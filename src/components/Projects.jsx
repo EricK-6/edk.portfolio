@@ -37,7 +37,9 @@ const PROJECTS = [
     image: './sentiment_pulse.png',
     color: 'from-cyan-500/20 to-blue-500/20',
     initial: 'S',
-    links: [],
+    links: [
+      { label: 'View project', href: 'https://github.com/EricK-6/sentiment-dashboard' },
+    ],
   },
   {
     title: 'Smart Energy Monitor',
@@ -97,29 +99,6 @@ const PROJECTS = [
     initial: 'R',
     links: [
       { label: 'View project', href: 'https://github.com/COMPSYS302/project-python-cs302-2026-python-project-24' },
-    ],
-  },
-  {
-    title: 'Java OOP Projects',
-    tag: 'Individual',
-    year: '2025',
-    role: 'Solo · Software engineering fundamentals',
-    description:
-      'Multiple Java command-line systems — an operator management tool, an adaptive AI Mind Game, and a graph-based routing app — applying OOP, design patterns (Strategy, Factory), and core data structures with Maven and JUnit.',
-    highlights: [
-      'Strategy & Factory design patterns',
-      'Graph algorithms for routing',
-      'Test-driven with Maven + JUnit',
-    ],
-    tech: ['Java', 'Maven', 'JUnit', 'OOP', 'Graphs'],
-    color: 'from-violet-500/20 to-fuchsia-500/20',
-    initial: 'J',
-    links: [
-      { label: 'Assignment 1', href: 'https://github.com/SOFTENG281-2025/assignment-1-dkim766' },
-      { label: 'Assignment 2', href: 'https://github.com/SOFTENG281-2025/assignment-2-dkim766' },
-      { label: 'Assignment 3', href: 'https://github.com/SOFTENG281-2025/assignment-3-dkim766' },
-      { label: 'Assignment 4', href: 'https://github.com/SOFTENG283/softeng283-assignment-3-dkim766' },
-      { label: 'Assignment 5', href: 'https://github.com/SOFTENG283/softeng283-assignment-4-dkim766' },
     ],
   },
 ]
