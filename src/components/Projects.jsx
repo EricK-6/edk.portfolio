@@ -22,6 +22,24 @@ const PROJECTS = [
     links: [],
   },
   {
+    title: 'Sentiment PULSE',
+    tag: 'AWS · Individual Project',
+    year: '2026',
+    role: 'Solo · Cloud & front-end',
+    description:
+      'A serverless sentiment analysis pipeline on AWS — Kinesis, Lambda, Comprehend, and DynamoDB — paired with a live React dashboard featuring hand-drawn SVG visualisations. Provisioned end-to-end with SAM Infrastructure as Code and deployed via AWS Amplify.',
+    highlights: [
+      'Serverless pipeline: Kinesis → Lambda → Comprehend → DynamoDB',
+      'Live React dashboard with hand-drawn SVG visualisations',
+      'SAM IaC, deployed on AWS Amplify',
+    ],
+    tech: ['AWS', 'Lambda', 'Kinesis', 'Comprehend', 'DynamoDB', 'SAM', 'React', 'Amplify'],
+    image: './sentiment_pulse.png',
+    color: 'from-cyan-500/20 to-blue-500/20',
+    initial: 'S',
+    links: [],
+  },
+  {
     title: 'Smart Energy Monitor',
     tag: 'Embedded Systems Design',
     year: '2025',
