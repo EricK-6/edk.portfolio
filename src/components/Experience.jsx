@@ -18,8 +18,8 @@ const EXPERIENCE = [
     period: 'Jul 2024 - Jan 2025',
     image: './twelve.jpg',
     bullets: [
-      'Delivered exceptional customer service and collaborated closely with colleagues to maintain smooth front of house operations throughout busy, fast paced service periods.',
-      'Efficiently resolved complex customer situations while keeping the guest experience positive and the floor running on time.',
+      'Delivered exceptional customer service and worked with colleagues to keep front of house operations running smoothly during busy service.',
+      'Efficiently resolved complex customer situations while keeping the guest experience positive.',
     ],
   },
 ]

@@ -66,4 +66,23 @@
     -webkit-mask-image: linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
     mask-image: linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
   }
+
+  /* waving hand emoji */
+  .wave-hand {
+    display: inline-block;
+    transform-origin: 70% 70%;
+    animation: wave 2.5s ease-in-out infinite;
+  }
+}
+
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-hand { animation: none; }
 }

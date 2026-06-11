@@ -3,11 +3,14 @@ import Reveal from './Reveal.jsx'
 
 export default function About() {
   return (
-    <Section id="about" kicker="About" title="About me">
+    <Section id="about" kicker="Profile" title="About me">
       <div className="grid gap-8 md:grid-cols-3">
         <Reveal className="md:col-span-2 space-y-4 text-zinc-700 dark:text-zinc-300 leading-relaxed">
+          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            Kia ora! <span className="wave-hand">👋</span>
+          </h3>
           <p>
-            Kia ora! 👋 I'm Eric, a penultimate year Computer Systems Engineering (Hons)
+            This is Eric, a penultimate year Computer Systems Engineering (Hons)
             student at the University of Auckland, passionate about embedded systems and
             modern software techniques. I work across the hardware and software boundary:
             firmware, PCBs, and the interfaces that tie them together, with C, Java, Python,
@@ -24,15 +27,16 @@ export default function About() {
         <Reveal as="aside" delay={120} className="space-y-4 block">
           <div className="card">
             <div className="text-xs uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
-              Quick facts
+              Highlights
             </div>
-            <dl className="mt-3 space-y-2 text-sm">
-              <Fact label="Location" value="Auckland, NZ" />
-              <Fact label="Degree" value="BE(Hons) Computer Systems" />
-              <Fact label="University" value="University of Auckland" />
-              <Fact label="Graduation" value="November 2027" />
-              <Fact label="Availability" value="Summer 2026/27" />
-            </dl>
+            <ul className="mt-3 space-y-2.5 text-sm text-zinc-700 dark:text-zinc-300">
+              {HIGHLIGHTS.map((h) => (
+                <li key={h} className="flex gap-2.5">
+                  <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent dark:bg-accent-dark" />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </Reveal>
       </div>
@@ -40,11 +44,9 @@ export default function About() {
   )
 }
 
-function Fact({ label, value }) {
-  return (
-    <div className="flex items-start justify-between gap-4">
-      <dt className="text-zinc-500 dark:text-zinc-500">{label}</dt>
-      <dd className="text-right font-medium text-zinc-800 dark:text-zinc-200">{value}</dd>
-    </div>
-  )
-}
+const HIGHLIGHTS = [
+  '3rd place · ECSE Design Competition',
+  '2× AWS Certified · Cloud & AI Practitioner',
+  'Robotics instructor at ciLab',
+  '7 projects across hardware & software',
+]

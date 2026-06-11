@@ -71,8 +71,8 @@ export default function Education() {
             <div className="mt-1 text-zinc-700 dark:text-zinc-300">
               High School Diploma
             </div>
-            <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
-              Microsoft Office and Google Workspace
+            <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Completed CIE IGCSE, AS, and A2 level courses and earned multiple diligence awards.
             </div>
           </div>
         </div>
