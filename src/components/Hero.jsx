@@ -125,8 +125,15 @@ function NameTile() {
 }
 
 function StatusTile() {
+  const [pulse, setPulse] = useState(false)
   return (
-    <div className={`${tile} bg-emerald-50/40 dark:bg-emerald-950/15 flex flex-col justify-between min-h-[136px]`}>
+    <button
+      type="button"
+      onClick={() => setPulse(true)}
+      onAnimationEnd={() => setPulse(false)}
+      aria-label="Open to internships"
+      className={`${tile} ${pulse ? 'animate-glow-green' : ''} w-full text-left bg-emerald-50/40 dark:bg-emerald-950/15 flex flex-col justify-between min-h-[136px]`}
+    >
       <div className="flex items-center gap-2">
         <span className="relative flex h-2.5 w-2.5">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -144,7 +151,7 @@ function StatusTile() {
           Summer 2026/27
         </div>
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -172,7 +179,7 @@ function CVTile() {
 
 function StatsTile() {
   return (
-    <div className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
+    <a href="#about" className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
       <div className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
         At a glance
       </div>
@@ -181,13 +188,13 @@ function StatsTile() {
         <Stat label="Graduating" value="Nov 2027" />
         <Stat label="Focus" value="Embedded · Software" />
       </dl>
-    </div>
+    </a>
   )
 }
 
 function AwardTile() {
   return (
-    <div className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
+    <a href="#projects" className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
       <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -203,22 +210,39 @@ function AwardTile() {
         </div>
         <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">2025 · Winnie the Bot</div>
       </div>
-    </div>
+    </a>
   )
 }
 
 function SocialTile() {
+  const goContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
   return (
-    <div className={`${tile} flex flex-col justify-between min-h-[136px]`}>
-      <div className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
-        Find me
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={goContact}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          goContact()
+        }
+      }}
+      aria-label="Find me — get in touch"
+      className={`${tile} flex cursor-pointer flex-col justify-between min-h-[136px]`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+          Find me
+        </span>
+        <span className="text-xs font-medium text-accent dark:text-accent-dark">Let's talk →</span>
       </div>
       <div className="space-y-2">
         <a
           href="https://github.com/EricK-6"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 text-sm text-zinc-700 hover:text-accent dark:text-zinc-300 dark:hover:text-accent-dark transition-colors"
+          onClick={(e) => e.stopPropagation()}
+          className="flex w-fit items-center gap-2 text-sm text-zinc-700 hover:text-accent dark:text-zinc-300 dark:hover:text-accent-dark transition-colors"
         >
           <GitHubIcon /> EricK-6
         </a>
@@ -226,7 +250,8 @@ function SocialTile() {
           href="https://www.linkedin.com/in/erick06/"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 text-sm text-zinc-700 hover:text-accent dark:text-zinc-300 dark:hover:text-accent-dark transition-colors"
+          onClick={(e) => e.stopPropagation()}
+          className="flex w-fit items-center gap-2 text-sm text-zinc-700 hover:text-accent dark:text-zinc-300 dark:hover:text-accent-dark transition-colors"
         >
           <LinkedInIcon /> erick06
         </a>
@@ -242,14 +267,14 @@ const TECH = [
 
 function SkillsTile() {
   return (
-    <div className={`${tile} sm:col-span-2 lg:col-span-4`}>
+    <a href="#skills" className={`${tile} block sm:col-span-2 lg:col-span-4`}>
       <div className="flex items-center justify-between gap-4">
         <div className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
           Tech I work with
         </div>
-        <a href="#skills" className="text-xs font-medium text-accent hover:underline dark:text-accent-dark">
+        <span className="text-xs font-medium text-accent dark:text-accent-dark">
           See all →
-        </a>
+        </span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {TECH.map((t) => (
@@ -261,7 +286,7 @@ function SkillsTile() {
           </span>
         ))}
       </div>
-    </div>
+    </a>
   )
 }
 
