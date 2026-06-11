@@ -16,7 +16,7 @@ const ROLES = [
     period: 'Feb 2025 - Oct 2025',
     image: './KEB.png',
     description:
-      'Provided personalised mentoring to first year students to support their transition into university life, encouraging academic engagement by addressing questions and offering direct guidance.',
+      'Provided personalised mentoring to first year students, supporting their transition into university life and academic engagement.',
   },
   {
     title: 'Full time Volunteer',

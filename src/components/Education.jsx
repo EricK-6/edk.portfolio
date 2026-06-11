@@ -58,7 +58,7 @@ export default function Education() {
           <img
             src="./pinehurst.jpeg"
             alt="Pinehurst School"
-            className="hidden sm:block h-20 w-auto flex-none rounded-xl object-contain drop-shadow-md"
+            className="hidden sm:block h-28 w-auto flex-none rounded-xl object-contain drop-shadow-md"
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
