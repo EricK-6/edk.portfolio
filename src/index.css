@@ -51,3 +51,19 @@
     @apply inline-block rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300;
   }
 }
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* fades the peeking prev/next cards out toward the edges */
+  .edge-fade {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
+  }
+}

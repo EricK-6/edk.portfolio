@@ -18,8 +18,8 @@ const EXPERIENCE = [
     period: 'Jul 2024 - Jan 2025',
     image: './twelve.jpg',
     bullets: [
-      'Delivered high quality service in a fast paced environment.',
-      'Assisted guests and maintained efficient table transitions during peak service.',
+      'Delivered exceptional customer service and collaborated closely with colleagues to maintain smooth front of house operations throughout busy, fast paced service periods.',
+      'Efficiently resolved complex customer situations while keeping the guest experience positive and the floor running on time.',
     ],
   },
 ]

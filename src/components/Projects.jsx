@@ -1,5 +1,5 @@
+import { useEffect, useRef } from 'react'
 import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
 
 const PROJECTS = [
   {
@@ -111,13 +111,7 @@ export default function Projects() {
       title="Things I've built"
       subtitle="A mix of hardware, software, and everything in between. Each project stretched a different part of the Computer Systems Engineering stack."
     >
-      <div className="grid gap-6 md:grid-cols-2">
-        {PROJECTS.map((p, i) => (
-          <Reveal key={p.title} delay={i * 80}>
-            <ProjectCard project={p} />
-          </Reveal>
-        ))}
-      </div>
+      <ProjectsCarousel projects={PROJECTS} />
 
       <p className="mt-8 text-sm text-zinc-500 dark:text-zinc-500">
         More on my <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="underline hover:text-accent dark:hover:text-accent-dark">GitHub</a>.
@@ -126,10 +120,201 @@ export default function Projects() {
   )
 }
 
-function ProjectCard({ project }) {
+function ProjectsCarousel({ projects }) {
+  const scrollerRef = useRef(null)
+  const apiRef = useRef({})
+  const N = projects.length
+  // three identical copies give a seamless infinite loop in both directions
+  const loop = [...projects, ...projects, ...projects]
+
+  useEffect(() => {
+    const el = scrollerRef.current
+    if (!el) return
+
+    const centerOffset = (i) => {
+      const c = el.children[i]
+      return c.offsetLeft + c.offsetWidth / 2 - el.clientWidth / 2
+    }
+    // exact width of one copy (distance between matching cards in adjacent copies)
+    const copyWidth = () => el.children[2 * N].offsetLeft - el.children[N].offsetLeft
+
+    // coverflow-style 3D tilt: the centred card sits flat and full size while
+    // its neighbours rotate away, shrink, and recede in depth
+    const render3d = () => {
+      const viewCenter = el.scrollLeft + el.clientWidth / 2
+      const step = el.children[0].offsetWidth + 24
+      for (let i = 0; i < el.children.length; i++) {
+        const child = el.children[i]
+        const cc = child.offsetLeft + child.offsetWidth / 2
+        const delta = (cc - viewCenter) / step
+        const ad = Math.min(Math.abs(delta), 1)
+        const clamped = Math.max(-1.5, Math.min(1.5, delta))
+        child.style.transform = `rotateY(${clamped * -32}deg) scale(${1 - ad * 0.22}) translateZ(${-ad * 170}px)`
+        child.style.opacity = `${1 - ad * 0.3}`
+        child.style.zIndex = `${100 - Math.round(Math.abs(delta) * 10)}`
+      }
+    }
+
+    const nearestIndex = () => {
+      const viewCenter = el.scrollLeft + el.clientWidth / 2
+      let n = 0
+      let best = Infinity
+      for (let i = 0; i < el.children.length; i++) {
+        const cc = el.children[i].offsetLeft + el.children[i].offsetWidth / 2
+        const d = Math.abs(cc - viewCenter)
+        if (d < best) {
+          best = d
+          n = i
+        }
+      }
+      return n
+    }
+
+    // keep the given card index inside the middle copy with an invisible jump
+    // (the copies are identical), so the loop never reaches an end
+    const normalize = (idx) => {
+      const cw = copyWidth()
+      if (idx < N) {
+        el.scrollLeft += cw
+        return idx + N
+      }
+      if (idx >= 2 * N) {
+        el.scrollLeft -= cw
+        return idx - N
+      }
+      return idx
+    }
+
+    // self-contained eased scroll tween (more reliable than native smooth scroll)
+    let snapRaf = 0
+    const animateTo = (target) => {
+      cancelAnimationFrame(snapRaf)
+      const start = el.scrollLeft
+      const dist = target - start
+      if (Math.abs(dist) < 1) {
+        render3d()
+        return
+      }
+      const t0 = performance.now()
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / 380)
+        const eased = 1 - Math.pow(1 - p, 3) // easeOutCubic
+        el.scrollLeft = start + dist * eased
+        render3d()
+        if (p < 1) snapRaf = requestAnimationFrame(tick)
+      }
+      snapRaf = requestAnimationFrame(tick)
+    }
+
+    // glide the nearest card to the exact centre once scrolling settles, so
+    // every card takes its turn fully centred and grown to full size
+    const settleSnap = () => {
+      const nearest = normalize(nearestIndex())
+      animateTo(centerOffset(nearest))
+    }
+
+    // prev / next buttons
+    apiRef.current.go = (dir) => {
+      cancelAnimationFrame(snapRaf)
+      const nearest = normalize(nearestIndex())
+      const t = el.children[nearest + dir]
+      if (t) animateTo(t.offsetLeft + t.offsetWidth / 2 - el.clientWidth / 2)
+    }
+
+    // start centered on the middle copy
+    el.scrollLeft = centerOffset(N)
+    render3d()
+
+    let raf = 0
+    let settle = 0
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; render3d() })
+      clearTimeout(settle)
+      settle = setTimeout(settleSnap, 140)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+
+    // let a vertical wheel / trackpad scroll drive the horizontal carousel,
+    // so scrolling brings the next card to the centre (and grows it)
+    const onWheel = (e) => {
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+      if (!delta) return
+      cancelAnimationFrame(snapRaf) // don't fight the user mid-snap
+      el.scrollLeft += delta
+      e.preventDefault()
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+
+    const ro = new ResizeObserver(() => {
+      el.scrollLeft = centerOffset(N)
+      render3d()
+    })
+    ro.observe(el)
+
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      el.removeEventListener('wheel', onWheel)
+      ro.disconnect()
+      cancelAnimationFrame(raf)
+      cancelAnimationFrame(snapRaf)
+      clearTimeout(settle)
+    }
+  }, [N])
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollerRef}
+        role="region"
+        aria-label="Projects carousel"
+        className="no-scrollbar flex gap-6 overflow-x-auto px-[6%] py-10 [perspective:1600px]"
+      >
+        {loop.map((p, i) => {
+          const clone = i < N || i >= 2 * N
+          return (
+            <div
+              key={i}
+              aria-hidden={clone || undefined}
+              className="shrink-0 grow-0 basis-[86%] sm:basis-[64%] lg:basis-[52%]"
+            >
+              <ProjectCard project={p} clone={clone} />
+            </div>
+          )
+        })}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => apiRef.current.go?.(-1)}
+        aria-label="Previous project"
+        className="absolute left-1 sm:left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-md backdrop-blur transition hover:bg-white hover:text-accent dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-200 dark:hover:text-accent-dark"
+      >
+        <ChevronIcon dir="left" />
+      </button>
+      <button
+        type="button"
+        onClick={() => apiRef.current.go?.(1)}
+        aria-label="Next project"
+        className="absolute right-1 sm:right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-md backdrop-blur transition hover:bg-white hover:text-accent dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-200 dark:hover:text-accent-dark"
+      >
+        <ChevronIcon dir="right" />
+      </button>
+    </div>
+  )
+}
+
+function ChevronIcon({ dir }) {
+  return (
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      {dir === 'left' ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
+    </svg>
+  )
+}
+
+function ProjectCard({ project, clone }) {
   const { title, tag, year, role, description, highlights, tech, color, initial, image, featured, links } = project
   return (
-    <article className={`card flex flex-col overflow-hidden ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
+    <article className={`card flex h-full flex-col overflow-hidden ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
       <div className={`relative -m-6 mb-6 h-44 overflow-hidden ${image ? 'bg-zinc-100 dark:bg-zinc-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
         {image ? (
           <img src={image} alt={title} className="h-full w-full object-cover" />
@@ -188,6 +373,7 @@ function ProjectCard({ project }) {
                 href={l.href}
                 target="_blank"
                 rel="noreferrer"
+                tabIndex={clone ? -1 : undefined}
                 className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
               >
                 {l.label} →

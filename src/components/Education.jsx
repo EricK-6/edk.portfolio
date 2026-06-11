@@ -24,7 +24,7 @@ export default function Education() {
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="text-lg font-semibold">
-                University of Auckland ·{' '}
+                The University of Auckland ·{' '}
                 <span className="text-zinc-600 dark:text-zinc-400 font-medium">Auckland, NZ</span>
               </h3>
               <span className="text-sm text-zinc-500 dark:text-zinc-500">Expected Nov 2027</span>
