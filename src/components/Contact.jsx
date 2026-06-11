@@ -66,7 +66,7 @@ export default function Contact() {
         <Reveal as="form" delay={120} className="md:col-span-3 card space-y-4 block" onSubmit={handleSubmit} noValidate>
           {status === 'success' && (
             <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
-              Message sent — I'll be in touch soon!
+              Message sent! I'll be in touch soon!
             </div>
           )}
           {status === 'error' && (

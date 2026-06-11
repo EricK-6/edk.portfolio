@@ -6,16 +6,16 @@ const CERTS = [
     name: 'AWS Certified Cloud Practitioner',
     issuer: 'Amazon Web Services',
     date: 'Apr 2026',
-    image: './clf.png',
+    image: './cloud.png',
     description:
-      'Proficiency in AWS core services and cloud architecture principles — Well-Architected Framework, security best practices, and cost optimisation.',
+      'Proficiency in AWS core services and cloud architecture principles: the Well-Architected Framework, security best practices, and cost optimisation.',
     tags: ['EC2', 'S3', 'IAM', 'Lambda', 'VPC'],
   },
   {
     name: 'AWS Certified AI Practitioner',
     issuer: 'Amazon Web Services',
     date: 'May 2026',
-    image: './aif.png',
+    image: './ai.png',
     description:
       'Foundational understanding of AI, machine learning, and generative AI concepts, including practical application of AWS AI/ML services.',
     tags: ['SageMaker', 'Bedrock', 'Rekognition'],

@@ -7,16 +7,17 @@ export default function About() {
       <div className="grid gap-8 md:grid-cols-3">
         <Reveal className="md:col-span-2 space-y-4 text-zinc-700 dark:text-zinc-300 leading-relaxed">
           <p>
-            Kia ora! I'm a penultimate-year Computer Systems Engineering (Hons) student
-            at the University of Auckland, drawn to the boundary between hardware and
-            software — firmware, PCBs, and the interfaces that tie them together.
-            Comfortable across C, Java, Python, and React, with an AWS Cloud
-            Practitioner cert backing the cloud side.
+            Kia ora! 👋 I'm Eric, a penultimate year Computer Systems Engineering (Hons)
+            student at the University of Auckland, passionate about embedded systems and
+            modern software techniques. I work across the hardware and software boundary:
+            firmware, PCBs, and the interfaces that tie them together, with C, Java, Python,
+            and React in my toolkit.
           </p>
           <p>
-            Outside of coursework I teach robotics at ciLab to students aged 8–16, and
-            I'm looking for a summer 2026/27 internship where I can contribute to real
-            systems — embedded, full-stack, or anywhere the two meet.
+            I've built a solid portfolio of projects both inside and outside of coursework,
+            complemented by AWS industry certifications and experience as a club executive
+            with the Korean Engineering Body. I'm always open to internship opportunities,
+            so feel free to check out my work below!
           </p>
         </Reveal>
 

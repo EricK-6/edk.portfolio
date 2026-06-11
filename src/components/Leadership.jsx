@@ -5,18 +5,18 @@ const ROLES = [
   {
     title: 'Academic Team Executive',
     org: 'Korean Engineering Body (KEB) · University of Auckland',
-    period: '2024 – Present',
-    image: './keb.jpg',
+    period: 'Jul 2024 - Present',
+    image: './KEB.png',
     description:
-      'Organize and lead tutorials for first-year engineering students, strengthening KEB\'s academic support and campus visibility.',
+      'Deliver tutorial sessions for junior engineering students and help plan academic events that support the student community.',
   },
   {
-    title: 'Mentor',
-    org: 'Korean Engineering Body (KEB) · University of Auckland',
-    period: '2024 – Present',
-    image: './keb.jpg',
+    title: 'Full time Volunteer',
+    org: 'IEEE · NZ Robotics Olympiad 2025',
+    period: 'Jul 2025',
+    image: './IEEE.png',
     description:
-      'Support first-year students with academic guidance and social integration into university life.',
+      'Volunteered full time at the NZ Robotics Olympiad 2025, supporting event operations for the Institute of Electrical and Electronics Engineers (IEEE).',
   },
 ]
 
@@ -31,7 +31,7 @@ export default function Leadership() {
                 <img
                   src={r.image}
                   alt={r.org}
-                  className="h-14 w-14 flex-none rounded-full object-cover"
+                  className="h-14 w-14 flex-none rounded-full bg-white object-contain p-1.5 ring-1 ring-zinc-200 dark:ring-zinc-800"
                 />
               )}
               <div className="flex-1 min-w-0">

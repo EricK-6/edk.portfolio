@@ -5,20 +5,20 @@ const EXPERIENCE = [
   {
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
-    period: 'Apr 2026 – Present',
+    period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Design and deliver hands-on robotics curriculum for students aged 8–16, covering embedded programming, sensor integration, and competition strategy.',
-      'Multiple student teams have advanced to regional events under this programme.',
+      'Instruct students in robot hardware assembly and software programming to complete mission based challenges.',
+      'Coach and support teams in preparation for nationwide robotics competitions.',
     ],
   },
   {
     role: 'Front of House',
     org: 'Twelve Restaurant',
-    period: 'Jul 2024 – Jan 2025',
-    image: './Twelve.jpg',
+    period: 'Jul 2024 - Jan 2025',
+    image: './twelve.jpg',
     bullets: [
-      'Delivered high-quality service in a fast-paced environment.',
+      'Delivered high quality service in a fast paced environment.',
       'Assisted guests and maintained efficient table transitions during peak service.',
     ],
   },

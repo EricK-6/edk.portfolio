@@ -3,25 +3,15 @@ import Reveal from './Reveal.jsx'
 
 const GROUPS = [
   {
-    label: 'Languages',
-    span: 'sm:col-span-2 lg:col-span-5',
+    label: 'Languages & Frameworks',
+    span: 'sm:col-span-2 lg:col-span-6',
     accent: true,
-    items: ['Java', 'C', 'Python', 'JavaScript'],
+    items: ['Python', 'Java', 'C', 'JavaScript', 'R', 'VHDL', 'React.js', 'Pandas', 'Scikit-Learn'],
   },
   {
-    label: 'Frameworks & Tools',
-    span: 'sm:col-span-2 lg:col-span-7',
-    items: ['React.js', 'Git', 'Maven', 'JUnit', 'Figma', 'AWS'],
-  },
-  {
-    label: 'Hardware & EDA',
-    span: 'sm:col-span-2 lg:col-span-7',
-    items: ['Atmel AVR', 'Altium Designer', 'LTspice', 'Arduino IDE', 'Quartus Prime'],
-  },
-  {
-    label: 'Other',
-    span: 'sm:col-span-2 lg:col-span-5',
-    items: ['MATLAB', 'VHDL', 'PyQt'],
+    label: 'Tools & Platform',
+    span: 'sm:col-span-2 lg:col-span-6',
+    items: ['AWS', 'Lambda', 'Kinesis', 'DynamoDB', 'Comprehend', 'Git/GitHub', 'Android Studio', 'MATLAB', 'Altium Designer'],
   },
 ]
 

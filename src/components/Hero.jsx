@@ -1,3 +1,47 @@
+import { useState, useEffect, useRef } from 'react'
+
+// Visitors can just start typing when they land on the page. Correctly typed
+// characters of `target` reveal in white; a wrong key resets back to the grey
+// hint. Returns how many leading characters match and whether it's complete.
+function useTypeChallenge(target) {
+  const [typed, setTyped] = useState(0)
+  const countRef = useRef(0)
+
+  useEffect(() => {
+    function onKey(e) {
+      // don't hijack typing inside form fields / editable elements
+      const el = document.activeElement
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return
+      // leave keyboard shortcuts alone
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+
+      const n = countRef.current
+
+      if (e.key === 'Backspace') {
+        countRef.current = Math.max(0, n - 1)
+        setTyped(countRef.current)
+        return
+      }
+      if (e.key.length !== 1) return // ignore Tab, Enter, arrows, etc.
+      if (n >= target.length) return // already complete
+
+      if (e.key === target[n]) {
+        if (e.key === ' ') e.preventDefault() // typing the space shouldn't scroll the page
+        countRef.current = n + 1
+        setTyped(n + 1)
+      } else {
+        // wrong key: no effect, fall back to the grey hint
+        countRef.current = 0
+        setTyped(0)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [target])
+
+  return { typed, done: typed >= target.length }
+}
+
 export default function Hero() {
   return (
     <section id="top" className="relative pt-12 pb-16 sm:pt-20 sm:pb-24">
@@ -25,7 +69,10 @@ export default function Hero() {
 const tile =
   'rounded-2xl border border-zinc-200 bg-white/80 backdrop-blur-sm p-6 dark:border-zinc-800 dark:bg-zinc-900/60 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-zinc-200/50 dark:hover:shadow-black/40'
 
+const NAME = 'Eric Kim'
+
 function NameTile() {
+  const { typed, done } = useTypeChallenge(NAME)
   return (
     <div className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
       <div
@@ -36,14 +83,33 @@ function NameTile() {
         <div className="text-xs font-medium uppercase tracking-widest text-accent dark:text-accent-dark">
           Computer Systems Engineering · UoA
         </div>
-        <h1 className="mt-3 text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
-          Dohyun <span className="text-zinc-400 dark:text-zinc-600">(</span>Eric<span className="text-zinc-400 dark:text-zinc-600">)</span> Kim
+        <h1 aria-label={NAME} className="mt-3 min-h-[1.1em] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
+          <span aria-hidden="true">
+            {/* correctly typed characters; glow once the full name is complete */}
+            <span className={done ? 'animate-glow-in' : undefined}>{NAME.slice(0, typed)}</span>
+            {/* blinking cursor */}
+            <span className="animate-blink font-normal text-accent dark:text-accent-dark">_</span>
+            {/* untyped remainder shown as a grey hint */}
+            <span className="text-zinc-400 dark:text-zinc-600">{NAME.slice(typed)}</span>
+          </span>
         </h1>
+        <p
+          aria-hidden="true"
+          className="mt-2 flex min-h-[1.25em] items-center gap-1.5 text-xs font-medium"
+        >
+          {done ? (
+            <span className="animate-fade-in text-sm sm:text-base font-semibold text-accent dark:text-accent-dark">Welcome Stranger :)</span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-zinc-400 dark:text-zinc-500">
+              <KeyboardIcon /> Try typing my name
+            </span>
+          )}
+        </p>
         <p className="mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
-          I build at the boundary of{' '}
+          Penultimate year Computer Systems Engineering student at UoA, passionate about{' '}
           <span className="font-medium text-zinc-900 dark:text-zinc-100">embedded systems</span> and{' '}
-          <span className="font-medium text-zinc-900 dark:text-zinc-100">software</span> — microcontrollers,
-          PCBs, React front-ends, and the glue in between.
+          <span className="font-medium text-zinc-900 dark:text-zinc-100">modern software techniques</span>.
+          Always open to new internship opportunities.
         </p>
       </div>
       <div className="relative flex flex-wrap items-center gap-3">
@@ -170,8 +236,8 @@ function SocialTile() {
 }
 
 const TECH = [
-  'C', 'Java', 'Python', 'JavaScript', 'React', 'AWS',
-  'ATmega', 'Altium', 'LTspice', 'PyQt6', 'Maven', 'JUnit',
+  'Python', 'Java', 'C', 'JavaScript', 'R', 'VHDL',
+  'React.js', 'Pandas', 'Scikit-Learn', 'AWS', 'MATLAB', 'Altium Designer',
 ]
 
 function SkillsTile() {
@@ -212,6 +278,14 @@ function Stat({ label, value }) {
   )
 }
 
+function KeyboardIcon() {
+  return (
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
+    </svg>
+  )
+}
 function DownloadIcon() {
   return (
     <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

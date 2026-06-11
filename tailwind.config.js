@@ -26,6 +26,8 @@ export default {
       animation: {
         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
         'fade-in': 'fadeIn 0.8s ease-out forwards',
+        blink: 'blink 1.1s step-end infinite',
+        'glow-in': 'glowIn 0.9s ease-out forwards',
       },
       keyframes: {
         fadeInUp: {
@@ -35,6 +37,15 @@ export default {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+        glowIn: {
+          '0%': { textShadow: '0 0 0 rgba(96,165,250,0)' },
+          '40%': { textShadow: '0 0 30px rgba(96,165,250,0.95), 0 0 12px rgba(59,130,246,0.7)' },
+          '100%': { textShadow: '0 0 16px rgba(96,165,250,0.45)' },
         },
       },
     },

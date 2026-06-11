@@ -17,7 +17,7 @@ export default function Education() {
       <Reveal className="card">
         <div className="flex gap-4">
           <img
-            src="./uoa.png"
+            src="./UoA.jpg"
             alt="University of Auckland"
             className="hidden sm:block h-28 w-auto flex-none rounded-xl object-contain drop-shadow-md"
           />
