@@ -11,12 +11,36 @@ const ROLES = [
       'Deliver tutorial sessions for junior engineering students and help plan academic events that support the student community.',
   },
   {
+    title: 'Student Mentor',
+    org: 'Korean Engineering Body (KEB) · University of Auckland',
+    period: 'Feb 2025 - Oct 2025',
+    image: './KEB.png',
+    description:
+      'Provided personalised mentoring to first year students to support their transition into university life, encouraging academic engagement by addressing questions and offering direct guidance.',
+  },
+  {
     title: 'Full time Volunteer',
     org: 'IEEE · NZ Robotics Olympiad 2025',
     period: 'Jul 2025',
     image: './IEEE.png',
     description:
       'Volunteered full time at the NZ Robotics Olympiad 2025, supporting event operations for the Institute of Electrical and Electronics Engineers (IEEE).',
+  },
+  {
+    title: 'Logistics Team Member',
+    org: 'The NZPMC Ltd',
+    period: 'Jul 2025',
+    image: './nzpmc.jpeg',
+    description:
+      'Part of the logistics team for the New Zealand Physics and Math Competition (NZPMC).',
+  },
+  {
+    title: 'Student Volunteer',
+    org: 'Centre for Automation and Robotic Engineering Science (CARES)',
+    period: 'May 2026',
+    image: './cares.jpeg',
+    description:
+      'Volunteered at the World Robot Olympiad (WRO) 2026 with the Centre for Automation and Robotic Engineering Science (CARES).',
   },
 ]
 

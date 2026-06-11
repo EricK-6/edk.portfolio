@@ -101,6 +101,44 @@ const PROJECTS = [
       { label: 'View project', href: 'https://github.com/COMPSYS302/project-python-cs302-2026-python-project-24' },
     ],
   },
+  {
+    title: 'MealHub',
+    tag: 'Java · Android',
+    year: '2026',
+    role: 'Team · Android development',
+    description:
+      'An Android recipe and meal planning app built in Java with Firebase Firestore, letting users browse cuisines, search food items, and build personalised meal plans persisted on the device.',
+    highlights: [
+      'Firebase Firestore backend with on device persistence',
+      'Nutrition goal tracking with macro progress indicators',
+      'Calorie and macro targets via RecyclerView and SharedPreferences',
+    ],
+    tech: ['Java', 'Android Studio', 'Firebase', 'Firestore', 'RecyclerView'],
+    image: './MealHub.png',
+    color: 'from-green-500/20 to-emerald-500/20',
+    initial: 'M',
+    links: [],
+  },
+  {
+    title: 'KEB Project Playground',
+    tag: 'Web Design',
+    year: '2025',
+    role: 'Team · Front end',
+    description:
+      'A multi page club website for the Korean Engineering Body, built with senior software engineering students using React 19, Vite, and React Router. Reusable components and dynamic event pages with React Bootstrap deliver a responsive interface across devices.',
+    highlights: [
+      'React 19, Vite, and React Router multi page site',
+      'Reusable components and dynamic event pages',
+      'Responsive UI with React Bootstrap',
+    ],
+    tech: ['JavaScript', 'React.js', 'Vite', 'React Router', 'React Bootstrap'],
+    image: './KEBWebDesign.png',
+    color: 'from-sky-500/20 to-indigo-500/20',
+    initial: 'K',
+    links: [
+      { label: 'View project', href: 'https://github.com/Patrick-Sheng/keb-project' },
+    ],
+  },
 ]
 
 export default function Projects() {
