@@ -86,7 +86,7 @@ function NameTile() {
         <h1 aria-label={NAME} className="mt-3 min-h-[1.1em] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
           <span aria-hidden="true">
             {/* correctly typed characters; glow once the full name is complete */}
-            <span className={done ? 'animate-glow-in dark:animate-glow-in-white' : undefined}>{NAME.slice(0, typed)}</span>
+            <span className={done ? 'animate-glow-in dark:animate-glow-in-green' : undefined}>{NAME.slice(0, typed)}</span>
             {/* blinking cursor */}
             <span className="animate-blink font-normal text-accent dark:text-accent-dark">_</span>
             {/* untyped remainder shown as a grey hint */}
@@ -132,14 +132,14 @@ function StatusTile() {
       onClick={() => setPulse(true)}
       onAnimationEnd={() => setPulse(false)}
       aria-label="Open to internships"
-      className={`${tile} ${pulse ? 'animate-glow-green dark:animate-glow-white' : ''} w-full text-left bg-emerald-50/40 dark:bg-grey-900/60 flex flex-col justify-between min-h-[136px]`}
+      className={`${tile} ${pulse ? 'animate-glow-green' : ''} w-full text-left bg-emerald-50/40 dark:bg-emerald-950/15 flex flex-col justify-between min-h-[136px]`}
     >
       <div className="flex items-center gap-2">
         <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 dark:bg-grey-300" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 dark:bg-grey-100" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
         </span>
-        <span className="text-xs font-medium uppercase tracking-widest text-emerald-700 dark:text-grey-300">
+        <span className="text-xs font-medium uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
           Available
         </span>
       </div>

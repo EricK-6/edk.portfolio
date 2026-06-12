@@ -36,11 +36,11 @@ export default {
       },
       colors: {
         grey,
-        // two personalities: blue on warm light grey, monochrome white on jet black
+        // two personalities: blue on warm light grey, dark green accents on jet black
         accent: {
           DEFAULT: '#2563eb', // blue-600 (light mode)
           light: '#3b82f6',   // blue-500 (decorative)
-          dark: '#ffffff',    // white (dark mode, pure black/white)
+          dark: '#059669',    // emerald-600 (dark mode, deep green, AA on black)
         },
       },
       animation: {
@@ -48,8 +48,7 @@ export default {
         'fade-in': 'fadeIn 0.8s ease-out forwards',
         blink: 'blink 1.1s step-end infinite',
         'glow-in': 'glowIn 0.9s ease-out forwards',
-        'glow-in-white': 'glowInWhite 0.9s ease-out forwards',
-        'glow-white': 'glowWhite 1.1s ease-out',
+        'glow-in-green': 'glowInGreen 0.9s ease-out forwards',
         'glow-green': 'glowGreen 1.1s ease-out',
       },
       keyframes: {
@@ -70,15 +69,10 @@ export default {
           '40%': { textShadow: '0 0 30px rgba(96,165,250,0.95), 0 0 12px rgba(59,130,246,0.7)' },
           '100%': { textShadow: '0 0 16px rgba(96,165,250,0.45)' },
         },
-        glowInWhite: {
-          '0%': { textShadow: '0 0 0 rgba(255,255,255,0)' },
-          '40%': { textShadow: '0 0 30px rgba(255,255,255,0.95), 0 0 12px rgba(255,255,255,0.6)' },
-          '100%': { textShadow: '0 0 16px rgba(255,255,255,0.4)' },
-        },
-        glowWhite: {
-          '0%': { boxShadow: '0 0 0 0 rgba(255,255,255,0)' },
-          '35%': { boxShadow: '0 0 26px 5px rgba(255,255,255,0.45)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(255,255,255,0)' },
+        glowInGreen: {
+          '0%': { textShadow: '0 0 0 rgba(5,150,105,0)' },
+          '40%': { textShadow: '0 0 30px rgba(5,150,105,0.95), 0 0 12px rgba(4,120,87,0.7)' },
+          '100%': { textShadow: '0 0 16px rgba(5,150,105,0.45)' },
         },
         glowGreen: {
           '0%': { boxShadow: '0 0 0 0 rgba(16,185,129,0)' },
