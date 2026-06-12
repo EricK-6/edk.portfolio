@@ -2,7 +2,7 @@
 
 Personal CV / portfolio website for **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at the University of Auckland. Built as a single-page site for internship applications.
 
-**Live:** https://erick-6.github.io/edk.portfolio/
+**Live:** https://erickk.cloud/
 
 ---
 
@@ -37,31 +37,33 @@ npm run preview   # serves the built site locally
 
 ## Deploy to GitHub Pages
 
-1. Create a new repo on GitHub (e.g. `personal-website`) under the `EricK-6` account.
-2. Push this folder to the repo:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial site"
-   git branch -M main
-   git remote add origin https://github.com/EricK-6/personal-website.git
-   git push -u origin main
-   ```
-3. If deploying to a repo subpath (e.g. `erick-6.github.io/personal-website/`), open `vite.config.js` and change `base: './'` to `base: '/personal-website/'`.
-4. Deploy:
-   ```bash
-   npm run deploy
-   ```
-   This builds the site and pushes `dist/` to the `gh-pages` branch.
-5. In GitHub repo **Settings → Pages**, set source to the `gh-pages` branch.
+### Automatic (current setup)
 
-For a root user-page at `erick-6.github.io`, create the repo named `EricK-6.github.io` and keep `base: './'`.
+Every push to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which runs `npm ci`, `npm run build`, and publishes `dist/` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. Just push and the live site updates — no local deploy step needed.
+
+In the GitHub repo **Settings → Pages**, the source is set to the `gh-pages` branch.
+
+### Manual (fallback)
+
+```bash
+npm run deploy
+```
+
+This builds the site and pushes `dist/` to the `gh-pages` branch from your machine.
+
+### Notes on `base`
+
+`vite.config.js` uses `base: './'`, which works at any deploy path. If you ever move to a repo subpath (e.g. `erick-6.github.io/personal-website/`), change it to `base: '/personal-website/'`. For a root user-page at `erick-6.github.io`, keep `base: './'`.
 
 ## Project layout
 
 ```
 Personal Website/
-├── CV.pdf                  # source CV (copy kept at project root for reference)
+├── CV.pdf                  # source CV (copied into public/ by scripts/copy-cv.mjs)
+├── .github/workflows/
+│   └── deploy.yml          # auto-deploys to GitHub Pages on push to main
+├── scripts/
+│   └── copy-cv.mjs         # copies CV.pdf → public/ before dev/build
 ├── public/
 │   ├── CV.pdf              # served at /CV.pdf (wired to the Download CV button)
 │   └── favicon.svg
@@ -71,17 +73,18 @@ Personal Website/
 │   ├── index.css           # Tailwind + component classes
 │   └── components/
 │       ├── Navbar.jsx
-│       ├── Hero.jsx
+│       ├── Hero.jsx        # bento-grid hero + "type my name" challenge
 │       ├── About.jsx
-│       ├── Projects.jsx
+│       ├── Projects.jsx    # 3D coverflow carousel (PROJECTS array)
 │       ├── Experience.jsx
 │       ├── Skills.jsx
 │       ├── Education.jsx
 │       ├── Certifications.jsx
 │       ├── Leadership.jsx
-│       ├── Contact.jsx
+│       ├── Contact.jsx     # Formspree-backed contact form
 │       ├── Footer.jsx
-│       └── Section.jsx     # shared section wrapper
+│       ├── Section.jsx     # shared section wrapper
+│       └── Reveal.jsx      # scroll-into-view fade/slide animation
 ├── index.html
 ├── tailwind.config.js
 ├── postcss.config.js
@@ -108,5 +111,5 @@ Replace `public/CV.pdf` with the latest version. The Download CV button in the h
 ## Notes
 
 - Dark mode follows system preference on first load and can be toggled from the navbar.
-- The contact form uses `mailto:` — it opens the user's email client, no backend.
+- The contact form POSTs to [Formspree](https://formspree.io/) (no backend of our own); messages are delivered to the inbox configured there. A "Just email me directly" `mailto:` link is offered as a fallback. To point it at a different inbox, change `FORMSPREE_ENDPOINT` in `src/components/Contact.jsx`.
 - `public/CV.pdf` is served publicly once deployed. If you'd rather not expose your phone number to scrapers, keep a redacted PDF in `public/` and the full one private.
