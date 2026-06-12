@@ -65,7 +65,7 @@ export default function BootIntro() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[60] flex flex-col justify-center bg-grey-950 px-6 font-mono text-xs text-emerald-400 transition-opacity duration-200 sm:px-12 sm:text-sm ${
+      className={`fixed inset-0 z-[60] flex flex-col justify-center bg-black px-6 font-mono text-xs text-grey-300 transition-opacity duration-200 sm:px-12 sm:text-sm ${
         fading ? 'opacity-0' : 'opacity-100'
       }`}
     >
@@ -73,7 +73,7 @@ export default function BootIntro() {
         {LINES.slice(0, count).map((l, i) => (
           <div key={i} className={i === LINES.length - 1 ? 'mt-2 text-grey-100' : 'text-grey-400'}>
             {l}
-            {i === LINES.length - 1 && <span className="animate-blink text-emerald-400">_</span>}
+            {i === LINES.length - 1 && <span className="animate-blink text-grey-100">_</span>}
           </div>
         ))}
       </div>
