@@ -9,7 +9,7 @@ export default function Section({ id, kicker, title, subtitle, children, classNa
             {kicker && <div className="section-kicker">{kicker}</div>}
             {title && <h2 className="section-title">{title}</h2>}
             {subtitle && (
-              <p className="mt-3 text-zinc-600 dark:text-zinc-400 leading-relaxed">{subtitle}</p>
+              <p className="mt-3 text-grey-600 dark:text-grey-400 leading-relaxed">{subtitle}</p>
             )}
           </Reveal>
         )}

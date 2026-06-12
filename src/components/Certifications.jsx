@@ -80,7 +80,7 @@ export default function Certifications() {
                 </defs>
                 <path
                   d={HEX_PATH}
-                  className="fill-white dark:fill-zinc-900"
+                  className="fill-grey-100 dark:fill-grey-900"
                   stroke={`url(#hexBorder-${i})`}
                   strokeWidth="2"
                   strokeOpacity="0.35"
@@ -100,7 +100,7 @@ export default function Certifications() {
                     {c.issuer} · {c.date}
                   </div>
                 </div>
-                <p className="max-w-[18rem] text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                <p className="max-w-[18rem] text-sm leading-relaxed text-grey-700 dark:text-grey-300">
                   {c.description}
                 </p>
                 {c.tags?.length > 0 && (

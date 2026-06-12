@@ -1,3 +1,21 @@
+import colors from 'tailwindcss/colors'
+
+// Base neutral for the whole site. Swap this one line to retune the mood:
+//   colors.stone   -> warm grey (calm, soft)
+//   colors.slate   -> cold grey (calm, cool/blue)
+//   colors.neutral -> true grey (neutral)
+//   colors.zinc    -> original (cool, faintly blue)
+// Warm grey (stone hue) light surfaces, dimmed so nothing reads as bright white.
+// 50-300 are custom toned-down values; 400+ stay stone so text colours
+// and dark mode remain untouched.
+const grey = {
+  ...colors.stone,
+  50: '#e8e5e1',  // inputs, brightest inset
+  100: '#dedad5', // tiles + cards
+  200: '#d0ccc5', // chips, tags, hover fills
+  300: '#beb9b1', // page background + soft borders
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
@@ -17,10 +35,12 @@ export default {
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
+        grey,
+        // two personalities: blue on warm light grey, dark green accents on jet black
         accent: {
-          DEFAULT: '#2563eb', // blue-600
-          light: '#3b82f6',   // blue-500
-          dark: '#60a5fa',    // blue-400 (dark mode)
+          DEFAULT: '#2563eb', // blue-600 (light mode)
+          light: '#3b82f6',   // blue-500 (decorative)
+          dark: '#059669',    // emerald-600 (dark mode, deep green, AA on black)
         },
       },
       animation: {
@@ -28,6 +48,7 @@ export default {
         'fade-in': 'fadeIn 0.8s ease-out forwards',
         blink: 'blink 1.1s step-end infinite',
         'glow-in': 'glowIn 0.9s ease-out forwards',
+        'glow-in-green': 'glowInGreen 0.9s ease-out forwards',
         'glow-green': 'glowGreen 1.1s ease-out',
       },
       keyframes: {
@@ -47,6 +68,11 @@ export default {
           '0%': { textShadow: '0 0 0 rgba(96,165,250,0)' },
           '40%': { textShadow: '0 0 30px rgba(96,165,250,0.95), 0 0 12px rgba(59,130,246,0.7)' },
           '100%': { textShadow: '0 0 16px rgba(96,165,250,0.45)' },
+        },
+        glowInGreen: {
+          '0%': { textShadow: '0 0 0 rgba(5,150,105,0)' },
+          '40%': { textShadow: '0 0 30px rgba(5,150,105,0.95), 0 0 12px rgba(4,120,87,0.7)' },
+          '100%': { textShadow: '0 0 16px rgba(5,150,105,0.45)' },
         },
         glowGreen: {
           '0%': { boxShadow: '0 0 0 0 rgba(16,185,129,0)' },

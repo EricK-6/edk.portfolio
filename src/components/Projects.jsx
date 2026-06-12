@@ -151,7 +151,7 @@ export default function Projects() {
     >
       <ProjectsCarousel projects={PROJECTS} />
 
-      <p className="mt-8 text-sm text-zinc-500 dark:text-zinc-500">
+      <p className="mt-8 text-sm text-grey-500 dark:text-grey-500">
         More on my <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="underline hover:text-accent dark:hover:text-accent-dark">GitHub</a>.
       </p>
     </Section>
@@ -325,7 +325,7 @@ function ProjectsCarousel({ projects }) {
         type="button"
         onClick={() => apiRef.current.go?.(-1)}
         aria-label="Previous project"
-        className="absolute left-1 sm:left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-md backdrop-blur transition hover:bg-white hover:text-accent dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-200 dark:hover:text-accent-dark"
+        className="absolute left-1 sm:left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-grey-300 bg-grey-100/90 text-grey-700 shadow-md backdrop-blur transition hover:bg-grey-200 hover:text-accent dark:border-grey-700 dark:bg-grey-900/90 dark:text-grey-200 dark:hover:text-accent-dark"
       >
         <ChevronIcon dir="left" />
       </button>
@@ -333,7 +333,7 @@ function ProjectsCarousel({ projects }) {
         type="button"
         onClick={() => apiRef.current.go?.(1)}
         aria-label="Next project"
-        className="absolute right-1 sm:right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-md backdrop-blur transition hover:bg-white hover:text-accent dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-200 dark:hover:text-accent-dark"
+        className="absolute right-1 sm:right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-grey-300 bg-grey-100/90 text-grey-700 shadow-md backdrop-blur transition hover:bg-grey-200 hover:text-accent dark:border-grey-700 dark:bg-grey-900/90 dark:text-grey-200 dark:hover:text-accent-dark"
       >
         <ChevronIcon dir="right" />
       </button>
@@ -353,7 +353,7 @@ function ProjectCard({ project, clone }) {
   const { title, tag, year, role, description, highlights, tech, color, initial, image, featured, links } = project
   return (
     <article className={`card flex h-full flex-col overflow-hidden ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
-      <div className={`relative -m-6 mb-6 h-44 overflow-hidden ${image ? 'bg-zinc-100 dark:bg-zinc-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
+      <div className={`relative -m-6 mb-6 h-44 overflow-hidden ${image ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
         {image ? (
           <img src={image} alt={title} className="h-full w-full object-cover" />
         ) : (
@@ -362,7 +362,7 @@ function ProjectCard({ project, clone }) {
             <span className="relative text-6xl font-extrabold text-white/90 drop-shadow-sm">{initial}</span>
           </>
         )}
-        <span className="absolute top-3 right-3 rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-zinc-800 backdrop-blur dark:bg-zinc-900/80 dark:text-zinc-200">
+        <span className="absolute top-3 right-3 rounded-full bg-grey-100/80 px-2.5 py-1 text-xs font-medium text-grey-800 backdrop-blur dark:bg-grey-900/80 dark:text-grey-200">
           {year}
         </span>
       </div>
@@ -377,13 +377,13 @@ function ProjectCard({ project, clone }) {
           {tag}
         </div>
         <h3 className="mt-1 text-xl font-semibold">{title}</h3>
-        <div className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-500">{role}</div>
-        <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+        <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">{role}</div>
+        <p className="mt-3 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
           {description}
         </p>
 
         {highlights?.length > 0 && (
-          <ul className="mt-4 space-y-1.5 text-sm text-zinc-700 dark:text-zinc-300">
+          <ul className="mt-4 space-y-1.5 text-sm text-grey-700 dark:text-grey-300">
             {highlights.map((h) => (
               <li key={h} className="flex gap-2">
                 <span className="mt-1 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent dark:bg-accent-dark" />

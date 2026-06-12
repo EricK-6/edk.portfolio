@@ -5,8 +5,8 @@ export default function About() {
   return (
     <Section id="about" kicker="Profile" title="About me">
       <div className="grid gap-8 md:grid-cols-3">
-        <Reveal className="md:col-span-2 space-y-4 text-zinc-700 dark:text-zinc-300 leading-relaxed">
-          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+        <Reveal className="md:col-span-2 space-y-4 text-grey-700 dark:text-grey-300 leading-relaxed">
+          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-grey-900 dark:text-grey-100">
             Kia ora! <span className="wave-hand">👋</span>
           </h3>
           <p>
@@ -26,10 +26,10 @@ export default function About() {
 
         <Reveal as="aside" delay={120} className="space-y-4 block">
           <div className="card">
-            <div className="text-xs uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+            <div className="text-xs uppercase tracking-widest text-grey-500 dark:text-grey-500">
               Highlights
             </div>
-            <ul className="mt-3 space-y-2.5 text-sm text-zinc-700 dark:text-zinc-300">
+            <ul className="mt-3 space-y-2.5 text-sm text-grey-700 dark:text-grey-300">
               {HIGHLIGHTS.map((h) => (
                 <li key={h} className="flex gap-2.5">
                   <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent dark:bg-accent-dark" />

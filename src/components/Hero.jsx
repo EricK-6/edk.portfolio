@@ -48,8 +48,8 @@ export default function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px]
-                   bg-gradient-to-b from-blue-50/60 via-white to-transparent
-                   dark:from-blue-950/30 dark:via-zinc-950 dark:to-transparent"
+                   bg-gradient-to-b from-accent/[0.06] via-grey-300 to-transparent
+                   dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
       />
       <div className="container-page">
         <div className="animate-fade-in-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -67,7 +67,7 @@ export default function Hero() {
 }
 
 const tile =
-  'rounded-2xl border border-zinc-200 bg-white/80 backdrop-blur-sm p-6 dark:border-zinc-800 dark:bg-zinc-900/60 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-zinc-200/50 dark:hover:shadow-black/40'
+  'rounded-2xl border border-grey-300/80 bg-grey-100/80 backdrop-blur-sm p-6 dark:border-grey-800/70 dark:bg-grey-900/60 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:shadow-grey-400/30 dark:hover:shadow-black/25'
 
 const NAME = 'Eric Kim'
 
@@ -77,7 +77,7 @@ function NameTile() {
     <div className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-br from-blue-400/25 via-indigo-400/15 to-transparent blur-3xl dark:from-blue-500/25 dark:via-indigo-500/15"
+        className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-br from-accent/[0.14] via-accent/[0.08] to-transparent blur-3xl dark:from-accent-dark/[0.08] dark:via-accent-dark/[0.04]"
       />
       <div className="relative">
         <div className="text-xs font-medium uppercase tracking-widest text-accent dark:text-accent-dark">
@@ -86,11 +86,11 @@ function NameTile() {
         <h1 aria-label={NAME} className="mt-3 min-h-[1.1em] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
           <span aria-hidden="true">
             {/* correctly typed characters; glow once the full name is complete */}
-            <span className={done ? 'animate-glow-in' : undefined}>{NAME.slice(0, typed)}</span>
+            <span className={done ? 'animate-glow-in dark:animate-glow-in-green' : undefined}>{NAME.slice(0, typed)}</span>
             {/* blinking cursor */}
             <span className="animate-blink font-normal text-accent dark:text-accent-dark">_</span>
             {/* untyped remainder shown as a grey hint */}
-            <span className="text-zinc-400 dark:text-zinc-600">{NAME.slice(typed)}</span>
+            <span className="text-grey-400 dark:text-grey-600">{NAME.slice(typed)}</span>
           </span>
         </h1>
         <p
@@ -100,15 +100,15 @@ function NameTile() {
           {done ? (
             <span className="animate-fade-in text-sm sm:text-base font-semibold text-accent dark:text-accent-dark">Welcome Stranger :)</span>
           ) : (
-            <span className="flex items-center gap-1.5 text-zinc-400 dark:text-zinc-500">
+            <span className="flex items-center gap-1.5 text-grey-400 dark:text-grey-500">
               <KeyboardIcon /> Try typing my name
             </span>
           )}
         </p>
-        <p className="mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
+        <p className="mt-4 text-base sm:text-lg text-grey-600 dark:text-grey-400 leading-relaxed max-w-2xl">
           Penultimate year Computer Systems Engineering student at UoA, passionate about{' '}
-          <span className="font-medium text-zinc-900 dark:text-zinc-100">embedded systems</span> and{' '}
-          <span className="font-medium text-zinc-900 dark:text-zinc-100">modern software techniques</span>.
+          <span className="font-medium text-grey-900 dark:text-grey-100">embedded systems</span> and{' '}
+          <span className="font-medium text-grey-900 dark:text-grey-100">modern software techniques</span>.
           Always open to new internship opportunities.
         </p>
       </div>
@@ -144,10 +144,10 @@ function StatusTile() {
         </span>
       </div>
       <div>
-        <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <div className="text-lg font-semibold text-grey-900 dark:text-grey-100">
           Open to internships
         </div>
-        <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <div className="mt-1 text-sm text-grey-600 dark:text-grey-400">
           Summer 2026/27
         </div>
       </div>
@@ -161,17 +161,17 @@ function CVTile() {
       href="./CV.pdf"
       download
       aria-label="Download CV as PDF"
-      className={`${tile} group relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-600 border-transparent text-white hover:from-blue-500 hover:to-indigo-500 dark:from-blue-600 dark:to-indigo-600 flex flex-col justify-between min-h-[136px]`}
+      className={`${tile} group relative overflow-hidden bg-gradient-to-br from-[#3a68bd] to-[#474eae] border-transparent text-white hover:from-[#497ac8] hover:to-[#5560b7] flex flex-col justify-between min-h-[136px]`}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-widest text-blue-100">
+        <span className="text-xs font-medium uppercase tracking-widest text-white/80">
           Resume
         </span>
         <DownloadIcon />
       </div>
       <div>
         <div className="text-lg font-semibold">Download CV</div>
-        <div className="mt-1 text-sm text-blue-100">PDF · updated 2026</div>
+        <div className="mt-1 text-sm text-white/80">PDF · updated 2026</div>
       </div>
     </a>
   )
@@ -180,7 +180,7 @@ function CVTile() {
 function StatsTile() {
   return (
     <a href="#about" className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
-      <div className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+      <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
         At a glance
       </div>
       <dl className="mt-3 grid grid-cols-3 gap-4">
@@ -202,13 +202,13 @@ function AwardTile() {
         <span className="text-xs font-medium uppercase tracking-widest">3rd place</span>
       </div>
       <div>
-        <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
+        <div className="text-lg font-semibold text-grey-900 dark:text-grey-100 leading-tight">
           ECSE Design
         </div>
-        <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
+        <div className="text-lg font-semibold text-grey-900 dark:text-grey-100 leading-tight">
           Competition
         </div>
-        <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">2025 · Winnie the Bot</div>
+        <div className="mt-1 text-sm text-grey-600 dark:text-grey-400">2025 · Winnie the Bot</div>
       </div>
     </a>
   )
@@ -227,11 +227,11 @@ function SocialTile() {
           goContact()
         }
       }}
-      aria-label="Find me — get in touch"
+      aria-label="Find me - get in touch"
       className={`${tile} flex cursor-pointer flex-col justify-between min-h-[136px]`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+        <span className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
           Find me
         </span>
         <span className="text-xs font-medium text-accent dark:text-accent-dark">Let's talk →</span>
@@ -242,7 +242,7 @@ function SocialTile() {
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="flex w-fit items-center gap-2 text-sm text-zinc-700 hover:text-accent dark:text-zinc-300 dark:hover:text-accent-dark transition-colors"
+          className="flex w-fit items-center gap-2 text-sm text-grey-700 hover:text-accent dark:text-grey-300 dark:hover:text-accent-dark transition-colors"
         >
           <GitHubIcon /> EricK-6
         </a>
@@ -251,7 +251,7 @@ function SocialTile() {
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="flex w-fit items-center gap-2 text-sm text-zinc-700 hover:text-accent dark:text-zinc-300 dark:hover:text-accent-dark transition-colors"
+          className="flex w-fit items-center gap-2 text-sm text-grey-700 hover:text-accent dark:text-grey-300 dark:hover:text-accent-dark transition-colors"
         >
           <LinkedInIcon /> erick06
         </a>
@@ -269,7 +269,7 @@ function SkillsTile() {
   return (
     <a href="#skills" className={`${tile} block sm:col-span-2 lg:col-span-4`}>
       <div className="flex items-center justify-between gap-4">
-        <div className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+        <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
           Tech I work with
         </div>
         <span className="text-xs font-medium text-accent dark:text-accent-dark">
@@ -280,7 +280,7 @@ function SkillsTile() {
         {TECH.map((t) => (
           <span
             key={t}
-            className="inline-flex items-center rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-sm font-medium text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+            className="inline-flex items-center rounded-lg border border-grey-300 bg-grey-200 px-2.5 py-1 text-sm font-medium text-grey-800 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200"
           >
             {t}
           </span>
@@ -293,10 +293,10 @@ function SkillsTile() {
 function Stat({ label, value }) {
   return (
     <div>
-      <dt className="text-[10px] font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+      <dt className="text-[10px] font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
         {label}
       </dt>
-      <dd className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+      <dd className="mt-1 text-sm font-medium text-grey-900 dark:text-grey-100">
         {value}
       </dd>
     </div>

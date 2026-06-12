@@ -107,7 +107,7 @@ export default function Leadership() {
         {/* straight spine (mobile) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-2 bottom-2 left-4 w-px bg-zinc-200 dark:bg-zinc-800 md:hidden"
+          className="pointer-events-none absolute top-2 bottom-2 left-4 w-px bg-grey-200 dark:bg-grey-800 md:hidden"
         />
 
         <ol className="relative">
@@ -124,26 +124,26 @@ export default function Leadership() {
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el) => (nodeRefs.current[i] = el)}
-                    className={`absolute top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-white dark:bg-accent-dark dark:ring-zinc-950 md:block ${left ? '-right-1.5' : '-left-1.5'}`}
+                    className={`absolute top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-grey-300 dark:bg-accent-dark dark:ring-grey-950 md:block ${left ? '-right-1.5' : '-left-1.5'}`}
                   />
                   {/* node on the spine (mobile) */}
-                  <span className="absolute top-6 -left-8 z-10 h-3 w-3 -translate-x-1/2 rounded-full bg-accent ring-4 ring-white dark:bg-accent-dark dark:ring-zinc-950 md:hidden" />
+                  <span className="absolute top-6 -left-8 z-10 h-3 w-3 -translate-x-1/2 rounded-full bg-accent ring-4 ring-grey-300 dark:bg-accent-dark dark:ring-grey-950 md:hidden" />
 
                   <div className="flex gap-4">
                     {r.image && (
                       <img
                         src={r.image}
                         alt={r.org}
-                        className="h-14 w-14 flex-none rounded-full bg-white object-contain p-1.5 ring-1 ring-zinc-200 dark:ring-zinc-800"
+                        className="h-14 w-14 flex-none rounded-full bg-grey-50 object-contain p-1.5 ring-1 ring-grey-200 dark:ring-grey-800"
                       />
                     )}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold">{r.title}</h3>
-                      <div className="text-sm text-zinc-500 dark:text-zinc-500">{r.org}</div>
-                      <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">{r.period}</div>
+                      <div className="text-sm text-grey-500 dark:text-grey-500">{r.org}</div>
+                      <div className="mt-1 text-xs text-grey-500 dark:text-grey-500">{r.period}</div>
                     </div>
                   </div>
-                  <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                  <p className="mt-3 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
                     {r.description}
                   </p>
                 </div>

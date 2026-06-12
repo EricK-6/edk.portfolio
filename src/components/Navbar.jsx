@@ -25,7 +25,7 @@ export default function Navbar({ theme, onToggleTheme }) {
     <header
       className={`sticky top-0 z-40 transition-colors ${
         scrolled
-          ? 'border-b border-zinc-200/80 bg-white/80 backdrop-blur dark:border-zinc-800/80 dark:bg-zinc-950/80'
+          ? 'border-b border-grey-400/50 bg-grey-300/80 backdrop-blur dark:border-grey-800/80 dark:bg-black/80'
           : 'border-b border-transparent'
       }`}
     >
@@ -39,7 +39,7 @@ export default function Navbar({ theme, onToggleTheme }) {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
+                className="text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100 transition-colors"
               >
                 {link.label}
               </a>
@@ -49,9 +49,16 @@ export default function Navbar({ theme, onToggleTheme }) {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
+            aria-label="Open terminal"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 hover:bg-grey-200 dark:border-grey-800 dark:text-grey-300 dark:hover:bg-grey-900"
+          >
+            <TerminalGlyph />
+          </button>
+          <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
             aria-label="Open command menu"
-            className="hidden sm:inline-flex h-9 items-center gap-2 rounded-lg border border-zinc-200 px-2.5 text-xs text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"
+            className="hidden sm:inline-flex h-9 items-center gap-2 rounded-lg border border-grey-200 px-2.5 text-xs text-grey-500 hover:bg-grey-200 hover:text-grey-700 dark:border-grey-800 dark:text-grey-400 dark:hover:bg-grey-900 dark:hover:text-grey-200"
           >
             <SearchIcon />
             <span className="font-mono">{isMac ? '⌘' : 'Ctrl'} K</span>
@@ -59,14 +66,14 @@ export default function Navbar({ theme, onToggleTheme }) {
           <button
             onClick={onToggleTheme}
             aria-label="Toggle dark mode"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 hover:bg-grey-200 dark:border-grey-800 dark:text-grey-300 dark:hover:bg-grey-900"
           >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
             onClick={() => setOpen((o) => !o)}
             aria-label="Open menu"
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 dark:border-zinc-800 dark:text-zinc-300"
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 dark:border-grey-800 dark:text-grey-300"
           >
             <MenuIcon open={open} />
           </button>
@@ -74,14 +81,14 @@ export default function Navbar({ theme, onToggleTheme }) {
       </nav>
 
       {open && (
-        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800">
+        <div className="md:hidden border-t border-grey-200 dark:border-grey-800">
           <ul className="container-page py-3 flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                  className="block rounded-lg px-3 py-2 text-sm text-grey-700 hover:bg-grey-200 dark:text-grey-300 dark:hover:bg-grey-900"
                 >
                   {link.label}
                 </a>
@@ -98,6 +105,14 @@ function SearchIcon() {
   return (
     <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+    </svg>
+  )
+}
+
+function TerminalGlyph() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
     </svg>
   )
 }

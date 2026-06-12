@@ -35,7 +35,7 @@ export default function CommandPalette({ theme, onToggleTheme }) {
       await navigator.clipboard.writeText(EMAIL)
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
-    } catch { /* clipboard blocked — no-op */ }
+    } catch { /* clipboard blocked - no-op */ }
   }
 
   // global open/close shortcut + event hook
@@ -44,6 +44,16 @@ export default function CommandPalette({ theme, onToggleTheme }) {
       if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault()
         setOpen((o) => !o)
+        return
+      }
+      // bare "/" opens it too - but not while typing in a field
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const el = document.activeElement
+        const typing = el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)
+        if (!typing) {
+          e.preventDefault()
+          setOpen(true)
+        }
       }
     }
     const onOpenEvent = () => setOpen(true)
@@ -72,6 +82,7 @@ export default function CommandPalette({ theme, onToggleTheme }) {
     { id: 'education', label: 'Education', hint: 'Academic background', keywords: 'education university degree uoa', icon: <HashIcon />, run: () => go('education') },
     { id: 'certifications', label: 'Credentials', hint: 'Certifications', keywords: 'certifications credentials awards', icon: <HashIcon />, run: () => go('certifications') },
     { id: 'leadership', label: 'Leadership', hint: 'Activities', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
+    { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
     { id: 'cv', label: 'Download CV', hint: 'PDF', keywords: 'cv resume pdf download', icon: <DownloadIcon />, run: downloadCV },
     {
@@ -119,9 +130,9 @@ export default function CommandPalette({ theme, onToggleTheme }) {
 
       <div
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
+        className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-grey-900"
       >
-        <div className="flex items-center gap-3 border-b border-zinc-200 px-4 dark:border-zinc-800">
+        <div className="flex items-center gap-3 border-b border-grey-200 px-4 dark:border-grey-800">
           <SearchIcon />
           <input
             ref={inputRef}
@@ -129,16 +140,16 @@ export default function CommandPalette({ theme, onToggleTheme }) {
             onChange={(e) => { setQuery(e.target.value); setActive(0) }}
             onKeyDown={onInputKey}
             placeholder="Jump to a section, download CV, copy email…"
-            className="h-12 w-full bg-transparent text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            className="h-12 w-full bg-transparent text-sm text-grey-900 placeholder:text-grey-400 focus:outline-none dark:text-grey-100 dark:placeholder:text-grey-500"
           />
-          <kbd className="hidden sm:inline-flex items-center rounded border border-zinc-300 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+          <kbd className="hidden sm:inline-flex items-center rounded border border-grey-300 px-1.5 py-0.5 font-mono text-[10px] text-grey-500 dark:border-grey-700 dark:text-grey-400">
             esc
           </kbd>
         </div>
 
         <ul className="max-h-[55vh] overflow-y-auto p-2">
           {filtered.length === 0 && (
-            <li className="px-3 py-6 text-center text-sm text-zinc-500 dark:text-zinc-500">No matches.</li>
+            <li className="px-3 py-6 text-center text-sm text-grey-500 dark:text-grey-500">No matches.</li>
           )}
           {filtered.map((c, i) => (
             <li key={c.id}>
@@ -148,20 +159,20 @@ export default function CommandPalette({ theme, onToggleTheme }) {
                 onMouseEnter={() => setActive(i)}
                 onClick={c.run}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                  i === activeIdx ? 'bg-zinc-100 dark:bg-zinc-800' : ''
+                  i === activeIdx ? 'bg-grey-200 dark:bg-grey-800' : ''
                 }`}
               >
-                <span className="flex h-7 w-7 flex-none items-center justify-center rounded-md border border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                <span className="flex h-7 w-7 flex-none items-center justify-center rounded-md border border-grey-200 text-grey-500 dark:border-grey-700 dark:text-grey-400">
                   {c.icon}
                 </span>
-                <span className="flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">{c.label}</span>
-                <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 truncate max-w-[45%] text-right">{c.hint}</span>
+                <span className="flex-1 text-sm font-medium text-grey-900 dark:text-grey-100">{c.label}</span>
+                <span className="font-mono text-xs text-grey-400 dark:text-grey-500 truncate max-w-[45%] text-right">{c.hint}</span>
               </button>
             </li>
           ))}
         </ul>
 
-        <div className="flex items-center justify-between gap-4 border-t border-zinc-200 px-4 py-2 text-[11px] text-zinc-500 dark:border-zinc-800 dark:text-zinc-500">
+        <div className="flex items-center justify-between gap-4 border-t border-grey-200 px-4 py-2 text-[11px] text-grey-500 dark:border-grey-800 dark:text-grey-500">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1"><Kbd>↑</Kbd><Kbd>↓</Kbd> navigate</span>
             <span className="flex items-center gap-1"><Kbd>↵</Kbd> select</span>
@@ -175,7 +186,7 @@ export default function CommandPalette({ theme, onToggleTheme }) {
 
 function Kbd({ children }) {
   return (
-    <kbd className="inline-flex min-w-[18px] items-center justify-center rounded border border-zinc-300 px-1 py-0.5 font-mono text-[10px] leading-none text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+    <kbd className="inline-flex min-w-[18px] items-center justify-center rounded border border-grey-300 px-1 py-0.5 font-mono text-[10px] leading-none text-grey-500 dark:border-grey-700 dark:text-grey-400">
       {children}
     </kbd>
   )
@@ -183,8 +194,15 @@ function Kbd({ children }) {
 
 function SearchIcon() {
   return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-none text-zinc-400">
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-none text-grey-400">
       <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+    </svg>
+  )
+}
+function TerminalIcon() {
+  return (
+    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
     </svg>
   )
 }

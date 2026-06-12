@@ -1,4 +1,4 @@
-# Eric Kim — Personal Website
+# Eric Kim - Personal Website
 
 Personal CV / portfolio website for **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at the University of Auckland. Built as a single-page site for internship applications.
 
@@ -39,7 +39,7 @@ npm run preview   # serves the built site locally
 
 ### Automatic (current setup)
 
-Every push to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which runs `npm ci`, `npm run build`, and publishes `dist/` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. Just push and the live site updates — no local deploy step needed.
+Every push to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which runs `npm ci`, `npm run build`, and publishes `dist/` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. Just push and the live site updates - no local deploy step needed.
 
 In the GitHub repo **Settings → Pages**, the source is set to the `gh-pages` branch.
 
@@ -94,7 +94,7 @@ Personal Website/
 
 ## Editing content
 
-Each section keeps its data in a constant at the top of its component file — open the file, edit the array, save. No CMS, no DB.
+Each section keeps its data in a constant at the top of its component file - open the file, edit the array, save. No CMS, no DB.
 
 - **Projects** → `src/components/Projects.jsx` (`PROJECTS` array)
 - **Experience** → `src/components/Experience.jsx`

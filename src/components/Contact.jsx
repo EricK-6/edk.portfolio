@@ -126,17 +126,17 @@ export default function Contact() {
 }
 
 const inputClass = (error) =>
-  `w-full rounded-lg border px-3 py-2 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 transition
-   bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500
+  `w-full rounded-lg border px-3 py-2 text-sm placeholder:text-grey-400 focus:outline-none focus:ring-2 transition
+   bg-grey-50 text-grey-900 dark:bg-grey-900 dark:text-grey-100 dark:placeholder:text-grey-500
    ${error
      ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20 dark:border-red-500 dark:focus:border-red-500 dark:focus:ring-red-500/20'
-     : 'border-zinc-300 focus:border-accent focus:ring-accent/20 dark:border-zinc-700 dark:focus:border-accent-dark dark:focus:ring-accent-dark/20'
+     : 'border-grey-300 focus:border-accent focus:ring-accent/20 dark:border-grey-700 dark:focus:border-accent-dark dark:focus:ring-accent-dark/20'
    }`
 
 function Field({ label, error, children }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-grey-500 dark:text-grey-400">
         {label}
       </span>
       {children}
@@ -151,10 +151,10 @@ function ContactLink({ label, value, href, external }) {
       href={href}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      className="group block rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:border-zinc-700"
+      className="group block rounded-xl border border-grey-300 bg-grey-100 p-4 transition hover:border-grey-400/60 hover:shadow-sm dark:border-grey-800 dark:bg-grey-900/60 dark:hover:border-grey-700"
     >
-      <div className="text-xs font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-500">{label}</div>
-      <div className="mt-1 font-medium text-zinc-900 group-hover:text-accent dark:text-zinc-100 dark:group-hover:text-accent-dark break-all">{value}</div>
+      <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">{label}</div>
+      <div className="mt-1 font-medium text-grey-900 group-hover:text-accent dark:text-grey-100 dark:group-hover:text-accent-dark break-all">{value}</div>
     </a>
   )
 }

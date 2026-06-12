@@ -11,13 +11,12 @@ import Leadership from './components/Leadership.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
+import TerminalDock from './components/TerminalDock.jsx'
+import BootIntro from './components/BootIntro.jsx'
 
 export default function App() {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'light'
-    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
-    return prefersDark ? 'dark' : 'light'
-  })
+  // dark mode is the default; visitors can switch via the navbar toggle
+  const [theme, setTheme] = useState('dark')
 
   useEffect(() => {
     const root = document.documentElement
@@ -27,9 +26,18 @@ export default function App() {
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
 
+  // lifted so the page can reflow (shift right) while the terminal dock is open
+  const [terminalOpen, setTerminalOpen] = useState(false)
+
   return (
-    <div className="min-h-screen">
+    <div
+      className={`min-h-screen transition-[padding] duration-300 ease-out ${
+        terminalOpen ? 'sm:pl-[380px]' : ''
+      }`}
+    >
+      <BootIntro />
       <CommandPalette theme={theme} onToggleTheme={toggleTheme} />
+      <TerminalDock open={terminalOpen} setOpen={setTerminalOpen} theme={theme} onToggleTheme={toggleTheme} />
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
       <main>
         <Hero />

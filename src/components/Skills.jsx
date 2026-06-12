@@ -24,17 +24,17 @@ export default function Skills() {
             {g.accent && (
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-gradient-to-br from-blue-400/20 via-indigo-400/10 to-transparent blur-2xl dark:from-blue-500/20 dark:via-indigo-500/10"
+                className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-gradient-to-br from-accent/[0.14] via-accent/[0.07] to-transparent blur-2xl dark:from-accent-dark/[0.08] dark:via-accent-dark/[0.04]"
               />
             )}
-            <h3 className="relative text-sm font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+            <h3 className="relative text-sm font-semibold uppercase tracking-widest text-grey-500 dark:text-grey-500">
               {g.label}
             </h3>
             <div className="relative mt-3 flex flex-wrap gap-2">
               {g.items.map((item) => (
                 <span
                   key={item}
-                  className="inline-flex items-center rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-sm font-medium text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                  className="inline-flex items-center rounded-lg border border-grey-300 bg-grey-200 px-2.5 py-1 text-sm font-medium text-grey-800 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200"
                 >
                   {item}
                 </span>
