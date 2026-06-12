@@ -134,6 +134,8 @@ export default function Leadership() {
                       <img
                         src={r.image}
                         alt={r.org}
+                        loading="lazy"
+                        decoding="async"
                         className="h-14 w-14 flex-none rounded-full bg-grey-50 object-contain p-1.5 ring-1 ring-grey-200 dark:ring-grey-800"
                       />
                     )}

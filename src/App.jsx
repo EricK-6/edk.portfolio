@@ -15,13 +15,20 @@ import TerminalDock from './components/TerminalDock.jsx'
 import BootIntro from './components/BootIntro.jsx'
 
 export default function App() {
-  // dark mode is the default; visitors can switch via the navbar toggle
-  const [theme, setTheme] = useState('dark')
+  // dark mode is the default; the visitor's toggle choice is remembered
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem('theme')
+      if (saved === 'light' || saved === 'dark') return saved
+    } catch { /* private mode */ }
+    return 'dark'
+  })
 
   useEffect(() => {
     const root = document.documentElement
     if (theme === 'dark') root.classList.add('dark')
     else root.classList.remove('dark')
+    try { localStorage.setItem('theme', theme) } catch { /* private mode */ }
   }, [theme])
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))

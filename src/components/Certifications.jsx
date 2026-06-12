@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
@@ -58,60 +59,118 @@ const HEX_W = 300
 const HEX_H = 400
 const HEX_PATH = roundedHex(HEX_W, HEX_H, 16)
 
+// one face of the flip card: the hexagon shape plus its content
+function HexFace({ gradientId, back = false, children }) {
+  return (
+    <div
+      className={`absolute inset-0 [backface-visibility:hidden] ${back ? '[transform:rotateY(180deg)]' : ''}`}
+    >
+      <svg
+        viewBox={`0 0 ${HEX_W} ${HEX_H}`}
+        preserveAspectRatio="none"
+        className="absolute inset-0 h-full w-full drop-shadow-md"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fb923c" />
+            <stop offset="100%" stopColor="#f59e0b" />
+          </linearGradient>
+        </defs>
+        <path
+          d={HEX_PATH}
+          className="fill-grey-100 dark:fill-grey-900"
+          stroke={`url(#${gradientId})`}
+          strokeWidth="2"
+          strokeOpacity="0.35"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// hexagon that flips 180° to its details: hover on desktop, tap on touch,
+// Enter/Space via keyboard; reduced-motion users get an instant swap
+function FlipHex({ cert, index }) {
+  const [flipped, setFlipped] = useState(false)
+  return (
+    <div className="relative aspect-[300/400] w-full max-w-sm [perspective:1200px]">
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`${cert.name}: flip for details`}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setFlipped(true) }}
+        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setFlipped(false) }}
+        onClick={() => setFlipped((f) => !f)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setFlipped((f) => !f)
+          }
+        }}
+        className={`relative h-full w-full cursor-pointer transition-transform duration-500 ease-out [transform-style:preserve-3d] motion-reduce:transition-none ${
+          flipped ? '[transform:rotateY(180deg)]' : ''
+        }`}
+      >
+        <HexFace gradientId={`hexBorder-${index}-front`}>
+          <img
+            src={cert.image}
+            alt={cert.name}
+            loading="lazy"
+            decoding="async"
+            className="h-44 w-auto flex-none object-contain drop-shadow-md"
+          />
+          <div>
+            <h3 className="whitespace-nowrap text-lg font-semibold leading-snug">{cert.name}</h3>
+            <div className="mt-1 text-sm font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
+              {cert.issuer} · {cert.date}
+            </div>
+          </div>
+          <div className="mt-2 flex items-center gap-1.5 text-xs text-grey-500 dark:text-grey-500">
+            <FlipIcon /> hover or tap for details
+          </div>
+        </HexFace>
+
+        <HexFace gradientId={`hexBorder-${index}-back`} back>
+          <h3 className="text-lg font-semibold leading-snug">{cert.name}</h3>
+          <div className="text-sm font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
+            {cert.issuer} · {cert.date}
+          </div>
+          <p className="max-w-[18rem] text-sm leading-relaxed text-grey-700 dark:text-grey-300">
+            {cert.description}
+          </p>
+          {cert.tags?.length > 0 && (
+            <div className="flex max-w-[19rem] flex-wrap justify-center gap-1.5">
+              {cert.tags.map((t) => (
+                <span key={t} className="tag">{t}</span>
+              ))}
+            </div>
+          )}
+        </HexFace>
+      </div>
+    </div>
+  )
+}
+
+function FlipIcon() {
+  return (
+    <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <polyline points="3 4 3 9 8 9" />
+    </svg>
+  )
+}
+
 export default function Certifications() {
   return (
     <Section id="certifications" kicker="Certifications" title="Credentials" className="!py-10 sm:!py-12">
       <div className="grid gap-6 sm:grid-cols-2">
         {CERTS.map((c, i) => (
           <Reveal key={c.name} delay={i * 80} className="flex justify-center">
-            <div className="relative aspect-[300/400] w-full max-w-sm">
-              {/* rounded hexagon shape + gradient border */}
-              <svg
-                viewBox={`0 0 ${HEX_W} ${HEX_H}`}
-                preserveAspectRatio="none"
-                className="absolute inset-0 h-full w-full drop-shadow-md"
-                aria-hidden="true"
-              >
-                <defs>
-                  <linearGradient id={`hexBorder-${i}`} x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#fb923c" />
-                    <stop offset="100%" stopColor="#f59e0b" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d={HEX_PATH}
-                  className="fill-grey-100 dark:fill-grey-900"
-                  stroke={`url(#hexBorder-${i})`}
-                  strokeWidth="2"
-                  strokeOpacity="0.35"
-                />
-              </svg>
-
-              {/* content */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center">
-                <img
-                  src={c.image}
-                  alt={c.name}
-                  className="h-44 w-auto flex-none object-contain drop-shadow-md"
-                />
-                <div>
-                  <h3 className="whitespace-nowrap text-lg font-semibold leading-snug">{c.name}</h3>
-                  <div className="mt-1 text-sm font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
-                    {c.issuer} · {c.date}
-                  </div>
-                </div>
-                <p className="max-w-[18rem] text-sm leading-relaxed text-grey-700 dark:text-grey-300">
-                  {c.description}
-                </p>
-                {c.tags?.length > 0 && (
-                  <div className="flex max-w-[19rem] flex-wrap justify-center gap-1.5">
-                    {c.tags.map((t) => (
-                      <span key={t} className="tag">{t}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            <FlipHex cert={c} index={i} />
           </Reveal>
         ))}
       </div>

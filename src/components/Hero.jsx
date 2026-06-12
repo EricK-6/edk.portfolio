@@ -42,7 +42,49 @@ function useTypeChallenge(target) {
   return { typed, done: typed >= target.length }
 }
 
+// Subtle 3D tilt that follows the cursor over each hero tile. One delegated
+// listener on the grid covers all tiles; inline transform overrides the
+// Tailwind hover lift while active and clears on leave so it takes back over.
+const TILT_MAX = 5 // degrees at the tile edge
+
+function useTileTilt() {
+  const gridRef = useRef(null)
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!grid) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const onMove = (e) => {
+      if (e.pointerType && e.pointerType !== 'mouse') return // touch: skip
+      const tile = e.target.closest('[data-tilt]')
+      if (!tile || !grid.contains(tile)) return
+      const r = tile.getBoundingClientRect()
+      const dx = (e.clientX - r.left) / r.width - 0.5
+      const dy = (e.clientY - r.top) / r.height - 0.5
+      const rx = (-dy * 2 * TILT_MAX).toFixed(2)
+      const ry = (dx * 2 * TILT_MAX).toFixed(2)
+      tile.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`
+    }
+
+    const onOut = (e) => {
+      const tile = e.target.closest('[data-tilt]')
+      if (tile && !tile.contains(e.relatedTarget)) tile.style.transform = ''
+    }
+
+    grid.addEventListener('pointermove', onMove)
+    grid.addEventListener('pointerout', onOut)
+    return () => {
+      grid.removeEventListener('pointermove', onMove)
+      grid.removeEventListener('pointerout', onOut)
+    }
+  }, [])
+
+  return gridRef
+}
+
 export default function Hero() {
+  const gridRef = useTileTilt()
   return (
     <section id="top" className="relative pt-12 pb-16 sm:pt-20 sm:pb-24">
       <div
@@ -52,7 +94,7 @@ export default function Hero() {
                    dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
       />
       <div className="container-page">
-        <div className="animate-fade-in-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div ref={gridRef} className="animate-fade-in-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 [perspective:1200px]">
           <NameTile />
           <StatusTile />
           <CVTile />
@@ -74,16 +116,21 @@ const NAME = 'Eric Kim'
 function NameTile() {
   const { typed, done } = useTypeChallenge(NAME)
   return (
-    <div className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
+    <div data-tilt className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-br from-accent/[0.14] via-accent/[0.08] to-transparent blur-3xl dark:from-accent-dark/[0.08] dark:via-accent-dark/[0.04]"
       />
-      <div className="relative">
-        <div className="text-xs font-medium uppercase tracking-widest text-accent dark:text-accent-dark">
-          Computer Systems Engineering · UoA
+      <img
+        src="./me.jpg"
+        alt="Portrait of Dohyun (Eric) Kim"
+        className="absolute right-6 top-1/2 hidden h-64 w-52 -translate-y-1/2 rounded-2xl object-cover shadow-lg ring-1 ring-grey-300/80 dark:ring-grey-700/80 lg:block"
+      />
+      <div className="relative lg:pr-60">
+        <div className="flex items-center gap-2 text-xl sm:text-2xl font-medium text-grey-600 dark:text-grey-400">
+          <span className="wave-hand" aria-hidden="true">👋</span> Kia Ora, This is..
         </div>
-        <h1 aria-label={NAME} className="mt-3 min-h-[1.1em] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
+        <h1 aria-label={NAME} className="mt-1 min-h-[1.1em] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
           <span aria-hidden="true">
             {/* correctly typed characters; glow once the full name is complete */}
             <span className={done ? 'animate-glow-in dark:animate-glow-in-green' : undefined}>{NAME.slice(0, typed)}</span>
@@ -98,18 +145,20 @@ function NameTile() {
           className="mt-2 flex min-h-[1.25em] items-center gap-1.5 text-xs font-medium"
         >
           {done ? (
-            <span className="animate-fade-in text-sm sm:text-base font-semibold text-accent dark:text-accent-dark">Welcome Stranger :)</span>
+            <span className="animate-fade-in text-base sm:text-lg font-semibold text-accent dark:text-accent-dark">Welcome Stranger :)</span>
           ) : (
             <span className="flex items-center gap-1.5 text-grey-400 dark:text-grey-500">
               <KeyboardIcon /> Try typing my name
             </span>
           )}
         </p>
-        <p className="mt-4 text-base sm:text-lg text-grey-600 dark:text-grey-400 leading-relaxed max-w-2xl">
-          Penultimate year Computer Systems Engineering student at UoA, passionate about{' '}
+        <p className="mt-3 text-xs sm:text-sm text-grey-600 dark:text-grey-400 leading-loose max-w-2xl">
+          <span className="rounded-md bg-grey-200/80 px-2 py-0.5 font-mono font-medium tracking-wide text-grey-900 dark:bg-grey-800/70 dark:text-grey-100">
+            I'm Penultimate CSE student @ UoA
+          </span>{' '}
+          passionate about{' '}
           <span className="font-medium text-grey-900 dark:text-grey-100">embedded systems</span> and{' '}
           <span className="font-medium text-grey-900 dark:text-grey-100">modern software techniques</span>.
-          Always open to new internship opportunities.
         </p>
       </div>
       <div className="relative flex flex-wrap items-center gap-3">
@@ -128,6 +177,7 @@ function StatusTile() {
   const [pulse, setPulse] = useState(false)
   return (
     <button
+      data-tilt
       type="button"
       onClick={() => setPulse(true)}
       onAnimationEnd={() => setPulse(false)}
@@ -158,6 +208,7 @@ function StatusTile() {
 function CVTile() {
   return (
     <a
+      data-tilt
       href="./CV.pdf"
       download
       aria-label="Download CV as PDF"
@@ -179,12 +230,12 @@ function CVTile() {
 
 function StatsTile() {
   return (
-    <a href="#about" className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
+    <a data-tilt href="#about" className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
       <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
         At a glance
       </div>
       <dl className="mt-3 grid grid-cols-3 gap-4">
-        <Stat label="Location" value="Auckland, NZ" />
+        <Stat label="Located In" value="Auckland, NZ" />
         <Stat label="Graduating" value="Nov 2027" />
         <Stat label="Focus" value="Embedded · Software" />
       </dl>
@@ -194,7 +245,7 @@ function StatsTile() {
 
 function AwardTile() {
   return (
-    <a href="#projects" className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
+    <a data-tilt href="#projects" className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
       <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -218,6 +269,7 @@ function SocialTile() {
   const goContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
   return (
     <div
+      data-tilt
       role="link"
       tabIndex={0}
       onClick={goContact}
@@ -267,7 +319,7 @@ const TECH = [
 
 function SkillsTile() {
   return (
-    <a href="#skills" className={`${tile} block sm:col-span-2 lg:col-span-4`}>
+    <a data-tilt href="#skills" className={`${tile} block sm:col-span-2 lg:col-span-4`}>
       <div className="flex items-center justify-between gap-4">
         <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
           Tech I work with

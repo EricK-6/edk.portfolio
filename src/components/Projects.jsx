@@ -87,10 +87,10 @@ const PROJECTS = [
     year: '2026',
     role: 'Team · Data & analytics',
     description:
-      'A Python desktop analytics app built with PyQt6 and pandas that automated a full day Excel reporting workflow into under 30 seconds. Includes three time series forecasting models with holdout MAE/RMSE validation and configurable horizons.',
+      'A Python desktop analytics app built with PyQt6 and pandas that automated a full day Excel reporting workflow into a matter of seconds. Includes multiple time series forecasting models with holdout MAE/RMSE validation and configurable horizons.',
     highlights: [
-      'Full day Excel workflow reduced to <30 seconds',
-      'Three time series forecasting models',
+      'Full day Excel workflow reduced to seconds',
+      'Multiple time series forecasting models',
       'Holdout MAE/RMSE validation with configurable horizons',
     ],
     tech: ['Python', 'PyQt6', 'pandas'],
@@ -355,7 +355,7 @@ function ProjectCard({ project, clone }) {
     <article className={`card flex h-full flex-col overflow-hidden ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
       <div className={`relative -m-6 mb-6 h-44 overflow-hidden ${image ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
         {image ? (
-          <img src={image} alt={title} className="h-full w-full object-cover" />
+          <img src={image} alt={title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
         ) : (
           <>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(0,0,0,0.3),transparent_50%)]" />

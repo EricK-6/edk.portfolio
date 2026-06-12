@@ -36,6 +36,8 @@ export default function Experience() {
                 <img
                   src={job.image}
                   alt={job.org}
+                  loading="lazy"
+                  decoding="async"
                   className="hidden sm:block h-16 w-16 flex-none rounded-lg object-cover ring-1 ring-grey-200 dark:ring-grey-800"
                 />
               )}
