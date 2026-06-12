@@ -10,6 +10,7 @@ import Certifications from './components/Certifications.jsx'
 import Leadership from './components/Leadership.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
+import CommandPalette from './components/CommandPalette.jsx'
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
@@ -28,6 +29,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      <CommandPalette theme={theme} onToggleTheme={toggleTheme} />
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
       <main>
         <Hero />

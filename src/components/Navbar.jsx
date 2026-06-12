@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
+
 const NAV_LINKS = [
   { href: '#about', label: 'About' },
   { href: '#projects', label: 'Projects' },
@@ -47,6 +49,14 @@ export default function Navbar({ theme, onToggleTheme }) {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+            aria-label="Open command menu"
+            className="hidden sm:inline-flex h-9 items-center gap-2 rounded-lg border border-zinc-200 px-2.5 text-xs text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"
+          >
+            <SearchIcon />
+            <span className="font-mono">{isMac ? '⌘' : 'Ctrl'} K</span>
+          </button>
+          <button
             onClick={onToggleTheme}
             aria-label="Toggle dark mode"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
@@ -81,6 +91,14 @@ export default function Navbar({ theme, onToggleTheme }) {
         </div>
       )}
     </header>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+    </svg>
   )
 }
 
