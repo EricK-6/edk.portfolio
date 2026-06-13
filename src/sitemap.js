@@ -3,13 +3,13 @@
 // the navbar minimap and the edge arrows / arrow-key navigation — moving in a
 // direction goes to the adjacent cell, and edges (no neighbour) show no arrow.
 //
-//   Projects    About          Experience
-//   Education   Home           Skills
-//   Leadership  Credentials    Contact
+//   Education    About        Experience
+//   Credentials  Home         Skills
+//   Leadership   Projects     Contact
 export const GRID = [
-  ['projects', 'about', 'experience'],
-  ['education', 'home', 'skills'],
-  ['leadership', 'certifications', 'contact'],
+  ['education', 'about', 'experience'],
+  ['certifications', 'home', 'skills'],
+  ['leadership', 'projects', 'contact'],
 ]
 
 export const LABELS = {

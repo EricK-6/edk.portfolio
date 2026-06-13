@@ -266,7 +266,7 @@ export default function App() {
   return (
     <LayoutContext.Provider value={layout}>
       <div
-        className={`min-h-screen transition-[padding] duration-300 ease-out ${
+        className={`flex min-h-screen flex-col transition-[padding] duration-300 ease-out ${
           terminalOpen ? 'sm:pl-[380px]' : ''
         }`}
       >
@@ -289,7 +289,9 @@ export default function App() {
         ) : (
           <ScrollLayout />
         )}
-        <Footer />
+        {/* footer belongs to the long scroll page; box pages are discrete and
+            shouldn't carry spare scroll space below their content */}
+        {layout === 'scroll' && <Footer />}
       </div>
     </LayoutContext.Provider>
   )
@@ -303,7 +305,7 @@ function navigateBoxTo(target) {
 // The classic single page: every section stacked in reading order.
 function ScrollLayout() {
   return (
-    <main>
+    <main className="flex-1">
       {SCROLL_ORDER.map((sid) => {
         const Component = COMPONENTS[sid]
         return <Component key={sid} />
@@ -317,8 +319,18 @@ function ScrollLayout() {
 // direction-aware slide chosen by the grid move that got here.
 function Page({ id, anim }) {
   const Component = COMPONENTS[id]
+  // Every box page fills the leftover viewport height (flex-1). On lg+, home
+  // also centres the bento and clips overflow, so there's no spare space to
+  // scroll within it — a scroll gesture navigates instead. Narrow screens keep
+  // normal scrolling (the single-column bento is taller than the viewport).
+  const centered = id === 'home'
   return (
-    <main key={id} className={anim}>
+    <main
+      key={id}
+      className={`flex-1 ${anim} ${
+        centered ? 'lg:flex lg:min-h-0 lg:flex-col lg:justify-center lg:overflow-hidden' : ''
+      }`}
+    >
       <Component />
     </main>
   )

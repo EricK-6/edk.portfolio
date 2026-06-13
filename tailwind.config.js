@@ -33,6 +33,7 @@ export default {
           'sans-serif',
         ],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        sketch: ['Caveat', 'ui-rounded', 'cursive'],
       },
       colors: {
         grey,

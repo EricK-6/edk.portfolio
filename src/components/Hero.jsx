@@ -1,19 +1,16 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { goTo } from '../router.js'
 import { useLayout } from '../layout.js'
 import { hrefFor } from '../sitemap.js'
-
-// Progress is kept module-level so it survives Hero remounting (which happens
-// on every layout switch and box-mode navigation) — otherwise the revealed
-// name and the un-blurred photo would reset each time.
-let savedTyped = 0
+import { NAME, getNameTyped, setNameTyped, useNameTyped } from '../nameReveal.js'
 
 // Visitors can just start typing when they land on the page. Correctly typed
-// characters of `target` reveal in white; a wrong key resets back to the grey
-// hint. Returns how many leading characters match and whether it's complete.
-function useTypeChallenge(target) {
-  const [typed, setTyped] = useState(() => Math.min(savedTyped, target.length))
-  const countRef = useRef(typed)
+// characters of NAME reveal in white; a wrong key resets back to the grey hint.
+// Progress lives in a shared store (nameReveal.js) so it survives Hero
+// remounting and the navbar hints can react to it. Returns how many leading
+// characters match and whether it's complete.
+function useTypeChallenge() {
+  const typed = useNameTyped()
 
   useEffect(() => {
     function onKey(e) {
@@ -23,30 +20,28 @@ function useTypeChallenge(target) {
       // leave keyboard shortcuts alone
       if (e.metaKey || e.ctrlKey || e.altKey) return
 
-      const n = countRef.current
-
-      const commit = (next) => { countRef.current = next; savedTyped = next; setTyped(next) }
+      const n = getNameTyped()
 
       if (e.key === 'Backspace') {
-        commit(Math.max(0, n - 1))
+        setNameTyped(n - 1)
         return
       }
       if (e.key.length !== 1) return // ignore Tab, Enter, arrows, etc.
-      if (n >= target.length) return // already complete
+      if (n >= NAME.length) return // already complete
 
-      if (e.key === target[n]) {
+      if (e.key === NAME[n]) {
         if (e.key === ' ') e.preventDefault() // typing the space shouldn't scroll the page
-        commit(n + 1)
+        setNameTyped(n + 1)
       } else {
-        // wrong key: no effect, fall back to the grey hint
-        commit(0)
+        // wrong key: fall back to the grey hint
+        setNameTyped(0)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [target])
+  }, [])
 
-  return { typed, done: typed >= target.length }
+  return { typed, done: typed >= NAME.length }
 }
 
 // Subtle 3D tilt that follows the cursor over each hero tile. One delegated
@@ -92,8 +87,12 @@ function useTileTilt() {
 
 export default function Hero() {
   const gridRef = useTileTilt()
+  const layout = useLayout()
   return (
-    <section id="top" className="relative pt-12 pb-16 sm:pt-20 sm:pb-24">
+    <section
+      id="top"
+      className={`relative ${layout === 'box' ? 'py-6' : 'pt-12 pb-16 sm:pt-20 sm:pb-24'}`}
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px]
@@ -118,10 +117,8 @@ export default function Hero() {
 const tile =
   'rounded-2xl border border-grey-300/80 bg-grey-100/80 backdrop-blur-sm p-6 dark:border-grey-800/70 dark:bg-grey-900/60 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:shadow-grey-400/30 dark:hover:shadow-black/25'
 
-const NAME = 'Eric Kim'
-
 function NameTile() {
-  const { typed, done } = useTypeChallenge(NAME)
+  const { typed, done } = useTypeChallenge()
   const layout = useLayout()
   return (
     <div data-tilt className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
