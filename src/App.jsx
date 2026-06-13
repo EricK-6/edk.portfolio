@@ -73,9 +73,11 @@ const ENTER_ANIM = {
   '': 'animate-fade-in-up',
 }
 
-// Box-mode spatial navigation: arrow keys move across the 3x3 grid, and a wheel
-// gesture past the top/bottom edge pages up/down (horizontal wheel is left to
-// the page — Projects has a horizontal carousel, and trackpads use it for back).
+// Box-mode navigation by scrolling in four directions (plus matching arrow
+// keys). A horizontal scroll/trackpad swipe moves left/right; a vertical scroll
+// moves up/down once it pushes past the top/bottom edge, so a tall page still
+// scrolls its own content first. Scrolling over something that scrolls
+// horizontally itself (the Projects carousel) is left alone.
 function useBoxNav(id, enabled) {
   const coolingRef = useRef(false)
   useEffect(() => {
@@ -83,10 +85,6 @@ function useBoxNav(id, enabled) {
     const pos = positionOf(id)
     if (!pos) return
 
-    const startCooldown = () => {
-      coolingRef.current = true
-      setTimeout(() => { coolingRef.current = false }, 600)
-    }
     const move = (dir) => {
       const map = {
         left: [pos.row, pos.col - 1],
@@ -96,7 +94,11 @@ function useBoxNav(id, enabled) {
       }
       const [r, c] = map[dir]
       const target = cellAt(r, c)
-      if (target) { navigateBoxTo(target); startCooldown() }
+      if (!target) return false
+      navigateBoxTo(target)
+      coolingRef.current = true
+      setTimeout(() => { coolingRef.current = false }, 600)
+      return true
     }
 
     const blocked = () => {
@@ -108,6 +110,16 @@ function useBoxNav(id, enabled) {
     const atTop = () => window.scrollY <= 2
     const atBottom = () =>
       window.innerHeight + Math.ceil(window.scrollY) >= document.documentElement.scrollHeight - 2
+    // walk up from the wheel target: is it inside a horizontally-scrollable box?
+    const overScrollerX = (node) => {
+      for (let el = node; el && el !== document.body; el = el.parentElement) {
+        if (el.scrollWidth > el.clientWidth + 4) {
+          const ox = getComputedStyle(el).overflowX
+          if (ox === 'auto' || ox === 'scroll') return true
+        }
+      }
+      return false
+    }
 
     const onKey = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || blocked()) return
@@ -116,15 +128,23 @@ function useBoxNav(id, enabled) {
       else if (e.key === 'ArrowUp' && atTop()) { e.preventDefault(); move('up') }
       else if (e.key === 'ArrowDown' && atBottom()) { e.preventDefault(); move('down') }
     }
+
     const onWheel = (e) => {
       if (blocked()) return
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return // ignore horizontal
-      if (e.deltaY > 8 && atBottom()) move('down')
-      else if (e.deltaY < -8 && atTop()) move('up')
+      const ax = Math.abs(e.deltaX)
+      const ay = Math.abs(e.deltaY)
+      if (ax > ay) {
+        if (ax < 18 || overScrollerX(e.target)) return // let the carousel scroll
+        if (move(e.deltaX > 0 ? 'right' : 'left')) e.preventDefault() // block back-swipe
+      } else {
+        if (ay < 18) return
+        if (e.deltaY > 0 && atBottom()) move('down')
+        else if (e.deltaY < 0 && atTop()) move('up')
+      }
     }
 
     window.addEventListener('keydown', onKey)
-    window.addEventListener('wheel', onWheel, { passive: true })
+    window.addEventListener('wheel', onWheel, { passive: false })
     return () => {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('wheel', onWheel)
@@ -264,6 +284,7 @@ export default function App() {
           <>
             <MiniMap current={id} />
             <Page id={id} anim={enterAnim} />
+            <EdgeNav id={id} />
           </>
         ) : (
           <ScrollLayout />
@@ -300,5 +321,120 @@ function Page({ id, anim }) {
     <main key={id} className={anim}>
       <Component />
     </main>
+  )
+}
+
+const EDGE_DWELL_MS = 800 // hold the cursor at an edge this long to navigate
+const EDGE_PX = 28 // how close to the viewport edge counts as "at the edge"
+const NAVBAR_PX = 64 // h-16 navbar height; the top edge zone starts below it
+
+const EDGE_POS = {
+  up: 'top-[4.75rem] left-1/2 -translate-x-1/2',
+  down: 'bottom-5 left-1/2 -translate-x-1/2',
+  left: 'left-2 sm:left-3 top-1/2 -translate-y-1/2',
+  right: 'right-2 sm:right-3 top-1/2 -translate-y-1/2',
+}
+
+// Chevrons pinned to each viewport edge that has a neighbouring page. Moving
+// the cursor to the very edge (middle band) charges a glow and auto-navigates
+// after EDGE_DWELL_MS; moving away or scrolling cancels. Each chevron is also a
+// plain link, so a click navigates instantly. Box mode only.
+function EdgeNav({ id }) {
+  const [charging, setCharging] = useState(null)
+  const timerRef = useRef(null)
+  const chargingRef = useRef(null)
+
+  const pos = positionOf(id)
+  const targets = pos
+    ? {
+        up: cellAt(pos.row - 1, pos.col),
+        down: cellAt(pos.row + 1, pos.col),
+        left: cellAt(pos.row, pos.col - 1),
+        right: cellAt(pos.row, pos.col + 1),
+      }
+    : {}
+
+  useEffect(() => {
+    if (!pos) return
+
+    const set = (dir) => {
+      if (chargingRef.current === dir) return // keep the current hold steady
+      chargingRef.current = dir
+      setCharging(dir)
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+      if (dir) {
+        timerRef.current = setTimeout(() => {
+          chargingRef.current = null
+          setCharging(null)
+          navigateBoxTo(targets[dir])
+        }, EDGE_DWELL_MS)
+      }
+    }
+
+    const onMove = (e) => {
+      if (document.body.style.overflow === 'hidden') { set(null); return } // modal open
+      const w = window.innerWidth
+      const h = window.innerHeight
+      const { clientX: x, clientY: y } = e
+      const vMid = y > h * 0.2 && y < h * 0.8
+      const hMid = x > w * 0.25 && x < w * 0.75
+      let dir = null
+      if (x <= EDGE_PX && vMid) dir = 'left'
+      else if (x >= w - EDGE_PX && vMid) dir = 'right'
+      else if (y > NAVBAR_PX && y <= NAVBAR_PX + EDGE_PX && hMid) dir = 'up'
+      else if (y >= h - EDGE_PX && hMid) dir = 'down'
+      set(targets[dir] ? dir : null)
+    }
+    const onLeaveOrScroll = () => set(null)
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('scroll', onLeaveOrScroll, { passive: true })
+    document.addEventListener('mouseleave', onLeaveOrScroll)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('scroll', onLeaveOrScroll)
+      document.removeEventListener('mouseleave', onLeaveOrScroll)
+      clearTimeout(timerRef.current)
+      chargingRef.current = null
+    }
+  }, [id]) // targets are derived from id
+
+  if (!pos) return null
+  return (
+    <>
+      {['up', 'down', 'left', 'right'].map((dir) =>
+        targets[dir] ? (
+          <span
+            key={dir}
+            aria-hidden="true"
+            className={`pointer-events-none fixed z-30 ${EDGE_POS[dir]}`}
+          >
+            <DirIcon dir={dir} charging={charging === dir} />
+          </span>
+        ) : null
+      )}
+    </>
+  )
+}
+
+// A filled arrow silhouette pointing in the given direction. It's a faint ghost
+// at rest; while the edge is charging it brightens, grows and glows (the path is
+// rotated via an SVG attribute so the CSS scale animation doesn't fight it).
+function DirIcon({ dir, charging }) {
+  const deg = { right: 0, down: 90, left: 180, up: 270 }[dir]
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={`h-6 w-6 ${
+        charging
+          ? 'text-accent animate-dwell dark:text-accent-dark dark:animate-dwell-green'
+          : 'text-grey-400/45 dark:text-grey-500/40'
+      }`}
+    >
+      <path d="M9 5l8 7-8 7z" transform={`rotate(${deg} 12 12)`} />
+    </svg>
   )
 }

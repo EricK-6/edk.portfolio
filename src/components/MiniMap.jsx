@@ -1,34 +1,44 @@
-import { GRID, INITIALS, LABELS, hrefFor } from '../sitemap.js'
+import { useState } from 'react'
+import { GRID, LABELS, hrefFor } from '../sitemap.js'
 
 // Floating 3x3 site map pinned to the very top-right corner of the viewport.
-// Each cell shows a section's initial and links to its page; the current page
-// is highlighted. z is between the navbar (z-40) and the modals (z-50) so it
-// sits above the bar but is still covered by the command palette / terminal.
+// Hovering (or focusing) a cell reveals its name in the label below; the
+// current page is accent-filled and home (the centre) wears a ring. z sits
+// between the navbar (z-40) and the modals (z-50).
 export default function MiniMap({ current }) {
+  const [hovered, setHovered] = useState(null)
+  const shown = hovered ?? current
+
   return (
     <nav
       aria-label="Site map"
-      className="fixed right-3 top-3 z-[45] hidden grid-cols-3 gap-1 rounded-xl border border-grey-400/60 bg-grey-100/90 p-1.5 shadow-lg backdrop-blur sm:grid dark:border-grey-700/70 dark:bg-grey-900/90"
+      onMouseLeave={() => setHovered(null)}
+      className="fixed right-3 top-3 z-[45] hidden flex-col gap-2 rounded-xl border border-grey-400/60 bg-grey-100/90 p-2 shadow-lg backdrop-blur sm:flex dark:border-grey-700/70 dark:bg-grey-900/90"
     >
-      {GRID.flat().map((id) => {
-        const active = id === current
-        return (
-          <a
-            key={id}
-            href={hrefFor(id)}
-            title={LABELS[id]}
-            aria-label={LABELS[id]}
-            aria-current={active ? 'page' : undefined}
-            className={`flex h-7 w-7 items-center justify-center rounded-md text-[11px] font-semibold leading-none transition-colors ${
-              active
-                ? 'bg-accent text-white dark:bg-accent-dark dark:text-grey-950'
-                : 'bg-grey-200 text-grey-600 hover:bg-grey-300 hover:text-grey-900 dark:bg-grey-800 dark:text-grey-400 dark:hover:bg-grey-700 dark:hover:text-grey-100'
-            }`}
-          >
-            {INITIALS[id]}
-          </a>
-        )
-      })}
+      <div className="grid grid-cols-3 gap-1">
+        {GRID.flat().map((id) => {
+          const active = id === current
+          return (
+            <a
+              key={id}
+              href={hrefFor(id)}
+              aria-label={LABELS[id]}
+              aria-current={active ? 'page' : undefined}
+              onMouseEnter={() => setHovered(id)}
+              onFocus={() => setHovered(id)}
+              onBlur={() => setHovered(null)}
+              className={`h-7 w-7 rounded-md transition-all duration-150 hover:scale-110 ${
+                active
+                  ? 'bg-accent shadow-sm dark:bg-accent-dark'
+                  : 'bg-grey-300 hover:bg-accent/40 dark:bg-grey-700 dark:hover:bg-accent-dark/40'
+              } ${id === 'home' ? 'ring-1 ring-inset ring-grey-500/50 dark:ring-grey-400/40' : ''}`}
+            />
+          )
+        })}
+      </div>
+      <div className="text-center text-[11px] font-medium leading-none text-grey-700 dark:text-grey-300">
+        {LABELS[shown]}
+      </div>
     </nav>
   )
 }

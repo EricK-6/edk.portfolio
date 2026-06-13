@@ -3,12 +3,17 @@ import { goTo } from '../router.js'
 import { useLayout } from '../layout.js'
 import { hrefFor } from '../sitemap.js'
 
+// Progress is kept module-level so it survives Hero remounting (which happens
+// on every layout switch and box-mode navigation) — otherwise the revealed
+// name and the un-blurred photo would reset each time.
+let savedTyped = 0
+
 // Visitors can just start typing when they land on the page. Correctly typed
 // characters of `target` reveal in white; a wrong key resets back to the grey
 // hint. Returns how many leading characters match and whether it's complete.
 function useTypeChallenge(target) {
-  const [typed, setTyped] = useState(0)
-  const countRef = useRef(0)
+  const [typed, setTyped] = useState(() => Math.min(savedTyped, target.length))
+  const countRef = useRef(typed)
 
   useEffect(() => {
     function onKey(e) {
@@ -20,9 +25,10 @@ function useTypeChallenge(target) {
 
       const n = countRef.current
 
+      const commit = (next) => { countRef.current = next; savedTyped = next; setTyped(next) }
+
       if (e.key === 'Backspace') {
-        countRef.current = Math.max(0, n - 1)
-        setTyped(countRef.current)
+        commit(Math.max(0, n - 1))
         return
       }
       if (e.key.length !== 1) return // ignore Tab, Enter, arrows, etc.
@@ -30,12 +36,10 @@ function useTypeChallenge(target) {
 
       if (e.key === target[n]) {
         if (e.key === ' ') e.preventDefault() // typing the space shouldn't scroll the page
-        countRef.current = n + 1
-        setTyped(n + 1)
+        commit(n + 1)
       } else {
         // wrong key: no effect, fall back to the grey hint
-        countRef.current = 0
-        setTyped(0)
+        commit(0)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -152,7 +156,7 @@ function NameTile() {
           className="mt-2 flex min-h-[1.25em] items-center gap-1.5 text-xs font-medium"
         >
           {done ? (
-            <span className="animate-fade-in text-base sm:text-lg font-semibold text-accent dark:text-accent-dark">Welcome Stranger :)</span>
+            <span className="animate-fade-in text-base sm:text-lg font-semibold text-accent dark:text-accent-dark">Welcome, Glad to have u here :)</span>
           ) : (
             <span className="flex items-center gap-1.5 text-grey-400 dark:text-grey-500">
               <KeyboardIcon /> Try typing my name

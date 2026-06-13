@@ -55,6 +55,10 @@ export default {
         'slide-from-left': 'slideFromLeft 0.4s ease-out both',
         'slide-from-top': 'slideFromTop 0.4s ease-out both',
         'slide-from-bottom': 'slideFromBottom 0.4s ease-out both',
+        // edge-dwell navigation: the arrow silhouette glows/grows over the hold
+        // (keep the 0.8s in sync with EDGE_DWELL_MS in App.jsx)
+        dwell: 'dwell 0.8s ease-in forwards',
+        'dwell-green': 'dwellGreen 0.8s ease-in forwards',
       },
       keyframes: {
         fadeInUp: {
@@ -76,6 +80,14 @@ export default {
         slideFromBottom: {
           '0%': { opacity: '0', transform: 'translateY(36px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        dwell: {
+          '0%': { opacity: '0.4', transform: 'scale(1)', filter: 'drop-shadow(0 0 0 rgba(37,99,235,0))' },
+          '100%': { opacity: '1', transform: 'scale(1.35)', filter: 'drop-shadow(0 0 7px rgba(37,99,235,0.9))' },
+        },
+        dwellGreen: {
+          '0%': { opacity: '0.4', transform: 'scale(1)', filter: 'drop-shadow(0 0 0 rgba(5,150,105,0))' },
+          '100%': { opacity: '1', transform: 'scale(1.35)', filter: 'drop-shadow(0 0 7px rgba(5,150,105,0.9))' },
         },
         fadeIn: {
           '0%': { opacity: '0' },

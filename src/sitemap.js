@@ -1,15 +1,14 @@
-// The site as a 3x3 spatial grid. Home (the bento) is the top-left cell; the
+// The site as a 3x3 spatial grid. Home (the bento) is the centre cell; the
 // other eight cells are the section pages. A page's position here drives both
-// the navbar minimap and the up/down/left/right directional nav at the bottom
-// of each page — moving in a direction goes to the adjacent cell, and edges
-// (no neighbour) simply show no arrow.
+// the navbar minimap and the edge arrows / arrow-key navigation — moving in a
+// direction goes to the adjacent cell, and edges (no neighbour) show no arrow.
 //
-//   Home        About          Experience
-//   Education   Projects       Skills
+//   Projects    About          Experience
+//   Education   Home           Skills
 //   Leadership  Credentials    Contact
 export const GRID = [
-  ['home', 'about', 'experience'],
-  ['education', 'projects', 'skills'],
+  ['projects', 'about', 'experience'],
+  ['education', 'home', 'skills'],
   ['leadership', 'certifications', 'contact'],
 ]
 
@@ -25,22 +24,19 @@ export const LABELS = {
   contact: 'Contact',
 }
 
-// Short initials for the minimap cells. Two letters where single ones would
-// collide (Experience/Education, Credentials/Contact).
-export const INITIALS = {
-  home: 'H',
-  about: 'A',
-  experience: 'Ex',
-  education: 'Ed',
-  projects: 'P',
-  skills: 'S',
-  leadership: 'L',
-  certifications: 'Cr',
-  contact: 'Co',
-}
-
 // The eight section ids in reading order (everything except home).
 export const SECTION_IDS = GRID.flat().filter((id) => id !== 'home')
+
+// The five sections shown as links in the top nav bar (the rest stay reachable
+// via the minimap, edge arrows, command palette, and mobile menu).
+export const NAV_IDS = ['about', 'projects', 'experience', 'skills', 'contact']
+
+// All pages in a sensible reading order (home first) for the mobile menu — the
+// grid above is laid out spatially, not in reading order.
+export const MENU_IDS = [
+  'home', 'about', 'projects', 'experience', 'skills',
+  'education', 'certifications', 'leadership', 'contact',
+]
 
 export function positionOf(id) {
   for (let row = 0; row < GRID.length; row++) {

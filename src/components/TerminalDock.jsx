@@ -352,12 +352,12 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
             </div>
           </div>
 
-          {/* pull-tab handle - rides the right edge of the panel, always visible */}
+          {/* pull-tab handle - rides the right edge of the panel near the top */}
           <button
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Collapse terminal' : 'Open terminal'}
             aria-expanded={open}
-            className="absolute left-full top-1/2 flex -translate-y-1/2 flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-blue-500 shadow-lg hover:text-blue-700 dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
+            className="absolute left-full top-20 flex flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-blue-500 shadow-lg hover:text-blue-700 dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
           >
             <PromptGlyph />
             <span className="font-mono text-[11px] tracking-wider [writing-mode:vertical-rl] rotate-180">

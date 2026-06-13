@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { GRID, LABELS, SECTION_IDS, hrefFor } from '../sitemap.js'
+import { LABELS, MENU_IDS, NAV_IDS, hrefFor } from '../sitemap.js'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
@@ -27,8 +27,8 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
           Eric Kim<span className="text-accent dark:text-accent-dark">.</span>
         </a>
 
-        <ul className="hidden xl:flex items-center gap-4 text-sm">
-          {SECTION_IDS.map((linkId) => (
+        <ul className="hidden lg:flex items-center gap-5 text-sm">
+          {NAV_IDS.map((linkId) => (
             <li key={linkId}>
               <a
                 href={hrefFor(linkId, layout)}
@@ -80,7 +80,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
           <button
             onClick={() => setOpen((o) => !o)}
             aria-label="Open menu"
-            className="xl:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 dark:border-grey-800 dark:text-grey-300"
+            className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 dark:border-grey-800 dark:text-grey-300"
           >
             <MenuIcon open={open} />
           </button>
@@ -88,9 +88,9 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
       </nav>
 
       {open && (
-        <div className="xl:hidden border-t border-grey-200 dark:border-grey-800">
+        <div className="lg:hidden border-t border-grey-200 dark:border-grey-800">
           <ul className="container-page py-3 flex flex-col gap-1">
-            {GRID.flat().map((linkId) => (
+            {MENU_IDS.map((linkId) => (
               <li key={linkId}>
                 <a
                   href={hrefFor(linkId, layout)}
