@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { goTo } from '../router.js'
+import { useLayout } from '../layout.js'
+import { hrefFor } from '../sitemap.js'
 
 // Visitors can just start typing when they land on the page. Correctly typed
 // characters of `target` reveal in white; a wrong key resets back to the grey
@@ -115,18 +118,22 @@ const NAME = 'Eric Kim'
 
 function NameTile() {
   const { typed, done } = useTypeChallenge(NAME)
+  const layout = useLayout()
   return (
     <div data-tilt className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-br from-accent/[0.14] via-accent/[0.08] to-transparent blur-3xl dark:from-accent-dark/[0.08] dark:via-accent-dark/[0.04]"
       />
+      {/* Photo sits on the left and pulls into focus as the name is typed:
+          fully blurred at rest, sharp once the challenge is complete. */}
       <img
         src="./me.jpg"
         alt="Portrait of Dohyun (Eric) Kim"
-        className="absolute right-6 top-1/2 hidden h-64 w-52 -translate-y-1/2 rounded-2xl object-cover shadow-lg ring-1 ring-grey-300/80 dark:ring-grey-700/80 lg:block"
+        style={{ filter: `blur(${(1 - typed / NAME.length) * 10}px)` }}
+        className={`absolute left-6 top-1/2 hidden h-64 w-52 -translate-y-1/2 rounded-2xl object-cover shadow-lg ring-1 ring-grey-300/80 dark:ring-grey-700/80 lg:block transition-[filter,transform] duration-500 ease-out ${done ? 'scale-100' : 'scale-105'}`}
       />
-      <div className="relative lg:pr-60">
+      <div className="relative lg:pl-60">
         <div className="flex items-center gap-2 text-xl sm:text-2xl font-medium text-grey-600 dark:text-grey-400">
           <span className="wave-hand" aria-hidden="true">👋</span> Kia Ora, This is..
         </div>
@@ -161,11 +168,11 @@ function NameTile() {
           <span className="font-medium text-grey-900 dark:text-grey-100">modern software techniques</span>.
         </p>
       </div>
-      <div className="relative flex flex-wrap items-center gap-3">
-        <a href="#projects" className="btn-primary">
+      <div className="relative flex flex-wrap items-center gap-3 lg:pl-60">
+        <a href={hrefFor('projects', layout)} className="btn-primary">
           View projects
         </a>
-        <a href="#contact" className="btn-secondary">
+        <a href={hrefFor('contact', layout)} className="btn-secondary">
           Get in touch
         </a>
       </div>
@@ -229,8 +236,9 @@ function CVTile() {
 }
 
 function StatsTile() {
+  const layout = useLayout()
   return (
-    <a data-tilt href="#about" className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
+    <a data-tilt href={hrefFor('about', layout)} className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
       <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
         At a glance
       </div>
@@ -244,8 +252,9 @@ function StatsTile() {
 }
 
 function AwardTile() {
+  const layout = useLayout()
   return (
-    <a data-tilt href="#projects" className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
+    <a data-tilt href={hrefFor('projects', layout)} className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
       <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -266,7 +275,8 @@ function AwardTile() {
 }
 
 function SocialTile() {
-  const goContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+  const layout = useLayout()
+  const goContact = () => goTo('contact', layout)
   return (
     <div
       data-tilt
@@ -318,8 +328,9 @@ const TECH = [
 ]
 
 function SkillsTile() {
+  const layout = useLayout()
   return (
-    <a data-tilt href="#skills" className={`${tile} block sm:col-span-2 lg:col-span-4`}>
+    <a data-tilt href={hrefFor('skills', layout)} className={`${tile} block sm:col-span-2 lg:col-span-4`}>
       <div className="flex items-center justify-between gap-4">
         <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
           Tech I work with

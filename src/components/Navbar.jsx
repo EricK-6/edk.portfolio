@@ -1,16 +1,9 @@
 import { useEffect, useState } from 'react'
+import { GRID, LABELS, SECTION_IDS, hrefFor } from '../sitemap.js'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
-const NAV_LINKS = [
-  { href: '#about', label: 'About' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#experience', label: 'Experience' },
-  { href: '#skills', label: 'Skills' },
-  { href: '#contact', label: 'Contact' },
-]
-
-export default function Navbar({ theme, onToggleTheme }) {
+export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, activeId }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -30,24 +23,30 @@ export default function Navbar({ theme, onToggleTheme }) {
       }`}
     >
       <nav className="container-page flex h-16 items-center justify-between">
-        <a href="#top" className="font-bold tracking-tight text-lg">
+        <a href={hrefFor('home', layout)} className="font-bold tracking-tight text-lg">
           Eric Kim<span className="text-accent dark:text-accent-dark">.</span>
         </a>
 
-        <ul className="hidden md:flex items-center gap-8 text-sm">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
+        <ul className="hidden xl:flex items-center gap-4 text-sm">
+          {SECTION_IDS.map((linkId) => (
+            <li key={linkId}>
               <a
-                href={link.href}
-                className="text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100 transition-colors"
+                href={hrefFor(linkId, layout)}
+                aria-current={activeId === linkId ? 'page' : undefined}
+                className={`transition-colors ${
+                  activeId === linkId
+                    ? 'text-grey-900 dark:text-grey-100'
+                    : 'text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100'
+                }`}
               >
-                {link.label}
+                {LABELS[linkId]}
               </a>
             </li>
           ))}
         </ul>
 
-        <div className="flex items-center gap-2">
+        {/* right padding (sm–lg) reserves the corner for the floating MiniMap */}
+        <div className="flex items-center gap-2 sm:pr-32 xl:pr-0">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
             aria-label="Open terminal"
@@ -64,6 +63,14 @@ export default function Navbar({ theme, onToggleTheme }) {
             <span className="font-mono">{isMac ? '⌘' : 'Ctrl'} K</span>
           </button>
           <button
+            onClick={onToggleLayout}
+            aria-label={layout === 'box' ? 'Switch to scrolling layout' : 'Switch to box layout'}
+            title={layout === 'box' ? 'Scrolling layout' : 'Box layout'}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 hover:bg-grey-200 dark:border-grey-800 dark:text-grey-300 dark:hover:bg-grey-900"
+          >
+            {layout === 'box' ? <ScrollIcon /> : <GridIcon />}
+          </button>
+          <button
             onClick={onToggleTheme}
             aria-label="Toggle dark mode"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 hover:bg-grey-200 dark:border-grey-800 dark:text-grey-300 dark:hover:bg-grey-900"
@@ -73,7 +80,7 @@ export default function Navbar({ theme, onToggleTheme }) {
           <button
             onClick={() => setOpen((o) => !o)}
             aria-label="Open menu"
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 dark:border-grey-800 dark:text-grey-300"
+            className="xl:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 dark:border-grey-800 dark:text-grey-300"
           >
             <MenuIcon open={open} />
           </button>
@@ -81,16 +88,21 @@ export default function Navbar({ theme, onToggleTheme }) {
       </nav>
 
       {open && (
-        <div className="md:hidden border-t border-grey-200 dark:border-grey-800">
+        <div className="xl:hidden border-t border-grey-200 dark:border-grey-800">
           <ul className="container-page py-3 flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
+            {GRID.flat().map((linkId) => (
+              <li key={linkId}>
                 <a
-                  href={link.href}
+                  href={hrefFor(linkId, layout)}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-2 text-sm text-grey-700 hover:bg-grey-200 dark:text-grey-300 dark:hover:bg-grey-900"
+                  aria-current={activeId === linkId ? 'page' : undefined}
+                  className={`block rounded-lg px-3 py-2 text-sm hover:bg-grey-200 dark:hover:bg-grey-900 ${
+                    activeId === linkId
+                      ? 'text-grey-900 dark:text-grey-100'
+                      : 'text-grey-700 dark:text-grey-300'
+                  }`}
                 >
-                  {link.label}
+                  {LABELS[linkId]}
                 </a>
               </li>
             ))}
@@ -105,6 +117,28 @@ function SearchIcon() {
   return (
     <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+    </svg>
+  )
+}
+
+// shown in box mode -> click switches to the scrolling (stacked rows) layout
+function ScrollIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="16" height="5" rx="1.5" />
+      <rect x="4" y="13" width="16" height="5" rx="1.5" />
+    </svg>
+  )
+}
+
+// shown in scroll mode -> click switches to the box (3x3 grid) layout
+function GridIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
     </svg>
   )
 }

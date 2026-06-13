@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { goTo } from '../router.js'
+import { useLayout } from '../layout.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 
@@ -108,6 +110,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
   const [cwd, setCwd] = useState([])
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
+  const layout = useLayout()
 
   const print = (...nodes) => setLines((prev) => [...prev, ...nodes])
 
@@ -139,7 +142,9 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
     if (el) el.scrollTop = el.scrollHeight
   }, [lines, open])
 
-  const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  // 'cd <section>' navigates to that section (a page in box mode, a scroll in
+  // scroll mode); 'top' / 'cd ~' is home
+  const go = (id) => goTo(id === 'top' ? 'home' : id, layout)
   const downloadCV = () => {
     const a = document.createElement('a')
     a.href = './CV.pdf'
@@ -249,7 +254,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         print(new Date().toString())
         break
       case 'sudo':
-        print('nice try 😏 - you do not have root here.')
+        print('nice try 😏, but you do not have root here.')
         break
       case 'exit':
       case 'close':

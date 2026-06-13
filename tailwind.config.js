@@ -50,10 +50,31 @@ export default {
         'glow-in': 'glowIn 0.9s ease-out forwards',
         'glow-in-green': 'glowInGreen 0.9s ease-out forwards',
         'glow-green': 'glowGreen 1.1s ease-out',
+        // directional page transitions for box-mode grid navigation
+        'slide-from-right': 'slideFromRight 0.4s ease-out both',
+        'slide-from-left': 'slideFromLeft 0.4s ease-out both',
+        'slide-from-top': 'slideFromTop 0.4s ease-out both',
+        'slide-from-bottom': 'slideFromBottom 0.4s ease-out both',
       },
       keyframes: {
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideFromRight: {
+          '0%': { opacity: '0', transform: 'translateX(36px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideFromLeft: {
+          '0%': { opacity: '0', transform: 'translateX(-36px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideFromTop: {
+          '0%': { opacity: '0', transform: 'translateY(-36px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideFromBottom: {
+          '0%': { opacity: '0', transform: 'translateY(36px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         fadeIn: {

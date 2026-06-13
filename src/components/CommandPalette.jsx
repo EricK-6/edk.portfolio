@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { goTo } from '../router.js'
+import { useLayout } from '../layout.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
@@ -12,13 +14,13 @@ export default function CommandPalette({ theme, onToggleTheme }) {
   const [copied, setCopied] = useState(false)
   const inputRef = useRef(null)
   const itemRefs = useRef([])
+  const layout = useLayout()
 
   const close = () => { setOpen(false); setQuery(''); setActive(0) }
 
   const go = (id) => {
     close()
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-    history.replaceState(null, '', `#${id}`)
+    goTo(id, layout)
   }
   const openLink = (href) => { close(); window.open(href, '_blank', 'noopener,noreferrer') }
   const downloadCV = () => {
