@@ -195,13 +195,14 @@ export default function App() {
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
 
-  // 'box' (one page per section) vs 'scroll' (classic single page); remembered
+  // 'scroll' (classic single page, the default) vs 'box' (one page per
+  // section); the visitor's explicit toggle is remembered
   const [layout, setLayout] = useState(() => {
     try {
       const saved = localStorage.getItem('layout')
       if (saved === 'box' || saved === 'scroll') return saved
     } catch { /* private mode */ }
-    return 'box'
+    return 'scroll'
   })
   useEffect(() => {
     try { localStorage.setItem('layout', layout) } catch { /* private mode */ }

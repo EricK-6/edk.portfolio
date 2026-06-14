@@ -74,7 +74,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
             >
               {layout === 'box' ? <ScrollIcon /> : <GridIcon />}
             </button>
-            {showHints && <Hint align="end" className="mt-1.5">view at a glance</Hint>}
+            {showHints && <Hint align="end" className="mt-1.5">more than just scroll</Hint>}
           </div>
           <div className="relative">
             <button
