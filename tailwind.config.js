@@ -5,15 +5,16 @@ import colors from 'tailwindcss/colors'
 //   colors.slate   -> cold grey (calm, cool/blue)
 //   colors.neutral -> true grey (neutral)
 //   colors.zinc    -> original (cool, faintly blue)
-// Warm grey (stone hue) light surfaces, dimmed so nothing reads as bright white.
-// 50-300 are custom toned-down values; 400+ stay stone so text colours
-// and dark mode remain untouched.
+// Soft cool-grey surfaces on a pure-white page: tiles/cards lift gently off
+// the white background while staying in the cool white+blue palette. 50-300
+// are custom light-mode values; 400+ stay stone so text colours and dark
+// mode are untouched.
 const grey = {
   ...colors.stone,
-  50: '#e8e5e1',  // inputs, brightest inset
-  100: '#dedad5', // tiles + cards
-  200: '#d0ccc5', // chips, tags, hover fills
-  300: '#beb9b1', // page background + soft borders
+  50: '#ffffff',  // inputs, brightest inset
+  100: '#f4f6f9', // tiles + cards
+  200: '#e7ecf3', // chips, tags, hover fills
+  300: '#d4dbe5', // soft borders + rings
 }
 
 /** @type {import('tailwindcss').Config} */

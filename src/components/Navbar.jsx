@@ -21,7 +21,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
     <header
       className={`sticky top-0 z-40 transition-colors ${
         scrolled
-          ? 'border-b border-grey-400/50 bg-grey-300/80 backdrop-blur dark:border-grey-800/80 dark:bg-black/80'
+          ? 'border-b border-grey-300 bg-white/80 backdrop-blur dark:border-grey-800/80 dark:bg-black/80'
           : 'border-b border-transparent'
       }`}
     >
@@ -38,7 +38,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
                 aria-current={activeId === linkId ? 'page' : undefined}
                 className={`transition-colors ${
                   activeId === linkId
-                    ? 'text-grey-900 dark:text-grey-100'
+                    ? 'text-accent dark:text-grey-100'
                     : 'text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100'
                 }`}
               >
@@ -107,7 +107,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
                   aria-current={activeId === linkId ? 'page' : undefined}
                   className={`block rounded-lg px-3 py-2 text-sm hover:bg-grey-200 dark:hover:bg-grey-900 ${
                     activeId === linkId
-                      ? 'text-grey-900 dark:text-grey-100'
+                      ? 'text-accent dark:text-grey-100'
                       : 'text-grey-700 dark:text-grey-300'
                   }`}
                 >

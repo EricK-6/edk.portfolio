@@ -9,7 +9,7 @@
   }
 
   body {
-    @apply font-sans antialiased text-grey-900 bg-grey-300 dark:text-grey-100 dark:bg-black;
+    @apply font-sans antialiased text-grey-900 bg-white dark:text-grey-100 dark:bg-black;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
@@ -40,7 +40,7 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-grey-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-grey-700 dark:bg-white dark:text-grey-900 dark:hover:bg-grey-200;
+    @apply inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 dark:bg-white dark:text-grey-900 dark:hover:bg-grey-200;
   }
 
   .btn-secondary {

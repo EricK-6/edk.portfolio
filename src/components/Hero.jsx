@@ -96,7 +96,7 @@ export default function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px]
-                   bg-gradient-to-b from-accent/[0.06] via-grey-300 to-transparent
+                   bg-gradient-to-b from-accent/[0.08] via-white to-transparent
                    dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
       />
       <div className="container-page">
