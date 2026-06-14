@@ -126,13 +126,11 @@ function NameTile() {
         aria-hidden="true"
         className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-br from-accent/[0.14] via-accent/[0.08] to-transparent blur-3xl dark:from-accent-dark/[0.08] dark:via-accent-dark/[0.04]"
       />
-      {/* Photo sits on the left and pulls into focus as the name is typed:
-          fully blurred at rest, sharp once the challenge is complete. */}
+      {/* Portrait sits on the left of the name tile. */}
       <img
         src="./me.jpg"
         alt="Portrait of Dohyun (Eric) Kim"
-        style={{ filter: `blur(${(1 - typed / NAME.length) * 10}px)` }}
-        className={`absolute left-6 top-1/2 hidden h-64 w-52 -translate-y-1/2 rounded-2xl object-cover shadow-lg ring-1 ring-grey-300/80 dark:ring-grey-700/80 lg:block transition-[filter,transform] duration-500 ease-out ${done ? 'scale-100' : 'scale-105'}`}
+        className="absolute left-6 top-1/2 hidden h-64 w-52 -translate-y-1/2 rounded-2xl object-cover shadow-lg ring-1 ring-grey-300/80 dark:ring-grey-700/80 lg:block"
       />
       <div className="relative lg:pl-60">
         <div className="flex items-center gap-2 text-xl sm:text-2xl font-medium text-grey-600 dark:text-grey-400">

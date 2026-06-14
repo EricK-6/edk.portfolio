@@ -11,6 +11,8 @@ const CERTS = [
     description:
       'AWS core services, security, and cost fundamentals built on the Well-Architected Framework.',
     tags: ['EC2', 'S3', 'IAM', 'VPC', 'CloudWatch'],
+    credlyUrl:
+      'https://www.credly.com/badges/9865f524-64b4-45e4-9f56-8c226ec8308a/public_url',
   },
   {
     name: 'AWS Certified AI Practitioner',
@@ -20,6 +22,8 @@ const CERTS = [
     description:
       'Foundations of AI, machine learning, and generative AI with AWS AI/ML services.',
     tags: ['SageMaker', 'Bedrock', 'Rekognition'],
+    credlyUrl:
+      'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
   },
 ]
 
@@ -92,26 +96,20 @@ function HexFace({ gradientId, back = false, children }) {
   )
 }
 
-// hexagon that flips 180° to its details: hover on desktop, tap on touch,
-// Enter/Space via keyboard; reduced-motion users get an instant swap
+// hexagon that links to the Credly badge; hovering on desktop flips it 180°
+// to reveal details, reduced-motion users get an instant swap
 function FlipHex({ cert, index }) {
   const [flipped, setFlipped] = useState(false)
   return (
     <div className="relative aspect-[300/400] w-full max-w-sm [perspective:1200px]">
-      <div
-        role="button"
-        tabIndex={0}
-        aria-label={`${cert.name}: flip for details`}
+      <a
+        href={cert.credlyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${cert.name} — verify on Credly (opens in a new tab)`}
         onPointerEnter={(e) => { if (e.pointerType === 'mouse') setFlipped(true) }}
         onPointerLeave={(e) => { if (e.pointerType === 'mouse') setFlipped(false) }}
-        onClick={() => setFlipped((f) => !f)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            setFlipped((f) => !f)
-          }
-        }}
-        className={`relative h-full w-full cursor-pointer transition-transform duration-500 ease-out [transform-style:preserve-3d] motion-reduce:transition-none ${
+        className={`relative block h-full w-full cursor-pointer rounded-3xl transition-transform duration-500 ease-out [transform-style:preserve-3d] motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-grey-100 dark:focus-visible:ring-offset-grey-900 ${
           flipped ? '[transform:rotateY(180deg)]' : ''
         }`}
       >
@@ -130,7 +128,7 @@ function FlipHex({ cert, index }) {
             </div>
           </div>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-grey-500 dark:text-grey-500">
-            <FlipIcon /> hover or tap for details
+            <ExternalLinkIcon /> click to verify on Credly
           </div>
         </HexFace>
 
@@ -150,16 +148,17 @@ function FlipHex({ cert, index }) {
             </div>
           )}
         </HexFace>
-      </div>
+      </a>
     </div>
   )
 }
 
-function FlipIcon() {
+function ExternalLinkIcon() {
   return (
     <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 12a9 9 0 1 0 3-6.7" />
-      <polyline points="3 4 3 9 8 9" />
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
     </svg>
   )
 }
