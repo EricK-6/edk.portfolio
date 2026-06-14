@@ -1,6 +1,6 @@
-# My Portfolio
+# Personal Portfolio
 
-Hey — I'm **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at the University of Auckland. This is the personal site I built to show what I've worked on and to point recruiters at while I'm hunting for internships.
+Hey, I'm **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at the University of Auckland. This is the personal site I built to show what I've worked on and to point recruiters at while I'm hunting for internships.
 
 🔗 **Live at [erickk.cloud](https://erickk.cloud/)**
 
