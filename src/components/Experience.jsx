@@ -3,6 +3,17 @@ import Reveal from './Reveal.jsx'
 
 const EXPERIENCE = [
   {
+    role: 'Teaching Assistant',
+    org: 'University of Auckland',
+    detail: 'ELECTENG 292: Electronics',
+    period: 'Jun 2026 - Present',
+    image: './UoA.jpg',
+    bullets: [
+      'Supported students through tutorials, lab sessions, and tests to reinforce electronics concepts and improve academic outcomes.',
+      'Managed weekly preparation, supervision, and invigilation duties to ensure smooth course delivery across 120 hours of engagement.',
+    ],
+  },
+  {
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
     period: 'Apr 2026 - Present',
@@ -49,6 +60,9 @@ export default function Experience() {
                   </h3>
                   <span className="text-sm text-grey-500 dark:text-grey-500">{job.period}</span>
                 </div>
+                {job.detail && (
+                  <div className="mt-0.5 text-sm font-medium text-accent dark:text-accent-dark">{job.detail}</div>
+                )}
                 <ul className="mt-3 space-y-1.5 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
                   {job.bullets.map((b) => (
                     <li key={b} className="flex gap-2">
