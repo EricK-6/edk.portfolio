@@ -213,11 +213,8 @@ function StatusTile() {
 
 function CVTile() {
   return (
-    <a
+    <div
       data-tilt
-      href="./CV.pdf"
-      download
-      aria-label="Download CV as PDF"
       className={`${tile} group relative overflow-hidden bg-gradient-to-br from-[#3a68bd] to-[#474eae] border-transparent text-white hover:from-[#497ac8] hover:to-[#5560b7] flex flex-col justify-between min-h-[136px]`}
     >
       <div className="flex items-center justify-between">
@@ -227,9 +224,28 @@ function CVTile() {
         <DownloadIcon />
       </div>
       <div>
-        <div className="text-lg font-semibold">Download CV</div>
-        <div className="mt-1 text-sm text-white/80">PDF · updated 2026</div>
+        <div className="text-sm font-medium text-white/90">Download my CV</div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <CVButton href="./CV.pdf" label="for SWE" ariaLabel="Download software engineering CV (PDF)" />
+          <CVButton href="./CV_EEE.pdf" label="for EEE" ariaLabel="Download electrical/electronics engineering CV (PDF)" />
+        </div>
       </div>
+    </div>
+  )
+}
+
+function CVButton({ href, label, ariaLabel }) {
+  return (
+    <a
+      href={href}
+      download
+      aria-label={ariaLabel}
+      className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-inset ring-white/25 transition hover:bg-white/25"
+    >
+      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" />
+      </svg>
+      {label}
     </a>
   )
 }

@@ -47,7 +47,8 @@ const FS = dir('top', {
     linkedin: file(
       <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-blue-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
     ),
-    'cv.pdf': { type: 'file', download: true, content: ['↓ downloading CV.pdf…'] },
+    'cv-swe.pdf': { type: 'file', download: './CV.pdf', content: ['↓ downloading software CV…'] },
+    'cv-eee.pdf': { type: 'file', download: './CV_EEE.pdf', content: ['↓ downloading hardware CV…'] },
   }),
 })
 
@@ -57,7 +58,7 @@ const HELP = [
   ['cd <dir>', 'go to a section (cd .. , cd ~)'],
   ['cat <file>', 'read a file'],
   ['whoami', 'who is this'],
-  ['cv', 'download my CV'],
+  ['cv <swe|eee>', 'download my CV (software / hardware)'],
   ['theme', 'toggle light / dark'],
   ['clear', 'clear the screen'],
 ]
@@ -145,9 +146,9 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
   // 'cd <section>' navigates to that section (a page in box mode, a scroll in
   // scroll mode); 'top' / 'cd ~' is home
   const go = (id) => goTo(id === 'top' ? 'home' : id, layout)
-  const downloadCV = () => {
+  const downloadCV = (href = './CV.pdf') => {
     const a = document.createElement('a')
-    a.href = './CV.pdf'
+    a.href = href
     a.download = ''
     document.body.appendChild(a)
     a.click()
@@ -214,7 +215,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         const node = getNode(segs)
         if (!node) { err('cat', `${args[0]}: no such file`); break }
         if (node.type === 'dir') { err('cat', `${args[0]}: is a directory`); break }
-        if (node.download) downloadCV()
+        if (node.download) downloadCV(node.download)
         node.content.forEach((line) => print(line))
         break
       }
@@ -222,10 +223,13 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         print("visitor - a curious one. The person you're here for is Dohyun (Eric) Kim.")
         break
       case 'cv':
-      case 'resume':
-        print('↓ downloading CV.pdf…')
-        downloadCV()
+      case 'resume': {
+        const which = (args[0] || '').toLowerCase()
+        if (which === 'swe' || which === 'software') { print('↓ downloading software CV…'); downloadCV('./CV.pdf') }
+        else if (which === 'eee' || which === 'hardware' || which === 'electrical') { print('↓ downloading hardware CV…'); downloadCV('./CV_EEE.pdf') }
+        else print('usage: cv <swe | eee>  — software or hardware/electronics CV')
         break
+      }
       case 'social':
       case 'links':
         print(
