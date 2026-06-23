@@ -88,6 +88,42 @@ function resolveSegments(cwd, arg) {
 
 const pathLabel = (segs) => (segs.length ? `~/${segs.join('/')}` : '~')
 
+// commands offered for inline completion (sorted so the suggestion is stable)
+const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'help', 'ls', 'pwd', 'social', 'theme', 'whoami']
+
+// fish-style inline suggestion: given the half-typed line, return the *suffix*
+// that would complete the current word — a command name (first word) or a
+// cd/ls/cat path argument — or '' when there's nothing to suggest. Pure, so it's
+// re-derived on every keystroke during render.
+function completionFor(input, cwd) {
+  if (!input || input.endsWith(' ')) return ''
+  const parts = input.split(/\s+/)
+
+  // first word -> complete the command name
+  if (parts.length === 1) {
+    const tok = parts[0]
+    const m = COMMANDS.find((c) => c !== tok && c.startsWith(tok))
+    return m ? m.slice(tok.length) : ''
+  }
+
+  // later words -> complete a path argument for the path-aware commands
+  const cmd = parts[0].toLowerCase()
+  if (cmd !== 'cd' && cmd !== 'ls' && cmd !== 'cat') return ''
+  const token = parts[parts.length - 1]
+  const slash = token.lastIndexOf('/')
+  const prefix = slash === -1 ? token : token.slice(slash + 1)
+  if (!prefix) return ''
+  const baseSegs = slash === -1 ? cwd : resolveSegments(cwd, token.slice(0, slash))
+  const node = getNode(baseSegs)
+  if (!node || node.type !== 'dir') return ''
+
+  let names = Object.keys(node.children || {})
+  if (cmd === 'cd') names = names.filter((n) => node.children[n].type === 'dir')
+  else if (cmd === 'cat') names = names.filter((n) => node.children[n].type === 'file')
+  const m = names.find((n) => n !== prefix && n.startsWith(prefix))
+  return m ? m.slice(prefix.length) : ''
+}
+
 function Prompt({ path = '~' }) {
   return (
     <>
@@ -272,10 +308,24 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
     }
   }
 
+  // fish-style inline autocomplete: the muted suffix that Tab / → will accept
+  const suggestion = completionFor(input, cwd)
+  const accept = () => suggestion && setInput(input + suggestion)
+
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
       run(input)
       setInput('')
+    } else if (e.key === 'Tab') {
+      // only trap Tab when there's something to complete, so it can still move
+      // focus (e.g. to the close button) otherwise
+      if (suggestion) { e.preventDefault(); accept() }
+    } else if (e.key === 'ArrowRight') {
+      // accept the suggestion when the caret sits at the very end of the line
+      if (suggestion && e.target.selectionStart === input.length && e.target.selectionStart === e.target.selectionEnd) {
+        e.preventDefault()
+        accept()
+      }
     } else if (e.key === 'Escape') {
       e.preventDefault()
       setOpen(false)
@@ -341,18 +391,33 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
 
             <div className="flex items-center">
               <Prompt path={pathLabel(cwd)} />
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                aria-label="Terminal input"
-                autoCapitalize="off"
-                autoCorrect="off"
-                autoComplete="off"
-                spellCheck="false"
-                className="flex-1 bg-transparent text-blue-900 caret-blue-600 outline-none dark:text-white dark:caret-grey-100"
-              />
+              <div className="relative flex-1">
+                <input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  aria-label="Terminal input"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  autoComplete="off"
+                  spellCheck="false"
+                  className="relative z-10 w-full border-0 bg-transparent p-0 text-blue-900 caret-blue-600 outline-none dark:text-white dark:caret-grey-100"
+                />
+                {/* ghost suffix, aligned under the input via an invisible copy of
+                    what's typed (monospace, so the widths match exactly) */}
+                {suggestion && (
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center whitespace-pre">
+                    <span className="invisible">{input}</span>
+                    <span className="text-blue-300 dark:text-grey-600">{suggestion}</span>
+                  </div>
+                )}
+              </div>
+              {suggestion && (
+                <span className="ml-2 shrink-0 rounded border border-blue-200 px-1 text-[10px] leading-tight text-blue-400 dark:border-grey-700 dark:text-grey-500">
+                  ⇥ tab
+                </span>
+              )}
             </div>
           </div>
 
