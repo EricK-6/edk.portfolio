@@ -28,13 +28,13 @@ export default function Education() {
                 The University of Auckland ·{' '}
                 <span className="text-grey-600 dark:text-grey-400 font-medium">Auckland, NZ</span>
               </h3>
-              <span className="text-sm text-grey-500 dark:text-grey-500">Expected Nov 2027</span>
+              <span className="text-sm text-grey-500 dark:text-grey-500">Expected Graduation Nov 2027</span>
             </div>
             <div className="mt-1 text-grey-700 dark:text-grey-300">
               Bachelor of Engineering (Honours) · Computer Systems Engineering
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Concentration: Embedded Systems & Intelligent Software
+              Concentration: Embedded Systems · Software & Digital Hardware Design
             </div>
 
             <div className="mt-6">

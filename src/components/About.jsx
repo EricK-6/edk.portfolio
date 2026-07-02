@@ -10,16 +10,19 @@ export default function About() {
             Kia ora! <span className="wave-hand">👋</span>
           </h3>
           <p>
-            This is Eric, a penultimate year Computer Systems Engineering (Hons)
-            student at the University of Auckland, passionate about embedded systems and
-            modern software techniques. I work across the hardware and software boundary:
-            firmware, PCBs, and the interfaces that tie them together, with C, Java, Python,
-            and React in my toolkit.
+            This is Eric, a penultimate Computer Systems Engineering (Hons)
+            student at the University of Auckland, specialising in embedded systems,
+            full stack development, and digital hardware design. I work across the
+            hardware and software boundary: firmware, PCBs, and the interfaces that
+            tie them together, with C, Java, Python, and React in my toolkit.
           </p>
           <p>
-            I've built a solid portfolio of projects both inside and outside of coursework,
-            complemented by AWS industry certifications and experience as a club executive
-            with the Korean Engineering Body. I'm always open to internship opportunities,
+            I am AWS certified in both Cloud and AI/ML, with a proven project portfolio
+            spanning serverless cloud pipelines, React web applications, FPGA development,
+            PCB design, and embedded robotics systems. That work earned 3rd place at the
+            2025 ECSE Design Competition. Outside the classroom I teach as a Teaching
+            Assistant and robotics instructor, and serve as an academic executive with
+            the Korean Engineering Body. I am always open to internship opportunities,
             so feel free to check out my work below!
           </p>
         </Reveal>
@@ -45,8 +48,8 @@ export default function About() {
 }
 
 const HIGHLIGHTS = [
-  '3rd place · ECSE Design Competition',
   '2× AWS Certified · Cloud & AI Practitioner',
-  'Robotics instructor at ciLab',
+  '3rd place · 2025 ECSE Design Competition',
   '7 projects across hardware & software',
+  'Teaching Assistant & Robotics Instructor',
 ]

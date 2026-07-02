@@ -4,17 +4,16 @@ import Section from './Section.jsx'
 const PROJECTS = [
   {
     title: 'Winnie the Bot',
-    tag: '3rd Place · ECSE Design Competition',
+    tag: '3rd Place · ECSE Design Competition 2025',
     year: '2025',
-    role: 'Team · Hardware & software integration',
-    description:
-      'An AI powered interactive robot built on dual ATmega328P microcontrollers with servos, an AI camera, and audio peripherals, enabling face tracking, arm movement, and voice dialogue. I contributed across hardware integration and 3D modelled the enclosure in AutoCAD.',
+    period: 'Issued by Department of ECSE · Sep 2025',
+    org: 'University of Auckland',
+    role: 'Awarded for "Winnie the Bot" - Interactive companion robot',
     highlights: [
-      'Dual ATmega328P microcontrollers with servos & AI camera',
-      'Face tracking, arm movement, and voice dialogue',
-      '3D modelled enclosure prototyped in AutoCAD',
+      'Designed and built the embedded electrical hardware for an AI powered interactive robot using dual ATmega328P NANO microcontrollers, servos, an AI camera, and audio peripherals to enable simultaneous face tracking, arm movement, and voice dialogue.',
+      'Contributed to 3D modelling and physical prototyping of the robot enclosure to house all electronics within a compact aesthetic form factor, placing 3rd in the UoA ECSE Design Competition.',
     ],
-    tech: ['Embedded C', 'ATmega328P', 'AI Camera', 'Servos', 'AutoCAD'],
+    tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.jpg',
     featured: true,
     color: 'from-amber-500/20 to-rose-500/20',
@@ -25,118 +24,111 @@ const PROJECTS = [
     title: 'Sentiment PULSE',
     tag: 'AWS · Individual Project',
     year: '2026',
-    role: 'Solo · Cloud & front end',
-    description:
-      'A serverless sentiment analysis pipeline on AWS (Kinesis, Lambda, Comprehend, and DynamoDB), paired with a live React dashboard featuring hand drawn SVG visualisations. Provisioned end to end with SAM Infrastructure as Code and deployed via AWS Amplify.',
+    period: 'May 2026 – Present',
+    role: 'Real-time Serverless Data pipeline',
     highlights: [
-      'Serverless pipeline: Kinesis → Lambda → Comprehend → DynamoDB',
-      'Live React dashboard with hand drawn SVG visualisations',
-      'SAM IaC, deployed on AWS Amplify',
+      'Built a serverless NLP pipeline on AWS (Kinesis, Lambda, Comprehend, DynamoDB) with AWS SAM in order to classify streaming text sentiment in real time.',
+      'Developed a live React dashboard on AWS Amplify to visualise sentiment trends and confidence scores.',
     ],
-    tech: ['AWS', 'Lambda', 'Kinesis', 'Comprehend', 'DynamoDB', 'SAM', 'React', 'Amplify'],
-    image: './sentiment_pulse.png',
+    tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'React.js', 'AWS Amplify'],
+    image: './pulse.png',
     color: 'from-cyan-500/20 to-blue-500/20',
     initial: 'S',
     links: [
-      { label: 'View project', href: 'https://github.com/EricK-6/sentiment-dashboard' },
+      { label: 'Deployed DEMO', href: 'https://master.d3t61ak2oiedfz.amplifyapp.com/' },
+      { label: 'Git repo', href: 'https://github.com/EricK-6/sentiment-dashboard' },
     ],
   },
   {
     title: 'Smart Energy Monitor',
-    tag: 'Embedded Systems Design',
+    tag: 'C & Embedded · Team Project',
     year: '2025',
-    role: 'Team · Firmware + PCB',
-    description:
-      'An embedded system that measures and displays real time household energy usage. Built on ATmega microcontrollers with full stack embedded work: sensor interfacing, ADC data handling, signal conditioning, PCB design, and simulation.',
+    org: 'University of Auckland',
+    role: 'Embedded Energy Monitoring System',
     highlights: [
-      'ATmega firmware in embedded C',
-      'Altium PCB design + LTspice simulation',
-      'ADC pipeline with signal conditioning',
+      'Designed an embedded energy monitoring system using ATmega328P microcontrollers with ADC processing in order to measure and display real-time energy usage.',
+      'Produced a validated PCB schematic using Altium Designer in order to achieve accurate signal conditioning.',
     ],
-    tech: ['ATmega', 'Embedded C', 'Altium', 'LTspice', 'ADC'],
+    tech: ['C', 'Atmel AVR', 'ATmega328P', 'Altium Designer', 'LTspice'],
     image: './energy_monitor.png',
     color: 'from-emerald-500/20 to-teal-500/20',
     initial: 'E',
     links: [
-      { label: 'View project', href: 'https://github.com/uoa-ece209-2025/ec209-2025-project-2025_team_41' },
+      { label: 'Git repo', href: 'https://github.com/uoa-ece209-2025/ec209-2025-project-2025_team_41' },
     ],
   },
   {
     title: 'Flappy Universe',
-    tag: 'VHDL · FPGA',
+    tag: 'VHDL · Team Project',
     year: '2026',
-    role: 'Team · Digital design',
-    description:
-      'A Flappy Bird style game implemented in VHDL on an Altera FPGA, with VGA signal generation, PS/2 mouse input, sprite rendering from ROM, and an LFSR random number generator. Built around a layered graphics pipeline with pixel priority compositing to render animated scenes at VGA resolution in real time.',
+    org: 'University of Auckland',
+    role: 'FPGA Game Implementation',
     highlights: [
-      'VGA signal generation + PS/2 mouse input',
-      'Sprite rendering from ROM with LFSR randomisation',
-      'Layered pixel priority compositing pipeline',
+      'Implemented a Flappy Bird-style game in VHDL on an Altera FPGA with VGA output and sprite rendering in order to demonstrate real-time hardware design.',
+      'Developed a pixel-priority VHDL pipeline in order to render game scenes at VGA resolution.',
     ],
-    tech: ['VHDL', 'Altera FPGA', 'Quartus Prime', 'VGA', 'PS/2'],
+    tech: ['VHDL', 'Intel Quartus Prime', 'Altera FPGA'],
     image: './flappy_universe.png',
     color: 'from-lime-500/20 to-green-500/20',
     initial: 'F',
     links: [
-      { label: 'View project', href: 'https://github.com/jpar483/COMPSYS305_MiniProject' },
+      { label: 'Git repo', href: 'https://github.com/jpar483/COMPSYS305_MiniProject' },
     ],
   },
   {
     title: 'RoastWorks Analytics',
-    tag: 'Team Project',
+    tag: 'Python · Team Project',
     year: '2026',
-    role: 'Team · Data & analytics',
-    description:
-      'A Python desktop analytics app built with PyQt6 and pandas that automated a full day Excel reporting workflow into a matter of seconds. Includes multiple time series forecasting models with holdout MAE/RMSE validation and configurable horizons.',
+    org: 'University of Auckland',
+    role: 'Business Analytics Dashboard',
     highlights: [
-      'Full day Excel workflow reduced to seconds',
-      'Multiple time series forecasting models',
-      'Holdout MAE/RMSE validation with configurable horizons',
+      'Built a desktop business analytics app with a PyQt6 GUI using pandas and Matplotlib, delivering sales performance dashboards with KPI tracking across three business units.',
+      "Implemented a scikit-learn forecasting module using Linear Regression and Holt's Exponential Smoothing.",
     ],
-    tech: ['Python', 'PyQt6', 'pandas'],
+    tech: ['Python', 'Pandas', 'scikit-learn'],
     image: './roastworks.png',
     color: 'from-orange-500/20 to-amber-500/20',
     initial: 'R',
     links: [
-      { label: 'View project', href: 'https://github.com/COMPSYS302/project-python-cs302-2026-python-project-24' },
+      { label: 'Git repo', href: 'https://github.com/COMPSYS302/project-python-cs302-2026-python-project-24' },
     ],
   },
   {
     title: 'MealHub',
-    tag: 'Java · Android',
+    tag: 'Java · Team Project',
     year: '2026',
-    role: 'Team · Android development',
-    description:
-      'An Android recipe and meal planning app built in Java with Firebase Firestore, letting users browse cuisines, search food items, and build personalised meal plans persisted on the device.',
+    org: 'University of Auckland',
+    role: 'Android Meal Planning App',
     highlights: [
-      'Firebase Firestore backend with on device persistence',
-      'Nutrition goal tracking with macro progress indicators',
-      'Calorie and macro targets via RecyclerView and SharedPreferences',
+      'Built an Android recipe and meal planning app in Java with Firebase Firestore, enabling users to browse cuisines, search food items, and persist personalised meal plans.',
+      'Implemented a nutrition goal tracking system using SharedPreferences to set and track daily targets.',
     ],
-    tech: ['Java', 'Android Studio', 'Firebase', 'Firestore', 'RecyclerView'],
+    tech: ['Java', 'Android Studio', 'Firebase Firestore', 'RecyclerView', 'SharedPreferences'],
     image: './MealHub.png',
     color: 'from-green-500/20 to-emerald-500/20',
     initial: 'M',
-    links: [],
+    links: [
+      { label: 'Git repo', href: 'https://github.com/COMPSYS302/project-java-2026-project-java-team-10-1' },
+    ],
   },
   {
-    title: 'KEB Project Playground',
-    tag: 'Web Design',
+    title: 'KEB Web Design',
+    tag: 'KEB Project Playground · Team Competition',
     year: '2025',
-    role: 'Team · Front end',
-    description:
-      'A multi page club website for the Korean Engineering Body, built with senior software engineering students using React 19, Vite, and React Router. Reusable components and dynamic event pages with React Bootstrap deliver a responsive interface across devices.',
+    period: 'Jul 2025 – Aug 2025',
+    org: 'Korean Engineering Body (KEB)',
+    role: 'Homepage for club',
     highlights: [
-      'React 19, Vite, and React Router multi page site',
-      'Reusable components and dynamic event pages',
-      'Responsive UI with React Bootstrap',
+      "Delivered the Korean Engineering Body's first-ever website using React 19, Vite, and React Bootstrap in order to give the club a centralised hub for events and activities.",
+      'Collaborated with senior software students in order to ship a production-ready platform from scratch.',
     ],
-    tech: ['JavaScript', 'React.js', 'Vite', 'React Router', 'React Bootstrap'],
+    tech: ['JavaScript', 'React.js', 'Vite'],
     image: './KEBWebDesign.png',
     color: 'from-sky-500/20 to-indigo-500/20',
     initial: 'K',
     links: [
-      { label: 'View project', href: 'https://github.com/Patrick-Sheng/keb-project' },
+      { label: 'Deployed DEMO', href: 'https://keb-project.vercel.app/' },
+      { label: 'Git repo', href: 'https://github.com/Patrick-Sheng/keb-project' },
     ],
   },
 ]
@@ -350,7 +342,7 @@ function ChevronIcon({ dir }) {
 }
 
 function ProjectCard({ project, clone }) {
-  const { title, tag, year, role, description, highlights, tech, color, initial, image, featured, links } = project
+  const { title, tag, year, period, org, role, highlights, tech, color, initial, image, featured, links } = project
   return (
     <article className={`card flex h-full flex-col overflow-hidden ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
       <div className={`relative -m-6 mb-6 h-44 overflow-hidden ${image ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
@@ -377,10 +369,9 @@ function ProjectCard({ project, clone }) {
           {tag}
         </div>
         <h3 className="mt-1 text-xl font-semibold">{title}</h3>
-        <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">{role}</div>
-        <p className="mt-3 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
-          {description}
-        </p>
+        {period && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">{period}</div>}
+        {org && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">Associated with {org}</div>}
+        <div className="mt-2 text-sm font-medium text-grey-700 dark:text-grey-300">:: {role}</div>
 
         {highlights?.length > 0 && (
           <ul className="mt-4 space-y-1.5 text-sm text-grey-700 dark:text-grey-300">

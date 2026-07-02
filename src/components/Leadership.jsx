@@ -9,7 +9,7 @@ const ROLES = [
     period: 'Jul 2024 - Present',
     image: './KEB.png',
     description:
-      'Deliver tutorial sessions for junior engineering students and help plan academic events that support the student community.',
+      'Tutor junior engineering students and assist in planning academic events for the student community.',
   },
   {
     title: 'Student Mentor',
@@ -25,7 +25,7 @@ const ROLES = [
     period: 'Jul 2025',
     image: './IEEE.png',
     description:
-      'Volunteered full time at the NZ Robotics Olympiad (NZRO) 2025, supporting event operations for the Institute of Electrical and Electronics Engineers (IEEE).',
+      'Volunteered 40+ hours full time supporting competition operations at the NZ Robotics Olympiad (NZRO) 2025 with the Institute of Electrical and Electronics Engineers (IEEE).',
   },
   {
     title: 'Logistics Team Member',

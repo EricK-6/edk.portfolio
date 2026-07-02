@@ -9,7 +9,7 @@ const CERTS = [
     date: 'Apr 2026',
     image: './cloud.png',
     description:
-      'AWS core services, security, and cost fundamentals built on the Well-Architected Framework.',
+      'Validated foundational knowledge of AWS cloud concepts, core services, and cloud security and architecture.',
     tags: ['EC2', 'S3', 'IAM', 'VPC', 'CloudWatch'],
     credlyUrl:
       'https://www.credly.com/badges/9865f524-64b4-45e4-9f56-8c226ec8308a/public_url',
@@ -20,7 +20,7 @@ const CERTS = [
     date: 'May 2026',
     image: './ai.png',
     description:
-      'Foundations of AI, machine learning, and generative AI with AWS AI/ML services.',
+      'Validated foundational knowledge of AI/ML concepts, generative AI, and AWS AI/ML services and tools.',
     tags: ['SageMaker', 'Bedrock', 'Rekognition'],
     credlyUrl:
       'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',

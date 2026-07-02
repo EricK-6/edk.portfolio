@@ -6,15 +6,15 @@ const EMAIL = 'dohyunkim290106@gmail.com'
 
 const PROJECTS = [
   ['winnie-the-bot', 'AI interactive robot · dual ATmega328P · 3rd place ECSE'],
-  ['sentiment-pulse', 'Serverless AWS sentiment pipeline + React dashboard'],
-  ['smart-energy-monitor', 'ATmega firmware · Altium PCB · LTspice'],
+  ['sentiment-pulse', 'Serverless NLP pipeline on AWS + live React dashboard'],
+  ['smart-energy-monitor', 'ATmega328P firmware · Altium Designer PCB · LTspice'],
   ['flappy-universe', 'VHDL game on an Altera FPGA · VGA + PS/2'],
   ['roastworks-analytics', 'PyQt6 + pandas forecasting desktop app'],
   ['mealhub', 'Android meal planner · Java + Firebase'],
-  ['keb-playground', 'React 19 club website'],
+  ['keb-web-design', "KEB's first ever club website · React 19 + Vite"],
 ]
 
-const SKILLS = 'Python  Java  C  JavaScript  R  VHDL  React.js  Pandas  Scikit-Learn  AWS  MATLAB  Altium'
+const SKILLS = 'Python  Java  C  JavaScript  React.js  R  MATLAB  VHDL  AWS  Git  Android Studio  Figma  Altium Designer'
 
 const file = (...content) => ({ type: 'file', content })
 const dir = (id, children = {}) => ({ type: 'dir', id, children })
@@ -24,8 +24,9 @@ const dir = (id, children = {}) => ({ type: 'dir', id, children })
 const FS = dir('top', {
   about: dir('about', {
     'about.txt': file(
-      'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
-      'Into embedded systems, low-level software, and cloud. Open to internships.'
+      'Dohyun (Eric) Kim - penultimate Computer Systems Engineering (Hons) @ UoA.',
+      'Specialising in embedded systems, full stack development, and digital hardware design.',
+      'AWS certified in Cloud & AI/ML. Open to internships.'
     ),
   }),
   projects: dir('projects', PROJECTS.reduce((acc, [name, desc]) => {

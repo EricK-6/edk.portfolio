@@ -162,9 +162,10 @@ function NameTile() {
           <span className="rounded-md bg-grey-200/80 px-2 py-0.5 font-mono font-medium tracking-wide text-grey-900 dark:bg-grey-800/70 dark:text-grey-100">
             I'm Penultimate CSE student @ UoA
           </span>{' '}
-          passionate about{' '}
-          <span className="font-medium text-grey-900 dark:text-grey-100">embedded systems</span> and{' '}
-          <span className="font-medium text-grey-900 dark:text-grey-100">modern software techniques</span>.
+          specialising in{' '}
+          <span className="font-medium text-grey-900 dark:text-grey-100">embedded systems</span>,{' '}
+          <span className="font-medium text-grey-900 dark:text-grey-100">full stack development</span>, and{' '}
+          <span className="font-medium text-grey-900 dark:text-grey-100">digital hardware design</span>.
         </p>
       </div>
       <div className="relative flex flex-wrap items-center gap-3 lg:pl-60">
@@ -339,7 +340,7 @@ function SocialTile() {
 
 const TECH = [
   'Python', 'Java', 'C', 'JavaScript', 'R', 'VHDL',
-  'React.js', 'Pandas', 'Scikit-Learn', 'AWS', 'MATLAB', 'Altium Designer',
+  'React.js', 'MATLAB', 'AWS', 'Git', 'Altium Designer', 'Figma',
 ]
 
 function SkillsTile() {

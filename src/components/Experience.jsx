@@ -9,8 +9,8 @@ const EXPERIENCE = [
     period: 'Jun 2026 - Present',
     image: './UoA.jpg',
     bullets: [
-      'Supported students through tutorials, lab sessions, and tests to reinforce electronics concepts and improve academic outcomes.',
-      'Managed weekly preparation, supervision, and invigilation duties to ensure smooth course delivery across 120 hours of engagement.',
+      'Deliver teaching support across tutorials, lab sessions, and test invigilation for ELECTENG 292: Electronics.',
+      'Strengthen student leadership and technical laboratory techniques across 120 hours of engagement.',
     ],
   },
   {
@@ -19,7 +19,7 @@ const EXPERIENCE = [
     period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Instruct students in robot hardware assembly and software programming to complete mission based challenges.',
+      'Instruct students in robot hardware assembly and software programming to complete missions.',
       'Coach and support teams in preparation for nationwide robotics competitions.',
     ],
   },

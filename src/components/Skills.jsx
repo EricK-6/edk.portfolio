@@ -4,14 +4,19 @@ import Reveal from './Reveal.jsx'
 const GROUPS = [
   {
     label: 'Languages & Frameworks',
-    span: 'sm:col-span-2 lg:col-span-6',
+    span: 'sm:col-span-2 lg:col-span-4',
     accent: true,
-    items: ['Python', 'Java', 'C', 'JavaScript', 'R', 'VHDL', 'React.js', 'Pandas', 'Scikit-Learn'],
+    items: ['Python', 'Java', 'C', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL'],
   },
   {
-    label: 'Tools & Platform',
-    span: 'sm:col-span-2 lg:col-span-6',
-    items: ['AWS', 'Lambda', 'Kinesis', 'DynamoDB', 'Comprehend', 'Git/GitHub', 'Android Studio', 'MATLAB', 'Altium Designer'],
+    label: 'Cloud & Software Tools',
+    span: 'sm:col-span-2 lg:col-span-4',
+    items: ['AWS', 'Lambda', 'Kinesis', 'Comprehend', 'DynamoDB', 'Amplify', 'Git', 'Android Studio', 'Figma'],
+  },
+  {
+    label: 'Hardware & EDA Tools',
+    span: 'sm:col-span-2 lg:col-span-4',
+    items: ['Altium Designer', 'LTSpice', 'ModelSim', 'Intel Quartus Prime', 'Proteus', 'Atmel AVR', 'AutoCAD'],
   },
 ]
 
