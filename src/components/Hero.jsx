@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
-import { goTo } from '../router.js'
+import { useEffect } from 'react'
 import { useLayout } from '../layout.js'
 import { hrefFor } from '../sitemap.js'
 import { NAME, getNameTyped, setNameTyped, useNameTyped } from '../nameReveal.js'
@@ -44,54 +43,31 @@ function useTypeChallenge() {
   return { typed, done: typed >= NAME.length }
 }
 
-// Subtle 3D tilt that follows the cursor over each hero tile. One delegated
-// listener on the grid covers all tiles; inline transform overrides the
-// Tailwind hover lift while active and clears on leave so it takes back over.
-const TILT_MAX = 5 // degrees at the tile edge
+// fixed pseudo-barcode stripes (widths in px), so it renders identically every time
+const BARS = [2, 1, 3, 1, 2, 2, 1, 4, 1, 2, 1, 3, 2, 1, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 1]
 
-function useTileTilt() {
-  const gridRef = useRef(null)
-
-  useEffect(() => {
-    const grid = gridRef.current
-    if (!grid) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const onMove = (e) => {
-      if (e.pointerType && e.pointerType !== 'mouse') return // touch: skip
-      const tile = e.target.closest('[data-tilt]')
-      if (!tile || !grid.contains(tile)) return
-      const r = tile.getBoundingClientRect()
-      const dx = (e.clientX - r.left) / r.width - 0.5
-      const dy = (e.clientY - r.top) / r.height - 0.5
-      const rx = (-dy * 2 * TILT_MAX).toFixed(2)
-      const ry = (dx * 2 * TILT_MAX).toFixed(2)
-      tile.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`
-    }
-
-    const onOut = (e) => {
-      const tile = e.target.closest('[data-tilt]')
-      if (tile && !tile.contains(e.relatedTarget)) tile.style.transform = ''
-    }
-
-    grid.addEventListener('pointermove', onMove)
-    grid.addEventListener('pointerout', onOut)
-    return () => {
-      grid.removeEventListener('pointermove', onMove)
-      grid.removeEventListener('pointerout', onOut)
-    }
-  }, [])
-
-  return gridRef
+function Field({ label, children, className = '' }) {
+  return (
+    <div className={className}>
+      <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
+        {label}
+      </div>
+      <div className="mt-0.5 text-sm font-semibold text-grey-900 dark:text-grey-100">{children}</div>
+    </div>
+  )
 }
 
+// The boarding-pass hero: the site has a flight mode, so the landing page is
+// the ticket. Passenger name is the typing game; the stub holds the barcode,
+// CV and socials.
 export default function Hero() {
-  const gridRef = useTileTilt()
   const layout = useLayout()
+  const { typed, done } = useTypeChallenge()
+
   return (
     <section
       id="top"
-      className={`relative ${layout === 'box' ? 'py-6' : 'pt-12 pb-16 sm:pt-20 sm:pb-24'}`}
+      className={`relative ${layout === 'box' || layout === 'space' ? 'py-6' : 'pt-12 pb-16 sm:pt-20 sm:pb-24'}`}
     >
       <div
         aria-hidden
@@ -99,306 +75,194 @@ export default function Hero() {
                    bg-gradient-to-b from-accent/[0.08] via-white to-transparent
                    dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
       />
-      <div className="container-page">
-        <div ref={gridRef} className="animate-fade-in-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 [perspective:1200px]">
-          <NameTile />
-          <StatusTile />
-          <CVTile />
-          <StatsTile />
-          <AwardTile />
-          <SocialTile />
-          <SkillsTile />
+      <div className="container-page animate-fade-in-up">
+        <div className="relative mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-2xl dark:border-grey-800 dark:bg-grey-950 md:grid-cols-[1fr_auto_250px]">
+          {/* accent strip */}
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent/70 via-accent/30 to-transparent dark:from-accent-dark/70 dark:via-accent-dark/30" />
+
+          {/* main segment */}
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div className="font-mono text-xs font-medium uppercase tracking-[0.3em] text-grey-500 dark:text-grey-500">
+                erickk·cloud — boarding pass
+              </div>
+              <div className="font-mono text-xs text-grey-400 dark:text-grey-600">FLIGHT EK-2027</div>
+            </div>
+
+            <div className="mt-5">
+              <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
+                Passenger <span className="normal-case tracking-normal">👋</span>
+              </div>
+              <h1 aria-label={NAME} className="mt-1 min-h-[1.1em] text-3xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">
+                <span aria-hidden="true">
+                  {/* correctly typed characters; glow once the full name is complete */}
+                  <span className={done ? 'animate-glow-in dark:animate-glow-in-green' : undefined}>{NAME.slice(0, typed)}</span>
+                  {/* blinking cursor */}
+                  <span className="animate-blink font-normal text-accent dark:text-accent-dark">_</span>
+                  {/* untyped remainder shown as a grey hint */}
+                  <span className="text-grey-400 dark:text-grey-600">{NAME.slice(typed)}</span>
+                </span>
+              </h1>
+              <p
+                aria-hidden="true"
+                className="mt-1.5 flex min-h-[1.25em] items-center gap-1.5 text-xs font-medium"
+              >
+                {done ? (
+                  <span className="animate-fade-in text-sm font-semibold text-accent dark:text-accent-dark">Identity verified - Welcome aboard :)</span>
+                ) : (
+                  <span className="text-grey-400 dark:text-grey-500">⌨ type my name to check in</span>
+                )}
+              </p>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+              <Field label="From">Auckland, NZ (AKL)</Field>
+              <Field label="To">Your team</Field>
+              <Field label="Seat">Summer 26/27</Field>
+              <Field label="Class">CSE (Hons) @ UoA</Field>
+              <Field label="Status">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  Open to internships
+                </span>
+              </Field>
+              <Field label="Certs">☁ AWS ×2 · Cloud + AI</Field>
+              <Field label="Carry-on" className="col-span-2 sm:col-span-3">
+                embedded systems · full stack development · digital hardware design
+              </Field>
+            </div>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <a href={hrefFor('projects', layout)} className="btn-primary">Board · View projects</a>
+              <a href={hrefFor('contact', layout)} className="btn-secondary">Get in touch</a>
+            </div>
+          </div>
+
+          {/* perforation */}
+          <div aria-hidden="true" className="relative hidden w-0 md:block">
+            <div className="absolute inset-y-3 left-0 border-l-2 border-dashed border-grey-300 dark:border-grey-800" />
+            <span className="absolute -top-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
+            <span className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
+          </div>
+          <div aria-hidden="true" className="relative mx-6 md:hidden">
+            <div className="border-t-2 border-dashed border-grey-300 dark:border-grey-800" />
+          </div>
+
+          {/* stub */}
+          <div className="flex flex-col justify-between gap-5 p-6 sm:p-8 md:pl-9">
+            <div>
+              <div className="flex items-baseline justify-between">
+                <span className="font-mono text-xs uppercase tracking-[0.25em] text-grey-500 dark:text-grey-500">Gate</span>
+                <span className="font-mono text-lg font-bold text-grey-900 dark:text-grey-100">P·01</span>
+              </div>
+              <div className="mt-4">
+                <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">Documents</div>
+                {/* one "Resume" tile, invisibly split: left half previews the
+                    SWE CV, right half the EEE CV */}
+                <div className="mt-1.5">
+                  {/* the label lives inside the tile so it centres exactly;
+                      pointer-events-none keeps both halves clickable */}
+                  <div className="relative flex h-9 overflow-hidden rounded-lg border border-grey-300 dark:border-grey-700">
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 z-10 grid place-items-center text-sm font-medium text-grey-700 dark:text-grey-300"
+                    >
+                      Resume
+                    </span>
+                    <a
+                      href="./CV.pdf"
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Preview software engineering CV in the browser (left half)"
+                      className="flex-1 transition hover:bg-grey-200/80 dark:hover:bg-grey-800/60"
+                    />
+                    <a
+                      href="./CV_EEE.pdf"
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Preview electrical/electronics engineering CV in the browser (right half)"
+                      className="flex-1 transition hover:bg-grey-200/80 dark:hover:bg-grey-800/60"
+                    />
+                  </div>
+                  {/* hand-drawn hints (until check-in): which half is which */}
+                  {!done && (
+                    <div
+                      aria-hidden="true"
+                      className="flex justify-around pt-0.5 font-sketch text-[14px] leading-none text-accent/80 dark:text-accent-dark/80"
+                    >
+                      <span className="flex flex-col items-center">
+                        <UpArrow />
+                        <span className="-mt-0.5 -rotate-3">swe</span>
+                      </span>
+                      <span className="flex flex-col items-center">
+                        <UpArrow />
+                        <span className="-mt-0.5 rotate-3">eee</span>
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 space-y-1.5 text-sm">
+                <a
+                  href="https://github.com/EricK-6"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex w-fit items-center gap-2 text-grey-600 transition-colors hover:text-accent dark:text-grey-400 dark:hover:text-accent-dark"
+                >
+                  <GitHubIcon /> EricK-6
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/erick06/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex w-fit items-center gap-2 text-grey-600 transition-colors hover:text-accent dark:text-grey-400 dark:hover:text-accent-dark"
+                >
+                  <LinkedInIcon /> erick06
+                </a>
+              </div>
+            </div>
+
+            {/* barcode */}
+            <div aria-hidden="true">
+              <div className="flex h-14 items-stretch gap-[3px]">
+                {BARS.map((w, i) => (
+                  <span key={i} style={{ width: w }} className="bg-grey-800 dark:bg-grey-200" />
+                ))}
+              </div>
+              <div className="mt-1.5 font-mono text-[10px] tracking-[0.3em] text-grey-400 dark:text-grey-600">
+                AKL·EK2027·INTERN
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-const tile =
-  'rounded-2xl border border-grey-300/80 bg-grey-100/80 backdrop-blur-sm p-6 dark:border-grey-800/70 dark:bg-grey-900/60 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-1 hover:shadow-md hover:shadow-grey-400/30 dark:hover:shadow-black/25'
-
-function NameTile() {
-  const { typed, done } = useTypeChallenge()
-  const layout = useLayout()
+// little hand-drawn arrow pointing up at the Resume tile half above it
+function UpArrow() {
   return (
-    <div data-tilt className={`${tile} relative overflow-hidden sm:col-span-2 lg:col-span-3 lg:row-span-2 flex flex-col justify-between gap-6 min-h-[280px]`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-br from-accent/[0.14] via-accent/[0.08] to-transparent blur-3xl dark:from-accent-dark/[0.08] dark:via-accent-dark/[0.04]"
-      />
-      {/* Portrait sits on the left of the name tile. */}
-      <img
-        src="./me.jpg"
-        alt="Portrait of Dohyun (Eric) Kim"
-        className="absolute left-6 top-1/2 hidden h-64 w-52 -translate-y-1/2 rounded-2xl object-cover shadow-lg ring-1 ring-grey-300/80 dark:ring-grey-700/80 lg:block"
-      />
-      <div className="relative lg:pl-60">
-        <div className="flex items-center gap-2 text-xl sm:text-2xl font-medium text-grey-600 dark:text-grey-400">
-          <span className="wave-hand" aria-hidden="true">👋</span> Kia Ora, This is..
-        </div>
-        <h1 aria-label={NAME} className="mt-1 min-h-[1.1em] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
-          <span aria-hidden="true">
-            {/* correctly typed characters; glow once the full name is complete */}
-            <span className={done ? 'animate-glow-in dark:animate-glow-in-green' : undefined}>{NAME.slice(0, typed)}</span>
-            {/* blinking cursor */}
-            <span className="animate-blink font-normal text-accent dark:text-accent-dark">_</span>
-            {/* untyped remainder shown as a grey hint */}
-            <span className="text-grey-400 dark:text-grey-600">{NAME.slice(typed)}</span>
-          </span>
-        </h1>
-        <p
-          aria-hidden="true"
-          className="mt-2 flex min-h-[1.25em] items-center gap-1.5 text-xs font-medium"
-        >
-          {done ? (
-            <span className="animate-fade-in text-base sm:text-lg font-semibold text-accent dark:text-accent-dark">Welcome, Glad to have u here :)</span>
-          ) : (
-            <span className="flex items-center gap-1.5 text-grey-400 dark:text-grey-500">
-              <KeyboardIcon /> Try typing my name
-            </span>
-          )}
-        </p>
-        <p className="mt-3 text-xs sm:text-sm text-grey-600 dark:text-grey-400 leading-loose max-w-2xl">
-          <span className="rounded-md bg-grey-200/80 px-2 py-0.5 font-mono font-medium tracking-wide text-grey-900 dark:bg-grey-800/70 dark:text-grey-100">
-            I'm Penultimate CSE student @ UoA
-          </span>{' '}
-          specialising in{' '}
-          <span className="font-medium text-grey-900 dark:text-grey-100">embedded systems</span>,{' '}
-          <span className="font-medium text-grey-900 dark:text-grey-100">full stack development</span>, and{' '}
-          <span className="font-medium text-grey-900 dark:text-grey-100">digital hardware design</span>.
-        </p>
-      </div>
-      <div className="relative flex flex-wrap items-center gap-3 lg:pl-60">
-        <a href={hrefFor('projects', layout)} className="btn-primary">
-          View projects
-        </a>
-        <a href={hrefFor('contact', layout)} className="btn-secondary">
-          Get in touch
-        </a>
-      </div>
-    </div>
-  )
-}
-
-function StatusTile() {
-  const [pulse, setPulse] = useState(false)
-  return (
-    <button
-      data-tilt
-      type="button"
-      onClick={() => setPulse(true)}
-      onAnimationEnd={() => setPulse(false)}
-      aria-label="Open to internships"
-      className={`${tile} ${pulse ? 'animate-glow-green' : ''} w-full text-left bg-emerald-50/40 dark:bg-emerald-950/15 flex flex-col justify-between min-h-[136px]`}
+    <svg
+      aria-hidden="true"
+      width="14"
+      height="14"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <div className="flex items-center gap-2">
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-        </span>
-        <span className="text-xs font-medium uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
-          Available
-        </span>
-      </div>
-      <div>
-        <div className="text-lg font-semibold text-grey-900 dark:text-grey-100">
-          Open to internships
-        </div>
-        <div className="mt-1 text-sm text-grey-600 dark:text-grey-400">
-          Summer 2026/27
-        </div>
-      </div>
-    </button>
-  )
-}
-
-function CVTile() {
-  return (
-    <div
-      data-tilt
-      className={`${tile} group relative overflow-hidden bg-gradient-to-br from-[#3a68bd] to-[#474eae] border-transparent text-white hover:from-[#497ac8] hover:to-[#5560b7] flex flex-col justify-between min-h-[136px]`}
-    >
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-widest text-white/80">
-          Resume
-        </span>
-        <DownloadIcon />
-      </div>
-      <div>
-        <div className="text-sm font-medium text-white/90">Download my CV</div>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <CVButton href="./CV.pdf" label="for SWE" ariaLabel="Download software engineering CV (PDF)" />
-          <CVButton href="./CV_EEE.pdf" label="for EEE" ariaLabel="Download electrical/electronics engineering CV (PDF)" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function CVButton({ href, label, ariaLabel }) {
-  return (
-    <a
-      href={href}
-      download
-      aria-label={ariaLabel}
-      className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-inset ring-white/25 transition hover:bg-white/25"
-    >
-      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" />
-      </svg>
-      {label}
-    </a>
-  )
-}
-
-function StatsTile() {
-  const layout = useLayout()
-  return (
-    <a data-tilt href={hrefFor('about', layout)} className={`${tile} sm:col-span-2 flex flex-col justify-between min-h-[136px]`}>
-      <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
-        At a glance
-      </div>
-      <dl className="mt-3 grid grid-cols-3 gap-4">
-        <Stat label="Located In" value="Auckland, NZ" />
-        <Stat label="Graduating" value="Nov 2027" />
-        <Stat label="Focus" value="Embedded · Software" />
-      </dl>
-    </a>
-  )
-}
-
-function AwardTile() {
-  const layout = useLayout()
-  return (
-    <a data-tilt href={hrefFor('projects', layout)} className={`${tile} bg-amber-50/40 dark:bg-amber-950/15 flex flex-col justify-between min-h-[136px]`}>
-      <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-        <span className="text-xs font-medium uppercase tracking-widest">3rd place</span>
-      </div>
-      <div>
-        <div className="text-lg font-semibold text-grey-900 dark:text-grey-100 leading-tight">
-          ECSE Design
-        </div>
-        <div className="text-lg font-semibold text-grey-900 dark:text-grey-100 leading-tight">
-          Competition
-        </div>
-        <div className="mt-1 text-sm text-grey-600 dark:text-grey-400">2025 · Winnie the Bot</div>
-      </div>
-    </a>
-  )
-}
-
-function SocialTile() {
-  const layout = useLayout()
-  const goContact = () => goTo('contact', layout)
-  return (
-    <div
-      data-tilt
-      role="link"
-      tabIndex={0}
-      onClick={goContact}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          goContact()
-        }
-      }}
-      aria-label="Find me - get in touch"
-      className={`${tile} flex cursor-pointer flex-col justify-between min-h-[136px]`}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
-          Find me
-        </span>
-        <span className="text-xs font-medium text-accent dark:text-accent-dark">Let's talk →</span>
-      </div>
-      <div className="space-y-2">
-        <a
-          href="https://github.com/EricK-6"
-          target="_blank"
-          rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className="flex w-fit items-center gap-2 text-sm text-grey-700 hover:text-accent dark:text-grey-300 dark:hover:text-accent-dark transition-colors"
-        >
-          <GitHubIcon /> EricK-6
-        </a>
-        <a
-          href="https://www.linkedin.com/in/erick06/"
-          target="_blank"
-          rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className="flex w-fit items-center gap-2 text-sm text-grey-700 hover:text-accent dark:text-grey-300 dark:hover:text-accent-dark transition-colors"
-        >
-          <LinkedInIcon /> erick06
-        </a>
-      </div>
-    </div>
-  )
-}
-
-const TECH = [
-  'Python', 'Java', 'C', 'JavaScript', 'R', 'VHDL',
-  'React.js', 'MATLAB', 'AWS', 'Git', 'Altium Designer', 'Figma',
-]
-
-function SkillsTile() {
-  const layout = useLayout()
-  return (
-    <a data-tilt href={hrefFor('skills', layout)} className={`${tile} block sm:col-span-2 lg:col-span-4`}>
-      <div className="flex items-center justify-between gap-4">
-        <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
-          Tech I work with
-        </div>
-        <span className="text-xs font-medium text-accent dark:text-accent-dark">
-          See all →
-        </span>
-      </div>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {TECH.map((t) => (
-          <span
-            key={t}
-            className="inline-flex items-center rounded-lg border border-grey-300 bg-grey-200 px-2.5 py-1 text-sm font-medium text-grey-800 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200"
-          >
-            {t}
-          </span>
-        ))}
-      </div>
-    </a>
-  )
-}
-
-function Stat({ label, value }) {
-  return (
-    <div>
-      <dt className="text-[10px] font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
-        {label}
-      </dt>
-      <dd className="mt-1 text-sm font-medium text-grey-900 dark:text-grey-100">
-        {value}
-      </dd>
-    </div>
-  )
-}
-
-function KeyboardIcon() {
-  return (
-    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="6" width="20" height="12" rx="2" />
-      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
+      <path d="M8 15 C 8 9.5, 6 6, 5 3" />
+      <path d="M5 3 L 2.5 5.5 M5 3 L 7.5 5" />
     </svg>
   )
 }
-function DownloadIcon() {
-  return (
-    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
-    </svg>
-  )
-}
+
 function GitHubIcon() {
   return (
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

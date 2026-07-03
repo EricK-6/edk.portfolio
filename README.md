@@ -6,8 +6,9 @@ Hey, I'm **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at
 
 It's a single-page site, but I didn't want it to feel like a CV crammed into a webpage, so I had some fun with it:
 
-- **Two ways to get around** — normal scrolling, or a "box mode" where each section is its own screen you move through with the arrow keys or the mouse wheel.
-- **A "type my name" hero** — start typing and my name reveals letter by letter.
+- **Space mode (the default)** — every section floats as a panel in a 3D starfield (constellations, planets, a comet, the odd shooting star) and the camera flies between them. Scroll, use the arrow keys, or click a floating panel to fly to it.
+- **Scroll mode** — the classic single page for reading everything at a glance (the navbar toggle switches modes).
+- **A boarding-pass hero** — the landing page is a ticket for the flight: type my name to check in, and the stub holds the CV previews.
 - **Command palette** (`Cmd`/`Ctrl + K`) and a small terminal dock for the keyboard people.
 - **Dark / light themes**, remembered between visits.
 
@@ -59,14 +60,15 @@ npm run deploy
 │   ├── CV.pdf                     # what the "Download CV" button grabs
 │   └── favicon.svg
 ├── src/
-│   ├── App.jsx                    # theme + layout (scroll vs box mode)
+│   ├── App.jsx                    # theme + layout (space vs scroll mode)
 │   ├── main.jsx
 │   ├── index.css                  # Tailwind + my shared component classes
 │   └── components/
 │       ├── Navbar.jsx
-│       ├── Hero.jsx               # bento grid + the type-my-name bit
+│       ├── Hero.jsx               # boarding-pass hero + type-my-name check-in
+│       ├── SpaceLayout.jsx        # 3D flight mode (the default layout)
 │       ├── About.jsx
-│       ├── Projects.jsx           # 3D coverflow carousel
+│       ├── Projects.jsx           # project explorer (list + detail card)
 │       ├── Experience.jsx
 │       ├── Skills.jsx
 │       ├── Education.jsx

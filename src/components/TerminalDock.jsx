@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { goTo } from '../router.js'
+import { NAME, useNameTyped } from '../nameReveal.js'
 import { useLayout } from '../layout.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
@@ -40,13 +41,13 @@ const FS = dir('top', {
   leadership: dir('leadership'),
   contact: dir('contact', {
     email: file(
-      <a href={`mailto:${EMAIL}`} className="text-blue-600 underline dark:text-grey-200">{EMAIL}</a>
+      <a href={`mailto:${EMAIL}`} className="text-grey-600 underline dark:text-grey-200">{EMAIL}</a>
     ),
     github: file(
-      <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-blue-600 underline dark:text-grey-200">github.com/EricK-6</a>
+      <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">github.com/EricK-6</a>
     ),
     linkedin: file(
-      <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-blue-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
+      <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
     ),
     'cv-swe.pdf': { type: 'file', download: './CV.pdf', content: ['↓ downloading software CV…'] },
     'cv-eee.pdf': { type: 'file', download: './CV_EEE.pdf', content: ['↓ downloading hardware CV…'] },
@@ -128,15 +129,17 @@ function completionFor(input, cwd) {
 function Prompt({ path = '~' }) {
   return (
     <>
-      <span className="text-blue-600 dark:text-grey-100">visitor@erickk.cloud</span>
-      <span className="text-blue-300 dark:text-grey-600">:</span>
-      <span className="text-blue-900 dark:text-white">{path}</span>
-      <span className="text-blue-300 dark:text-grey-600">$ </span>
+      <span className="text-grey-700 dark:text-grey-100">visitor@erickk.cloud</span>
+      <span className="text-grey-400 dark:text-grey-600">:</span>
+      <span className="text-grey-900 dark:text-white">{path}</span>
+      <span className="text-grey-400 dark:text-grey-600">$ </span>
     </>
   )
 }
 
 export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
+  // the handle hint fades once the visitor has typed the name (like the navbar hints)
+  const showHints = useNameTyped() < NAME.length
   const [lines, setLines] = useState(() => [
     'erickk.cloud - interactive shell',
     "run 'ls' to look around, or 'help' for commands.",
@@ -192,7 +195,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
     a.remove()
   }
 
-  const err = (c, msg) => print(<span><span className="font-semibold text-blue-900 dark:text-white">{c}:</span> {msg}</span>)
+  const err = (c, msg) => print(<span><span className="font-semibold text-grey-900 dark:text-white">{c}:</span> {msg}</span>)
 
   const run = (raw) => {
     const trimmed = raw.trim()
@@ -209,12 +212,12 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         HELP.forEach(([c, d]) =>
           print(
             <span className="grid grid-cols-[7rem_1fr] gap-x-2">
-              <span className="text-blue-800 dark:text-grey-200">{c}</span>
-              <span className="text-blue-400 dark:text-grey-500">{d}</span>
+              <span className="text-grey-800 dark:text-grey-200">{c}</span>
+              <span className="text-grey-500 dark:text-grey-500">{d}</span>
             </span>
           )
         )
-        print(<span className="mt-1 block text-blue-400 dark:text-grey-500">tip: try `ls`, then `cd projects`, then `cat winnie-the-bot`.</span>)
+        print(<span className="mt-1 block text-grey-500 dark:text-grey-500">tip: try `ls`, then `cd projects`, then `cat winnie-the-bot`.</span>)
         break
       case 'pwd':
         print(pathLabel(cwd))
@@ -225,11 +228,11 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         if (!node) { err('ls', `no such file or directory: ${args[0]}`); break }
         if (node.type === 'file') { print(args[0]); break }
         const names = Object.keys(node.children || {})
-        if (!names.length) { print(<span className="text-blue-300 dark:text-grey-600">(no files - cd here to view it on the page)</span>); break }
+        if (!names.length) { print(<span className="text-grey-400 dark:text-grey-600">(no files - cd here to view it on the page)</span>); break }
         print(
           <span className="flex flex-wrap gap-x-4 gap-y-1">
             {names.map((n) => (
-              <span key={n} className={node.children[n].type === 'dir' ? 'text-blue-800 dark:text-white' : 'text-blue-500 dark:text-grey-400'}>
+              <span key={n} className={node.children[n].type === 'dir' ? 'text-grey-800 dark:text-white' : 'text-grey-500 dark:text-grey-400'}>
                 {n}{node.children[n].type === 'dir' ? '/' : ''}
               </span>
             ))}
@@ -272,13 +275,13 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         print(
           <span>
             github:&nbsp;
-            <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-blue-600 underline dark:text-grey-200">github.com/EricK-6</a>
+            <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">github.com/EricK-6</a>
           </span>
         )
         print(
           <span>
             linkedin:&nbsp;
-            <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-blue-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
+            <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
           </span>
         )
         break
@@ -305,7 +308,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         setLines([])
         break
       default:
-        print(<span><span className="font-semibold text-blue-900 dark:text-white">command not found:</span> {cmd}. type 'help'.</span>)
+        print(<span><span className="font-semibold text-grey-900 dark:text-white">command not found:</span> {cmd}. type 'help'.</span>)
     }
   }
 
@@ -365,14 +368,14 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         <div className="relative flex h-full flex-col border-r border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-black">
           {/* title bar */}
           <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3 dark:border-grey-800 dark:bg-black">
-            <span className="h-3 w-3 rounded-full bg-blue-200 dark:bg-grey-700" />
-            <span className="h-3 w-3 rounded-full bg-blue-400 dark:bg-grey-500" />
-            <span className="h-3 w-3 rounded-full bg-blue-600 dark:bg-grey-300" />
-            <span className="ml-2 flex-1 font-mono text-xs text-blue-400 dark:text-grey-500">visitor@erickk.cloud: ~</span>
+            <span className="h-3 w-3 rounded-full bg-grey-300 dark:bg-grey-700" />
+            <span className="h-3 w-3 rounded-full bg-grey-400 dark:bg-grey-500" />
+            <span className="h-3 w-3 rounded-full bg-grey-500 dark:bg-grey-300" />
+            <span className="ml-2 flex-1 font-mono text-xs text-grey-500 dark:text-grey-500">visitor@erickk.cloud: ~</span>
             <button
               onClick={() => setOpen(false)}
               aria-label="Close terminal"
-              className="text-blue-400 hover:text-blue-700 dark:text-grey-500 dark:hover:text-grey-100"
+              className="text-grey-500 hover:text-grey-800 dark:text-grey-500 dark:hover:text-grey-100"
             >
               <CloseIcon />
             </button>
@@ -382,7 +385,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
           <div
             ref={bodyRef}
             onClick={() => inputRef.current?.focus()}
-            className="flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed text-blue-700 dark:text-grey-300"
+            className="flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed text-grey-700 dark:text-grey-300"
           >
             {lines.map((l, i) => (
               <div key={i} className="whitespace-pre-wrap break-words">
@@ -403,22 +406,17 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
                   autoCorrect="off"
                   autoComplete="off"
                   spellCheck="false"
-                  className="relative z-10 w-full border-0 bg-transparent p-0 text-blue-900 caret-blue-600 outline-none dark:text-white dark:caret-grey-100"
+                  className="relative z-10 w-full border-0 bg-transparent p-0 text-grey-900 caret-grey-700 outline-none dark:text-white dark:caret-grey-100"
                 />
                 {/* ghost suffix, aligned under the input via an invisible copy of
                     what's typed (monospace, so the widths match exactly) */}
                 {suggestion && (
                   <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center whitespace-pre">
                     <span className="invisible">{input}</span>
-                    <span className="text-blue-300 dark:text-grey-600">{suggestion}</span>
+                    <span className="text-grey-400 dark:text-grey-600">{suggestion}</span>
                   </div>
                 )}
               </div>
-              {suggestion && (
-                <span className="ml-2 shrink-0 rounded border border-blue-200 px-1 text-[10px] leading-tight text-blue-400 dark:border-grey-700 dark:text-grey-500">
-                  ⇥ tab
-                </span>
-              )}
             </div>
           </div>
 
@@ -427,13 +425,25 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Collapse terminal' : 'Open terminal'}
             aria-expanded={open}
-            className="absolute left-full top-20 flex flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-blue-500 shadow-lg hover:text-blue-700 dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
+            className="absolute left-full top-20 flex flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
           >
             <PromptGlyph />
             <span className="font-mono text-[11px] tracking-wider [writing-mode:vertical-rl] rotate-180">
               terminal
             </span>
           </button>
+          {!open && showHints && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute left-full top-32 ml-10 flex items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 dark:text-accent-dark/80"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="-rotate-90">
+                <path d="M8 15 C 8 9.5, 6 6, 5 3" />
+                <path d="M5 3 L 2.5 5.5 M5 3 L 7.5 5" />
+              </svg>
+              <span className="rotate-2 whitespace-nowrap">For Devs</span>
+            </span>
+          )}
         </div>
       </aside>
     </>

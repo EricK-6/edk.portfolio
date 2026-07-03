@@ -54,16 +54,16 @@ export default function Contact() {
       id="contact"
       kicker="Contact"
       title="Let's talk"
-      subtitle="Fill in the form and I'll get back to you, or reach me directly via the links below."
+      subtitle="Fill in the form to contact me, I read every message."
     >
-      <div className="grid gap-8 md:grid-cols-5">
-        <Reveal className="md:col-span-2 space-y-4">
-          <ContactLink label="Email" value={EMAIL} href={`mailto:${EMAIL}`} />
-          <ContactLink label="LinkedIn" value="linkedin.com/in/erick06" href="https://www.linkedin.com/in/erick06/" external />
-          <ContactLink label="GitHub" value="github.com/EricK-6" href="https://github.com/EricK-6" external />
+      <div className="mx-auto max-w-2xl">
+        <Reveal className="mb-5 flex flex-wrap items-center justify-center gap-3">
+          <IconLink href={`mailto:${EMAIL}`} label={`Email ${EMAIL}`}><MailIcon />{EMAIL}</IconLink>
+          <IconLink href="https://www.linkedin.com/in/erick06/" label="LinkedIn profile erick06" external><LinkedInIcon />erick06</IconLink>
+          <IconLink href="https://github.com/EricK-6" label="GitHub profile EricK-6" external><GitHubIcon />EricK-6</IconLink>
         </Reveal>
 
-        <Reveal as="form" delay={120} className="md:col-span-3 card space-y-4 block" onSubmit={handleSubmit} noValidate>
+        <Reveal as="form" delay={120} className="card space-y-4 block" onSubmit={handleSubmit} noValidate>
           {status === 'success' && (
             <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
               Message sent! I'll be in touch soon!
@@ -145,16 +145,43 @@ function Field({ label, error, children }) {
   )
 }
 
-function ContactLink({ label, value, href, external }) {
+// compact pill links for the direct contact channels: icon + address / id
+function IconLink({ href, label, external, children }) {
   return (
     <a
       href={href}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      className="group block rounded-xl border border-grey-300 bg-grey-100 p-4 transition hover:border-grey-400/60 hover:shadow-sm dark:border-grey-800 dark:bg-grey-900/60 dark:hover:border-grey-700"
+      aria-label={label}
+      title={label}
+      className="inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent dark:border-grey-800 dark:bg-grey-900/60 dark:text-grey-300 dark:hover:border-accent-dark/60 dark:hover:text-accent-dark"
     >
-      <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">{label}</div>
-      <div className="mt-1 font-medium text-grey-900 group-hover:text-accent dark:text-grey-100 dark:group-hover:text-accent-dark break-all">{value}</div>
+      {children}
     </a>
+  )
+}
+
+function MailIcon() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 7-10 6L2 7" />
+    </svg>
+  )
+}
+
+function LinkedInIcon() {
+  return (
+    <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.05-1.86-3.05-1.86 0-2.15 1.45-2.15 2.95v5.67H9.32V9h3.42v1.56h.05a3.75 3.75 0 0 1 3.38-1.86c3.61 0 4.28 2.38 4.28 5.47v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.2 24 24 23.23 24 22.28V1.72C24 .77 23.2 0 22.22 0z" />
+    </svg>
+  )
+}
+
+function GitHubIcon() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.35.77 1.05.77 2.11 0 1.52-.01 2.75-.01 3.12 0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5z" />
+    </svg>
   )
 }

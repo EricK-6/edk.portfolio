@@ -10,20 +10,19 @@ export default function About() {
             Kia ora! <span className="wave-hand">👋</span>
           </h3>
           <p>
-            This is Eric, a penultimate Computer Systems Engineering (Hons)
-            student at the University of Auckland, specialising in embedded systems,
-            full stack development, and digital hardware design. I work across the
-            hardware and software boundary: firmware, PCBs, and the interfaces that
-            tie them together, with C, Java, Python, and React in my toolkit.
+            This is Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student
+            at the University of Auckland, specialising in <Bold>embedded systems</Bold>,{' '}
+            <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>. I work
+            across the hardware and software boundary with <Bold>C, Java, Python, and React</Bold>{' '}
+            in my toolkit.
           </p>
           <p>
-            I am AWS certified in both Cloud and AI/ML, with a proven project portfolio
-            spanning serverless cloud pipelines, React web applications, FPGA development,
-            PCB design, and embedded robotics systems. That work earned 3rd place at the
-            2025 ECSE Design Competition. Outside the classroom I teach as a Teaching
-            Assistant and robotics instructor, and serve as an academic executive with
-            the Korean Engineering Body. I am always open to internship opportunities,
-            so feel free to check out my work below!
+            I am <Bold>2× AWS certified</Bold> with a project portfolio spanning{' '}
+            <Bold>serverless cloud pipelines</Bold>, <Bold>React web apps</Bold>, and{' '}
+            <Bold>embedded robotics</Bold>, which earned <Bold>3rd place</Bold> at the 2025
+            ECSE Design Competition. Outside the classroom I teach as a <Bold>Teaching
+            Assistant and robotics instructor</Bold>. I am always open to{' '}
+            <Bold>internship opportunities</Bold>, so feel free to check out my work below!
           </p>
         </Reveal>
 
@@ -45,6 +44,10 @@ export default function About() {
       </div>
     </Section>
   )
+}
+
+function Bold({ children }) {
+  return <strong className="font-semibold text-grey-900 dark:text-grey-100">{children}</strong>
 }
 
 const HIGHLIGHTS = [

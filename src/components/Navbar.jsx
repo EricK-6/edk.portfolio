@@ -48,8 +48,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
           ))}
         </ul>
 
-        {/* right padding (sm–lg) reserves the corner for the floating MiniMap */}
-        <div className="flex items-center gap-2 sm:pr-32 xl:pr-0">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
             aria-label="Open terminal"
@@ -68,13 +67,17 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
           <div className="relative">
             <button
               onClick={onToggleLayout}
-              aria-label={layout === 'box' ? 'Switch to scrolling layout' : 'Switch to box layout'}
-              title={layout === 'box' ? 'Scrolling layout' : 'Box layout'}
+              aria-label={layout === 'space' ? 'Switch to scrolling layout' : 'Switch to space layout'}
+              title={layout === 'space' ? 'At a glance (scroll)' : 'Space mode'}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 hover:bg-grey-200 dark:border-grey-800 dark:text-grey-300 dark:hover:bg-grey-900"
             >
-              {layout === 'box' ? <ScrollIcon /> : <GridIcon />}
+              {layout === 'space' ? <ScrollIcon /> : <OrbitIcon />}
             </button>
-            {showHints && <Hint align="end" className="mt-1.5">more than just scroll</Hint>}
+            {showHints && (
+              <Hint align="end" className="mt-1.5">
+                {layout === 'space' ? 'At glance' : 'take a flight?'}
+              </Hint>
+            )}
           </div>
           <div className="relative">
             <button
@@ -169,7 +172,7 @@ function SearchIcon() {
   )
 }
 
-// shown in box mode -> click switches to the scrolling (stacked rows) layout
+// shown in space mode -> click switches to the scrolling (stacked rows) layout
 function ScrollIcon() {
   return (
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -179,14 +182,12 @@ function ScrollIcon() {
   )
 }
 
-// shown in scroll mode -> click switches to the box (3x3 grid) layout
-function GridIcon() {
+// shown in scroll mode -> click switches to the space (3D flight) layout
+function OrbitIcon() {
   return (
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      <circle cx="12" cy="12" r="4" />
+      <ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-18 12 12)" />
     </svg>
   )
 }

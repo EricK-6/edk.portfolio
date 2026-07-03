@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
+import { useLayout } from '../layout.js'
 
 const ROLES = [
   {
@@ -49,6 +50,9 @@ const ROLES = [
 const ITEMS = [...ROLES].reverse()
 
 export default function Leadership() {
+  // space mode: trim card padding so the section sits near full scale in its
+  // floating panel without the serpentine columns colliding
+  const space = useLayout() === 'space'
   const wrapRef = useRef(null)
   const nodeRefs = useRef([])
   const [path, setPath] = useState('')
@@ -58,14 +62,21 @@ export default function Leadership() {
     if (!wrap) return
 
     const build = () => {
-      const wb = wrap.getBoundingClientRect()
+      // measure in layout space (offsetLeft/Top): unlike client rects these
+      // ignore transforms, so the curve lands exactly on the dots even while
+      // the reveal animation is mid-translate or space mode scales the panel
+      const centerOf = (el) => {
+        let x = el.offsetWidth / 2
+        let y = el.offsetHeight / 2
+        for (let n = el; n && n !== wrap; n = n.offsetParent) {
+          x += n.offsetLeft
+          y += n.offsetTop
+        }
+        return { x, y }
+      }
       const pts = nodeRefs.current
-        .filter(Boolean)
-        .map((n) => {
-          const r = n.getBoundingClientRect()
-          return { x: r.left + r.width / 2 - wb.left, y: r.top + r.height / 2 - wb.top }
-        })
-        .filter((p) => p.x !== 0 || p.y !== 0) // skip nodes hidden on mobile
+        .filter((n) => n && n.offsetParent) // skip nodes hidden on mobile
+        .map(centerOf)
       if (pts.length < 2) {
         setPath('')
         return
@@ -92,7 +103,7 @@ export default function Leadership() {
   }, [])
 
   return (
-    <Section id="leadership" kicker="Leadership" title="Activities & leadership">
+    <Section id="leadership" kicker="Leadership" title="Activities & Leadership">
       <div ref={wrapRef} className="relative">
         {/* curved Z connector (desktop) */}
         <svg className="pointer-events-none absolute inset-0 hidden h-full w-full md:block" aria-hidden="true">
@@ -103,6 +114,19 @@ export default function Leadership() {
             strokeWidth="2.5"
             strokeLinecap="round"
           />
+          {/* a runner dot travelling the curve bottom-to-top, forever */}
+          {path && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
+            <circle r="4.5" className="fill-accent dark:fill-accent-dark">
+              <animateMotion
+                dur="4.5s"
+                repeatCount="indefinite"
+                calcMode="linear"
+                keyPoints="1;0"
+                keyTimes="0;1"
+                path={path}
+              />
+            </circle>
+          )}
         </svg>
         {/* straight spine (mobile) */}
         <div
@@ -120,7 +144,7 @@ export default function Leadership() {
                 delay={i * 70}
                 className="relative block pl-12 md:pl-0 mt-6 first:mt-0 md:-mt-16 md:first:mt-0"
               >
-                <div className={`card relative md:w-[calc(50%-3rem)] ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                <div className={`card relative md:w-[calc(50%-3rem)] ${space ? 'p-4' : ''} ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el) => (nodeRefs.current[i] = el)}

@@ -86,3 +86,45 @@
 @media (prefers-reduced-motion: reduce) {
   .wave-hand { animation: none; }
 }
+
+/* space mode: a shooting star streaks once per animation cycle, then waits
+   invisible until the loop restarts */
+@keyframes shooting-star {
+  0% { transform: translate3d(0, 0, 0) rotate(-32deg); opacity: 0; }
+  2% { opacity: 0.9; }
+  9%, 100% { transform: translate3d(-620px, 388px, 0) rotate(-32deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shooting-star { animation: none; opacity: 0; }
+}
+
+/* space mode: the spiral galaxy slowly rotates in its tilted plane */
+@keyframes galaxy-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galaxy-spin { animation: none; }
+}
+
+/* hero tech ribbon: two identical groups scroll left; -50% lands exactly on
+   the second copy so the loop is seamless */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+}
+
+/* hero starfield: each star twinkles on its own randomised cycle */
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star-twinkle { animation: none !important; opacity: 0.6; }
+}
