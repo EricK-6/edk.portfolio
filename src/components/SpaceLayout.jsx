@@ -577,8 +577,9 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
                     <FitPanel
                       scrollerRef={(el) => (scrollers.current[i] = el)}
                       maxScale={pid === 'education' ? 1 : undefined}
-                      // home is the boarding pass (max-w-4xl card): hug it
-                      designWidth={pid === 'home' ? 950 : undefined}
+                      // home is the boarding pass (max-w-4xl card): hug it;
+                      // leadership is wide (max-w-7xl serpentine): give it room
+                      designWidth={pid === 'home' ? 950 : pid === 'leadership' ? 1360 : undefined}
                       dockOffset={off}
                     >
                       <Component />
