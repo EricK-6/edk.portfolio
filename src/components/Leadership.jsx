@@ -37,12 +37,20 @@ const ROLES = [
       'Part of the logistics team for the New Zealand Physics and Math Competition (NZPMC).',
   },
   {
-    title: 'Student Volunteer',
+    title: 'Competition Staff',
     org: 'CARES · World Robot Olympiad 2026',
     period: 'May 2026',
     image: './cares.jpeg',
     description:
       'Volunteered at the World Robot Olympiad (WRO) 2026 with the Centre for Automation and Robotic Engineering Science (CARES).',
+  },
+  {
+    title: 'Competition Staff',
+    org: 'IEEE · NZ Robotics Olympiad 2026',
+    period: 'Jul 2026',
+    image: './IEEE.png',
+    description:
+      'Returned to the NZ Robotics Olympiad (NZRO) 2026 as competition staff, building on experience as a full time volunteer at NZRO 2025 and as a robotics instructor at ciLab.',
   },
 ]
 
@@ -140,7 +148,7 @@ export default function Leadership() {
             return (
               <Reveal
                 as="li"
-                key={r.title}
+                key={`${r.title}-${r.org}`}
                 delay={i * 70}
                 className="relative block pl-12 md:pl-0 mt-6 first:mt-0 md:-mt-16 md:first:mt-0"
               >
