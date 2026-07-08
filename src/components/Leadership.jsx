@@ -5,20 +5,12 @@ import { useLayout } from '../layout.js'
 
 const ROLES = [
   {
-    title: 'Academic Team Executive',
+    title: 'Academic Executive',
     org: 'Korean Engineering Body (KEB)',
     period: 'Jul 2024 - Present',
     image: './KEB.png',
     description:
       'Tutor junior engineering students and assist in planning academic events for the student community.',
-  },
-  {
-    title: 'Student Mentor',
-    org: 'Korean Engineering Body (KEB)',
-    period: 'Feb 2025 - Oct 2025',
-    image: './KEB.png',
-    description:
-      'Provided personalised mentoring to first year students, supporting their transition into university life and academic engagement.',
   },
   {
     title: 'Full time Volunteer',
@@ -54,8 +46,11 @@ const ROLES = [
   },
 ]
 
-// most recent first
-const ITEMS = [...ROLES].reverse()
+// ongoing roles pinned on top, then most recent first
+const ITEMS = [
+  ...ROLES.filter((r) => r.period.includes('Present')),
+  ...ROLES.filter((r) => !r.period.includes('Present')).reverse(),
+]
 
 export default function Leadership() {
   // space mode: trim card padding so the section sits near full scale in its
