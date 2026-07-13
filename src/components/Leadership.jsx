@@ -38,9 +38,9 @@ const ROLES = [
   },
   {
     title: 'Competition Staff',
-    org: 'IEEE · NZ Robotics Olympiad 2026',
+    org: 'IEEE R&A · NZ Robotics Olympiad 2026',
     period: 'Jul 2026',
-    image: './IEEE.png',
+    image: './ieee_r&a.webp',
     description:
       'Returned to the NZ Robotics Olympiad (NZRO) 2026 as competition staff, building on experience as a full time volunteer at NZRO 2025 and as a robotics instructor at ciLab.',
   },
