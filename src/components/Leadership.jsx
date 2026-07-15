@@ -106,7 +106,9 @@ export default function Leadership() {
   }, [])
 
   return (
-    <Section id="leadership" kicker="Leadership" title="Activities & Leadership" wide>
+    // wide only in space mode: its floating panel is sized for the serpentine
+    // (1360px); in scroll mode the section keeps the page's normal column
+    <Section id="leadership" kicker="Leadership" title="Activities & Leadership" wide={space}>
       <div ref={wrapRef} className="relative">
         {/* curved Z connector (desktop) */}
         <svg className="pointer-events-none absolute inset-0 hidden h-full w-full md:block" aria-hidden="true">

@@ -99,7 +99,14 @@ export default function App() {
     try { localStorage.setItem('theme', theme) } catch { /* private mode */ }
   }, [theme])
 
-  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+  // theme flips sweep the new palette across the page left-to-right (View
+  // Transition API + clip-path wipe in index.css); browsers without support
+  // switch instantly, as do reduced-motion users (CSS side).
+  const toggleTheme = () => {
+    const flip = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+    if (document.startViewTransition) document.startViewTransition(() => flushSync(flip))
+    else flip()
+  }
 
   // 'space' (3D flight between floating panels, the default) or 'scroll'
   // (classic single page); the visitor's explicit toggle is remembered

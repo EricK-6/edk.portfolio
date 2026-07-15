@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { LABELS, MENU_IDS, hrefFor } from '../sitemap.js'
-import { NAME, useNameTyped } from '../nameReveal.js'
 import { useVisited } from '../passport.js'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
@@ -9,8 +8,8 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const navRef = useRef(null)
-  // sketch hints fade out once the visitor has typed the name (revealed the photo)
-  const showHints = useNameTyped() < NAME.length
+  // sketch hints fade out once the visitor starts exploring other sections
+  const showHints = useVisited().size <= 1
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -203,8 +202,15 @@ function FlightPath({ wrapRef, activeId }) {
     }
     measure()
     window.addEventListener('resize', measure)
+    // the terminal dock squeezes the page without a window resize, so watch
+    // the nav element itself too
+    const ro = new ResizeObserver(measure)
+    if (wrapRef.current) ro.observe(wrapRef.current)
     document.fonts?.ready?.then(measure) // Inter loading changes widths
-    return () => window.removeEventListener('resize', measure)
+    return () => {
+      window.removeEventListener('resize', measure)
+      ro.disconnect()
+    }
   }, [wrapRef])
 
   if (!geo) return null

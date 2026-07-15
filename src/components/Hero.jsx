@@ -1,18 +1,20 @@
 import { useEffect } from 'react'
 import { useLayout } from '../layout.js'
 import { hrefFor } from '../sitemap.js'
-import { NAME, getNameTyped, setNameTyped, useNameTyped } from '../nameReveal.js'
+import { NAME, autoCheckIn, cancelAutoCheckIn, getNameTyped, setNameTyped, useNameTyped } from '../nameReveal.js'
 import { isVipPassenger, useVisited } from '../passport.js'
 
-// Visitors can just start typing when they land on the page. Correctly typed
-// characters of NAME reveal in white; a wrong key resets back to the grey hint.
+// The passenger name prints itself shortly after load (autoCheckIn), but
+// visitors can take over and type it themselves: correctly typed characters
+// of NAME reveal in white; a wrong key resets back to the grey hint.
 // Progress lives in a shared store (nameReveal.js) so it survives Hero
-// remounting and the navbar hints can react to it. Returns how many leading
-// characters match and whether it's complete.
+// remounting on layout switches. Returns how many leading characters match
+// and whether it's complete.
 function useTypeChallenge() {
   const typed = useNameTyped()
 
   useEffect(() => {
+    autoCheckIn()
     function onKey(e) {
       // don't hijack typing inside form fields / editable elements
       const el = document.activeElement
@@ -23,11 +25,13 @@ function useTypeChallenge() {
       const n = getNameTyped()
 
       if (e.key === 'Backspace') {
+        cancelAutoCheckIn() // the visitor is playing the game themselves
         setNameTyped(n - 1)
         return
       }
       if (e.key.length !== 1) return // ignore Tab, Enter, arrows, etc.
       if (n >= NAME.length) return // already complete
+      cancelAutoCheckIn()
 
       if (e.key === NAME[n]) {
         if (e.key === ' ') e.preventDefault() // typing the space shouldn't scroll the page
@@ -64,7 +68,10 @@ function Field({ label, children, className = '' }) {
 export default function Hero() {
   const layout = useLayout()
   const { typed, done } = useTypeChallenge()
-  const vip = isVipPassenger(useVisited())
+  const visited = useVisited()
+  const vip = isVipPassenger(visited)
+  // hand-drawn hints stay until the visitor starts exploring other sections
+  const fresh = visited.size <= 1
 
   return (
     <section
@@ -127,6 +134,8 @@ export default function Hero() {
               >
                 {done ? (
                   <span className="animate-fade-in text-sm font-semibold text-accent dark:text-accent-dark">Identity verified - Welcome aboard :)</span>
+                ) : typed > 0 ? (
+                  <span className="text-grey-400 dark:text-grey-500">checking in…</span>
                 ) : (
                   <span className="text-grey-400 dark:text-grey-500">⌨ type my name to check in</span>
                 )}
@@ -205,8 +214,8 @@ export default function Hero() {
                       className="flex-1 transition hover:bg-grey-200/80 dark:hover:bg-grey-800/60"
                     />
                   </div>
-                  {/* hand-drawn hints (until check-in): which half is which */}
-                  {!done && (
+                  {/* hand-drawn hints (until they explore): which half is which */}
+                  {fresh && (
                     <div
                       aria-hidden="true"
                       className="flex justify-around pt-0.5 font-sketch text-[14px] leading-none text-accent/80 dark:text-accent-dark/80"

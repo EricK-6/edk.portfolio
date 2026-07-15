@@ -108,6 +108,29 @@
   .galaxy-spin { animation: none; }
 }
 
+/* sky mode (light theme): clouds drift gently side to side */
+@keyframes cloud-drift {
+  from { transform: translateX(-28px); }
+  to { transform: translateX(28px); }
+}
+.cloud-drift {
+  animation: cloud-drift 60s ease-in-out infinite alternate;
+}
+
+/* sky mode: the hot-air balloon bobs on the breeze */
+@keyframes balloon-bob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-14px) rotate(1.5deg); }
+}
+.balloon-bob {
+  animation: balloon-bob 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-drift,
+  .balloon-bob { animation: none; }
+}
+
 /* hero tech ribbon: two identical groups scroll left; -50% lands exactly on
    the second copy so the loop is seamless */
 @keyframes marquee {
@@ -127,6 +150,28 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .star-twinkle { animation: none !important; opacity: 0.6; }
+}
+
+/* theme toggle: the new palette wipes across the page left-to-right.
+   App.jsx wraps the theme flip in document.startViewTransition; the old
+   snapshot holds still underneath while a clip-path reveals the new one.
+   Browsers without the View Transition API just switch instantly. */
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  animation: theme-wipe 700ms ease-in-out both;
+  mix-blend-mode: normal;
+}
+@keyframes theme-wipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }
 
 /* print: the page prints as one clean light document. App.jsx flips space

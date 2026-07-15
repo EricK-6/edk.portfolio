@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Section from './Section.jsx'
-import { useLayout } from '../layout.js'
+import { useLayout, usePanelActive } from '../layout.js'
 
 const PROJECTS = [
   {
@@ -339,11 +339,25 @@ function ProjectIcon({ type }) {
 function ProjectCard({ project, space }) {
   const { title, tag, year, period, org, role, highlights, tech, color, initial, image, video, featured, links, log } = project
   const [logOpen, setLogOpen] = useState(false)
+
+  // the demo clip only plays while its panel is the one on camera — space
+  // mode keeps every section mounted, and a looping video on a hidden panel
+  // is pure battery drain
+  const panelActive = usePanelActive()
+  const videoRef = useRef(null)
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (panelActive) v.play().catch(() => { /* autoplay policy: poster stays */ })
+    else v.pause()
+  }, [panelActive])
+
   return (
     <article className={`card flex h-full flex-col overflow-hidden ${space ? 'p-4' : ''} ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
       <div className={`relative ${space ? '-m-4 mb-4 h-28' : '-m-6 mb-6 h-44'} overflow-hidden ${image || video ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
         {video ? (
           <video
+            ref={videoRef}
             src={video}
             poster={image}
             muted

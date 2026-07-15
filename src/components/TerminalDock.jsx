@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { goTo } from '../router.js'
-import { NAME, useNameTyped } from '../nameReveal.js'
+import { useVisited } from '../passport.js'
 import { useLayout } from '../layout.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
@@ -160,8 +160,8 @@ function Prompt({ path = '~' }) {
 }
 
 export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
-  // the handle hint fades once the visitor has typed the name (like the navbar hints)
-  const showHints = useNameTyped() < NAME.length
+  // the handle hint fades once the visitor starts exploring (like the navbar hints)
+  const showHints = useVisited().size <= 1
   const [lines, setLines] = useState(() => [
     'erickk.cloud - interactive shell',
     "run 'ls' to look around, or 'help' for commands.",

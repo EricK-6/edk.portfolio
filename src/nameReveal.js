@@ -26,3 +26,29 @@ export function useNameTyped() {
     getNameTyped,
   )
 }
+
+// The boarding pass prints the passenger name by itself shortly after load,
+// so the name is never left grey for visitors who don't type (recruiters
+// skimming, anyone on a phone). Manual typing remains as an easter egg:
+// any keypress cancels the printer and hands the keyboard over.
+let autoTimer = null
+let autoStarted = false
+
+export function autoCheckIn(delayMs = 900) {
+  if (autoStarted || typed >= NAME.length) return
+  autoStarted = true
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setNameTyped(NAME.length)
+    return
+  }
+  const tick = () => {
+    setNameTyped(getNameTyped() + 1)
+    if (getNameTyped() < NAME.length) autoTimer = setTimeout(tick, 75)
+  }
+  autoTimer = setTimeout(tick, delayMs)
+}
+
+export function cancelAutoCheckIn() {
+  clearTimeout(autoTimer)
+  autoStarted = true // the visitor took the keyboard; don't restart
+}
