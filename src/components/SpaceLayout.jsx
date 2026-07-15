@@ -132,10 +132,20 @@ const camT = (c) =>
 
 // the overview camera: mostly frontal, nudged up and to the side. The
 // scale3d squashes the vortex's depth to less than half before the pull-back,
-// packing all nine cards into one tight, glanceable cluster with only a mild
+// packing all nine cards into one glanceable cluster with only a mild
 // near/far size difference.
 const OVERVIEW_T =
-  'translate3d(0px, 0px, -6500px) rotateX(-7deg) rotateY(-14deg) scale3d(1, 1, 0.45) translate3d(0px, 0px, 8000px)'
+  'translate3d(0px, 0px, -7200px) rotateX(-10deg) rotateY(-24deg) scale3d(1, 1, 0.45) translate3d(0px, 0px, 8000px)'
+
+// on the map, stops fan outward from the axis (positions spread, cards stay
+// their size) so the nine cards separate instead of stacking on the axis —
+// the cards are wider than the flight orbit itself
+const OVERVIEW_SPREAD = 2.4
+
+// home and contact sit ON the axis, so the fan-out can't separate them:
+// contact (index 8) would hide dead-centre behind everything. Nudge it into
+// the map's empty centre-bottom instead.
+const OVERVIEW_NUDGE = { 8: { x: -400, y: 2100 } }
 
 // -- background scenery -----------------------------------------------------
 // Everything below lives inside the world transform, so it parallaxes with
@@ -635,6 +645,40 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
     // handlers read live position via refs, so they bind once
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 2D click layer for the map: Chrome's hit-testing cannot reach buttons on
+  // panels deep inside the preserve-3d scene (pointer events land on the flat
+  // ancestors — verified with elementFromPoint), so once the zoom-out settles
+  // we measure each panel's projected screen box and lay a plain screen-space
+  // button over it. Bulletproof clicks, keyboard-focusable, hover ring free.
+  const mainRef = useRef(null)
+  const panelBoxRefs = useRef([])
+  const [mapRects, setMapRects] = useState(null)
+  useEffect(() => {
+    if (!overview) { setMapRects(null); return }
+    const measure = () => {
+      const mainEl = mainRef.current
+      if (!mainEl) return
+      const mr = mainEl.getBoundingClientRect()
+      setMapRects(
+        order
+          .map((pid, i) => {
+            const el = panelBoxRefs.current[i]
+            if (!el) return null
+            const r = el.getBoundingClientRect()
+            return { pid, left: r.left - mr.left, top: r.top - mr.top, width: r.width, height: r.height }
+          })
+          .filter(Boolean)
+      )
+    }
+    const t = setTimeout(measure, ARC_MS + 120) // after the zoom settles
+    window.addEventListener('resize', measure)
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('resize', measure)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overview, order])
+
   // subtle camera sway following the cursor (mouse only), for depth feel.
   // Frozen (and reset) on the overview map so click targets hold still.
   useEffect(() => {
@@ -717,6 +761,7 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
 
   return (
     <main
+      ref={mainRef}
       className="fixed right-0 top-16 bottom-0 overflow-hidden bg-gradient-to-b from-grey-200 to-white transition-[left] duration-300 ease-out dark:from-black dark:to-grey-950"
       style={{ left: off, perspective: '1200px', perspectiveOrigin: '50% 45%' }}
     >
@@ -799,6 +844,9 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
             const d = Math.abs(i - index)
             const active = i === index
             const Component = components[pid]
+            const nudge = OVERVIEW_NUDGE[i]
+            const px = overview ? s.x * OVERVIEW_SPREAD + (nudge?.x ?? 0) : s.x
+            const py = overview ? s.y * OVERVIEW_SPREAD + (nudge?.y ?? 0) : s.y
             return (
               // NOTE: panels must stay opacity:1 — Chrome flattens translucent
               // participants of a preserve-3d context to DOM paint order, which
@@ -812,9 +860,9 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
                 className="absolute left-1/2 top-1/2 h-0 w-0"
                 style={{
                   transformStyle: 'preserve-3d',
-                  // on the map, cards grow a little around their own stop so
-                  // the far end of the spiral stays legible
-                  transform: `translate3d(${s.x}px, ${s.y}px, ${s.z}px) rotateY(${s.ry}deg) rotateX(${s.rx}deg) rotateZ(${s.rz}deg) scale(${overview ? 1.4 : 1})`,
+                  // on the map, positions fan outward and cards grow a touch
+                  // so every stop is individually visible
+                  transform: `translate3d(${px}px, ${py}px, ${s.z}px) rotateY(${s.ry}deg) rotateX(${s.rx}deg) rotateZ(${s.rz}deg) scale(${overview ? 1.2 : 1})`,
                   transition: reduce ? undefined : `transform ${ARC_MS}ms ease`,
                   // map paint order follows the route (home in front); in
                   // flight it mirrors proximity so neighbours win clicks
@@ -827,6 +875,7 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
                     -36px bias centres it in the free band between the navbar
                     and the HUD rather than in the stage. */}
                 <div
+                  ref={(el) => (panelBoxRefs.current[i] = el)}
                   className="absolute"
                   style={{ transform: 'translate(-50%, calc(-50% - 36px))' }}
                 >
@@ -861,15 +910,15 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
                       transition: `opacity ${ARC_MS}ms ease`,
                     }}
                   />
-                  {/* neighbours (and, on the map, every stop) are one big
-                      "fly here" button; on the map the target extends well
-                      past the card so aiming stays easy */}
-                  {(!active || overview) && (
+                  {/* the dimmed neighbour is one big "fly here" button; on the
+                      map these 3D buttons are unreachable by the pointer, so
+                      the screen-space click layer takes over instead */}
+                  {!active && !overview && (
                     <button
                       type="button"
                       aria-label={`Fly to ${LABELS[pid]}`}
-                      onClick={() => { goTo(pid, 'space'); setOverview(false) }}
-                      className={`absolute z-10 cursor-pointer ${overview ? '-inset-24' : 'inset-0 rounded-2xl'}`}
+                      onClick={() => goTo(pid, 'space')}
+                      className="absolute inset-0 z-10 cursor-pointer rounded-2xl"
                     />
                   )}
                 </div>
@@ -878,6 +927,22 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
           })}
         </div>
       </div>
+
+      {/* the map's screen-space click layer (see mapRects above) */}
+      {overview && mapRects && (
+        <div className="absolute inset-0 z-20">
+          {mapRects.map((r) => (
+            <button
+              key={r.pid}
+              type="button"
+              aria-label={`Fly to ${LABELS[r.pid]}`}
+              onClick={() => { goTo(r.pid, 'space'); setOverview(false) }}
+              className="absolute cursor-pointer rounded-xl border-2 border-transparent transition hover:border-accent/70 hover:bg-accent/5 focus-visible:border-accent dark:hover:border-accent-dark/70 dark:hover:bg-accent-dark/10 dark:focus-visible:border-accent-dark"
+              style={{ left: r.left - 10, top: r.top - 10, width: r.width + 20, height: r.height + 20 }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* HUD: flight position, jump dots, and controls */}
       <div

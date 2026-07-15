@@ -116,7 +116,7 @@ export default function Hero() {
 
             <div className="mt-5">
               <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
-                Passenger <span className="normal-case tracking-normal">👋</span>
+                Kia Ora! Passenger <span className="normal-case tracking-normal">👋</span>
               </div>
               <h1 aria-label={NAME} className="mt-1 min-h-[1.1em] text-3xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">
                 <span aria-hidden="true">
