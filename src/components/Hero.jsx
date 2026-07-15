@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useLayout } from '../layout.js'
 import { hrefFor } from '../sitemap.js'
 import { NAME, getNameTyped, setNameTyped, useNameTyped } from '../nameReveal.js'
-import { isFrequentFlyer, useVisited } from '../passport.js'
+import { isVipPassenger, useVisited } from '../passport.js'
 
 // Visitors can just start typing when they land on the page. Correctly typed
 // characters of NAME reveal in white; a wrong key resets back to the grey hint.
@@ -64,7 +64,7 @@ function Field({ label, children, className = '' }) {
 export default function Hero() {
   const layout = useLayout()
   const { typed, done } = useTypeChallenge()
-  const frequentFlyer = isFrequentFlyer(useVisited())
+  const vip = isVipPassenger(useVisited())
 
   return (
     <section
@@ -85,14 +85,14 @@ export default function Hero() {
           {/* main segment */}
           <div className="relative p-6 sm:p-8">
             {/* rubber stamp earned by visiting every section (see passport.js) */}
-            {frequentFlyer && (
+            {vip && (
               <div
-                aria-label="Frequent flyer — all sections visited"
+                aria-label="VIP passenger — all sections visited"
                 className="pointer-events-none absolute right-4 top-14 z-10 hidden -rotate-12 animate-fade-in rounded-lg border-2 border-emerald-600/60 px-2.5 py-1.5 text-center sm:block dark:border-emerald-500/60"
               >
                 <div className="rounded border border-emerald-600/40 px-2 py-1 dark:border-emerald-500/40">
                   <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-600/90 dark:text-emerald-500/90">
-                    ★ Frequent flyer
+                    ★ VIP Passenger
                   </div>
                   <div className="font-mono text-[8px] uppercase tracking-[0.25em] text-emerald-600/70 dark:text-emerald-500/70">
                     all sectors · EK-2027

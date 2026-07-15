@@ -8,6 +8,7 @@ const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigat
 export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, activeId }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const navRef = useRef(null)
   // sketch hints fade out once the visitor has typed the name (revealed the photo)
   const showHints = useNameTyped() < NAME.length
 
@@ -26,8 +27,9 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
           : 'border-b border-transparent'
       }`}
     >
-      <nav className="container-page flex h-16 items-center justify-between">
-        <a href={hrefFor('home', layout)} className="font-bold tracking-tight text-lg">
+      <nav ref={navRef} className="container-page relative flex h-16 items-center justify-between">
+        {/* the logo doubles as the flight path's home stop (data-nav-id) */}
+        <a href={hrefFor('home', layout)} data-nav-id="home" className="font-bold tracking-tight text-lg">
           Eric Kim<span className="text-accent dark:text-accent-dark">.</span>
           <span className="ml-2 hidden align-middle font-mono text-[9px] font-normal uppercase tracking-[0.3em] text-grey-400 dark:text-grey-600 xl:inline">
             EK·2027
@@ -35,6 +37,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
         </a>
 
         <FlightDeckNav layout={layout} activeId={activeId} />
+        <FlightPath wrapRef={navRef} activeId={activeId} />
 
         <div className="flex items-center gap-2 print:hidden">
           <button
@@ -114,12 +117,11 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
 }
 
 // -- the flight deck ----------------------------------------------------------
-// All nine stops as cockpit radio presets (mono three-letter codes with LED
-// state dots) sitting along the ribbon's dotted flight path: the little plane
-// parks under the active preset and glides between stops, and stops the
-// visitor has seen carry a passport-stamp dot.
+// The eight section stops as cockpit radio presets (mono three-letter codes
+// with LED state dots) sitting along a dotted flight path that departs from
+// the logo (the home stop): the little plane parks under wherever the visitor
+// is and glides between stops, and visited stops carry a passport-stamp dot.
 const PRESET = {
-  home: 'HOM',
   about: 'ABT',
   projects: 'PRJ',
   experience: 'EXP',
@@ -130,12 +132,12 @@ const PRESET = {
   contact: 'CNT',
 }
 
+const DECK_IDS = MENU_IDS.filter((id) => id !== 'home')
+
 function FlightDeckNav({ layout, activeId }) {
-  const wrapRef = useRef(null)
   return (
-    <div ref={wrapRef} className="relative hidden lg:block">
-      <ul className="flex items-center gap-1.5">
-        {MENU_IDS.map((linkId) => {
+      <ul className="hidden items-center gap-1.5 lg:flex">
+        {DECK_IDS.map((linkId) => {
           const active = activeId === linkId
           return (
             <li key={linkId}>
@@ -161,15 +163,13 @@ function FlightDeckNav({ layout, activeId }) {
           )
         })}
       </ul>
-      <FlightPath wrapRef={wrapRef} activeId={activeId} />
-    </div>
   )
 }
 
-// The dotted route drawn under the desktop nav links. Link centres are
-// measured from the DOM (and re-measured on resize / after fonts settle);
-// the plane is absolutely positioned at the active link and a CSS left
-// transition makes it glide between stops. Purely decorative.
+// The dotted route drawn across the navbar, from the logo (home) to the last
+// preset. Stop centres are measured from the DOM (and re-measured on resize /
+// after fonts settle); the plane is absolutely positioned at the active stop
+// and a CSS left transition makes it glide between them. Purely decorative.
 function FlightPath({ wrapRef, activeId }) {
   const [centers, setCenters] = useState(null)
   const visited = useVisited()
@@ -182,7 +182,8 @@ function FlightPath({ wrapRef, activeId }) {
       const next = {}
       wrap.querySelectorAll('[data-nav-id]').forEach((el) => {
         const r = el.getBoundingClientRect()
-        next[el.dataset.navId] = r.left - wr.left + r.width / 2
+        // skip hidden stops (the deck is display:none below lg)
+        if (r.width > 0) next[el.dataset.navId] = r.left - wr.left + r.width / 2
       })
       setCenters(next)
     }
@@ -199,7 +200,7 @@ function FlightPath({ wrapRef, activeId }) {
   const planeX = centers[activeId] // undefined when the active section isn't a nav link
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-full mt-0.5 h-3">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[47px] hidden h-3 lg:block">
       <div
         className="absolute top-1/2 border-t border-dotted border-grey-400/70 dark:border-grey-700"
         style={{ left: first, width: last - first }}

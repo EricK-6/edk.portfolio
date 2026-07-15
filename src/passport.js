@@ -3,8 +3,8 @@ import { MENU_IDS } from './sitemap.js'
 
 // Passport stamps: which of the nine stops the visitor has seen, shared
 // app-wide and remembered across visits. Kept at module scope (like
-// nameReveal.js) so the widget, the hero's frequent-flyer stamp, and the
-// space HUD all react to the same progress.
+// nameReveal.js) so the widget, the hero's VIP-passenger stamp, and the
+// navbar flight path all react to the same progress.
 
 export const STAMP_IDS = MENU_IDS // home + the eight sections, reading order
 
@@ -33,4 +33,4 @@ export function useVisited() {
   )
 }
 
-export const isFrequentFlyer = (set = visited) => set.size >= STAMP_IDS.length
+export const isVipPassenger = (set = visited) => set.size >= STAMP_IDS.length

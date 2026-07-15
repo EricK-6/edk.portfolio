@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { GRID, LABELS } from '../sitemap.js'
-import { STAMP_IDS, isFrequentFlyer, useVisited } from '../passport.js'
+import { STAMP_IDS, isVipPassenger, useVisited } from '../passport.js'
 import { goTo } from '../router.js'
 import { useLayout } from '../layout.js'
 
 // Passport: a stamp per section visited. The pill sits bottom-right; clicking
 // it unfolds a 3x3 stamp sheet mirroring the site's spatial grid. Collect all
-// nine and you're a frequent flyer — confetti, once, plus a stamp on the
+// nine and you're a VIP passenger — confetti, once, plus a stamp on the
 // hero's boarding pass (rendered by Hero).
 
 // one-shot confetti burst, skipped for reduced-motion users
@@ -37,7 +37,7 @@ export default function PassportWidget() {
   const layout = useLayout()
   const visited = useVisited()
   const [open, setOpen] = useState(false)
-  const done = isFrequentFlyer(visited)
+  const done = isVipPassenger(visited)
 
   // fire the confetti exactly once, the moment the ninth stamp lands
   const wasDone = useRef(done)
@@ -64,7 +64,7 @@ export default function PassportWidget() {
               Passport
             </span>
             <span className={`font-mono text-[10px] uppercase tracking-widest ${done ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-grey-400 dark:text-grey-600'}`}>
-              {done ? '★ Frequent flyer' : `${visited.size}/${STAMP_IDS.length} stamps`}
+              {done ? '★ VIP passenger' : `${visited.size}/${STAMP_IDS.length} stamps`}
             </span>
           </div>
           {/* the site's own 3x3 spatial grid as a stamp sheet */}
@@ -98,7 +98,7 @@ export default function PassportWidget() {
             })}
           </div>
           <p className="mt-2 text-center text-[10px] text-grey-400 dark:text-grey-600">
-            {done ? 'all sectors cleared — thanks for flying' : 'visit every section to earn frequent flyer status'}
+            {done ? 'all sectors cleared — thanks for flying' : 'visit every section to earn VIP passenger status'}
           </p>
         </div>
       )}
@@ -107,7 +107,7 @@ export default function PassportWidget() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        aria-label={`Passport: ${visited.size} of ${STAMP_IDS.length} sections stamped${done ? ' — frequent flyer' : ''}`}
+        aria-label={`Passport: ${visited.size} of ${STAMP_IDS.length} sections stamped${done ? ' — VIP passenger' : ''}`}
         className={`flex items-center gap-2 rounded-full border px-3.5 py-2 font-mono text-xs shadow-lg backdrop-blur transition ${
           done
             ? 'border-emerald-600/50 bg-emerald-50/90 text-emerald-700 hover:bg-emerald-100/90 dark:border-emerald-500/50 dark:bg-emerald-950/80 dark:text-emerald-300 dark:hover:bg-emerald-900/80'
@@ -115,7 +115,7 @@ export default function PassportWidget() {
         }`}
       >
         <StampIcon done={done} />
-        {done ? 'FREQUENT FLYER' : `${visited.size}/${STAMP_IDS.length}`}
+        {done ? 'VIP PASSENGER' : `${visited.size}/${STAMP_IDS.length}`}
       </button>
     </div>
   )
