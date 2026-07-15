@@ -65,6 +65,7 @@ const PROJECTS = [
     ],
     tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'React.js', 'AWS Amplify'],
     image: './pulse.webp',
+    video: './pulse.mp4',
     color: 'from-cyan-500/20 to-blue-500/20',
     initial: 'S',
     links: [
