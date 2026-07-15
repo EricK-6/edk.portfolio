@@ -39,14 +39,9 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
         <FlightDeckNav layout={layout} activeId={activeId} />
         <FlightPath wrapRef={navRef} activeId={activeId} />
 
+        {/* terminal button intentionally absent: the dock has its own edge
+            pull-tab, plus cmd/ctrl+` and the command palette */}
         <div className="flex items-center gap-2 print:hidden">
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
-            aria-label="Open terminal"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-400/60 text-grey-600 hover:bg-grey-200 dark:border-grey-800 dark:text-grey-300 dark:hover:bg-grey-900"
-          >
-            <TerminalGlyph />
-          </button>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
             aria-label="Open command menu"
@@ -166,12 +161,20 @@ function FlightDeckNav({ layout, activeId }) {
   )
 }
 
-// The dotted route drawn across the navbar, from the logo (home) to the last
-// preset. Stop centres are measured from the DOM (and re-measured on resize /
-// after fonts settle); the plane is absolutely positioned at the active stop
-// and a CSS left transition makes it glide between them. Purely decorative.
+// The dotted route across the navbar: it departs beside the logo at the
+// logo's own height, banks down to the line under the first preset, then runs
+// straight to the last one. Stop positions are measured from the DOM (and
+// re-measured on resize / after fonts settle). The plane rides the actual
+// curve via CSS offset-path where supported (offset-rotate noses it into the
+// descent for free); elsewhere it falls back to straight left/top glides.
+// Purely decorative.
+const HOME_Y = 32 // path start beside the logo: navbar (h-16) vertical centre
+const LINE_Y = 53 // the straight stretch under the presets
+const SUPPORTS_OFFSET_PATH =
+  typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('offset-path', 'path("M0 0 L10 10")')
+
 function FlightPath({ wrapRef, activeId }) {
-  const [centers, setCenters] = useState(null)
+  const [geo, setGeo] = useState(null)
   const visited = useVisited()
 
   useEffect(() => {
@@ -179,49 +182,85 @@ function FlightPath({ wrapRef, activeId }) {
       const wrap = wrapRef.current
       if (!wrap) return
       const wr = wrap.getBoundingClientRect()
-      const next = {}
+      const centers = {}
+      let homeX = null
       wrap.querySelectorAll('[data-nav-id]').forEach((el) => {
         const r = el.getBoundingClientRect()
-        // skip hidden stops (the deck is display:none below lg)
-        if (r.width > 0) next[el.dataset.navId] = r.left - wr.left + r.width / 2
+        if (r.width <= 0) return // the deck is display:none below lg
+        if (el.dataset.navId === 'home') homeX = r.right - wr.left + 14
+        else centers[el.dataset.navId] = r.left - wr.left + r.width / 2
       })
-      setCenters(next)
+      const ids = MENU_IDS.filter((id) => centers[id] != null)
+      if (homeX == null || ids.length < 2) { setGeo(null); return }
+      const ax = centers[ids[0]] // first preset: where the descent levels off
+      const ex = centers[ids[ids.length - 1]]
+      const curveD = `M ${homeX} ${HOME_Y} C ${homeX + (ax - homeX) * 0.4} ${HOME_Y}, ${homeX + (ax - homeX) * 0.65} ${LINE_Y}, ${ax} ${LINE_Y}`
+      // arc length of the bank, so offset-distance percentages line up with stops
+      const probe = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      probe.setAttribute('d', curveD)
+      const curveLen = probe.getTotalLength()
+      setGeo({ centers, ids, homeX, ax, d: `${curveD} H ${ex}`, curveLen, totalLen: curveLen + (ex - ax) })
     }
     measure()
     window.addEventListener('resize', measure)
-    document.fonts?.ready?.then(measure) // Inter loading changes link widths
+    document.fonts?.ready?.then(measure) // Inter loading changes widths
     return () => window.removeEventListener('resize', measure)
   }, [wrapRef])
 
-  const ids = MENU_IDS.filter((id) => centers?.[id] != null)
-  if (ids.length < 2) return null
-  const first = centers[ids[0]]
-  const last = centers[ids[ids.length - 1]]
-  const planeX = centers[activeId] // undefined when the active section isn't a nav link
+  if (!geo) return null
+  const { centers, ids, homeX, ax, d, curveLen, totalLen } = geo
+  const known = activeId === 'home' || centers[activeId] != null
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const planeStyle = SUPPORTS_OFFSET_PATH
+    ? {
+        offsetPath: `path('${d}')`,
+        offsetRotate: 'auto',
+        offsetDistance: known
+          ? `${(((activeId === 'home' ? 0 : curveLen + (centers[activeId] - ax)) / totalLen) * 100).toFixed(3)}%`
+          : '0%',
+        transition: reduce ? undefined : 'offset-distance 700ms ease-in-out',
+      }
+    : {
+        left: activeId === 'home' ? homeX : centers[activeId] ?? homeX,
+        top: activeId === 'home' ? HOME_Y : LINE_Y,
+        transform: 'translate(-50%, -50%)',
+        transition: reduce ? undefined : 'left 700ms ease-in-out, top 700ms ease-in-out',
+      }
 
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[47px] hidden h-3 lg:block">
-      <div
-        className="absolute top-1/2 border-t border-dotted border-grey-400/70 dark:border-grey-700"
-        style={{ left: first, width: last - first }}
-      />
-      {/* stops: stamped once visited (passport), the active one is under the plane */}
-      {ids.map((id) =>
-        id === activeId ? null : (
-          <span
-            key={id}
-            className={`absolute top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors ${
-              visited.has(id)
-                ? 'bg-accent/70 dark:bg-accent-dark/80'
-                : 'border border-grey-400 bg-white dark:border-grey-600 dark:bg-black'
-            }`}
-            style={{ left: centers[id] }}
-          />
-        )
-      )}
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden lg:block">
+      <svg className="absolute inset-0 h-full w-full overflow-visible">
+        <path
+          d={d}
+          fill="none"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeDasharray="0.5 7"
+          className="stroke-grey-400/80 dark:stroke-grey-700"
+        />
+        {/* stops: home beside the logo, then one per preset. Stamped once
+            visited (passport); the active one is under the plane. */}
+        {[['home', homeX, HOME_Y], ...ids.map((id) => [id, centers[id], LINE_Y])].map(([id, cx, cy]) =>
+          id === activeId ? null : (
+            <circle
+              key={id}
+              cx={cx}
+              cy={cy}
+              r="2.5"
+              strokeWidth="1"
+              className={
+                visited.has(id)
+                  ? 'fill-accent/70 stroke-none dark:fill-accent-dark/80'
+                  : 'fill-white stroke-grey-400 dark:fill-black dark:stroke-grey-600'
+              }
+            />
+          )
+        )}
+      </svg>
       <span
-        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-accent transition-[left,opacity] duration-700 ease-in-out motion-reduce:transition-none dark:text-accent-dark"
-        style={{ left: planeX ?? first, opacity: planeX == null ? 0 : 1 }}
+        className="absolute left-0 top-0 block h-[13px] w-[13px] text-accent dark:text-accent-dark"
+        style={{ ...planeStyle, opacity: known ? 1 : 0 }}
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
           <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" />
@@ -294,14 +333,6 @@ function OrbitIcon() {
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="4" />
       <ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-18 12 12)" />
-    </svg>
-  )
-}
-
-function TerminalGlyph() {
-  return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
     </svg>
   )
 }

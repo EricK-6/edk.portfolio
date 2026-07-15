@@ -17,7 +17,7 @@ const PROJECTS = [
     ],
     tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.webp',
-    // video: './winnie.mp4', // drop the clip into public/ and uncomment
+    video: './winnie.mp4',
     featured: true,
     color: 'from-amber-500/20 to-rose-500/20',
     initial: 'W',
@@ -106,6 +106,7 @@ const PROJECTS = [
     ],
     tech: ['C', 'Atmel AVR', 'ATmega328P', 'Altium Designer', 'LTspice'],
     image: './energy_monitor.webp',
+    video: './smart.mp4',
     color: 'from-emerald-500/20 to-teal-500/20',
     initial: 'E',
     links: [
@@ -125,6 +126,7 @@ const PROJECTS = [
     ],
     tech: ['VHDL', 'Intel Quartus Prime', 'Altera FPGA'],
     image: './flappy_universe.webp',
+    video: './flappy.mp4',
     color: 'from-lime-500/20 to-green-500/20',
     initial: 'F',
     links: [
