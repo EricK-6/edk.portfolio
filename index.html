@@ -60,5 +60,23 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- GoatCounter (privacy-friendly analytics). The site is a hash-routed
+         SPA, so '#/about' is normalised to '/about' and every hash navigation
+         counts as a pageview; it skips localhost by itself. -->
+    <script>
+      window.goatcounter = {
+        path: function () {
+          return '/' + location.hash.replace(/^#\/?/, '')
+        },
+      }
+      window.addEventListener('hashchange', function () {
+        if (window.goatcounter && typeof window.goatcounter.count === 'function') {
+          window.goatcounter.count()
+        }
+      })
+    </script>
+    <script data-goatcounter="https://erickk.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
   </body>
 </html>
