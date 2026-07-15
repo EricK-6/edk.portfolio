@@ -38,7 +38,14 @@ const PROJECTS = [
         ],
       },
       {
-        code: '03 · LANDING',
+        code: '03 · TURBULENCE',
+        body: [
+          "The enclosure fought back at the CAD stage. Winnie's parts are doll sized, small enough that measuring them by eye was hopeless and their true dimensions were genuinely hard to pin down.",
+          'The fix was proper metrology: vernier calipers and lab grade measurement equipment, one component at a time, recording actual sizes until the numbers could be trusted. Those measurements became the 3D CAD model the final enclosure was built from.',
+        ],
+      },
+      {
+        code: '04 · LANDING',
         body: [
           '3rd place at the UoA ECSE Design Competition 2025, awarded by the Department of ECSE in September 2025.',
         ],
@@ -485,9 +492,6 @@ function FlightLogModal({ project, onClose }) {
               ))}
             </section>
           ))}
-          <p className="border-t border-dashed border-grey-300 pt-3 font-mono text-[11px] text-grey-400 dark:border-grey-800 dark:text-grey-600">
-            // turbulence & debrief entries: logging soon
-          </p>
         </div>
       </div>
     </div>,

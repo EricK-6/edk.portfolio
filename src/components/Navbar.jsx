@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LABELS, MENU_IDS, NAV_IDS, hrefFor } from '../sitemap.js'
 import { NAME, useNameTyped } from '../nameReveal.js'
+import { useVisited } from '../passport.js'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
 export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, activeId }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const navWrapRef = useRef(null)
   // sketch hints fade out once the visitor has typed the name (revealed the photo)
   const showHints = useNameTyped() < NAME.length
 
@@ -28,25 +30,35 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
       <nav className="container-page flex h-16 items-center justify-between">
         <a href={hrefFor('home', layout)} className="font-bold tracking-tight text-lg">
           Eric Kim<span className="text-accent dark:text-accent-dark">.</span>
+          <span className="ml-2 hidden align-middle font-mono text-[9px] font-normal uppercase tracking-[0.3em] text-grey-400 dark:text-grey-600 lg:inline">
+            EK·2027
+          </span>
         </a>
 
-        <ul className="hidden lg:flex items-center gap-5 text-sm">
-          {NAV_IDS.map((linkId) => (
-            <li key={linkId}>
-              <a
-                href={hrefFor(linkId, layout)}
-                aria-current={activeId === linkId ? 'page' : undefined}
-                className={`transition-colors ${
-                  activeId === linkId
-                    ? 'text-accent dark:text-grey-100'
-                    : 'text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100'
-                }`}
-              >
-                {LABELS[linkId]}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {/* the links sit along a dotted flight path: a little plane parks at
+            the active section and glides on navigation, and visited stops
+            carry a passport-stamp dot (see FlightPath below) */}
+        <div ref={navWrapRef} className="relative hidden lg:block">
+          <ul className="flex items-center gap-6 text-sm">
+            {NAV_IDS.map((linkId) => (
+              <li key={linkId}>
+                <a
+                  data-nav-id={linkId}
+                  href={hrefFor(linkId, layout)}
+                  aria-current={activeId === linkId ? 'page' : undefined}
+                  className={`transition-colors ${
+                    activeId === linkId
+                      ? 'text-accent dark:text-grey-100'
+                      : 'text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100'
+                  }`}
+                >
+                  {LABELS[linkId]}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <FlightPath wrapRef={navWrapRef} activeId={activeId} />
+        </div>
 
         <div className="flex items-center gap-2 print:hidden">
           <button
@@ -122,6 +134,70 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
         </div>
       )}
     </header>
+  )
+}
+
+// The dotted route drawn under the desktop nav links. Link centres are
+// measured from the DOM (and re-measured on resize / after fonts settle);
+// the plane is absolutely positioned at the active link and a CSS left
+// transition makes it glide between stops. Purely decorative.
+function FlightPath({ wrapRef, activeId }) {
+  const [centers, setCenters] = useState(null)
+  const visited = useVisited()
+
+  useEffect(() => {
+    const measure = () => {
+      const wrap = wrapRef.current
+      if (!wrap) return
+      const wr = wrap.getBoundingClientRect()
+      const next = {}
+      wrap.querySelectorAll('[data-nav-id]').forEach((el) => {
+        const r = el.getBoundingClientRect()
+        next[el.dataset.navId] = r.left - wr.left + r.width / 2
+      })
+      setCenters(next)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    document.fonts?.ready?.then(measure) // Inter loading changes link widths
+    return () => window.removeEventListener('resize', measure)
+  }, [wrapRef])
+
+  const ids = NAV_IDS.filter((id) => centers?.[id] != null)
+  if (ids.length < 2) return null
+  const first = centers[ids[0]]
+  const last = centers[ids[ids.length - 1]]
+  const planeX = centers[activeId] // undefined when the active section isn't a nav link
+
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-full mt-0.5 h-3">
+      <div
+        className="absolute top-1/2 border-t border-dotted border-grey-400/70 dark:border-grey-700"
+        style={{ left: first, width: last - first }}
+      />
+      {/* stops: stamped once visited (passport), the active one is under the plane */}
+      {ids.map((id) =>
+        id === activeId ? null : (
+          <span
+            key={id}
+            className={`absolute top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors ${
+              visited.has(id)
+                ? 'bg-accent/70 dark:bg-accent-dark/80'
+                : 'border border-grey-400 bg-white dark:border-grey-600 dark:bg-black'
+            }`}
+            style={{ left: centers[id] }}
+          />
+        )
+      )}
+      <span
+        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-accent transition-[left,opacity] duration-700 ease-in-out motion-reduce:transition-none dark:text-accent-dark"
+        style={{ left: planeX ?? first, opacity: planeX == null ? 0 : 1 }}
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" />
+        </svg>
+      </span>
+    </div>
   )
 }
 
