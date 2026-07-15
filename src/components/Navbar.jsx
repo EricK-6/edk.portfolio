@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { LABELS, MENU_IDS, NAV_IDS, hrefFor } from '../sitemap.js'
+import { LABELS, MENU_IDS, hrefFor } from '../sitemap.js'
 import { NAME, useNameTyped } from '../nameReveal.js'
 import { useVisited } from '../passport.js'
 
@@ -10,19 +10,6 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
   const [open, setOpen] = useState(false)
   // sketch hints fade out once the visitor has typed the name (revealed the photo)
   const showHints = useNameTyped() < NAME.length
-
-  // TEMPORARY: trialling three navbar styles (ribbon / board / cockpit).
-  // Remove this state + the switcher pills once one is chosen.
-  const [navStyle, setNavStyle] = useState(() => {
-    try {
-      const saved = localStorage.getItem('navstyle')
-      if (saved === 'board' || saved === 'cockpit') return saved
-    } catch { /* private mode */ }
-    return 'ribbon'
-  })
-  useEffect(() => {
-    try { localStorage.setItem('navstyle', navStyle) } catch { /* private mode */ }
-  }, [navStyle])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -41,47 +28,15 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
     >
       <nav className="container-page flex h-16 items-center justify-between">
         <a href={hrefFor('home', layout)} className="font-bold tracking-tight text-lg">
-          {navStyle === 'board' ? (
-            <span className="font-mono text-base font-bold tracking-widest">
-              ERICKK<span className="text-amber-500">//</span>INTL
-            </span>
-          ) : (
-            <>
-              Eric Kim<span className="text-accent dark:text-accent-dark">.</span>
-              <span className="ml-2 hidden align-middle font-mono text-[9px] font-normal uppercase tracking-[0.3em] text-grey-400 dark:text-grey-600 lg:inline">
-                EK·2027
-              </span>
-            </>
-          )}
+          Eric Kim<span className="text-accent dark:text-accent-dark">.</span>
+          <span className="ml-2 hidden align-middle font-mono text-[9px] font-normal uppercase tracking-[0.3em] text-grey-400 dark:text-grey-600 xl:inline">
+            EK·2027
+          </span>
         </a>
 
-        {navStyle === 'ribbon' && <RibbonNav layout={layout} activeId={activeId} />}
-        {navStyle === 'board' && <BoardNav layout={layout} activeId={activeId} />}
-        {navStyle === 'cockpit' && <CockpitNav layout={layout} activeId={activeId} />}
+        <FlightDeckNav layout={layout} activeId={activeId} />
 
         <div className="flex items-center gap-2 print:hidden">
-          {/* TEMPORARY: navbar style trial — R(ibbon) / B(oard) / C(ockpit).
-              Delete this block once a style is chosen. */}
-          <div
-            className="hidden items-center gap-0.5 rounded-lg border border-dashed border-grey-400/60 p-0.5 lg:flex dark:border-grey-700"
-            title="temporary: navbar style trial"
-          >
-            {[['ribbon', 'R'], ['board', 'B'], ['cockpit', 'C']].map(([style, letter]) => (
-              <button
-                key={style}
-                onClick={() => setNavStyle(style)}
-                aria-label={`Try ${style} navbar`}
-                aria-pressed={navStyle === style}
-                className={`rounded px-1.5 py-0.5 font-mono text-[10px] transition ${
-                  navStyle === style
-                    ? 'bg-grey-200 text-grey-900 dark:bg-grey-800 dark:text-grey-100'
-                    : 'text-grey-400 hover:text-grey-700 dark:text-grey-600 dark:hover:text-grey-300'
-                }`}
-              >
-                {letter}
-              </button>
-            ))}
-          </div>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
             aria-label="Open terminal"
@@ -158,130 +113,39 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
   )
 }
 
-// -- navbar style 1: flight-path ribbon --------------------------------------
-// Plain text links along a dotted route; the plane parks at the active
-// section and visited stops carry passport-stamp dots.
-function RibbonNav({ layout, activeId }) {
-  const wrapRef = useRef(null)
-  return (
-    <div ref={wrapRef} className="relative hidden lg:block">
-      <ul className="flex items-center gap-6 text-sm">
-        {NAV_IDS.map((linkId) => (
-          <li key={linkId}>
-            <a
-              data-nav-id={linkId}
-              href={hrefFor(linkId, layout)}
-              aria-current={activeId === linkId ? 'page' : undefined}
-              className={`transition-colors ${
-                activeId === linkId
-                  ? 'text-accent dark:text-grey-100'
-                  : 'text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100'
-              }`}
-            >
-              {LABELS[linkId]}
-            </a>
-          </li>
-        ))}
-      </ul>
-      <FlightPath wrapRef={wrapRef} activeId={activeId} />
-    </div>
-  )
-}
-
-// -- navbar style 2: departures board ----------------------------------------
-// Solari-style split-flap board: mono uppercase links whose letters flick
-// through random characters on hover before settling, and the active section
-// wears the amber NOW BOARDING treatment.
-const FLAP_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-function SplitFlap({ text }) {
-  const [display, setDisplay] = useState(text)
-  const timer = useRef(null)
-
-  const spin = () => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    clearInterval(timer.current)
-    let tick = 0
-    timer.current = setInterval(() => {
-      tick += 1
-      if (tick > text.length + 4) {
-        clearInterval(timer.current)
-        setDisplay(text)
-        return
-      }
-      // letters settle left to right, the rest keep flapping
-      setDisplay(
-        text
-          .split('')
-          .map((ch, i) => (tick > i + 3 ? ch : FLAP_CHARS[Math.floor(Math.random() * FLAP_CHARS.length)]))
-          .join('')
-      )
-    }, 42)
-  }
-
-  useEffect(() => () => clearInterval(timer.current), [])
-  return <span onMouseEnter={spin}>{display}</span>
-}
-
-function BoardNav({ layout, activeId }) {
-  return (
-    <ul className="hidden items-center gap-6 font-mono text-xs tracking-[0.2em] lg:flex">
-      {NAV_IDS.map((linkId) => {
-        const active = activeId === linkId
-        return (
-          <li key={linkId} className="relative">
-            <a
-              href={hrefFor(linkId, layout)}
-              aria-current={active ? 'page' : undefined}
-              className={`transition-colors ${
-                active
-                  ? 'text-amber-500 dark:text-amber-400'
-                  : 'text-grey-600 hover:text-grey-900 dark:text-grey-400 dark:hover:text-grey-100'
-              }`}
-            >
-              <SplitFlap text={LABELS[linkId].toUpperCase()} />
-            </a>
-            {active && (
-              <span
-                aria-hidden="true"
-                className="absolute left-1/2 top-full mt-0.5 -translate-x-1/2 whitespace-nowrap text-[8px] tracking-[0.25em] text-amber-500/90 dark:text-amber-400/90"
-              >
-                <span className="animate-blink">▸</span> NOW BOARDING
-              </span>
-            )}
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-
-// -- navbar style 3: cockpit instrument strip ---------------------------------
-// Links as radio-channel presets with LED state dots, plus a live ALT readout
-// showing position along the full flight (all nine stops).
+// -- the flight deck ----------------------------------------------------------
+// All nine stops as cockpit radio presets (mono three-letter codes with LED
+// state dots) sitting along the ribbon's dotted flight path: the little plane
+// parks under the active preset and glides between stops, and stops the
+// visitor has seen carry a passport-stamp dot.
 const PRESET = {
+  home: 'HOM',
   about: 'ABT',
   projects: 'PRJ',
   experience: 'EXP',
   skills: 'SKL',
+  education: 'EDU',
+  certifications: 'CRD',
+  leadership: 'LDR',
   contact: 'CNT',
 }
 
-function CockpitNav({ layout, activeId }) {
-  const idx = MENU_IDS.indexOf(activeId)
+function FlightDeckNav({ layout, activeId }) {
+  const wrapRef = useRef(null)
   return (
-    <div className="hidden items-center gap-4 lg:flex">
+    <div ref={wrapRef} className="relative hidden lg:block">
       <ul className="flex items-center gap-1.5">
-        {NAV_IDS.map((linkId) => {
+        {MENU_IDS.map((linkId) => {
           const active = activeId === linkId
           return (
             <li key={linkId}>
               <a
+                data-nav-id={linkId}
                 href={hrefFor(linkId, layout)}
                 title={LABELS[linkId]}
                 aria-label={LABELS[linkId]}
                 aria-current={active ? 'page' : undefined}
-                className={`flex items-center gap-1.5 rounded border px-2 py-1 font-mono text-[11px] tracking-wider transition ${
+                className={`flex items-center gap-1.5 rounded border px-1.5 py-1 font-mono text-[11px] tracking-wider transition xl:px-2 ${
                   active
                     ? 'border-accent/60 bg-grey-200/70 text-accent dark:border-accent-dark/60 dark:bg-grey-900 dark:text-accent-dark'
                     : 'border-grey-300 text-grey-500 hover:border-grey-400 hover:text-grey-800 dark:border-grey-800 dark:text-grey-500 dark:hover:border-grey-600 dark:hover:text-grey-200'
@@ -297,9 +161,7 @@ function CockpitNav({ layout, activeId }) {
           )
         })}
       </ul>
-      <span className="font-mono text-[10px] tracking-[0.2em] text-grey-500 dark:text-grey-500">
-        ALT {String(idx + 1).padStart(2, '0')}/{String(MENU_IDS.length).padStart(2, '0')}
-      </span>
+      <FlightPath wrapRef={wrapRef} activeId={activeId} />
     </div>
   )
 }
@@ -330,7 +192,7 @@ function FlightPath({ wrapRef, activeId }) {
     return () => window.removeEventListener('resize', measure)
   }, [wrapRef])
 
-  const ids = NAV_IDS.filter((id) => centers?.[id] != null)
+  const ids = MENU_IDS.filter((id) => centers?.[id] != null)
   if (ids.length < 2) return null
   const first = centers[ids[0]]
   const last = centers[ids[ids.length - 1]]

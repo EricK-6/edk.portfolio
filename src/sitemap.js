@@ -27,12 +27,9 @@ export const LABELS = {
 // The eight section ids in reading order (everything except home).
 export const SECTION_IDS = GRID.flat().filter((id) => id !== 'home')
 
-// The five sections shown as links in the top nav bar (the rest stay reachable
-// via the minimap, edge arrows, command palette, and mobile menu).
-export const NAV_IDS = ['about', 'projects', 'experience', 'skills', 'contact']
-
-// All pages in a sensible reading order (home first) for the mobile menu — the
-// grid above is laid out spatially, not in reading order.
+// All pages in a sensible reading order (home first), used by the navbar's
+// flight deck and the mobile menu — the grid above is laid out spatially,
+// not in reading order.
 export const MENU_IDS = [
   'home', 'about', 'projects', 'experience', 'skills',
   'education', 'certifications', 'leadership', 'contact',
