@@ -79,8 +79,11 @@ export default function Contact() {
             <Field label="Your name" error={errors.name}>
               <input
                 type="text"
+                name="name"
+                autoComplete="name"
                 value={name}
                 onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: '' })) }}
+                aria-invalid={errors.name ? true : undefined}
                 className={inputClass(errors.name)}
                 placeholder="Jane Recruiter"
               />
@@ -88,8 +91,11 @@ export default function Contact() {
             <Field label="Your email" error={errors.email}>
               <input
                 type="email"
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: '' })) }}
+                aria-invalid={errors.email ? true : undefined}
                 className={inputClass(errors.email)}
                 placeholder="jane@example.com"
               />
@@ -98,6 +104,7 @@ export default function Contact() {
           <Field label="Subject">
             <input
               type="text"
+              name="subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className={inputClass()}
@@ -106,9 +113,11 @@ export default function Contact() {
           </Field>
           <Field label="Message" error={errors.message}>
             <textarea
+              name="message"
               value={message}
               onChange={(e) => { setMessage(e.target.value); setErrors((p) => ({ ...p, message: '' })) }}
               rows={5}
+              aria-invalid={errors.message ? true : undefined}
               className={`${inputClass(errors.message)} resize-y min-h-[120px]`}
               placeholder="Hi Eric, …"
             />
@@ -120,6 +129,14 @@ export default function Contact() {
             <a href={`mailto:${EMAIL}`} className="btn-secondary">Just email me directly</a>
           </div>
         </Reveal>
+
+        {/* always-mounted live region (out of the form's space-y flow) so
+            screen readers announce the submit outcome */}
+        <p role="status" aria-live="polite" className="sr-only">
+          {status === 'success' && "Message sent! I'll be in touch soon!"}
+          {status === 'error' && 'Something went wrong. Try emailing me directly.'}
+          {status === 'sending' && 'Sending message…'}
+        </p>
       </div>
     </Section>
   )

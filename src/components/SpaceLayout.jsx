@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { goTo } from '../router.js'
 import { LABELS } from '../sitemap.js'
 
@@ -338,7 +338,14 @@ const ASTEROIDS = [
 
 export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
   // on phones the terminal overlays the page instead of pushing it
-  const off = window.innerWidth >= 640 ? dockOffset : 0
+  const [isWide, setIsWide] = useState(() => window.matchMedia('(min-width: 640px)').matches)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 640px)')
+    const onChange = () => setIsWide(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  const off = isWide ? dockOffset : 0
   const index = Math.max(0, order.indexOf(id))
   const indexRef = useRef(index)
   indexRef.current = index
@@ -359,7 +366,7 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
     return true
   }
 
-  // land at the top of each panel (mirrors box mode's scroll-to-top per page)
+  // each panel is its own page: land at its top after every flight
   useEffect(() => {
     scrollers.current[index]?.scrollTo({ top: 0 })
   }, [index])

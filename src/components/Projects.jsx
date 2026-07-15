@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Section from './Section.jsx'
 import { useLayout } from '../layout.js'
 
@@ -15,7 +15,7 @@ const PROJECTS = [
       'Contributed to 3D modelling and physical prototyping of the robot enclosure to house all electronics within a compact aesthetic form factor, placing 3rd in the UoA ECSE Design Competition.',
     ],
     tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
-    image: './winnie.jpg',
+    image: './winnie.webp',
     featured: true,
     color: 'from-amber-500/20 to-rose-500/20',
     initial: 'W',
@@ -33,7 +33,7 @@ const PROJECTS = [
       'Developed a live React dashboard on AWS Amplify to visualise sentiment trends and confidence scores.',
     ],
     tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'React.js', 'AWS Amplify'],
-    image: './pulse.png',
+    image: './pulse.webp',
     color: 'from-cyan-500/20 to-blue-500/20',
     initial: 'S',
     links: [
@@ -54,7 +54,7 @@ const PROJECTS = [
       'Collaborated with senior software students in order to ship a production-ready platform from scratch.',
     ],
     tech: ['JavaScript', 'React.js', 'Vite'],
-    image: './KEBWebDesign.png',
+    image: './KEBWebDesign.webp',
     color: 'from-sky-500/20 to-indigo-500/20',
     initial: 'K',
     links: [
@@ -74,7 +74,7 @@ const PROJECTS = [
       'Produced a validated PCB schematic using Altium Designer in order to achieve accurate signal conditioning.',
     ],
     tech: ['C', 'Atmel AVR', 'ATmega328P', 'Altium Designer', 'LTspice'],
-    image: './energy_monitor.png',
+    image: './energy_monitor.webp',
     color: 'from-emerald-500/20 to-teal-500/20',
     initial: 'E',
     links: [
@@ -93,7 +93,7 @@ const PROJECTS = [
       'Developed a pixel-priority VHDL pipeline in order to render game scenes at VGA resolution.',
     ],
     tech: ['VHDL', 'Intel Quartus Prime', 'Altera FPGA'],
-    image: './flappy_universe.png',
+    image: './flappy_universe.webp',
     color: 'from-lime-500/20 to-green-500/20',
     initial: 'F',
     links: [
@@ -112,7 +112,7 @@ const PROJECTS = [
       "Implemented a scikit-learn forecasting module using Linear Regression and Holt's Exponential Smoothing.",
     ],
     tech: ['Python', 'Pandas', 'scikit-learn'],
-    image: './roastworks.png',
+    image: './roastworks.webp',
     color: 'from-orange-500/20 to-amber-500/20',
     initial: 'R',
     links: [
@@ -131,7 +131,7 @@ const PROJECTS = [
       'Implemented a nutrition goal tracking system using SharedPreferences to set and track daily targets.',
     ],
     tech: ['Java', 'Android Studio', 'Firebase Firestore', 'RecyclerView', 'SharedPreferences'],
-    image: './MealHub.png',
+    image: './MealHub.webp',
     color: 'from-green-500/20 to-emerald-500/20',
     initial: 'M',
     links: [
@@ -146,6 +146,23 @@ export default function Projects() {
   const space = useLayout() === 'space'
   const [sel, setSel] = useState(0)
   const current = PROJECTS[sel]
+  const tabRefs = useRef([])
+
+  // roving tabindex: arrows move selection and focus together. Both axes work
+  // because the list is a horizontal row on small screens, a column on md+.
+  const onTabKeyDown = (e) => {
+    let next = null
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (sel + 1) % PROJECTS.length
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (sel - 1 + PROJECTS.length) % PROJECTS.length
+    else if (e.key === 'Home') next = 0
+    else if (e.key === 'End') next = PROJECTS.length - 1
+    if (next == null) return
+    e.preventDefault()
+    e.stopPropagation() // arrows here pick a project, not a space-mode panel
+    setSel(next)
+    tabRefs.current[next]?.focus()
+  }
+
   return (
     <Section
       id="projects"
@@ -157,18 +174,24 @@ export default function Projects() {
           glance; one click swaps the detail card. On small screens the list
           becomes a horizontal row of pills above the card. */}
       <div className="grid items-start gap-4 md:grid-cols-[minmax(220px,300px)_1fr]">
-        <div
-          role="tablist"
-          aria-label="Projects"
-          className="no-scrollbar flex gap-2 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0"
-        >
+        <div>
+          <div
+            role="tablist"
+            aria-label="Projects"
+            className="no-scrollbar flex gap-2 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0"
+          >
           {PROJECTS.map((p, i) => (
             <button
               key={p.title}
+              ref={(el) => (tabRefs.current[i] = el)}
               type="button"
               role="tab"
+              id={`project-tab-${i}`}
               aria-selected={i === sel}
+              aria-controls="project-panel"
+              tabIndex={i === sel ? 0 : -1}
               onClick={() => setSel(i)}
+              onKeyDown={onTabKeyDown}
               className={`shrink-0 rounded-xl border px-4 ${space ? 'py-2' : 'py-2.5'} text-left transition md:w-full ${
                 i === sel
                   ? 'border-accent/60 bg-grey-200/80 dark:border-accent-dark/50 dark:bg-grey-900'
@@ -187,18 +210,25 @@ export default function Projects() {
               <span className="mt-0.5 hidden text-xs text-grey-500 dark:text-grey-500 md:block">{p.tag}</span>
             </button>
           ))}
+          </div>
           <a
             href="https://github.com/EricK-6"
             target="_blank"
             rel="noreferrer"
-            className="hidden items-center gap-1 px-4 pt-1 text-xs text-grey-500 underline-offset-2 hover:text-accent hover:underline dark:text-grey-500 dark:hover:text-accent-dark md:flex"
+            className="hidden items-center gap-1 px-4 pt-1 mt-2 text-xs text-grey-500 underline-offset-2 hover:text-accent hover:underline dark:text-grey-500 dark:hover:text-accent-dark md:flex"
           >
             More on my GitHub →
           </a>
         </div>
 
         {/* key remount replays the entrance animation on every switch */}
-        <div key={current.title} className="min-w-0 animate-fade-in-up">
+        <div
+          key={current.title}
+          role="tabpanel"
+          id="project-panel"
+          aria-labelledby={`project-tab-${sel}`}
+          className="min-w-0 animate-fade-in-up"
+        >
           <ProjectCard project={current} space={space} />
         </div>
       </div>

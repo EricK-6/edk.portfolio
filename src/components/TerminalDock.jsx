@@ -183,8 +183,8 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
     if (el) el.scrollTop = el.scrollHeight
   }, [lines, open])
 
-  // 'cd <section>' navigates to that section (a page in box mode, a scroll in
-  // scroll mode); 'top' / 'cd ~' is home
+  // 'cd <section>' navigates to that section (a flight in space mode, a scroll
+  // in scroll mode); 'top' / 'cd ~' is home
   const go = (id) => goTo(id === 'top' ? 'home' : id, layout)
   const downloadCV = (href = './CV.pdf') => {
     const a = document.createElement('a')

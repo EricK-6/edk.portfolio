@@ -41,7 +41,7 @@ const SCROLL_ORDER = [
 const ANCHOR_IDS = SCROLL_ORDER.map((id) => (id === 'home' ? 'top' : id))
 
 // Which section is currently nearest the top of the viewport (used to keep
-// the visitor's place when switching scroll -> box).
+// the visitor's place when switching scroll -> space).
 function sectionInView() {
   let current = 'home'
   for (const elId of ANCHOR_IDS) {
@@ -79,13 +79,14 @@ function useScrollSpy(enabled) {
 }
 
 export default function App() {
-  // dark mode is the default; the visitor's toggle choice is remembered
+  // the visitor's toggle choice is remembered; first-timers follow their OS
+  // preference, defaulting to dark when there's no stated preference
   const [theme, setTheme] = useState(() => {
     try {
       const saved = localStorage.getItem('theme')
       if (saved === 'light' || saved === 'dark') return saved
     } catch { /* private mode */ }
-    return 'dark'
+    return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
   })
 
   useEffect(() => {
@@ -117,13 +118,13 @@ export default function App() {
   const routeId = COMPONENTS[route] ? route : 'home' // unknown routes -> home
 
   // When switching scroll -> space we set the route hash, but hashchange (and so
-  // `route`) updates a tick later. boxId pins the target for that first render
+  // `route`) updates a tick later. pinnedId pins the target for that first render
   // to avoid a flash of the wrong section; it clears once route catches up.
-  const [boxId, setBoxId] = useState(null)
+  const [pinnedId, setPinnedId] = useState(null)
   useEffect(() => {
-    if (boxId != null && routeId === boxId) setBoxId(null)
-  }, [routeId, boxId])
-  const id = boxId ?? routeId
+    if (pinnedId != null && routeId === pinnedId) setPinnedId(null)
+  }, [routeId, pinnedId])
+  const id = pinnedId ?? routeId
 
   // scroll mode: highlight the section currently in view
   const activeSection = useScrollSpy(layout === 'scroll')
@@ -132,9 +133,9 @@ export default function App() {
   // in space mode each route is a discrete page: jump to the top and
   // retitle the tab. scroll mode is one page, so leave both alone.
   useEffect(() => {
-    if (layout === 'scroll') { document.title = 'Eric Kim'; return }
+    if (layout === 'scroll') { document.title = 'Eric Kim_'; return }
     window.scrollTo(0, 0)
-    document.title = id === 'home' ? 'Eric Kim' : `${LABELS[id]} · Eric Kim`
+    document.title = id === 'home' ? 'Eric Kim_' : `${LABELS[id]} · Eric Kim_`
   }, [id, layout])
 
   // keep the visitor's place across a layout switch (space <-> scroll)
@@ -142,8 +143,8 @@ export default function App() {
   const toggleLayout = () => {
     if (layout === 'scroll') {
       const target = sectionInView()
-      setBoxId(target)        // show it immediately
-      navigateBoxTo(target)   // and update the URL (route catches up next tick)
+      setPinnedId(target)     // show it immediately
+      setRouteHash(target)    // and update the URL (route catches up next tick)
       setLayout('space')
     } else {
       pendingScrollRef.current = id
@@ -181,7 +182,7 @@ export default function App() {
         ) : (
           <ScrollLayout />
         )}
-        {/* footer belongs to the long scroll page; box pages are discrete and
+        {/* footer belongs to the long scroll page; space panels are discrete and
             shouldn't carry spare scroll space below their content */}
         {layout === 'scroll' && <Footer />}
       </div>
@@ -190,7 +191,7 @@ export default function App() {
 }
 
 // Set the route hash directly (used when switching scroll -> space).
-function navigateBoxTo(target) {
+function setRouteHash(target) {
   window.location.hash = target === 'home' ? '/' : `/${target}`
 }
 

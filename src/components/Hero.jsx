@@ -67,7 +67,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className={`relative ${layout === 'box' || layout === 'space' ? 'py-6' : 'pt-12 pb-16 sm:pt-20 sm:pb-24'}`}
+      className={`relative ${layout === 'space' ? 'py-6' : 'pt-12 pb-16 sm:pt-20 sm:pb-24'}`}
     >
       <div
         aria-hidden

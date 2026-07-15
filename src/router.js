@@ -17,7 +17,7 @@ export function navigate(route) {
 }
 
 // Go to a section, doing the right thing for the active layout: route to its
-// page in 'box' mode, or smooth-scroll to its anchor in 'scroll' mode (Hero's
+// page in 'space' mode, or smooth-scroll to its anchor in 'scroll' mode (Hero's
 // section id is 'top', so home maps to that).
 export function goTo(id, layout) {
   if (layout === 'scroll') {
