@@ -137,10 +137,6 @@ const camT = (c) =>
 const OVERVIEW_T =
   'translate3d(0px, 0px, -6500px) rotateX(-7deg) rotateY(-14deg) scale3d(1, 1, 0.45) translate3d(0px, 0px, 8000px)'
 
-// the opening overview-then-dive plays once per page load, not again on
-// every scroll <-> space layout switch (SpaceLayout remounts on those)
-let introPlayed = false
-
 // -- background scenery -----------------------------------------------------
 // Everything below lives inside the world transform, so it parallaxes with
 // the camera for free. Coordinates are hand-placed off the flight path.
@@ -508,20 +504,10 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
   )
 
   // overview: pinch out (or the HUD button) pulls the camera right back to
-  // see the whole vortex at a glance; every panel becomes a click target.
-  // The first mount of a page load opens ON the overview and dives down the
-  // vortex to the visitor's section — the site introduces its own geography
-  // (and teaches the pinch gesture) in one move.
-  const [overview, setOverview] = useState(() => !introPlayed && !reduce)
+  // see the whole vortex at a glance; every panel becomes a click target
+  const [overview, setOverview] = useState(false)
   const overviewRef = useRef(false)
   overviewRef.current = overview
-  useEffect(() => {
-    if (introPlayed || !overviewRef.current) { introPlayed = true; return }
-    introPlayed = true
-    const t = setTimeout(() => setOverview(false), 1600) // linger, then dive
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const fly = (dir) => {
     const target = order[indexRef.current + dir]
