@@ -58,7 +58,7 @@ npm run deploy
 ├── scripts/copy-cv.mjs            # copies CV.pdf → public/ before dev & build
 ├── public/
 │   ├── CV.pdf                     # what the "Download CV" button grabs
-│   └── favicon.svg
+│   └── saturn.svg
 ├── src/
 │   ├── App.jsx                    # theme + layout (space vs scroll mode)
 │   ├── main.jsx

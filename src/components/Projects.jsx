@@ -27,20 +27,20 @@ const PROJECTS = [
       {
         code: '01 · MISSION',
         body: [
-          'Build a companion robot for the UoA ECSE Design Competition 2025 that can hold your gaze, wave, and talk back — an embedded system that reads as a character, not a circuit board.',
+          'Build a companion robot for the UoA ECSE Design Competition 2025 that can hold your gaze, wave, and talk back. An embedded system that reads as a character, not a circuit board.',
         ],
       },
       {
         code: '02 · AIRFRAME',
         body: [
-          'Dual ATmega328P NANOs share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue — running simultaneously on hardware with no operating system underneath.',
+          'Dual ATmega328P NANOs share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue, all running simultaneously on hardware with no operating system underneath.',
           'The enclosure was 3D modelled and physically prototyped to pack every board, servo, and speaker into a compact, desk-friendly form factor.',
         ],
       },
       {
         code: '03 · LANDING',
         body: [
-          '3rd place, UoA ECSE Design Competition 2025 — awarded by the Department of ECSE, September 2025.',
+          '3rd place at the UoA ECSE Design Competition 2025, awarded by the Department of ECSE in September 2025.',
         ],
       },
     ],
