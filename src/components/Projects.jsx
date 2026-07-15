@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Section from './Section.jsx'
 import { useLayout } from '../layout.js'
 
@@ -16,10 +17,33 @@ const PROJECTS = [
     ],
     tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.webp',
+    // video: './winnie.mp4', // drop the clip into public/ and uncomment
     featured: true,
     color: 'from-amber-500/20 to-rose-500/20',
     initial: 'W',
     links: [],
+    // deeper case study shown in the flight-log modal
+    log: [
+      {
+        code: '01 · MISSION',
+        body: [
+          'Build a companion robot for the UoA ECSE Design Competition 2025 that can hold your gaze, wave, and talk back — an embedded system that reads as a character, not a circuit board.',
+        ],
+      },
+      {
+        code: '02 · AIRFRAME',
+        body: [
+          'Dual ATmega328P NANOs share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue — running simultaneously on hardware with no operating system underneath.',
+          'The enclosure was 3D modelled and physically prototyped to pack every board, servo, and speaker into a compact, desk-friendly form factor.',
+        ],
+      },
+      {
+        code: '03 · LANDING',
+        body: [
+          '3rd place, UoA ECSE Design Competition 2025 — awarded by the Department of ECSE, September 2025.',
+        ],
+      },
+    ],
   },
   {
     title: 'Sentiment PULSE',
@@ -303,11 +327,24 @@ function ProjectIcon({ type }) {
 }
 
 function ProjectCard({ project, space }) {
-  const { title, tag, year, period, org, role, highlights, tech, color, initial, image, featured, links } = project
+  const { title, tag, year, period, org, role, highlights, tech, color, initial, image, video, featured, links, log } = project
+  const [logOpen, setLogOpen] = useState(false)
   return (
     <article className={`card flex h-full flex-col overflow-hidden ${space ? 'p-4' : ''} ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
-      <div className={`relative ${space ? '-m-4 mb-4 h-28' : '-m-6 mb-6 h-44'} overflow-hidden ${image ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
-        {image ? (
+      <div className={`relative ${space ? '-m-4 mb-4 h-28' : '-m-6 mb-6 h-44'} overflow-hidden ${image || video ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
+        {video ? (
+          <video
+            src={video}
+            poster={image}
+            muted
+            loop
+            autoPlay
+            playsInline
+            preload="metadata"
+            aria-label={`${title} demo`}
+            className="h-full w-full object-cover"
+          />
+        ) : image ? (
           <img src={image} alt={title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
         ) : (
           <>
@@ -355,9 +392,18 @@ function ProjectCard({ project, space }) {
           </div>
         )}
 
-        {links?.length > 0 && (
+        {(links?.length > 0 || log) && (
           <div className={`${space ? 'mt-3' : 'mt-5'} flex flex-wrap gap-4`}>
-            {links.map((l) => (
+            {log && (
+              <button
+                type="button"
+                onClick={() => setLogOpen(true)}
+                className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
+              >
+                Open the flight log →
+              </button>
+            )}
+            {links?.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
@@ -371,6 +417,80 @@ function ProjectCard({ project, space }) {
           </div>
         )}
       </div>
+      {logOpen && <FlightLogModal project={project} onClose={() => setLogOpen(false)} />}
     </article>
+  )
+}
+
+// Case-study modal styled as a flight log. Rendered through a portal because
+// space mode's 3D transforms would otherwise hijack position:fixed.
+function FlightLogModal({ project, onClose }) {
+  const closeRef = useRef(null)
+
+  useEffect(() => {
+    // freeze the page behind the modal; SpaceLayout reads this to pause
+    // its wheel/arrow flight handlers too
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeRef.current?.focus()
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); onClose() }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Flight log — ${project.title}`}
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-h-full w-full max-w-xl overflow-y-auto rounded-2xl border border-grey-300 bg-white shadow-2xl dark:border-grey-800 dark:bg-grey-950"
+      >
+        <div className="flex items-center justify-between border-b border-grey-200 px-5 py-3.5 dark:border-grey-800">
+          <div className="font-mono text-xs font-medium uppercase tracking-[0.25em] text-grey-500">
+            Flight log · {project.title}
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Close flight log"
+            className="rounded-lg p-1 text-grey-500 hover:bg-grey-200 hover:text-grey-800 dark:hover:bg-grey-900 dark:hover:text-grey-100"
+          >
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="space-y-5 px-5 py-5">
+          {project.log.map((entry) => (
+            <section key={entry.code}>
+              <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent dark:text-accent-dark">
+                {entry.code}
+              </h4>
+              {entry.body.map((para) => (
+                <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700 dark:text-grey-300">
+                  {para}
+                </p>
+              ))}
+            </section>
+          ))}
+          <p className="border-t border-dashed border-grey-300 pt-3 font-mono text-[11px] text-grey-400 dark:border-grey-800 dark:text-grey-600">
+            // turbulence & debrief entries: logging soon
+          </p>
+        </div>
+      </div>
+    </div>,
+    document.body
   )
 }

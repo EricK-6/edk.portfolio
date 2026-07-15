@@ -128,3 +128,30 @@
 @media (prefers-reduced-motion: reduce) {
   .star-twinkle { animation: none !important; opacity: 0.6; }
 }
+
+/* print: the page prints as one clean light document. App.jsx flips space
+   mode -> scroll and dark -> light on beforeprint, so these rules only need
+   to strip motion, chrome, and scroll-reveal hiding. */
+@media print {
+  html {
+    scroll-padding-top: 0;
+  }
+  *, ::before, ::after {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  /* Reveal keeps below-fold content at inline opacity 0 until it is
+     scrolled into view — paper has no scrolling */
+  main [style] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  header {
+    position: static !important;
+  }
+  .card {
+    break-inside: avoid;
+  }
+}

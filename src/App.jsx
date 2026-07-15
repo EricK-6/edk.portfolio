@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import Navbar from './components/Navbar.jsx'
 import Hero from './components/Hero.jsx'
 import About from './components/About.jsx'
@@ -14,9 +15,11 @@ import CommandPalette from './components/CommandPalette.jsx'
 import TerminalDock from './components/TerminalDock.jsx'
 import BootIntro from './components/BootIntro.jsx'
 import SpaceLayout from './components/SpaceLayout.jsx'
+import PassportWidget from './components/PassportWidget.jsx'
 import { useRoute } from './router.js'
 import { LayoutContext } from './layout.js'
 import { LABELS } from './sitemap.js'
+import { markVisited } from './passport.js'
 
 // id -> the component rendered for that cell. Home is the bento (Hero).
 const COMPONENTS = {
@@ -130,6 +133,9 @@ export default function App() {
   const activeSection = useScrollSpy(layout === 'scroll')
   const activeId = layout === 'scroll' ? activeSection : id
 
+  // every section the visitor sees earns a passport stamp
+  useEffect(() => { markVisited(activeId) }, [activeId])
+
   // in space mode each route is a discrete page: jump to the top and
   // retitle the tab. scroll mode is one page, so leave both alone.
   useEffect(() => {
@@ -160,6 +166,36 @@ export default function App() {
     }
   }, [layout])
 
+  // printing: space mode is a fixed 3D stage and dark mode wastes toner, so
+  // Ctrl+P temporarily renders the one-page scroll layout in light theme
+  // (flushSync commits before the browser snapshots), restored afterwards.
+  const printStateRef = useRef(null)
+  const layoutRef = useRef(layout)
+  layoutRef.current = layout
+  useEffect(() => {
+    const before = () => {
+      if (printStateRef.current) return
+      printStateRef.current = { layout: layoutRef.current }
+      const wasDark = document.documentElement.classList.contains('dark')
+      printStateRef.current.wasDark = wasDark
+      if (wasDark) document.documentElement.classList.remove('dark')
+      if (layoutRef.current !== 'scroll') flushSync(() => setLayout('scroll'))
+    }
+    const after = () => {
+      const prev = printStateRef.current
+      printStateRef.current = null
+      if (!prev) return
+      if (prev.wasDark) document.documentElement.classList.add('dark')
+      if (prev.layout !== 'scroll') setLayout(prev.layout)
+    }
+    window.addEventListener('beforeprint', before)
+    window.addEventListener('afterprint', after)
+    return () => {
+      window.removeEventListener('beforeprint', before)
+      window.removeEventListener('afterprint', after)
+    }
+  }, [])
+
   return (
     <LayoutContext.Provider value={layout}>
       <div
@@ -182,6 +218,7 @@ export default function App() {
         ) : (
           <ScrollLayout />
         )}
+        <PassportWidget />
         {/* footer belongs to the long scroll page; space panels are discrete and
             shouldn't carry spare scroll space below their content */}
         {layout === 'scroll' && <Footer />}

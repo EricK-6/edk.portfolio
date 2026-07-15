@@ -61,9 +61,31 @@ const HELP = [
   ['cat <file>', 'read a file'],
   ['whoami', 'who is this'],
   ['cv <swe|eee>', 'download my CV (software / hardware)'],
+  ['status', 'live systems check'],
+  ['fortune', 'a fortune cookie for engineers'],
   ['theme', 'toggle light / dark'],
   ['clear', 'clear the screen'],
 ]
+
+const FORTUNES = [
+  '"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements." — Brian Kernighan',
+  '"Simplicity is prerequisite for reliability." — Edsger Dijkstra',
+  '"First, solve the problem. Then, write the code." — John Johnson',
+  '"Any sufficiently advanced technology is indistinguishable from magic." — Arthur C. Clarke',
+  '"Weeks of coding can save you hours of planning." — unknown',
+  'There are 10 types of people: those who understand binary and those who don\'t.',
+  'It works on my machine. — every engineer, eventually',
+  'A clean solder joint is worth a thousand debug sessions.',
+]
+
+// "pushed 3 h ago" for the status command
+function relTime(iso) {
+  const mins = Math.max(1, Math.round((Date.now() - new Date(iso)) / 60000))
+  if (mins < 60) return `${mins} min ago`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 48) return `${hrs} h ago`
+  return `${Math.round(hrs / 24)} d ago`
+}
 
 // walk the tree to the node at `segs`, or null if any segment is missing
 function getNode(segs) {
@@ -91,7 +113,7 @@ function resolveSegments(cwd, arg) {
 const pathLabel = (segs) => (segs.length ? `~/${segs.join('/')}` : '~')
 
 // commands offered for inline completion (sorted so the suggestion is stable)
-const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'help', 'ls', 'pwd', 'social', 'theme', 'whoami']
+const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'fortune', 'help', 'ls', 'pwd', 'social', 'status', 'sudo', 'theme', 'whoami']
 
 // fish-style inline suggestion: given the half-typed line, return the *suffix*
 // that would complete the current word — a command name (first word) or a
@@ -297,8 +319,53 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
       case 'date':
         print(new Date().toString())
         break
-      case 'sudo':
-        print('nice try 😏, but you do not have root here.')
+      case 'sudo': {
+        const what = args.join(' ').toLowerCase()
+        if (what === 'hire-me' || what === 'hire me') {
+          print('[sudo] password for visitor: ********')
+          print('access granted. root privileges: emotional only.')
+          print('initiating recruitment protocol…')
+          print(
+            <span>
+              → opening mail client:&nbsp;
+              <a href={`mailto:${EMAIL}?subject=Internship%20opportunity`} className="text-grey-600 underline dark:text-grey-200">{EMAIL}</a>
+            </span>
+          )
+          setTimeout(() => { window.location.href = `mailto:${EMAIL}?subject=Internship%20opportunity` }, 900)
+        } else {
+          print('nice try 😏, but you do not have root here. (unless… `sudo hire-me`)')
+        }
+        break
+      }
+      case 'status': {
+        print('querying live systems…')
+        const okLine = (label, value, state = 'OK') =>
+          print(
+            <span className="grid grid-cols-[8.5rem_1fr_auto] gap-x-2">
+              <span className="text-grey-800 dark:text-grey-200">{label}</span>
+              <span className="min-w-0 truncate text-grey-500 dark:text-grey-400">{value}</span>
+              <span className={state === 'OK' ? 'text-emerald-600 dark:text-emerald-400' : 'text-grey-400 dark:text-grey-600'}>[ {state} ]</span>
+            </span>
+          )
+        okLine('sys/website', 'erickk.cloud — you are here')
+        okLine('sys/available', 'open to internships · summer 26/27')
+        okLine(
+          'sys/local-time',
+          new Date().toLocaleTimeString('en-NZ', { timeZone: 'Pacific/Auckland', hour: '2-digit', minute: '2-digit' }) + ' — Auckland, NZ'
+        )
+        fetch('https://api.github.com/users/EricK-6/events/public?per_page=1')
+          .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+          .then((events) => {
+            const e = events?.[0]
+            if (!e) throw new Error('no events')
+            const action = (e.type || '').replace('Event', '').toLowerCase() || 'activity'
+            okLine('sys/github', `${action} on ${e.repo?.name?.split('/')[1] ?? 'a repo'} · ${relTime(e.created_at)}`)
+          })
+          .catch(() => okLine('sys/github', 'live check unreachable — github.com/EricK-6', '??'))
+        break
+      }
+      case 'fortune':
+        print(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])
         break
       case 'exit':
       case 'close':
@@ -361,7 +428,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
 
       <aside
         aria-label="Interactive terminal"
-        className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,380px)] transform transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,380px)] transform transition-transform duration-300 ease-out print:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >

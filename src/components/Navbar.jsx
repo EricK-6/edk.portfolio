@@ -48,7 +48,7 @@ export default function Navbar({ theme, onToggleTheme, layout, onToggleLayout, a
           ))}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 print:hidden">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
             aria-label="Open terminal"
