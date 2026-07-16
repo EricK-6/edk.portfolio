@@ -5,12 +5,12 @@ export default function About() {
   return (
     <Section id="about" kicker="Profile" title="About me">
       <div className="grid gap-8 md:grid-cols-3">
-        <Reveal className="md:col-span-2 space-y-4 text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
+        <Reveal className="md:col-span-2 space-y-4 sm:text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
           <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-grey-900 dark:text-grey-100">
             Kia ora! <span className="wave-hand">👋</span>
           </h3>
           <p>
-            This is Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student
+            This is Eric, a penultimate-year <Bold>Computer Systems Engineering (Hons)</Bold> student
             at the University of Auckland, specialising in <Bold>embedded systems</Bold>,{' '}
             <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>. I work
             across the hardware and software boundary with <Bold>C, Java, Python, and React</Bold>{' '}

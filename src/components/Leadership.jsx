@@ -186,7 +186,7 @@ export default function Leadership() {
                       <div className="mt-1 text-xs text-grey-500 dark:text-grey-500">{r.period}</div>
                     </div>
                   </div>
-                  <p className="mt-3 text-sm text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
+                  <p className="mt-3 text-sm sm:text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
                     {r.description}
                   </p>
                 </div>

@@ -202,12 +202,15 @@ export default function Projects() {
       id="projects"
       kicker="Projects"
       title="Things I've built"
-      subtitle="A mix of hardware, software, and everything in between. Click a project on panel to see more details."
+      subtitle="A mix of hardware, software, and everything in between. Pick a project from the list to see the details."
     >
       {/* master-detail explorer: every project is visible in the list at a
           glance; one click swaps the detail card. On small screens the list
           becomes a horizontal row of pills above the card. */}
-      <div className="grid items-start gap-4 md:grid-cols-[minmax(220px,300px)_1fr]">
+      {/* minmax(0,1fr) (not an implicit auto track): otherwise the chip
+          strip's max-content width inflates the column past the viewport
+          on phones and the detail card clips */}
+      <div className="grid items-start gap-4 grid-cols-[minmax(0,1fr)] md:grid-cols-[minmax(220px,300px)_1fr]">
         <div>
           <div
             role="tablist"
@@ -396,7 +399,7 @@ function ProjectCard({ project, space }) {
         <div className="mt-2 text-sm font-medium text-grey-700 dark:text-grey-300">:: {role}</div>
 
         {highlights?.length > 0 && (
-          <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm text-justify text-grey-700 dark:text-grey-300`}>
+          <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm sm:text-justify text-grey-700 dark:text-grey-300`}>
             {highlights.map((h) => (
               <li key={h} className="flex gap-2">
                 <span className="mt-1 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent dark:bg-accent-dark" />
@@ -529,7 +532,7 @@ function FlightLogModal({ project, onClose }) {
                 {entry.code}
               </h4>
               {entry.body.map((para) => (
-                <p key={para} className="mt-1.5 text-sm text-justify leading-relaxed text-grey-700 dark:text-grey-300">
+                <p key={para} className="mt-1.5 text-sm sm:text-justify leading-relaxed text-grey-700 dark:text-grey-300">
                   {para}
                 </p>
               ))}

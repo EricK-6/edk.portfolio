@@ -1004,9 +1004,14 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
           </button>
         </div>
         <div className="font-mono text-[10px] text-grey-500/80">
-          {overview
-            ? 'click a panel to fly to it · pinch in or esc to return'
-            : 'scroll · ← → · pinch out to see the whole flight'}
+          {/* touch screens have no arrow keys or wheel: swap the verbs */}
+          {window.matchMedia('(pointer: coarse)').matches
+            ? overview
+              ? 'tap a panel to fly to it · pinch in to return'
+              : 'swipe · tap a dim panel · pinch out for the map'
+            : overview
+              ? 'click a panel to fly to it · pinch in or esc to return'
+              : 'scroll · ← → · pinch out to see the whole flight'}
         </div>
       </div>
     </main>

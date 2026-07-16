@@ -125,7 +125,7 @@ function HexMedallion({ cert, index }) {
 
       {/* details face — fades in over the badge */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
-        <p className="max-w-[15rem] text-sm text-justify leading-relaxed text-grey-700 dark:text-grey-300">
+        <p className="max-w-[15rem] text-sm sm:text-justify leading-relaxed text-grey-700 dark:text-grey-300">
           {cert.description}
         </p>
         {cert.tags?.length > 0 && (

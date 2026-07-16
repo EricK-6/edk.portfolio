@@ -25,7 +25,7 @@ const dir = (id, children = {}) => ({ type: 'dir', id, children })
 const FS = dir('top', {
   about: dir('about', {
     'about.txt': file(
-      'Dohyun (Eric) Kim - penultimate Computer Systems Engineering (Hons) @ UoA.',
+      'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
       'Specialising in embedded systems, full stack development, and digital hardware design.',
       'AWS certified in Cloud & AI/ML. Open to internships.'
     ),

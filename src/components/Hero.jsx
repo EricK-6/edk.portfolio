@@ -155,7 +155,7 @@ export default function Hero() {
             <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
               <Field label="From">Auckland, NZ (AKL)</Field>
               <Field label="To">Your Team</Field>
-              <Field label="Seat">Summer 26/27</Field>
+              <Field label="Seat">Nov 2026 – Feb 2027</Field>
               <Field label="Class">CSE (Hons) @ UoA</Field>
               <Field label="Status">
                 <span className="inline-flex items-center gap-1.5">
