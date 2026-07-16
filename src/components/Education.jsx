@@ -71,7 +71,7 @@ export default function Education() {
             <div className="mt-1 text-grey-700 dark:text-grey-300">
               High School Diploma
             </div>
-            <div className="mt-2 text-sm text-grey-600 dark:text-grey-400 leading-relaxed">
+            <div className="mt-2 text-sm text-justify text-grey-600 dark:text-grey-400 leading-relaxed">
               Completed CIE IGCSE, AS, and A2 level courses and earned multiple diligence awards.
             </div>
           </div>

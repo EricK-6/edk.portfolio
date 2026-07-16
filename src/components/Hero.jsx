@@ -48,9 +48,6 @@ function useTypeChallenge() {
   return { typed, done: typed >= NAME.length }
 }
 
-// fixed pseudo-barcode stripes (widths in px), so it renders identically every time
-const BARS = [2, 1, 3, 1, 2, 2, 1, 4, 1, 2, 1, 3, 2, 1, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 1]
-
 function Field({ label, children, className = '' }) {
   return (
     <div className={className}>
@@ -84,13 +81,28 @@ export default function Hero() {
                    bg-gradient-to-b from-accent/[0.08] via-white to-transparent
                    dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
       />
-      <div className="container-page animate-fade-in-up">
-        <div className="relative mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-2xl dark:border-grey-800 dark:bg-grey-950 md:grid-cols-[1fr_auto_250px]">
+      {/* max-w-7xl beats container-page's max-w-5xl so the ticket can run wide */}
+      <div className="container-page max-w-7xl animate-fade-in-up">
+        <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-2xl dark:border-grey-800 dark:bg-grey-950 md:grid-cols-[auto_auto_1fr_auto_250px]">
           {/* accent strip */}
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent/70 via-accent/30 to-transparent dark:from-accent-dark/70 dark:via-accent-dark/30" />
 
+          {/* tear-off stub on the left edge (desktop): vertical BOARDING PASS
+              reading bottom-to-top (vertical-rl + rotate-180) */}
+          <div aria-hidden="true" className="hidden select-none items-center px-3 md:flex">
+            <span className="rotate-180 font-mono text-sm font-semibold uppercase tracking-[0.4em] text-grey-500 [writing-mode:vertical-rl] dark:text-grey-500">
+              Boarding Pass
+            </span>
+          </div>
+          {/* perforation tearing the stub off the main segment */}
+          <div aria-hidden="true" className="relative hidden w-0 md:block">
+            <div className="absolute inset-y-3 left-0 border-l-2 border-dashed border-grey-300 dark:border-grey-800" />
+            <span className="absolute -top-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
+            <span className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
+          </div>
+
           {/* main segment */}
-          <div className="relative p-6 sm:p-8">
+          <div className="relative px-6 py-4 sm:px-8 sm:py-5">
             {/* rubber stamp earned by visiting every section (see passport.js) */}
             {vip && (
               <div
@@ -114,7 +126,7 @@ export default function Hero() {
               <div className="font-mono text-xs text-grey-400 dark:text-grey-600">FLIGHT EK-2027</div>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-3">
               <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
                 Kia Ora! Passenger <span className="normal-case tracking-normal">👋</span>
               </div>
@@ -142,9 +154,9 @@ export default function Hero() {
               </p>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
               <Field label="From">Auckland, NZ (AKL)</Field>
-              <Field label="To">Your team</Field>
+              <Field label="To">Your Team</Field>
               <Field label="Seat">Summer 26/27</Field>
               <Field label="Class">CSE (Hons) @ UoA</Field>
               <Field label="Status">
@@ -162,7 +174,7 @@ export default function Hero() {
               </Field>
             </div>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <a href={hrefFor('projects', layout)} className="btn-primary">Board · View projects</a>
               <a href={hrefFor('contact', layout)} className="btn-secondary">Get in touch</a>
             </div>
@@ -179,14 +191,14 @@ export default function Hero() {
           </div>
 
           {/* stub */}
-          <div className="flex flex-col justify-between gap-5 p-6 sm:p-8 md:pl-9">
+          <div className="flex flex-col justify-between gap-3 px-6 py-4 sm:px-8 sm:py-5 md:pl-9">
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="font-mono text-xs uppercase tracking-[0.25em] text-grey-500 dark:text-grey-500">Gate</span>
                 <span className="font-mono text-lg font-bold text-grey-900 dark:text-grey-100">P·01</span>
               </div>
-              <div className="mt-4">
-                <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">Documents</div>
+              <div className="mt-3">
+                <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">Resume</div>
                 {/* one "Resume" tile, invisibly split: left half previews the
                     SWE CV, right half the EEE CV */}
                 <div className="mt-1.5">
@@ -195,12 +207,16 @@ export default function Hero() {
                   <div className="relative flex h-9 overflow-hidden rounded-lg border border-grey-300 dark:border-grey-700">
                     <span
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 z-10 grid place-items-center text-sm font-medium text-grey-700 dark:text-grey-300"
+                      className="pointer-events-none absolute inset-0 z-10 flex items-center text-sm font-medium text-grey-700 dark:text-grey-300"
                     >
-                      Resume
+                      {/* each label centres over its clickable half (1/4 and
+                          3/4 points); "vs" is pinned to the exact middle */}
+                      <span className="w-1/2 text-center">SWE</span>
+                      <span className="w-1/2 text-center">EEE</span>
+                      <span className="absolute left-1/2 -translate-x-1/2 text-xs text-grey-400 dark:text-grey-600">vs</span>
                     </span>
                     <a
-                      href="./CV.pdf"
+                      href="./CV_SWE.pdf"
                       target="_blank"
                       rel="noreferrer"
                       aria-label="Preview software engineering CV in the browser (left half)"
@@ -232,7 +248,7 @@ export default function Hero() {
                   )}
                 </div>
               </div>
-              <div className="mt-4 space-y-1.5 text-sm">
+              <div className="mt-3 space-y-1.5 text-sm">
                 <a
                   href="https://github.com/EricK-6"
                   target="_blank"
@@ -252,17 +268,15 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* barcode */}
-            <div aria-hidden="true">
-              <div className="flex h-14 items-stretch gap-[3px]">
-                {BARS.map((w, i) => (
-                  <span key={i} style={{ width: w }} className="bg-grey-800 dark:bg-grey-200" />
-                ))}
-              </div>
-              <div className="mt-1.5 font-mono text-[10px] tracking-[0.3em] text-grey-400 dark:text-grey-600">
-                AKL·EK2027·INTERN
-              </div>
-            </div>
+            {/* QR code in the barcode's old spot; white padding keeps the
+                quiet zone scannable in dark mode */}
+            <img
+              src="./qr.jpg"
+              alt="QR code"
+              loading="lazy"
+              decoding="async"
+              className="mx-auto h-20 w-20 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 dark:ring-grey-800"
+            />
           </div>
         </div>
       </div>

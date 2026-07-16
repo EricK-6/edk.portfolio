@@ -5,7 +5,7 @@ export default function About() {
   return (
     <Section id="about" kicker="Profile" title="About me">
       <div className="grid gap-8 md:grid-cols-3">
-        <Reveal className="md:col-span-2 space-y-4 text-grey-700 dark:text-grey-300 leading-relaxed">
+        <Reveal className="md:col-span-2 space-y-4 text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
           <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-grey-900 dark:text-grey-100">
             Kia ora! <span className="wave-hand">👋</span>
           </h3>
@@ -21,8 +21,8 @@ export default function About() {
             <Bold>serverless cloud pipelines</Bold>, <Bold>React web apps</Bold>, and{' '}
             <Bold>embedded robotics</Bold>, which earned <Bold>3rd place</Bold> at the 2025
             ECSE Design Competition. Outside the classroom I teach as a <Bold>Teaching
-            Assistant and robotics instructor</Bold>. I am always open to{' '}
-            <Bold>internship opportunities</Bold>, so feel free to check out my work below!
+            Assistant and Robotics Instructor</Bold>. I am always open to{' '}
+            <Bold>Internship opportunities</Bold>, so feel free to check out my work below!
           </p>
         </Reveal>
 

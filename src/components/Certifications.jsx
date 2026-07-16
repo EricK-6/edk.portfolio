@@ -102,14 +102,13 @@ function FlipHex({ cert, index }) {
   const [flipped, setFlipped] = useState(false)
   return (
     <div className="relative aspect-[300/400] w-full max-w-sm [perspective:1200px]">
-      <a
-        href={cert.credlyUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`${cert.name} — verify on Credly (opens in a new tab)`}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setFlipped(true) }}
-        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setFlipped(false) }}
-        className={`relative block h-full w-full cursor-pointer rounded-3xl transition-transform duration-500 ease-out [transform-style:preserve-3d] motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-grey-100 dark:focus-visible:ring-offset-grey-900 ${
+      {/* the rotating card is pointer-events-none: browsers hit-test
+          3D-transformed elements against their projected quad, which collapses
+          and stretches unpredictably mid-flip and fires bogus enter/leave
+          pairs (the infinite-flip bug). Hover and click live on the static
+          overlay link below, so the animation never affects hit-testing. */}
+      <div
+        className={`pointer-events-none relative h-full w-full rounded-3xl transition-transform duration-500 ease-out [transform-style:preserve-3d] motion-reduce:transition-none ${
           flipped ? '[transform:rotateY(180deg)]' : ''
         }`}
       >
@@ -137,7 +136,7 @@ function FlipHex({ cert, index }) {
           <div className="text-sm font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
             {cert.issuer} · {cert.date}
           </div>
-          <p className="max-w-[18rem] text-sm leading-relaxed text-grey-700 dark:text-grey-300">
+          <p className="max-w-[18rem] text-sm text-justify leading-relaxed text-grey-700 dark:text-grey-300">
             {cert.description}
           </p>
           {cert.tags?.length > 0 && (
@@ -148,7 +147,18 @@ function FlipHex({ cert, index }) {
             </div>
           )}
         </HexFace>
-      </a>
+      </div>
+
+      {/* static hit layer: owns hover + click, never transforms */}
+      <a
+        href={cert.credlyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${cert.name} — verify on Credly (opens in a new tab)`}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setFlipped(true) }}
+        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setFlipped(false) }}
+        className="absolute inset-0 z-10 block cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-grey-100 dark:focus-visible:ring-offset-grey-900"
+      />
     </div>
   )
 }

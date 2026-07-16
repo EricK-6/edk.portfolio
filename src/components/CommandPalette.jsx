@@ -23,7 +23,7 @@ export default function CommandPalette({ theme, onToggleTheme }) {
     goTo(id, layout)
   }
   const openLink = (href) => { close(); window.open(href, '_blank', 'noopener,noreferrer') }
-  const downloadCV = (href = './CV.pdf') => {
+  const downloadCV = (href = './CV_SWE.pdf') => {
     close()
     const a = document.createElement('a')
     a.href = href
@@ -86,7 +86,7 @@ export default function CommandPalette({ theme, onToggleTheme }) {
     { id: 'leadership', label: 'Leadership', hint: 'Activities', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
     { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
-    { id: 'cv-swe', label: 'Download CV — Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV('./CV.pdf') },
+    { id: 'cv-swe', label: 'Download CV — Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV('./CV_SWE.pdf') },
     { id: 'cv-eee', label: 'Download CV — Hardware', hint: 'PDF', keywords: 'cv resume pdf download hardware electrical electronics eee', icon: <DownloadIcon />, run: () => downloadCV('./CV_EEE.pdf') },
     {
       id: 'theme',

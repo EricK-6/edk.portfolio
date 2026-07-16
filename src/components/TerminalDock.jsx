@@ -49,7 +49,7 @@ const FS = dir('top', {
     linkedin: file(
       <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
     ),
-    'cv-swe.pdf': { type: 'file', download: './CV.pdf', content: ['↓ downloading software CV…'] },
+    'cv-swe.pdf': { type: 'file', download: './CV_SWE.pdf', content: ['↓ downloading software CV…'] },
     'cv-eee.pdf': { type: 'file', download: './CV_EEE.pdf', content: ['↓ downloading hardware CV…'] },
   }),
 })
@@ -208,7 +208,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
   // 'cd <section>' navigates to that section (a flight in space mode, a scroll
   // in scroll mode); 'top' / 'cd ~' is home
   const go = (id) => goTo(id === 'top' ? 'home' : id, layout)
-  const downloadCV = (href = './CV.pdf') => {
+  const downloadCV = (href = './CV_SWE.pdf') => {
     const a = document.createElement('a')
     a.href = href
     a.download = ''
@@ -287,7 +287,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
       case 'cv':
       case 'resume': {
         const which = (args[0] || '').toLowerCase()
-        if (which === 'swe' || which === 'software') { print('↓ downloading software CV…'); downloadCV('./CV.pdf') }
+        if (which === 'swe' || which === 'software') { print('↓ downloading software CV…'); downloadCV('./CV_SWE.pdf') }
         else if (which === 'eee' || which === 'hardware' || which === 'electrical') { print('↓ downloading hardware CV…'); downloadCV('./CV_EEE.pdf') }
         else print('usage: cv <swe | eee>  — software or hardware/electronics CV')
         break

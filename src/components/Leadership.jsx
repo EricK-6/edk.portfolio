@@ -5,7 +5,7 @@ import { useLayout } from '../layout.js'
 
 const ROLES = [
   {
-    title: 'Academic Executive',
+    title: 'Academic Team Executive',
     org: 'Korean Engineering Body (KEB)',
     period: 'Jul 2024 - Present',
     image: './KEB.png',
@@ -13,7 +13,7 @@ const ROLES = [
       'Tutor junior engineering students and assist in planning academic events for the student community.',
   },
   {
-    title: 'Full time Volunteer',
+    title: 'Full-time Volunteer',
     org: 'IEEE · NZ Robotics Olympiad 2025',
     period: 'Jul 2025',
     image: './IEEE.png',
@@ -59,6 +59,7 @@ export default function Leadership() {
   const wrapRef = useRef(null)
   const nodeRefs = useRef([])
   const [path, setPath] = useState('')
+  const [runnerPath, setRunnerPath] = useState('')
 
   useEffect(() => {
     const wrap = wrapRef.current
@@ -82,17 +83,25 @@ export default function Leadership() {
         .map(centerOf)
       if (pts.length < 2) {
         setPath('')
+        setRunnerPath('')
         return
       }
       // smooth serpentine: vertical control points create flowing S-curves
-      let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`
-      for (let i = 1; i < pts.length; i++) {
-        const a = pts[i - 1]
-        const b = pts[i]
-        const my = (a.y + b.y) / 2
-        d += ` C ${a.x.toFixed(1)} ${my.toFixed(1)}, ${b.x.toFixed(1)} ${my.toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`
+      const curveThrough = (points) => {
+        let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`
+        for (let i = 1; i < points.length; i++) {
+          const a = points[i - 1]
+          const b = points[i]
+          const my = (a.y + b.y) / 2
+          d += ` C ${a.x.toFixed(1)} ${my.toFixed(1)}, ${b.x.toFixed(1)} ${my.toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`
+        }
+        return d
       }
-      setPath(d)
+      setPath(curveThrough(pts))
+      // the runner flies the same curve reversed (bottom-to-top): SMIL's
+      // rotate="auto" follows the path's own direction, so reversing the path
+      // (rather than keyPoints) keeps the plane's nose pointing along travel
+      setRunnerPath(curveThrough([...pts].reverse()))
     }
 
     build()
@@ -119,18 +128,21 @@ export default function Leadership() {
             strokeWidth="2.5"
             strokeLinecap="round"
           />
-          {/* a runner dot travelling the curve bottom-to-top, forever */}
-          {path && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
-            <circle r="4.5" className="fill-accent dark:fill-accent-dark">
+          {/* the navbar's paper plane travelling the curve bottom-to-top, forever */}
+          {runnerPath && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
+            <g className="fill-accent dark:fill-accent-dark">
+              {/* 24x24 icon scaled down and centred on the motion point */}
+              <path
+                d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"
+                transform="translate(-10.2 -10.2) scale(0.85)"
+              />
               <animateMotion
                 dur="4.5s"
                 repeatCount="indefinite"
-                calcMode="linear"
-                keyPoints="1;0"
-                keyTimes="0;1"
-                path={path}
+                rotate="auto"
+                path={runnerPath}
               />
-            </circle>
+            </g>
           )}
         </svg>
         {/* straight spine (mobile) */}
@@ -174,7 +186,7 @@ export default function Leadership() {
                       <div className="mt-1 text-xs text-grey-500 dark:text-grey-500">{r.period}</div>
                     </div>
                   </div>
-                  <p className="mt-3 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
+                  <p className="mt-3 text-sm text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
                     {r.description}
                   </p>
                 </div>

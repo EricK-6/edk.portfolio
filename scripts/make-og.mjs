@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import { fileURLToPath } from 'node:url'
 
 // Regenerates public/og-image.png (the boarding-pass social preview).
 // sharp is not a project dependency — install it temporarily to run:
@@ -17,28 +18,16 @@ const GREY_400 = '#a8a29e'
 const GREY_500 = '#78716c'
 const GREY_600 = '#57534e'
 
-// same fixed pseudo-barcode as the live hero
-const BARS = [2, 1, 3, 1, 2, 2, 1, 4, 1, 2, 1, 3, 2, 1, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 1]
+// card geometry: wide and short, like a real ticket
+const CX = 25, CY = 135, CW = 1150, CH = 360, R = 26
+const BAND_W = 56 // vertical BOARDING PASS stub on the left edge
+const M = CX + BAND_W + 30 // main segment left edge
+const PERF_X = CX + 880 // perforation line
+const STUB_X = PERF_X + 40
 
-// card geometry
-const CX = 70, CY = 95, CW = 1060, CH = 440, R = 26
-const PERF_X = CX + 740 // perforation line
-const STUB_X = PERF_X + 36
-
-const bars = (() => {
-  let x = STUB_X
-  const parts = []
-  for (const w of BARS) {
-    const bw = w * 2.4
-    parts.push(`<rect x="${x.toFixed(1)}" y="${CY + 290}" width="${bw.toFixed(1)}" height="72" fill="${GREY_100}"/>`)
-    x += bw + 4.4
-  }
-  return parts.join('\n')
-})()
-
-const field = (x, y, label, value, valueFill = GREY_100) => `
+const field = (x, y, label, value, valueFill = GREY_100, size = 23) => `
   <text x="${x}" y="${y}" font-family="${MONO}" font-size="15" letter-spacing="3" fill="${GREY_600}">${label}</text>
-  <text x="${x}" y="${y + 32}" font-family="${SANS}" font-size="23" font-weight="bold" fill="${valueFill}">${value}</text>`
+  <text x="${x}" y="${y + 32}" font-family="${SANS}" font-size="${size}" font-weight="bold" fill="${valueFill}">${value}</text>`
 
 const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -68,42 +57,62 @@ const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http
     <rect x="${CX}" y="${CY}" width="${CW}" height="7" fill="url(#accent)"/>
   </g>
 
+  <!-- tear-off stub: vertical BOARDING PASS reading bottom-to-top,
+       sized to fill the stub's full height -->
+  <text x="${CX + BAND_W / 2 + 8}" y="${CY + CH / 2}" font-family="${MONO}" font-size="22" letter-spacing="10" fill="${GREY_500}"
+        text-anchor="middle" transform="rotate(-90, ${CX + BAND_W / 2 + 8}, ${CY + CH / 2})">BOARDING PASS</text>
+  <line x1="${CX + BAND_W}" y1="${CY + 18}" x2="${CX + BAND_W}" y2="${CY + CH - 18}" stroke="#44403c" stroke-width="3" stroke-dasharray="10 12"/>
+  <circle cx="${CX + BAND_W}" cy="${CY}" r="17" fill="#000"/>
+  <circle cx="${CX + BAND_W}" cy="${CY + CH}" r="17" fill="#000"/>
+
   <!-- header row -->
-  <text x="${CX + 46}" y="${CY + 62}" font-family="${MONO}" font-size="17" letter-spacing="6" fill="${GREY_500}">ERICKK·CLOUD — BOARDING PASS</text>
-  <text x="${PERF_X - 40}" y="${CY + 62}" font-family="${MONO}" font-size="17" letter-spacing="2" fill="${GREY_600}" text-anchor="end">FLIGHT EK-2027</text>
+  <text x="${M}" y="${CY + 52}" font-family="${MONO}" font-size="17" letter-spacing="6" fill="${GREY_500}">ERICKK·CLOUD</text>
+  <text x="${PERF_X - 24}" y="${CY + 52}" font-family="${MONO}" font-size="17" letter-spacing="2" fill="${GREY_600}" text-anchor="end">FLIGHT EK-2027</text>
 
   <!-- passenger -->
-  <text x="${CX + 46}" y="${CY + 122}" font-family="${MONO}" font-size="15" letter-spacing="4" fill="${GREY_600}">PASSENGER</text>
-  <text x="${CX + 44}" y="${CY + 178}" font-family="${SANS}" font-size="58" font-weight="bold" fill="${GREY_100}">Dohyun (Eric) Kim<tspan fill="${EMERALD}">_</tspan></text>
-  <text x="${CX + 46}" y="${CY + 214}" font-family="${SANS}" font-size="21" fill="${GREY_400}">Computer Systems Engineering (Hons) · University of Auckland</text>
+  <text x="${M}" y="${CY + 100}" font-family="${MONO}" font-size="15" letter-spacing="4" fill="${GREY_600}">PASSENGER</text>
+  <text x="${M - 2}" y="${CY + 148}" font-family="${SANS}" font-size="54" font-weight="bold" fill="${GREY_100}">Dohyun (Eric) Kim<tspan fill="${EMERALD}">_</tspan></text>
+  <text x="${M}" y="${CY + 180}" font-family="${SANS}" font-size="21" fill="${GREY_400}">Computer Systems Engineering (Hons) · University of Auckland</text>
 
   <!-- fields -->
-  ${field(CX + 46, CY + 286, 'FROM', 'Auckland, NZ (AKL)')}
-  ${field(CX + 306, CY + 286, 'TO', 'Your team')}
-  ${field(CX + 506, CY + 286, 'SEAT', 'Summer 26/27')}
-  ${field(CX + 46, CY + 370, 'CLASS', 'Embedded · Full stack · Digital hardware')}
-  <circle cx="${CX + 514}" cy="${CY + 395}" r="6" fill="#34d399"/>
-  <text x="${CX + 530}" y="${CY + 402}" font-family="${SANS}" font-size="23" font-weight="bold" fill="${GREY_100}">Open to internships</text>
+  ${field(M, CY + 232, 'FROM', 'Auckland, NZ (AKL)')}
+  ${field(M + 250, CY + 232, 'TO', 'Your team')}
+  ${field(M + 410, CY + 232, 'SEAT', 'Summer 26/27')}
+  ${field(M, CY + 302, 'CLASS', 'Embedded · Full stack · Digital hardware', GREY_100, 20)}
+  <text x="${M + 410}" y="${CY + 302}" font-family="${MONO}" font-size="15" letter-spacing="3" fill="${GREY_600}">STATUS</text>
+  <circle cx="${M + 417}" cy="${CY + 327}" r="6" fill="#34d399"/>
+  <text x="${M + 433}" y="${CY + 334}" font-family="${SANS}" font-size="21" font-weight="bold" fill="${GREY_100}">Open to internships</text>
 
   <!-- perforation -->
   <line x1="${PERF_X}" y1="${CY + 18}" x2="${PERF_X}" y2="${CY + CH - 18}" stroke="#44403c" stroke-width="3" stroke-dasharray="10 12"/>
   <circle cx="${PERF_X}" cy="${CY}" r="17" fill="#000"/>
   <circle cx="${PERF_X}" cy="${CY + CH}" r="17" fill="#000"/>
 
-  <!-- stub -->
-  <text x="${STUB_X}" y="${CY + 130}" font-family="${MONO}" font-size="15" letter-spacing="5" fill="${GREY_500}">GATE</text>
-  <text x="${CX + CW - 46}" y="${CY + 134}" font-family="${MONO}" font-size="34" font-weight="bold" fill="${GREY_100}" text-anchor="end">P·01</text>
-  <text x="${STUB_X}" y="${CY + 196}" font-family="${MONO}" font-size="15" letter-spacing="4" fill="${GREY_600}">DOCUMENTS</text>
-  <text x="${STUB_X}" y="${CY + 228}" font-family="${SANS}" font-size="21" fill="${GREY_400}">CV · GitHub · LinkedIn</text>
-  ${bars}
-  <text x="${STUB_X}" y="${CY + 396}" font-family="${MONO}" font-size="15" letter-spacing="5" fill="${GREY_600}">AKL·EK2027·INTERN</text>
+  <!-- stub (the QR itself is composited in by sharp below) -->
+  <text x="${STUB_X}" y="${CY + 104}" font-family="${MONO}" font-size="15" letter-spacing="5" fill="${GREY_500}">GATE</text>
+  <text x="${CX + CW - 46}" y="${CY + 108}" font-family="${MONO}" font-size="34" font-weight="bold" fill="${GREY_100}" text-anchor="end">P·01</text>
+  <text x="${STUB_X}" y="${CY + 160}" font-family="${MONO}" font-size="15" letter-spacing="4" fill="${GREY_600}">RESUME</text>
+  <text x="${STUB_X}" y="${CY + 188}" font-family="${SANS}" font-size="21" fill="${GREY_400}">SWE vs EEE</text>
 
   <!-- url -->
   <text x="${W / 2}" y="${H - 34}" font-family="${MONO}" font-size="19" letter-spacing="6" fill="${GREY_500}" text-anchor="middle">erickk.cloud</text>
 </svg>`
 
+// QR replaces the stub barcode: resized with a white quiet-zone border and
+// centred in the stub's free space
+const QR_SIZE = 130
+const QR_PAD = 6
+const qr = await sharp(fileURLToPath(new URL('../public/qr.jpg', import.meta.url)))
+  .resize(QR_SIZE - QR_PAD * 2, QR_SIZE - QR_PAD * 2)
+  .extend({ top: QR_PAD, bottom: QR_PAD, left: QR_PAD, right: QR_PAD, background: '#fff' })
+  .png()
+  .toBuffer()
+const qrLeft = Math.round((STUB_X + CX + CW - 46) / 2 - QR_SIZE / 2)
+const qrTop = CY + 206
+
 await sharp(Buffer.from(svg), { density: 144 })
   .resize(W, H)
+  .composite([{ input: qr, left: qrLeft, top: qrTop }])
   .png()
-  .toFile(new URL('../public/og-image.png', import.meta.url).pathname)
+  .toFile(fileURLToPath(new URL('../public/og-image.png', import.meta.url)))
 console.log('og-image.png written')

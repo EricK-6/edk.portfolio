@@ -53,11 +53,11 @@ npm run deploy
 ## How it's laid out
 
 ```
-├── CV.pdf                         # my CV — copy-cv.mjs copies this into public/
+├── CV_SWE.pdf                     # my CV — copy-cv.mjs copies this into public/
 ├── .github/workflows/deploy.yml   # auto-deploy on push to main
-├── scripts/copy-cv.mjs            # copies CV.pdf → public/ before dev & build
+├── scripts/copy-cv.mjs            # copies CV_SWE.pdf → public/ before dev & build
 ├── public/
-│   ├── CV.pdf                     # what the "Download CV" button grabs
+│   ├── CV_SWE.pdf                 # what the "Download CV" button grabs
 │   └── saturn.svg
 ├── src/
 │   ├── App.jsx                    # theme + layout (space vs scroll mode)
@@ -97,10 +97,10 @@ For real project screenshots, I drop an image into `public/` and swap the placeh
 
 ## Updating my CV
 
-I keep `CV.pdf` at the project root — the `copy-cv` script copies it into `public/` automatically whenever I run dev or build, and the Download CV button just points at `/CV.pdf`. So I only swap that one file.
+I keep `CV_SWE.pdf` at the project root — the `copy-cv` script copies it into `public/` automatically whenever I run dev or build, and the Download CV button just points at `/CV_SWE.pdf`. So I only swap that one file.
 
 ## A few notes to self
 
 - Dark mode follows the system on first load, then remembers whatever I last picked.
 - The contact form posts to Formspree (set by `FORMSPREE_ENDPOINT` in `Contact.jsx`), with a plain `mailto:` fallback underneath it.
-- `public/CV.pdf` is public once the site is deployed — if I don't want my phone number scraped, I can keep a redacted PDF in `public/` and the full one to myself.
+- `public/CV_SWE.pdf` is public once the site is deployed — if I don't want my phone number scraped, I can keep a redacted PDF in `public/` and the full one to myself.

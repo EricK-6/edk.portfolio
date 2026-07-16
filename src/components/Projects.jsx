@@ -97,7 +97,7 @@ const PROJECTS = [
   {
     title: 'Smart Energy Monitor',
     icon: 'zap',
-    tag: 'C & Embedded · Team Project',
+    tag: 'Embedded C · Team Project',
     year: '2025',
     org: 'University of Auckland',
     role: 'Embedded Energy Monitoring System',
@@ -105,7 +105,7 @@ const PROJECTS = [
       'Designed an embedded energy monitoring system using ATmega328P microcontrollers with ADC processing in order to measure and display real-time energy usage.',
       'Produced a validated PCB schematic using Altium Designer in order to achieve accurate signal conditioning.',
     ],
-    tech: ['C', 'Atmel AVR', 'ATmega328P', 'Altium Designer', 'LTspice'],
+    tech: ['C', 'Atmel AVR', 'ATmega328P', 'Altium Designer', 'LTspice', 'Proteus'],
     image: './energy_monitor.webp',
     video: './smart.mp4',
     color: 'from-emerald-500/20 to-teal-500/20',
@@ -125,7 +125,7 @@ const PROJECTS = [
       'Implemented a Flappy Bird-style game in VHDL on an Altera FPGA with VGA output and sprite rendering in order to demonstrate real-time hardware design.',
       'Developed a pixel-priority VHDL pipeline in order to render game scenes at VGA resolution.',
     ],
-    tech: ['VHDL', 'Intel Quartus Prime', 'Altera FPGA'],
+    tech: ['VHDL', 'Altera FPGA', 'Intel Quartus Prime', 'ModelSim'],
     image: './flappy_universe.webp',
     video: './flappy.mp4',
     color: 'from-lime-500/20 to-green-500/20',
@@ -164,7 +164,7 @@ const PROJECTS = [
       'Built an Android recipe and meal planning app in Java with Firebase Firestore, enabling users to browse cuisines, search food items, and persist personalised meal plans.',
       'Implemented a nutrition goal tracking system using SharedPreferences to set and track daily targets.',
     ],
-    tech: ['Java', 'Android Studio', 'Firebase Firestore', 'RecyclerView', 'SharedPreferences'],
+    tech: ['Java', 'Android Studio', 'Firebase Firestore', 'XML', 'Figma'],
     image: './MealHub.webp',
     color: 'from-green-500/20 to-emerald-500/20',
     initial: 'M',
@@ -396,7 +396,7 @@ function ProjectCard({ project, space }) {
         <div className="mt-2 text-sm font-medium text-grey-700 dark:text-grey-300">:: {role}</div>
 
         {highlights?.length > 0 && (
-          <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm text-grey-700 dark:text-grey-300`}>
+          <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm text-justify text-grey-700 dark:text-grey-300`}>
             {highlights.map((h) => (
               <li key={h} className="flex gap-2">
                 <span className="mt-1 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent dark:bg-accent-dark" />
@@ -427,22 +427,48 @@ function ProjectCard({ project, space }) {
                 Open the flight log →
               </button>
             )}
-            {links?.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
-              >
-                {l.label} →
-              </a>
-            ))}
+            {links?.map((l) => {
+              const demo = /demo/i.test(l.label)
+              const git = l.href.includes('github.com')
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
+                >
+                  {demo && <LiveLed />}
+                  {git && <GitHubIcon />}
+                  {l.label}
+                  {!demo && !git && ' →'}
+                </a>
+              )
+            })}
           </div>
         )}
       </div>
       {logOpen && <FlightLogModal project={project} onClose={() => setLogOpen(false)} />}
     </article>
+  )
+}
+
+// blinking green LED marking a live deployed demo — same light as the hero's
+// "Open to internships" status
+function LiveLed() {
+  return (
+    <span aria-hidden="true" className="relative flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+    </span>
+  )
+}
+
+function GitHubIcon() {
+  return (
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.35.77 1.05.77 2.11 0 1.52-.01 2.75-.01 3.12 0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5z" />
+    </svg>
   )
 }
 
@@ -503,7 +529,7 @@ function FlightLogModal({ project, onClose }) {
                 {entry.code}
               </h4>
               {entry.body.map((para) => (
-                <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700 dark:text-grey-300">
+                <p key={para} className="mt-1.5 text-sm text-justify leading-relaxed text-grey-700 dark:text-grey-300">
                   {para}
                 </p>
               ))}
