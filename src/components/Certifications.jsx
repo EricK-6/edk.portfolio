@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
@@ -27,15 +26,16 @@ const CERTS = [
   },
 ]
 
-// build a rounded-corner vertical hexagon path for a viewBox of w x h
+// build a rounded-corner regular hexagon path for a viewBox of w x h — for a
+// true pointy-top hexagon keep w:h at √3:2 with side vertices at 1/4 and 3/4
 function roundedHex(w, h, r) {
   const v = [
     [w / 2, 0],
-    [w, h * 0.16],
-    [w, h * 0.84],
+    [w, h * 0.25],
+    [w, h * 0.75],
     [w / 2, h],
-    [0, h * 0.84],
-    [0, h * 0.16],
+    [0, h * 0.75],
+    [0, h * 0.25],
   ]
   const n = v.length
   const unit = (ax, ay, bx, by) => {
@@ -60,15 +60,30 @@ function roundedHex(w, h, r) {
 }
 
 const HEX_W = 300
-const HEX_H = 400
+const HEX_H = 346 // 300 × 2/√3 — regular hexagon proportions
 const HEX_PATH = roundedHex(HEX_W, HEX_H, 16)
 
-// one face of the flip card: the hexagon shape plus its content
-function HexFace({ gradientId, back = false, children }) {
+// medallion that links to the Credly badge: the hexagon frames only the badge
+// art (which already carries the cert name); hovering or focusing crossfades
+// to the description. Pure opacity swap on a static element — no 3D, no
+// filters animating, nothing hover can destabilise.
+function HexMedallion({ cert, index }) {
+  const gradientId = `hexBorder-${index}`
   return (
-    <div
-      className={`absolute inset-0 [backface-visibility:hidden] ${back ? '[transform:rotateY(180deg)]' : ''}`}
+    <a
+      href={cert.credlyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${cert.name} — verify on Credly (opens in a new tab)`}
+      className="group relative block aspect-[300/346] w-full max-w-sm cursor-pointer select-none rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-grey-300 dark:focus-visible:ring-offset-grey-950"
     >
+      {/* soft glow pad grounding the badge (static, so nothing can flicker) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-10 rounded-full bg-orange-500/10 blur-2xl dark:bg-orange-400/[0.08]"
+      />
+      {/* the shadow stays constant: transitioning a filter re-composites the
+          layer on every hover, which showed up as cursor/paint flicker */}
       <svg
         viewBox={`0 0 ${HEX_W} ${HEX_H}`}
         preserveAspectRatio="none"
@@ -83,83 +98,48 @@ function HexFace({ gradientId, back = false, children }) {
         </defs>
         <path
           d={HEX_PATH}
-          className="fill-grey-100 dark:fill-grey-900"
+          className="fill-grey-100 transition-[stroke-opacity] [stroke-opacity:0.45] group-hover:[stroke-opacity:0.9] dark:fill-grey-900"
           stroke={`url(#${gradientId})`}
-          strokeWidth="2"
-          strokeOpacity="0.35"
+          strokeWidth="2.5"
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center">
-        {children}
-      </div>
-    </div>
-  )
-}
 
-// hexagon that links to the Credly badge; hovering on desktop flips it 180°
-// to reveal details, reduced-motion users get an instant swap
-function FlipHex({ cert, index }) {
-  const [flipped, setFlipped] = useState(false)
-  return (
-    <div className="relative aspect-[300/400] w-full max-w-sm [perspective:1200px]">
-      {/* the rotating card is pointer-events-none: browsers hit-test
-          3D-transformed elements against their projected quad, which collapses
-          and stretches unpredictably mid-flip and fires bogus enter/leave
-          pairs (the infinite-flip bug). Hover and click live on the static
-          overlay link below, so the animation never affects hit-testing. */}
-      <div
-        className={`pointer-events-none relative h-full w-full rounded-3xl transition-transform duration-500 ease-out [transform-style:preserve-3d] motion-reduce:transition-none ${
-          flipped ? '[transform:rotateY(180deg)]' : ''
-        }`}
-      >
-        <HexFace gradientId={`hexBorder-${index}-front`}>
-          <img
-            src={cert.image}
-            alt={cert.name}
-            loading="lazy"
-            decoding="async"
-            className="h-44 w-auto flex-none object-contain drop-shadow-md"
-          />
-          <div>
-            <h3 className="whitespace-nowrap text-lg font-semibold leading-snug">{cert.name}</h3>
-            <div className="mt-1 text-sm font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
-              {cert.issuer} · {cert.date}
-            </div>
-          </div>
-          <div className="mt-2 flex items-center gap-1.5 text-xs text-grey-500 dark:text-grey-500">
-            <ExternalLinkIcon /> click to verify on Credly
-          </div>
-        </HexFace>
-
-        <HexFace gradientId={`hexBorder-${index}-back`} back>
-          <h3 className="text-lg font-semibold leading-snug">{cert.name}</h3>
-          <div className="text-sm font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
+      {/* badge face — art, name and date all kept inside the hexagon; the
+          name wraps within a width the mid-band holds, and the small issuer
+          line clears the bottom taper */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-8 text-center transition-opacity duration-300 group-hover:opacity-0 group-focus-visible:opacity-0 motion-reduce:transition-none">
+        <img
+          src={cert.image}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-[48%] w-auto flex-none object-contain drop-shadow-md"
+        />
+        <div>
+          <h3 className="mx-auto max-w-[15rem] text-base font-semibold leading-snug">{cert.name}</h3>
+          <div className="mt-1 text-xs font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
             {cert.issuer} · {cert.date}
           </div>
-          <p className="max-w-[18rem] text-sm text-justify leading-relaxed text-grey-700 dark:text-grey-300">
-            {cert.description}
-          </p>
-          {cert.tags?.length > 0 && (
-            <div className="flex max-w-[19rem] flex-wrap justify-center gap-1.5">
-              {cert.tags.map((t) => (
-                <span key={t} className="tag">{t}</span>
-              ))}
-            </div>
-          )}
-        </HexFace>
+        </div>
       </div>
 
-      {/* static hit layer: owns hover + click, never transforms */}
-      <a
-        href={cert.credlyUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`${cert.name} — verify on Credly (opens in a new tab)`}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setFlipped(true) }}
-        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setFlipped(false) }}
-        className="absolute inset-0 z-10 block cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-grey-100 dark:focus-visible:ring-offset-grey-900"
-      />
-    </div>
+      {/* details face — fades in over the badge */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
+        <p className="max-w-[15rem] text-sm text-justify leading-relaxed text-grey-700 dark:text-grey-300">
+          {cert.description}
+        </p>
+        {cert.tags?.length > 0 && (
+          <div className="flex max-w-[16rem] flex-wrap justify-center gap-1.5">
+            {cert.tags.map((t) => (
+              <span key={t} className="tag">{t}</span>
+            ))}
+          </div>
+        )}
+        <div className="flex items-center gap-1.5 text-xs text-grey-500 dark:text-grey-500">
+          <ExternalLinkIcon /> click to verify on Credly
+        </div>
+      </div>
+    </a>
   )
 }
 
@@ -176,10 +156,10 @@ function ExternalLinkIcon() {
 export default function Certifications() {
   return (
     <Section id="certifications" kicker="Certifications" title="Credentials" className="!py-10 sm:!py-12">
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="mx-auto grid max-w-3xl gap-10 sm:grid-cols-2 sm:gap-12">
         {CERTS.map((c, i) => (
           <Reveal key={c.name} delay={i * 80} className="flex justify-center">
-            <FlipHex cert={c} index={i} />
+            <HexMedallion cert={c} index={i} />
           </Reveal>
         ))}
       </div>

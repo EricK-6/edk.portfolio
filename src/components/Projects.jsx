@@ -417,7 +417,7 @@ function ProjectCard({ project, space }) {
         )}
 
         {(links?.length > 0 || log) && (
-          <div className={`${space ? 'mt-3' : 'mt-5'} flex flex-wrap gap-4`}>
+          <div className={`${space ? 'mt-3' : 'mt-5'} flex flex-wrap items-center gap-3`}>
             {log && (
               <button
                 type="button"
@@ -436,7 +436,7 @@ function ProjectCard({ project, space }) {
                   href={l.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-grey-400/70 bg-grey-100 px-3 py-1.5 text-sm font-medium text-grey-900 transition hover:bg-grey-200 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-100 dark:hover:bg-grey-800"
                 >
                   {demo && <LiveLed />}
                   {git && <GitHubIcon />}

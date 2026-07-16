@@ -67,8 +67,6 @@ export default function Hero() {
   const { typed, done } = useTypeChallenge()
   const visited = useVisited()
   const vip = isVipPassenger(visited)
-  // hand-drawn hints stay until the visitor starts exploring other sections
-  const fresh = visited.size <= 1
 
   return (
     <section
@@ -77,7 +75,7 @@ export default function Hero() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px]
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px] max-h-full
                    bg-gradient-to-b from-accent/[0.08] via-white to-transparent
                    dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
       />
@@ -121,7 +119,7 @@ export default function Hero() {
             )}
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <div className="font-mono text-xs font-medium uppercase tracking-[0.3em] text-grey-500 dark:text-grey-500">
-                erickk·cloud — boarding pass
+                erickk·cloud
               </div>
               <div className="font-mono text-xs text-grey-400 dark:text-grey-600">FLIGHT EK-2027</div>
             </div>
@@ -230,22 +228,6 @@ export default function Hero() {
                       className="flex-1 transition hover:bg-grey-200/80 dark:hover:bg-grey-800/60"
                     />
                   </div>
-                  {/* hand-drawn hints (until they explore): which half is which */}
-                  {fresh && (
-                    <div
-                      aria-hidden="true"
-                      className="flex justify-around pt-0.5 font-sketch text-[14px] leading-none text-accent/80 dark:text-accent-dark/80"
-                    >
-                      <span className="flex flex-col items-center">
-                        <UpArrow />
-                        <span className="-mt-0.5 -rotate-3">swe</span>
-                      </span>
-                      <span className="flex flex-col items-center">
-                        <UpArrow />
-                        <span className="-mt-0.5 rotate-3">eee</span>
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
               <div className="mt-3 space-y-1.5 text-sm">
@@ -275,32 +257,12 @@ export default function Hero() {
               alt="QR code"
               loading="lazy"
               decoding="async"
-              className="mx-auto h-20 w-20 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 dark:ring-grey-800"
+              className="mx-auto h-36 w-36 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 dark:ring-grey-800"
             />
           </div>
         </div>
       </div>
     </section>
-  )
-}
-
-// little hand-drawn arrow pointing up at the Resume tile half above it
-function UpArrow() {
-  return (
-    <svg
-      aria-hidden="true"
-      width="14"
-      height="14"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 15 C 8 9.5, 6 6, 5 3" />
-      <path d="M5 3 L 2.5 5.5 M5 3 L 7.5 5" />
-    </svg>
   )
 }
 
