@@ -251,14 +251,24 @@ export default function Hero() {
             </div>
 
             {/* QR code in the barcode's old spot; white padding keeps the
-                quiet zone scannable in dark mode */}
-            <img
-              src="./qr.webp"
-              alt="QR code linking to Eric's LinkedIn profile"
-              loading="lazy"
-              decoding="async"
-              className="mx-auto h-36 w-36 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 dark:ring-grey-800"
-            />
+                quiet zone scannable in dark mode. Hidden on phones (you
+                can't scan the screen you're holding) and clickable as a
+                LinkedIn link for everyone else. */}
+            <a
+              href="https://www.linkedin.com/in/erick06/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open Eric's LinkedIn profile (the QR code links there too)"
+              className="mx-auto hidden md:block"
+            >
+              <img
+                src="./qr.webp"
+                alt="QR code linking to Eric's LinkedIn profile"
+                loading="lazy"
+                decoding="async"
+                className="h-36 w-36 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 transition hover:ring-accent/60 dark:ring-grey-800 dark:hover:ring-accent-dark/60"
+              />
+            </a>
           </div>
         </div>
       </div>
