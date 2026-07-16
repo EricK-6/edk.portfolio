@@ -6,7 +6,7 @@ const CERTS = [
     name: 'AWS Certified Cloud Practitioner',
     issuer: 'Amazon Web Services',
     date: 'Apr 2026',
-    image: './cloud.png',
+    image: './cloud.webp',
     description:
       'Validated foundational knowledge of AWS cloud concepts, core services, and cloud security and architecture.',
     tags: ['EC2', 'S3', 'IAM', 'VPC', 'CloudWatch'],
@@ -17,7 +17,7 @@ const CERTS = [
     name: 'AWS Certified AI Practitioner',
     issuer: 'Amazon Web Services',
     date: 'May 2026',
-    image: './ai.png',
+    image: './ai.webp',
     description:
       'Validated foundational knowledge of AI/ML concepts, generative AI, and AWS AI/ML services and tools.',
     tags: ['SageMaker', 'Bedrock', 'Rekognition'],

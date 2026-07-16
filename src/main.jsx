@@ -1,5 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+// self-hosted fonts (replaces the old Google Fonts stylesheet): only the
+// weights the site actually uses
+import '@fontsource/inter/400.css'
+import '@fontsource/inter/500.css'
+import '@fontsource/inter/600.css'
+import '@fontsource/inter/700.css'
+import '@fontsource/inter/800.css'
+import '@fontsource/jetbrains-mono/400.css'
+import '@fontsource/jetbrains-mono/500.css'
+import '@fontsource/caveat/500.css'
+import '@fontsource/caveat/600.css'
 import App from './App.jsx'
 import './index.css'
 

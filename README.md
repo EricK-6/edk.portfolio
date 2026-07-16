@@ -53,11 +53,11 @@ npm run deploy
 ## How it's laid out
 
 ```
-├── CV_SWE.pdf                     # my CV — copy-cv.mjs copies this into public/
 ├── .github/workflows/deploy.yml   # auto-deploy on push to main
-├── scripts/copy-cv.mjs            # copies CV_SWE.pdf → public/ before dev & build
+├── scripts/make-og.mjs            # regenerates public/og-image.png (see its header)
 ├── public/
-│   ├── CV_SWE.pdf                 # what the "Download CV" button grabs
+│   ├── CV_SWE.pdf                 # the two CVs the boarding-pass stub links to
+│   ├── CV_EEE.pdf
 │   └── saturn.svg
 ├── src/
 │   ├── App.jsx                    # theme + layout (space vs scroll mode)
@@ -97,7 +97,7 @@ For real project screenshots, I drop an image into `public/` and swap the placeh
 
 ## Updating my CV
 
-I keep `CV_SWE.pdf` at the project root — the `copy-cv` script copies it into `public/` automatically whenever I run dev or build, and the Download CV button just points at `/CV_SWE.pdf`. So I only swap that one file.
+Both CVs (`CV_SWE.pdf` and `CV_EEE.pdf`) live in `public/` and are committed to the repo — the boarding-pass stub links straight to them. To update one, just replace the PDF in `public/` and push.
 
 ## A few notes to self
 

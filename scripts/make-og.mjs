@@ -102,7 +102,7 @@ const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http
 // centred in the stub's free space
 const QR_SIZE = 130
 const QR_PAD = 6
-const qr = await sharp(fileURLToPath(new URL('../public/qr.jpg', import.meta.url)))
+const qr = await sharp(fileURLToPath(new URL('../public/qr.webp', import.meta.url)))
   .resize(QR_SIZE - QR_PAD * 2, QR_SIZE - QR_PAD * 2)
   .extend({ top: QR_PAD, bottom: QR_PAD, left: QR_PAD, right: QR_PAD, background: '#fff' })
   .png()

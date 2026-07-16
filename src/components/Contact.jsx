@@ -14,6 +14,7 @@ export default function Contact() {
   const [email, setEmail] = useState('')
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
+  const [gotcha, setGotcha] = useState('') // honeypot: humans never see it, bots fill it
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | sending | success | error
 
@@ -36,7 +37,7 @@ export default function Contact() {
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify({ name, email, subject, message, _gotcha: gotcha }),
       })
       if (res.ok) {
         setStatus('success')
@@ -74,6 +75,19 @@ export default function Contact() {
               Something went wrong. Try emailing me directly.
             </div>
           )}
+
+          {/* spam trap: hidden from people (and screen readers), Formspree
+              silently drops any submission where it's filled in */}
+          <div className="hidden" aria-hidden="true">
+            <input
+              type="text"
+              name="_gotcha"
+              tabIndex={-1}
+              autoComplete="off"
+              value={gotcha}
+              onChange={(e) => setGotcha(e.target.value)}
+            />
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Your name" error={errors.name}>

@@ -192,7 +192,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('open-terminal', onOpen)
     }
-  }, [])
+  }, [setOpen])
 
   // focus the prompt when opened
   useEffect(() => {

@@ -253,8 +253,8 @@ export default function Hero() {
             {/* QR code in the barcode's old spot; white padding keeps the
                 quiet zone scannable in dark mode */}
             <img
-              src="./qr.jpg"
-              alt="QR code"
+              src="./qr.webp"
+              alt="QR code linking to Eric's LinkedIn profile"
               loading="lazy"
               decoding="async"
               className="mx-auto h-36 w-36 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 dark:ring-grey-800"

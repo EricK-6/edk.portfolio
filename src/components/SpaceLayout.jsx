@@ -676,7 +676,6 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
       clearTimeout(t)
       window.removeEventListener('resize', measure)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overview, order])
 
   // subtle camera sway following the cursor (mouse only), for depth feel.

@@ -8,7 +8,7 @@ const ROLES = [
     title: 'Academic Team Executive',
     org: 'Korean Engineering Body (KEB)',
     period: 'Jul 2024 - Present',
-    image: './KEB.png',
+    image: './KEB.webp',
     description:
       'Tutor junior engineering students and assist in planning academic events for the student community.',
   },
@@ -16,7 +16,7 @@ const ROLES = [
     title: 'Full-time Volunteer',
     org: 'IEEE · NZ Robotics Olympiad 2025',
     period: 'Jul 2025',
-    image: './IEEE.png',
+    image: './IEEE.webp',
     description:
       'Volunteered 40+ hours full time supporting competition operations at the NZ Robotics Olympiad (NZRO) 2025 with the Institute of Electrical and Electronics Engineers (IEEE).',
   },
