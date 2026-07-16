@@ -151,9 +151,7 @@ function FlightDeckNav({ layout, activeId }) {
                   aria-hidden="true"
                   className={`h-1 w-1 rounded-full ${active ? 'bg-emerald-500 shadow-[0_0_4px] shadow-emerald-500' : 'bg-grey-400/60 dark:bg-grey-600/60'}`}
                 />
-                {/* full names when there's room; airport codes at lg–xl */}
-                <span className="xl:hidden">{PRESET[linkId]}</span>
-                <span className="hidden uppercase xl:inline">{LABELS[linkId]}</span>
+                {PRESET[linkId]}
               </a>
             </li>
           )
