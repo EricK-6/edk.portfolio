@@ -77,7 +77,7 @@ const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http
   <!-- fields -->
   ${field(M, CY + 232, 'FROM', 'Auckland, NZ (AKL)')}
   ${field(M + 250, CY + 232, 'TO', 'Your team')}
-  ${field(M + 410, CY + 232, 'SEAT', 'Summer 26/27')}
+  ${field(M + 410, CY + 232, 'SEAT', 'Nov 2026 – Feb 2027')}
   ${field(M, CY + 302, 'CLASS', 'Embedded · Full stack · Digital hardware', GREY_100, 20)}
   <text x="${M + 410}" y="${CY + 302}" font-family="${MONO}" font-size="15" letter-spacing="3" fill="${GREY_600}">STATUS</text>
   <circle cx="${M + 417}" cy="${CY + 327}" r="6" fill="#34d399"/>
