@@ -20,8 +20,9 @@ export default function About() {
             I am <Bold>2× AWS certified</Bold> with a project portfolio spanning{' '}
             <Bold>serverless cloud pipelines</Bold>, <Bold>React web apps</Bold>, and{' '}
             <Bold>embedded robotics</Bold>, which earned <Bold>3rd place</Bold> at the 2025
-            ECSE Design Competition. Outside the classroom I teach as a <Bold>Teaching
-            Assistant and Robotics Instructor</Bold>. I am always open to{' '}
+            ECSE Design Competition. Outside the classroom I teach as a{' '}
+            <Bold>Robotics Instructor</Bold>, coaching student teams toward nationwide
+            robotics competitions. I am always open to{' '}
             <Bold>Internship opportunities</Bold>, so feel free to check out my work below!
           </p>
         </Reveal>
@@ -54,5 +55,5 @@ const HIGHLIGHTS = [
   '2× AWS Certified · Cloud & AI Practitioner',
   '3rd place · 2025 ECSE Design Competition',
   '7 projects across hardware & software',
-  'Teaching Assistant & Robotics Instructor',
+  'Robotics Instructor & competition coach at ciLab',
 ]

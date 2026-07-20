@@ -3,24 +3,14 @@ import Reveal from './Reveal.jsx'
 
 const EXPERIENCE = [
   {
-    role: 'Teaching Assistant',
-    org: 'University of Auckland',
-    detail: 'ELECTENG 292: Electronics',
-    period: 'Jun 2026 - Present',
-    image: './UoA.jpg',
-    bullets: [
-      'Deliver teaching support across tutorials, lab sessions, and test invigilation for ELECTENG 292: Electronics.',
-      'Strengthen student leadership and technical laboratory techniques across 120 hours of engagement.',
-    ],
-  },
-  {
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
     period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Instruct students in robot hardware assembly and software programming to complete missions.',
-      'Coach and support teams in preparation for nationwide robotics competitions.',
+      'Instruct students in robot hardware assembly and software programming, guiding them from first build through to completed missions.',
+      'Break down concepts like sensors, motor control, and mission logic into hands-on lessons for young learners.',
+      'Coach and support teams in preparation for nationwide robotics competitions, including the NZ Robotics Olympiad (NZRO).',
     ],
   },
   {
