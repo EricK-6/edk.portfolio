@@ -60,8 +60,8 @@ const PROJECTS = [
     period: 'Jul 2026',
     role: 'Statement-Level Fraud Detection Platform',
     highlights: [
-      'Built a serverless statement review pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB, SNS) that turns an uploaded PDF or CSV bank statement into categorised, risk-scored transactions.',
-      'Reasoned over the whole statement in one Claude Opus 4.8 call rather than transaction by transaction, catching duplicate charges and out-of-pattern spend, with a locked JSON schema making every flag cite the transaction behind it.',
+      'Built a serverless fraud-detection pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB) in order to categorise and risk-score a full bank statement.',
+      'Reasoned over the whole statement in one Claude Opus 4.8 call in order to catch duplicate charges and out-of-pattern spend.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
     image: './spottern.webp',
@@ -98,7 +98,7 @@ const PROJECTS = [
     icon: 'globe',
     tag: 'KEB Project Playground · Team Competition',
     year: '2025',
-    period: 'Jul 2025 – Aug 2025',
+    period: 'Aug 2025',
     org: 'Korean Engineering Body (KEB)',
     role: 'Homepage for club',
     highlights: [

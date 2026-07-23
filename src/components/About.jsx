@@ -54,6 +54,6 @@ function Bold({ children }) {
 const HIGHLIGHTS = [
   '2× AWS Certified · Cloud & AI Practitioner',
   '3rd place · 2025 ECSE Design Competition',
-  '7 projects across hardware & software',
+  '8 projects across hardware & software',
   'Robotics Instructor & competition coach at ciLab',
 ]

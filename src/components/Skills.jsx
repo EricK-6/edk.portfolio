@@ -11,7 +11,7 @@ const GROUPS = [
   {
     label: 'Cloud & Software Tools',
     span: 'sm:col-span-2 lg:col-span-4',
-    items: ['AWS', 'Lambda', 'Kinesis', 'Comprehend', 'DynamoDB', 'Amplify', 'Git', 'Android Studio', 'Figma'],
+    items: ['AWS', 'Lambda', 'Bedrock', 'Textract', 'Kinesis', 'Comprehend', 'DynamoDB', 'Amplify', 'Git', 'Android Studio', 'Figma'],
   },
   {
     label: 'Hardware & EDA Tools',
