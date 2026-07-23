@@ -53,11 +53,31 @@ const PROJECTS = [
     ],
   },
   {
+    title: 'Spottern!',
+    icon: 'shield',
+    tag: 'AWS×BNZ AI Hackathon · Team Competition',
+    year: '2026',
+    period: 'Jul 2026',
+    role: 'Statement-Level Fraud Detection Platform',
+    highlights: [
+      'Built a serverless statement review pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB, SNS) that turns an uploaded PDF or CSV bank statement into categorised, risk-scored transactions.',
+      'Reasoned over the whole statement in one Claude Opus 4.8 call rather than transaction by transaction, catching duplicate charges and out-of-pattern spend, with a locked JSON schema making every flag cite the transaction behind it.',
+    ],
+    tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
+    image: './spottern.webp',
+    color: 'from-violet-500/20 to-fuchsia-500/20',
+    initial: 'S',
+    links: [
+      { label: 'Deployed DEMO', href: 'https://erick-6.github.io/Spottern/' },
+      { label: 'Git repo', href: 'https://github.com/EricK-6/Spottern' },
+    ],
+  },
+  {
     title: 'Sentiment PULSE',
     icon: 'cloud',
     tag: 'AWS · Individual Project',
     year: '2026',
-    period: 'May 2026 – Present',
+    period: 'May 2026 – Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
       'Built a serverless NLP pipeline on AWS (Kinesis, Lambda, Comprehend, DynamoDB) with AWS SAM in order to classify streaming text sentiment in real time.',
@@ -280,6 +300,7 @@ export default function Projects() {
 // small identifying glyph per project shown in the explorer list (Winnie the
 // Bot carries the amber award star via `featured` instead)
 const ICON_STYLES = {
+  shield: 'text-violet-500 dark:text-violet-400',
   cloud: 'text-sky-500 dark:text-sky-400',
   globe: 'text-indigo-500 dark:text-indigo-400',
   zap: 'text-yellow-500 dark:text-yellow-400',
@@ -289,6 +310,12 @@ const ICON_STYLES = {
 }
 
 const ICON_PATHS = {
+  shield: (
+    <>
+      <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" />
+      <path d="m9 12 2 2 4-4" />
+    </>
+  ),
   cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
   globe: (
     <>
