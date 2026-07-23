@@ -10,7 +10,7 @@ export default function About() {
             Kia ora! <span className="wave-hand">👋</span>
           </h3>
           <p>
-            This is Eric, a penultimate-year <Bold>Computer Systems Engineering (Hons)</Bold> student
+            This is Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student
             at the University of Auckland, specialising in <Bold>embedded systems</Bold>,{' '}
             <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>. I work
             across the hardware and software boundary with <Bold>C, Java, Python, and React</Bold>{' '}
@@ -55,5 +55,5 @@ const HIGHLIGHTS = [
   '2× AWS Certified · Cloud & AI Practitioner',
   '3rd place · 2025 ECSE Design Competition',
   '8 projects across hardware & software',
-  'Robotics Instructor & competition coach at ciLab',
+  'Robotics Instructor & Competition Coach at ciLab',
 ]
