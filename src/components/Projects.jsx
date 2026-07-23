@@ -59,6 +59,7 @@ const PROJECTS = [
     year: '2026',
     period: 'Jul 2026',
     role: 'Statement-Level Fraud Detection Platform',
+    hostedBy: 'Amazon Web Services (AWS), Bank of New Zealand (BNZ) & Centre of Digital Enterprise (CODE)',
     highlights: [
       'Built a serverless fraud-detection pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB) in order to categorise and risk-score a full bank statement.',
       'Reasoned over the whole statement in one Claude Opus 4.8 call in order to catch duplicate charges and out-of-pattern spend.',
@@ -99,8 +100,8 @@ const PROJECTS = [
     tag: 'KEB Project Playground · Team Competition',
     year: '2025',
     period: 'Aug 2025',
-    org: 'Korean Engineering Body (KEB)',
     role: 'Homepage for club',
+    hostedBy: 'Korean Engineering Body (KEB)',
     highlights: [
       "Delivered the Korean Engineering Body's first-ever website using React 19, Vite, and React Bootstrap in order to give the club a centralised hub for events and activities.",
       'Collaborated with senior software students in order to ship a production-ready platform from scratch.',
@@ -367,7 +368,7 @@ function ProjectIcon({ type }) {
 }
 
 function ProjectCard({ project, space }) {
-  const { title, tag, year, period, org, role, highlights, tech, color, initial, image, video, featured, links, log } = project
+  const { title, tag, year, period, org, role, hostedBy, highlights, tech, color, initial, image, video, featured, links, log } = project
   const [logOpen, setLogOpen] = useState(false)
 
   // the demo clip only plays while its panel is the one on camera — space
@@ -424,6 +425,7 @@ function ProjectCard({ project, space }) {
         {period && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">{period}</div>}
         {org && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">Associated with {org}</div>}
         <div className="mt-2 text-sm font-medium text-grey-700 dark:text-grey-300">:: {role}</div>
+        {hostedBy && <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">Hosted by {hostedBy}</div>}
 
         {highlights?.length > 0 && (
           <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm sm:text-justify text-grey-700 dark:text-grey-300`}>
