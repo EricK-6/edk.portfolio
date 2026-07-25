@@ -62,7 +62,6 @@ const PROJECTS = [
     hostedBy: [
       'Amazon Web Services (AWS)',
       'Bank of New Zealand (BNZ)',
-      'Centre of Digital Enterprise (CODE)',
     ],
     highlights: [
       'Built a serverless fraud-detection pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB) in order to categorise and risk-score a full bank statement.',
