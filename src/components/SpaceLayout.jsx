@@ -134,18 +134,42 @@ const camT = (c) =>
 // scale3d squashes the vortex's depth to less than half before the pull-back,
 // packing all nine cards into one glanceable cluster with only a mild
 // near/far size difference.
-const OVERVIEW_T =
-  'translate3d(0px, 0px, -7200px) rotateX(-10deg) rotateY(-24deg) scale3d(1, 1, 0.45) translate3d(0px, 0px, 8000px)'
+// The pull-back below is tuned for a full desktop window. The projection is
+// the same picture whatever the window size — a narrower one just crops it —
+// so on a phone five of the nine cards used to sit outside the viewport
+// entirely. overviewT/overviewSpread back the camera off and draw the fan in
+// until the whole flight fits again.
+const OVERVIEW_BASE_Z = 7200
+const OVERVIEW_DESIGN_W = 1440
+// how much of the desktop layout a given window can take: 1 on a full desktop
+// window, shrinking towards ~0.3 on a phone
+const overviewFit = (vw) => Math.min(1, Math.max(360, vw) / OVERVIEW_DESIGN_W)
+const overviewT = (vw) => {
+  // sqrt again, not the raw ratio: the projected diorama is the same picture
+  // at every window size (a narrow window just crops it), so it does need a
+  // real pull-back — but the panels are already narrower on a phone, and
+  // backing off proportionally would shrink them to unreadable slivers.
+  const z = Math.round(OVERVIEW_BASE_Z / Math.sqrt(overviewFit(vw)))
+  return `translate3d(0px, 0px, ${-z}px) rotateX(-10deg) rotateY(-24deg) scale3d(1, 1, 0.45) translate3d(0px, 0px, 8000px)`
+}
 
 // on the map, stops fan outward from the axis (positions spread, cards stay
 // their size) so the nine cards separate instead of stacking on the axis —
-// the cards are wider than the flight orbit itself
+// the cards are wider than the flight orbit itself. The fan has to come back
+// in on smaller windows or the outer stops fall off the edges (a phone used
+// to lose five of the nine cards off screen entirely).
 const OVERVIEW_SPREAD = 2.4
+// sqrt, not the raw ratio: the camera has already backed off a little by then,
+// so pulling the fan in proportionally as well leaves the cluster marooned in
+// the middle of a half-empty screen
+const overviewSpread = (vw) => OVERVIEW_SPREAD * Math.sqrt(overviewFit(vw))
 
 // home and contact sit ON the axis, so the fan-out can't separate them:
-// contact (index 8) would hide dead-centre behind everything. Nudge it into
-// the map's empty centre-bottom instead.
-const OVERVIEW_NUDGE = { 8: { x: -400, y: 2100 } }
+// contact (index 8) would hide dead-centre behind everything. Nudge it clear
+// into the map's empty bottom-left, under home — parked any nearer the middle
+// it ends up behind projects/experience, which leaves it almost unclickable
+// now that the click layer respects what's actually drawn on top.
+const OVERVIEW_NUDGE = { 8: { x: -4900, y: 4400 } }
 
 // -- background scenery -----------------------------------------------------
 // Everything below lives inside the world transform, so it parallaxes with
@@ -502,6 +526,16 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
     return () => mq.removeEventListener('change', onChange)
   }, [])
   const off = isWide ? dockOffset : 0
+
+  // the map camera has to fit the window, so it needs the live width (minus
+  // whatever the terminal dock is eating)
+  const [vw, setVw] = useState(() => window.innerWidth)
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   const index = Math.max(0, order.indexOf(id))
   const indexRef = useRef(index)
   indexRef.current = index
@@ -665,7 +699,7 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
             const el = panelBoxRefs.current[i]
             if (!el) return null
             const r = el.getBoundingClientRect()
-            return { pid, left: r.left - mr.left, top: r.top - mr.top, width: r.width, height: r.height }
+            return { pid, i, left: r.left - mr.left, top: r.top - mr.top, width: r.width, height: r.height }
           })
           .filter(Boolean)
       )
@@ -736,7 +770,9 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
   const worldRef = useRef(null)
   const flightAnimRef = useRef(null)
   const lastTargetRef = useRef(null)
-  const target = overview ? OVERVIEW_T : camT(stopFor(index))
+  const nudgeFit = Math.sqrt(overviewFit(vw - off))
+  const spread = overviewSpread(vw - off)
+  const target = overview ? overviewT(vw - off) : camT(stopFor(index))
   useLayoutEffect(() => {
     const el = worldRef.current
     if (!el || lastTargetRef.current === target) return
@@ -844,8 +880,10 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
             const active = i === index
             const Component = components[pid]
             const nudge = OVERVIEW_NUDGE[i]
-            const px = overview ? s.x * OVERVIEW_SPREAD + (nudge?.x ?? 0) : s.x
-            const py = overview ? s.y * OVERVIEW_SPREAD + (nudge?.y ?? 0) : s.y
+            // the nudge rides the same curve as the fan-out, so contact keeps
+            // clear of its neighbours at every window size
+            const px = overview ? s.x * spread + (nudge?.x ?? 0) * nudgeFit : s.x
+            const py = overview ? s.y * spread + (nudge?.y ?? 0) * nudgeFit : s.y
             return (
               // NOTE: panels must stay opacity:1 — Chrome flattens translucent
               // participants of a preserve-3d context to DOM paint order, which
@@ -937,7 +975,13 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
               aria-label={`Fly to ${LABELS[r.pid]}`}
               onClick={() => { goTo(r.pid, 'space'); setOverview(false) }}
               className="absolute cursor-pointer rounded-xl border-2 border-transparent transition hover:border-accent/70 hover:bg-accent/5 focus-visible:border-accent dark:hover:border-accent-dark/70 dark:hover:bg-accent-dark/10 dark:focus-visible:border-accent-dark"
-              style={{ left: r.left - 10, top: r.top - 10, width: r.width + 20, height: r.height + 20 }}
+              // the map's cards overlap, so these flat boxes must stack the
+              // same way the scene paints them (order.length - i, home in
+              // front) — in plain DOM order the LAST card would swallow
+              // clicks meant for the card drawn on top of it (contact sits
+              // over projects' list column, so "click projects" flew to
+              // contact)
+              style={{ left: r.left - 10, top: r.top - 10, width: r.width + 20, height: r.height + 20, zIndex: order.length - r.i }}
             />
           ))}
         </div>
