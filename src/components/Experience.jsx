@@ -1,6 +1,9 @@
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
+// Bullets are kept to a similar length on purpose: at the section's width
+// each one then sets a single line, so the list reads as an even block
+// instead of one two-line entry sitting above two one-line entries.
 const EXPERIENCE = [
   {
     role: 'Robotics Instructor',
@@ -8,9 +11,9 @@ const EXPERIENCE = [
     period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Instruct students in robot hardware assembly and software programming, guiding them from first build through to completed missions.',
+      'Instruct students in robot hardware assembly and software programming, from first build to completed missions.',
       'Break down concepts like sensors, motor control, and mission logic into hands-on lessons for young learners.',
-      'Coach and support teams in preparation for nationwide robotics competitions, including the NZ Robotics Olympiad (NZRO).',
+      'Coach and support teams in preparation for nationwide robotics competitions, including the NZ Robotics Olympiad.',
     ],
   },
   {

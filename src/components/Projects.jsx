@@ -9,7 +9,7 @@ const PROJECTS = [
     tag: '3rd Place · ECSE Design Competition 2025',
     year: '2025',
     period: 'Issued by Department of ECSE · Sep 2025',
-    org: 'University of Auckland',
+    org: 'University of Auckland (UoA)',
     role: 'Awarded for "Winnie the Bot" - Interactive companion robot',
     highlights: [
       'Designed and built the embedded electrical hardware for an AI powered interactive robot using dual ATmega328P NANO microcontrollers, servos, an AI camera, and audio peripherals to enable simultaneous face tracking, arm movement, and voice dialogue.',
@@ -59,7 +59,11 @@ const PROJECTS = [
     year: '2026',
     period: 'Jul 2026',
     role: 'Statement-Level Fraud Detection Platform',
-    hostedBy: 'Amazon Web Services (AWS), Bank of New Zealand (BNZ) & Centre of Digital Enterprise (CODE)',
+    hostedBy: [
+      'Amazon Web Services (AWS)',
+      'Bank of New Zealand (BNZ)',
+      'Centre of Digital Enterprise (CODE)',
+    ],
     highlights: [
       'Built a serverless fraud-detection pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB) in order to categorise and risk-score a full bank statement.',
       'Reasoned over the whole statement in one Claude Opus 4.8 call in order to catch duplicate charges and out-of-pattern spend.',
@@ -101,7 +105,7 @@ const PROJECTS = [
     year: '2025',
     period: 'Aug 2025',
     role: 'Homepage for club',
-    hostedBy: 'Korean Engineering Body (KEB)',
+    hostedBy: ['Korean Engineering Body (KEB)'],
     highlights: [
       "Delivered the Korean Engineering Body's first-ever website using React 19, Vite, and React Bootstrap in order to give the club a centralised hub for events and activities.",
       'Collaborated with senior software students in order to ship a production-ready platform from scratch.',
@@ -120,7 +124,7 @@ const PROJECTS = [
     icon: 'zap',
     tag: 'Embedded C · Team Project',
     year: '2025',
-    org: 'University of Auckland',
+    org: 'University of Auckland (UoA)',
     role: 'Embedded Energy Monitoring System',
     highlights: [
       'Designed an embedded energy monitoring system using ATmega328P microcontrollers with ADC processing in order to measure and display real-time energy usage.',
@@ -129,6 +133,10 @@ const PROJECTS = [
     tech: ['C', 'Atmel AVR', 'ATmega328P', 'Altium Designer', 'LTspice', 'Proteus'],
     image: './energy_monitor.webp',
     video: './smart.mp4',
+    // the media strip is far wider than it is tall, so a centred crop of this
+    // clip lands on bare green PCB; bias it upwards to hold the red
+    // seven-segment readout, which is the part that actually moves
+    focus: '50% 20%',
     color: 'from-emerald-500/20 to-teal-500/20',
     initial: 'E',
     links: [
@@ -140,7 +148,7 @@ const PROJECTS = [
     icon: 'cpu',
     tag: 'VHDL · Team Project',
     year: '2026',
-    org: 'University of Auckland',
+    org: 'University of Auckland (UoA)',
     role: 'FPGA Game Implementation',
     highlights: [
       'Implemented a Flappy Bird-style game in VHDL on an Altera FPGA with VGA output and sprite rendering in order to demonstrate real-time hardware design.',
@@ -160,7 +168,7 @@ const PROJECTS = [
     icon: 'chart',
     tag: 'Python · Team Project',
     year: '2026',
-    org: 'University of Auckland',
+    org: 'University of Auckland (UoA)',
     role: 'Business Analytics Dashboard',
     highlights: [
       'Built a desktop business analytics app with a PyQt6 GUI using pandas and Matplotlib, delivering sales performance dashboards with KPI tracking across three business units.',
@@ -179,7 +187,7 @@ const PROJECTS = [
     icon: 'phone',
     tag: 'Java · Team Project',
     year: '2026',
-    org: 'University of Auckland',
+    org: 'University of Auckland (UoA)',
     role: 'Android Meal Planning App',
     highlights: [
       'Built an Android recipe and meal planning app in Java with Firebase Firestore, enabling users to browse cuisines, search food items, and persist personalised meal plans.',
@@ -368,7 +376,7 @@ function ProjectIcon({ type }) {
 }
 
 function ProjectCard({ project, space }) {
-  const { title, tag, year, period, org, role, hostedBy, highlights, tech, color, initial, image, video, featured, links, log } = project
+  const { title, tag, year, period, org, role, hostedBy, highlights, tech, color, initial, image, video, focus, featured, links, log } = project
   const [logOpen, setLogOpen] = useState(false)
 
   // the demo clip only plays while its panel is the one on camera — space
@@ -398,9 +406,17 @@ function ProjectCard({ project, space }) {
             preload="metadata"
             aria-label={`${title} demo`}
             className="h-full w-full object-cover"
+            style={focus ? { objectPosition: focus } : undefined}
           />
         ) : image ? (
-          <img src={image} alt={title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          <img
+            src={image}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+            style={focus ? { objectPosition: focus } : undefined}
+          />
         ) : (
           <>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(0,0,0,0.3),transparent_50%)]" />
@@ -423,9 +439,14 @@ function ProjectCard({ project, space }) {
         </div>
         <h3 className={`mt-1 font-semibold ${space ? 'text-lg' : 'text-xl'}`}>{title}</h3>
         {period && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">{period}</div>}
-        {org && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">Associated with {org}</div>}
         <div className="mt-2 text-sm font-medium text-grey-700 dark:text-grey-300">:: {role}</div>
-        {hostedBy && <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">Hosted by {hostedBy}</div>}
+        {(hostedBy || org) && (
+          <Affiliation
+            label={hostedBy ? 'Hosted by' : 'Associated with'}
+            names={hostedBy ?? [org]}
+            space={space}
+          />
+        )}
 
         {highlights?.length > 0 && (
           <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm sm:text-justify text-grey-700 dark:text-grey-300`}>
@@ -482,6 +503,46 @@ function ProjectCard({ project, space }) {
       </div>
       {logOpen && <FlightLogModal project={project} onClose={() => setLogOpen(false)} />}
     </article>
+  )
+}
+
+// Who stood behind the project: the university it sat under, or the
+// organisations that ran the hackathon. For the competition entries the hosts
+// ARE half the credential, so they get a proper credit strip — a monogram
+// tile per organisation — rather than the run-on grey sentence they used to
+// share. Names carry their own short form in brackets ("Bank of New Zealand
+// (BNZ)"); that bracketed form becomes the tile and the rest stays as the
+// readable label.
+const shortForm = (name) => {
+  const bracketed = name.match(/\(([^)]+)\)/)
+  if (bracketed) return bracketed[1]
+  const initials = name.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).map((w) => w[0]).join('')
+  return initials.slice(0, 4) || name.slice(0, 2).toUpperCase()
+}
+const fullName = (name) => name.replace(/\s*\([^)]*\)\s*/g, ' ').trim()
+
+function Affiliation({ label, names, space }) {
+  return (
+    <div className={space ? 'mt-2.5' : 'mt-3'}>
+      <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
+        {label}
+      </div>
+      <div className="mt-1.5 flex flex-wrap gap-2">
+        {names.map((name) => (
+          <span
+            key={name}
+            className="inline-flex items-center gap-2 rounded-lg border border-grey-300/80 bg-grey-100 py-1 pl-1 pr-2.5 dark:border-grey-800 dark:bg-grey-900/60"
+          >
+            {/* no uppercase utility here: the short forms are written as the
+                organisations write them, and "UoA" must not become "UOA" */}
+            <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-md bg-accent/10 px-1.5 font-mono text-[10px] font-bold tracking-wider text-accent dark:bg-accent-dark/15 dark:text-accent-dark">
+              {shortForm(name)}
+            </span>
+            <span className="text-xs font-medium text-grey-700 dark:text-grey-300">{fullName(name)}</span>
+          </span>
+        ))}
+      </div>
+    </div>
   )
 }
 

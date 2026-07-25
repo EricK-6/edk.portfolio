@@ -1,6 +1,15 @@
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
+// The diligence awards were the substance of the "multiple diligence awards"
+// line, so they are shown as the awards themselves — one tile per subject,
+// with the syllabus it was sat under.
+const DILIGENCE = [
+  { syllabus: 'NCEA', subject: 'English' },
+  { syllabus: 'IGCSE', subject: 'Computer Science' },
+  { syllabus: 'AS', subject: 'Physics' },
+]
+
 const COURSEWORK = [
   'Computer Architecture',
   'AI & Machine Learning',
@@ -71,13 +80,57 @@ export default function Education() {
             <div className="mt-1 text-grey-700 dark:text-grey-300">
               High School Diploma
             </div>
-            <div className="mt-2 text-sm sm:text-justify text-grey-600 dark:text-grey-400 leading-relaxed">
-              Completed CIE IGCSE, AS, and A2 level courses and earned multiple diligence awards.
+            <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
+              Completed CIE IGCSE, AS, and A2 level courses
+            </div>
+
+            <div className="mt-5">
+              <div className="mb-2 text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
+                Diligence awards
+              </div>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {DILIGENCE.map(({ syllabus, subject }) => (
+                  <div
+                    key={subject}
+                    className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-3 py-2 dark:border-amber-400/25 dark:bg-amber-400/[0.05]"
+                  >
+                    <RosetteIcon />
+                    <div className="min-w-0">
+                      <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-600/90 dark:text-amber-400/90">
+                        {syllabus}
+                      </div>
+                      <div className="truncate text-sm font-medium text-grey-800 dark:text-grey-200">{subject}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </Reveal>
       </div>
     </Section>
+  )
+}
+
+// award rosette: a medal disc with two ribbon tails
+function RosetteIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="flex-none text-amber-600/80 dark:text-amber-400/80"
+    >
+      <circle cx="12" cy="9" r="5.5" />
+      <path d="M12 6.6l.9 1.85 2.05.3-1.48 1.44.35 2.03L12 11.26l-1.82.96.35-2.03L9.05 8.75l2.05-.3L12 6.6z" fill="currentColor" stroke="none" opacity="0.55" />
+      <path d="M8.6 13.7L7 22l5-2.6L17 22l-1.6-8.3" />
+    </svg>
   )
 }
