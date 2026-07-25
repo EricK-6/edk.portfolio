@@ -19,7 +19,7 @@ import { PanelActiveContext } from '../layout.js'
 
 const FLIGHT_MS = 1150
 const ARC_MS = FLIGHT_MS + 250 // corkscrew flights get a little longer than the old straight hop
-const SWAY_DEG = 2.4 // max camera sway following the cursor
+const SWAY_PCT = 14 // max camera sway following the cursor, as perspective-origin drift
 const MIN_SCALE = 0.58 // fit-to-panel floor; below this, text gets too small
 const MAX_SCALE = 1.12 // gentle zoom-to-fill ceiling, so no section looks blown up next to its neighbours
 const PANEL_MAX_OFFSET = 152 // viewport space reserved for navbar + HUD + margins
@@ -541,7 +541,6 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
   indexRef.current = index
   const scrollers = useRef([])
   const coolingRef = useRef(false)
-  const swayRef = useRef(null)
   const reduce = useMemo(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     []
@@ -712,21 +711,36 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
     }
   }, [overview, order])
 
-  // subtle camera sway following the cursor (mouse only), for depth feel.
+  // Subtle camera sway following the cursor (mouse only), for depth feel:
+  // the scene's vanishing point drifts with the pointer, so the far scenery
+  // slides against the panel the visitor is parked on.
+  //
+  // This moves the perspective ORIGIN rather than rotating a wrapper around
+  // the panels, and that distinction is load-bearing. Rotating the wrapper
+  // tilted the whole preserve-3d subtree, and Chrome then hit-tests parts of
+  // that subtree against the flat wrapper instead of the panel's own buttons
+  // (elementFromPoint returns the wrapper while elementsFromPoint still lists
+  // the button on top). Any sway on both axes at once — i.e. the cursor
+  // anywhere off the viewport's centre lines, which is nearly always — killed
+  // clicks on a shifting handful of controls: you could not pick a project
+  // from the Projects list in space mode on a desktop. Touch never hit it
+  // because sway is mouse-only. Moving the origin leaves the subtree's
+  // geometry untouched, so every target stays exactly where it is drawn.
   // Frozen (and reset) on the overview map so click targets hold still.
   useEffect(() => {
-    if (overview && swayRef.current) swayRef.current.style.transform = ''
+    if (overview && mainRef.current) mainRef.current.style.perspectiveOrigin = ''
   }, [overview])
   useEffect(() => {
     if (reduce) return
     const onMove = (e) => {
       if (e.pointerType && e.pointerType !== 'mouse') return
       if (overviewRef.current) return
-      const el = swayRef.current
+      const el = mainRef.current
       if (!el) return
       const nx = e.clientX / window.innerWidth - 0.5
       const ny = e.clientY / window.innerHeight - 0.5
-      el.style.transform = `rotateX(${(-ny * SWAY_DEG).toFixed(2)}deg) rotateY(${(nx * SWAY_DEG).toFixed(2)}deg)`
+      el.style.perspectiveOrigin =
+        `${(50 + nx * SWAY_PCT).toFixed(2)}% ${(45 + ny * SWAY_PCT).toFixed(2)}%`
     }
     window.addEventListener('pointermove', onMove)
     return () => window.removeEventListener('pointermove', onMove)
@@ -797,15 +811,13 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
   return (
     <main
       ref={mainRef}
-      className="fixed right-0 top-16 bottom-0 overflow-hidden bg-gradient-to-b from-grey-200 to-white transition-[left] duration-300 ease-out dark:from-black dark:to-grey-950"
-      style={{ left: off, perspective: '1200px', perspectiveOrigin: '50% 45%' }}
+      // perspective-origin is the camera sway (see the pointermove effect); it
+      // is set imperatively, so the resting value lives in a class rather than
+      // the style prop, and clearing the inline value restores it
+      className="fixed right-0 top-16 bottom-0 overflow-hidden bg-gradient-to-b from-grey-200 to-white [perspective-origin:50%_45%] [transition:left_300ms_ease-out,perspective-origin_500ms_ease-out] dark:from-black dark:to-grey-950"
+      style={{ left: off, perspective: '1200px' }}
     >
-      {/* camera sway wrapper (cursor parallax) */}
-      <div
-        ref={swayRef}
-        className="absolute inset-0 transition-transform duration-500 ease-out"
-        style={{ transformStyle: 'preserve-3d' }}
-      >
+      <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
         {/* the world: the camera flight is one animated inverse transform,
             driven by the WAAPI arc keyframes above */}
         <div
