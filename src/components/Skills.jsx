@@ -40,44 +40,43 @@ const GROUPS = [
 export default function Skills() {
   return (
     <Section id="skills" kicker="Skills" title="What I work with">
-      {/* items-start so each card hugs its own chips: the groups hold 8, 11 and
-          7 items, and stretching them to a common height left the shortest
-          card with a dead band of empty card under its last row */}
-      <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {GROUPS.map((g, i) => (
-          <Reveal
-            key={g.label}
-            delay={i * 80}
-            // breakpoint first, then last: — Tailwind emits `last:sm:…` as an
-            // unconditional rule, so the media query silently goes missing
-            className="card relative flex flex-col overflow-hidden !p-0 sm:last:col-span-2 lg:last:col-span-1"
-          >
-            {/* hue rule: the group's colour, without tinting the whole card */}
-            <span aria-hidden="true" className={`block h-1 w-full bg-gradient-to-r ${g.tone.rule}`} />
-            <div className="flex flex-1 flex-col p-5">
-              <div className="flex items-center gap-2.5">
-                <span className={`inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg ${g.tone.tile}`}>
-                  <GroupIcon type={g.icon} />
-                </span>
-                <h3 className="flex-1 text-sm font-semibold text-grey-800 dark:text-grey-200">{g.label}</h3>
-                <span className="font-mono text-[11px] tabular-nums text-grey-400 dark:text-grey-600">
-                  {String(g.items.length).padStart(2, '0')}
-                </span>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {g.items.map((item) => (
-                  <span
-                    key={item}
-                    className="inline-flex items-center rounded-lg border border-grey-300/80 bg-grey-200/70 px-2.5 py-1 text-sm font-medium text-grey-800 transition-colors hover:border-grey-400 hover:bg-grey-200 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200 dark:hover:border-grey-700"
-                  >
-                    {item}
+      {/* One panel split into three ruled columns rather than three separate
+          tiles. The groups hold 8, 11 and 7 items, so equal-size tiles always
+          left the short two with a band of empty card; inside a single box the
+          columns simply end where they end, the way a spec sheet does, and the
+          outer shape stays a clean rectangle. */}
+      <Reveal className="overflow-hidden rounded-2xl border border-grey-300/80 bg-grey-100 dark:border-grey-800/70 dark:bg-grey-900/60">
+        <div className="grid lg:grid-cols-3 lg:divide-x lg:divide-grey-300/70 lg:dark:divide-grey-800/70">
+          {GROUPS.map((g) => (
+            <div key={g.label} className="flex flex-col">
+              {/* hue rule: doubles as the divider between stacked columns
+                  below lg, where there is no vertical rule to carry it */}
+              <span aria-hidden="true" className={`block h-1 w-full bg-gradient-to-r ${g.tone.rule}`} />
+              <div className="p-5">
+                <div className="flex items-center gap-2.5">
+                  <span className={`inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg ${g.tone.tile}`}>
+                    <GroupIcon type={g.icon} />
                   </span>
-                ))}
+                  <h3 className="flex-1 text-sm font-semibold text-grey-800 dark:text-grey-200">{g.label}</h3>
+                  <span className="font-mono text-[11px] tabular-nums text-grey-400 dark:text-grey-600">
+                    {String(g.items.length).padStart(2, '0')}
+                  </span>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {g.items.map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center rounded-lg border border-grey-300/80 bg-grey-200/70 px-2.5 py-1 text-sm font-medium text-grey-800 transition-colors hover:border-grey-400 hover:bg-grey-200 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200 dark:hover:border-grey-700"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          </Reveal>
-        ))}
-      </div>
+          ))}
+        </div>
+      </Reveal>
     </Section>
   )
 }

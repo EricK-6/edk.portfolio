@@ -508,11 +508,19 @@ function ProjectCard({ project, space }) {
 
 // Who stood behind the project: the university it sat under, or the
 // organisations that ran the hackathon. For the competition entries the hosts
-// ARE half the credential, so they get a proper credit strip — a monogram
-// tile per organisation — rather than the run-on grey sentence they used to
-// share. Names carry their own short form in brackets ("Bank of New Zealand
-// (BNZ)"); that bracketed form becomes the tile and the rest stays as the
-// readable label.
+// ARE half the credential, so they get a proper credit strip — the real logo
+// plus the organisation's name — rather than the run-on grey sentence they
+// used to share. Names carry their own short form in brackets ("Bank of New
+// Zealand (BNZ)"), which keys the logo and is also the fallback badge for any
+// organisation whose mark we don't hold.
+const LOGOS = {
+  AWS: './aws.jpg',
+  BNZ: './bnz.jpg',
+  CODE: './code.png',
+  KEB: './KEB.webp',
+  UoA: './UoA.jpg',
+}
+
 const shortForm = (name) => {
   const bracketed = name.match(/\(([^)]+)\)/)
   if (bracketed) return bracketed[1]
@@ -528,19 +536,36 @@ function Affiliation({ label, names, space }) {
         {label}
       </div>
       <div className="mt-1.5 flex flex-wrap gap-2">
-        {names.map((name) => (
-          <span
-            key={name}
-            className="inline-flex items-center gap-2 rounded-lg border border-grey-300/80 bg-grey-100 py-1 pl-1 pr-2.5 dark:border-grey-800 dark:bg-grey-900/60"
-          >
-            {/* no uppercase utility here: the short forms are written as the
-                organisations write them, and "UoA" must not become "UOA" */}
-            <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-md bg-accent/10 px-1.5 font-mono text-[10px] font-bold tracking-wider text-accent dark:bg-accent-dark/15 dark:text-accent-dark">
-              {shortForm(name)}
+        {names.map((name) => {
+          const key = shortForm(name)
+          const logo = LOGOS[key]
+          return (
+            <span
+              key={name}
+              className="inline-flex items-center gap-2 rounded-lg border border-grey-300/80 bg-grey-100 py-1 pl-1.5 pr-2.5 dark:border-grey-800 dark:bg-grey-900/60"
+            >
+              {logo ? (
+                // one fixed height, width free: the square marks (AWS, BNZ,
+                // UoA, KEB) come out as 24px tiles and CODE's wide wordmark
+                // keeps its 3:1 proportions instead of being squashed square
+                <img
+                  src={logo}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="h-6 w-auto max-w-[4.5rem] flex-none rounded object-contain"
+                />
+              ) : (
+                // fallback badge stays neutral grey — an accent-tinted one
+                // turned emerald in dark mode and read as a status pill
+                <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded bg-grey-200 px-1.5 font-mono text-[10px] font-bold tracking-wider text-grey-600 dark:bg-grey-800 dark:text-grey-400">
+                  {key}
+                </span>
+              )}
+              <span className="text-xs font-medium text-grey-700 dark:text-grey-300">{fullName(name)}</span>
             </span>
-            <span className="text-xs font-medium text-grey-700 dark:text-grey-300">{fullName(name)}</span>
-          </span>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

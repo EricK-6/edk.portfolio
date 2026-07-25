@@ -84,24 +84,26 @@ export default function Education() {
               Completed CIE IGCSE, AS, and A2 level courses
             </div>
 
-            <div className="mt-5">
+            {/* deliberately quieter than the bordered tiles this started as:
+                Pinehurst is the secondary entry and was out-shouting the
+                degree above it. Same information, chip-sized — the rosette and
+                the amber syllabus carry it without a box each. */}
+            <div className="mt-4">
               <div className="mb-2 text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
                 Diligence awards
               </div>
-              <div className="grid gap-2 sm:grid-cols-3">
+              <div className="flex flex-wrap gap-1.5">
                 {DILIGENCE.map(({ syllabus, subject }) => (
-                  <div
+                  <span
                     key={subject}
-                    className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-3 py-2 dark:border-amber-400/25 dark:bg-amber-400/[0.05]"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-grey-200 py-0.5 pl-1.5 pr-2 text-xs text-grey-700 dark:bg-grey-800 dark:text-grey-300"
                   >
                     <RosetteIcon />
-                    <div className="min-w-0">
-                      <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-600/90 dark:text-amber-400/90">
-                        {syllabus}
-                      </div>
-                      <div className="truncate text-sm font-medium text-grey-800 dark:text-grey-200">{subject}</div>
-                    </div>
-                  </div>
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-600/90 dark:text-amber-400/90">
+                      {syllabus}
+                    </span>
+                    <span className="font-medium">{subject}</span>
+                  </span>
                 ))}
               </div>
             </div>
@@ -118,8 +120,8 @@ function RosetteIcon() {
   return (
     <svg
       aria-hidden="true"
-      width="22"
-      height="22"
+      width="13"
+      height="13"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
