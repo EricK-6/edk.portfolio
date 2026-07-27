@@ -8,8 +8,10 @@ const PROJECTS = [
     title: 'Winnie the Bot',
     tag: '3rd Place · ECSE Design Competition 2025',
     year: '2025',
-    period: 'Issued by Department of ECSE · Sep 2025',
-    org: 'University of Auckland (UoA)',
+    period: 'Sep 2025',
+    // bracketed short form keys the logo, so the ECSE department credit still
+    // flies the University of Auckland mark
+    awardedBy: ['Department of ECSE (UoA)'],
     role: 'Awarded for "Winnie the Bot" - Interactive companion robot',
     highlights: [
       'Designed and built the embedded electrical hardware for an AI powered interactive robot using dual ATmega328P NANO microcontrollers, servos, an AI camera, and audio peripherals to enable simultaneous face tracking, arm movement, and voice dialogue.',
@@ -56,9 +58,9 @@ const PROJECTS = [
     title: 'Spottern!',
     tag: 'Top 8 Finalist · AWS×BNZ AI Hackathon 2026',
     year: '2026',
-    period: 'Awarded Jul 2026 · Team competition',
+    period: 'Jul 2026',
     role: 'Awarded for "Spottern!" - Statement-level fraud detection platform',
-    hostedBy: [
+    awardedBy: [
       'Amazon Web Services (AWS)',
       'Bank of New Zealand (BNZ)',
     ],
@@ -375,7 +377,7 @@ function ProjectIcon({ type }) {
 }
 
 function ProjectCard({ project, space }) {
-  const { title, tag, year, period, org, role, hostedBy, highlights, tech, color, initial, image, video, focus, featured, links, log } = project
+  const { title, tag, year, period, org, role, awardedBy, hostedBy, highlights, tech, color, initial, image, video, focus, featured, links, log } = project
   const [logOpen, setLogOpen] = useState(false)
 
   // the demo clip only plays while its panel is the one on camera — space
@@ -439,10 +441,10 @@ function ProjectCard({ project, space }) {
         <h3 className={`mt-1 font-semibold ${space ? 'text-lg' : 'text-xl'}`}>{title}</h3>
         {period && <div className="mt-0.5 text-sm text-grey-500 dark:text-grey-500">{period}</div>}
         <div className="mt-2 text-sm font-medium text-grey-700 dark:text-grey-300">:: {role}</div>
-        {(hostedBy || org) && (
+        {(awardedBy || hostedBy || org) && (
           <Affiliation
-            label={hostedBy ? 'Hosted by' : 'Associated with'}
-            names={hostedBy ?? [org]}
+            label={awardedBy ? 'Awarded by' : hostedBy ? 'Hosted by' : 'Associated with'}
+            names={awardedBy ?? hostedBy ?? [org]}
             space={space}
           />
         )}
@@ -505,13 +507,13 @@ function ProjectCard({ project, space }) {
   )
 }
 
-// Who stood behind the project: the university it sat under, or the
-// organisations that ran the hackathon. For the competition entries the hosts
-// ARE half the credential, so they get a proper credit strip — the real logo
-// plus the organisation's name — rather than the run-on grey sentence they
-// used to share. Names carry their own short form in brackets ("Bank of New
-// Zealand (BNZ)"), which keys the logo and is also the fallback badge for any
-// organisation whose mark we don't hold.
+// Who stood behind the project: the body that handed out the award, the
+// organisation that ran the event, or the university it sat under. For the
+// award entries the awarding body IS half the credential, so it gets a proper
+// credit strip — the real logo plus the organisation's name — rather than the
+// run-on grey sentence it used to share. Names carry their own short form in
+// brackets ("Bank of New Zealand (BNZ)"), which keys the logo and is also the
+// fallback badge for any organisation whose mark we don't hold.
 const LOGOS = {
   AWS: './aws.jpg',
   BNZ: './bnz.jpg',
