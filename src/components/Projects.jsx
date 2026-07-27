@@ -54,21 +54,21 @@ const PROJECTS = [
   },
   {
     title: 'Spottern!',
-    icon: 'shield',
-    tag: 'AWS×BNZ AI Hackathon · Team Competition',
+    tag: 'Top 8 Finalist · AWS×BNZ AI Hackathon 2026',
     year: '2026',
-    period: 'Jul 2026',
-    role: 'Statement-Level Fraud Detection Platform',
+    period: 'Awarded Jul 2026 · Team competition',
+    role: 'Awarded for "Spottern!" - Statement-level fraud detection platform',
     hostedBy: [
       'Amazon Web Services (AWS)',
       'Bank of New Zealand (BNZ)',
     ],
     highlights: [
-      'Built a serverless fraud-detection pipeline on AWS (S3, Lambda, Textract, Bedrock, DynamoDB) in order to categorise and risk-score a full bank statement.',
-      'Reasoned over the whole statement in one Claude Opus 4.8 call in order to catch duplicate charges and out-of-pattern spend.',
+      'Built a serverless fraud pipeline on AWS (SNS, Lambda, Textract, Bedrock, DynamoDB) in order to extract, normalise, and reason over an entire bank statement in a single LLM call rather than scoring each transaction alone.',
+      'Designed a schema validated JSON contract for Claude Opus 4.8 in order to cite transaction IDs behind every fraud flag, rejecting any output referencing a non-existent charge.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
     image: './spottern.webp',
+    featured: true,
     color: 'from-violet-500/20 to-fuchsia-500/20',
     initial: 'S',
     links: [
@@ -305,8 +305,8 @@ export default function Projects() {
   )
 }
 
-// small identifying glyph per project shown in the explorer list (Winnie the
-// Bot carries the amber award star via `featured` instead)
+// small identifying glyph per project shown in the explorer list (the two
+// competition wins carry the amber award star via `featured` instead)
 const ICON_STYLES = {
   shield: 'text-violet-500 dark:text-violet-400',
   cloud: 'text-sky-500 dark:text-sky-400',

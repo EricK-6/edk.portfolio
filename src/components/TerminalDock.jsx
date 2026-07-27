@@ -7,6 +7,7 @@ const EMAIL = 'dohyunkim290106@gmail.com'
 
 const PROJECTS = [
   ['winnie-the-bot', 'AI interactive robot · dual ATmega328P · 3rd place ECSE'],
+  ['spottern', 'Statement-level fraud detection on AWS · top 8 AWS×BNZ hackathon'],
   ['sentiment-pulse', 'Serverless NLP pipeline on AWS + live React dashboard'],
   ['smart-energy-monitor', 'ATmega328P firmware · Altium Designer PCB · LTspice'],
   ['flappy-universe', 'VHDL game on an Altera FPGA · VGA + PS/2'],

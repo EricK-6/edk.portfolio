@@ -20,7 +20,8 @@ export default function About() {
             I am <Bold>2× AWS certified</Bold> with a project portfolio spanning{' '}
             <Bold>serverless cloud pipelines</Bold>, <Bold>React web apps</Bold>, and{' '}
             <Bold>embedded robotics</Bold>, which earned <Bold>3rd place</Bold> at the 2025
-            ECSE Design Competition. Outside the classroom I teach as a{' '}
+            ECSE Design Competition and a <Bold>top 8 finish</Bold> at the 2026 AWS×BNZ AI
+            Hackathon. Outside the classroom I teach as a{' '}
             <Bold>Robotics Instructor</Bold>, coaching student teams toward nationwide
             robotics competitions. I am always open to{' '}
             <Bold>Internship opportunities</Bold>, so feel free to check out my work below!
@@ -53,6 +54,7 @@ function Bold({ children }) {
 
 const HIGHLIGHTS = [
   '2× AWS Certified · Cloud & AI Practitioner',
+  'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
   '3rd place · 2025 ECSE Design Competition',
   '8 projects across hardware & software',
   'Robotics Instructor & Competition Coach at ciLab',
