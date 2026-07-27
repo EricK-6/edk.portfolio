@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Section from './Section.jsx'
 import { useLayout, usePanelActive } from '../layout.js'
@@ -11,8 +11,8 @@ const PROJECTS = [
     period: 'Sep 2025',
     // bracketed short form keys the logo, so the ECSE department credit still
     // flies the University of Auckland mark
-    awardedBy: ['Department of ECSE (UoA)'],
-    role: 'Awarded for "Winnie the Bot" - Interactive companion robot',
+    awardedBy: ['Department of Electrical, Computer and Software Engineering (UoA)'],
+    role: 'Interactive Companion Robot',
     highlights: [
       'Designed and built the embedded electrical hardware for an AI powered interactive robot using dual ATmega328P NANO microcontrollers, servos, an AI camera, and audio peripherals to enable simultaneous face tracking, arm movement, and voice dialogue.',
       'Contributed to 3D modelling and physical prototyping of the robot enclosure to house all electronics within a compact aesthetic form factor, placing 3rd in the UoA ECSE Design Competition.',
@@ -59,7 +59,7 @@ const PROJECTS = [
     tag: 'Top 8 Finalist · AWS×BNZ AI Hackathon 2026',
     year: '2026',
     period: 'Jul 2026',
-    role: 'Awarded for "Spottern!" - Statement-level fraud detection platform',
+    role: 'Statement-level fraud detection platform',
     awardedBy: [
       'Amazon Web Services (AWS)',
       'Bank of New Zealand (BNZ)',
@@ -204,6 +204,34 @@ const PROJECTS = [
   },
 ]
 
+// The explorer list is partitioned: the competition wins read as awards, the
+// rest as projects. PROJECTS stays a flat, awards-first array so the tab
+// indices (and the roving tabindex that walks them) need no group arithmetic —
+// a heading is emitted at the top and again where the awards run out.
+const groupLabelFor = (i) => {
+  if (i === 0) return 'Projects with Credentials'
+  if (PROJECTS[i - 1].featured && !PROJECTS[i].featured) return 'Projects'
+  return null
+}
+
+// Presentational only: `role="presentation"` keeps the tabs the tablist's sole
+// real children, and each award tab already names its placement in the tag
+// line underneath, so nothing is lost by hiding these from assistive tech.
+// Vertical column on md+, inline divider in the phone's scroll strip.
+function GroupLabel({ children, first }) {
+  return (
+    <div
+      role="presentation"
+      aria-hidden="true"
+      className={`flex-none self-center whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600 md:self-start md:px-4 ${
+        first ? 'md:pb-0.5' : 'ml-1 md:ml-0 md:mt-3 md:pb-0.5'
+      }`}
+    >
+      {children}
+    </div>
+  )
+}
+
 export default function Projects() {
   // space mode fits the whole section in one floating panel, so the cards
   // trade some padding and image height for a layout that needs no zoom-out
@@ -244,38 +272,40 @@ export default function Projects() {
         <div>
           <div
             role="tablist"
-            aria-label="Projects"
+            aria-label="Awards and projects"
             className="no-scrollbar flex gap-2 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0"
           >
           {PROJECTS.map((p, i) => (
-            <button
-              key={p.title}
-              ref={(el) => (tabRefs.current[i] = el)}
-              type="button"
-              role="tab"
-              id={`project-tab-${i}`}
-              aria-selected={i === sel}
-              aria-controls="project-panel"
-              tabIndex={i === sel ? 0 : -1}
-              onClick={() => setSel(i)}
-              onKeyDown={onTabKeyDown}
-              className={`shrink-0 rounded-xl border px-4 ${space ? 'py-2' : 'py-2.5'} text-left transition md:w-full ${
-                i === sel
-                  ? 'border-accent/60 bg-grey-200/80 dark:border-accent-dark/50 dark:bg-grey-900'
-                  : 'border-grey-300/70 text-grey-600 hover:border-grey-400 hover:text-grey-900 dark:border-grey-800 dark:text-grey-400 dark:hover:border-grey-700 dark:hover:text-grey-100'
-              }`}
-            >
-              <span className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium md:whitespace-normal">
-                {p.featured && (
-                  <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="flex-none text-amber-500 dark:text-amber-400">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                )}
-                <ProjectIcon type={p.icon} />
-                {p.title}
-              </span>
-              <span className="mt-0.5 hidden text-xs text-grey-500 dark:text-grey-500 md:block">{p.tag}</span>
-            </button>
+            <Fragment key={p.title}>
+              {groupLabelFor(i) && <GroupLabel first={i === 0}>{groupLabelFor(i)}</GroupLabel>}
+              <button
+                ref={(el) => (tabRefs.current[i] = el)}
+                type="button"
+                role="tab"
+                id={`project-tab-${i}`}
+                aria-selected={i === sel}
+                aria-controls="project-panel"
+                tabIndex={i === sel ? 0 : -1}
+                onClick={() => setSel(i)}
+                onKeyDown={onTabKeyDown}
+                className={`shrink-0 rounded-xl border px-4 ${space ? 'py-2' : 'py-2.5'} text-left transition md:w-full ${
+                  i === sel
+                    ? 'border-accent/60 bg-grey-200/80 dark:border-accent-dark/50 dark:bg-grey-900'
+                    : 'border-grey-300/70 text-grey-600 hover:border-grey-400 hover:text-grey-900 dark:border-grey-800 dark:text-grey-400 dark:hover:border-grey-700 dark:hover:text-grey-100'
+                }`}
+              >
+                <span className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium md:whitespace-normal">
+                  {p.featured && (
+                    <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="flex-none text-amber-500 dark:text-amber-400">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  )}
+                  <ProjectIcon type={p.icon} />
+                  {p.title}
+                </span>
+                <span className="mt-0.5 hidden text-xs text-grey-500 dark:text-grey-500 md:block">{p.tag}</span>
+              </button>
+            </Fragment>
           ))}
           </div>
           <a
