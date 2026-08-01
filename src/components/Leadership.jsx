@@ -6,6 +6,7 @@ import { useLayout } from '../layout.js'
 const ROLES = [
   {
     title: 'Academic Team Executive',
+    detail: 'Co-Founding Member',
     org: 'Korean Engineering Body (KEB)',
     period: 'Jul 2024 - Present',
     image: './KEB.webp',
@@ -182,6 +183,9 @@ export default function Leadership() {
                     )}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold">{r.title}</h3>
+                      {r.detail && (
+                        <div className="text-xs font-medium text-accent dark:text-accent-dark">{r.detail}</div>
+                      )}
                       <div className="text-sm text-grey-500 dark:text-grey-500">{r.org}</div>
                       <div className="mt-1 text-xs text-grey-500 dark:text-grey-500">{r.period}</div>
                     </div>

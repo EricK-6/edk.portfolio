@@ -6,14 +6,24 @@ import Reveal from './Reveal.jsx'
 // instead of one two-line entry sitting above two one-line entries.
 const EXPERIENCE = [
   {
+    role: 'Research Assistant',
+    org: 'University of Auckland',
+    detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
+    period: 'Jul 2026 - Present',
+    image: './UoA.jpg',
+    bullets: [
+      'Develop and test navigation and control algorithms for TurtleBot2 robots, including sensor integration.',
+      'Assist with experiment design, data collection, and analysis to support ongoing robotics research.',
+    ],
+  },
+  {
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
     period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Instruct students in robot hardware assembly and software programming, from first build to completed missions.',
-      'Break down concepts like sensors, motor control, and mission logic into hands-on lessons for young learners.',
-      'Coach and support teams in preparation for nationwide robotics competitions, including the NZ Robotics Olympiad.',
+      'Teach robot hardware assembly and programming, turning sensors and motor control into hands-on lessons.',
+      'Coach and support teams preparing for nationwide contests, including the NZ Robotics Olympiad.',
     ],
   },
   {
