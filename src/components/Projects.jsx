@@ -21,6 +21,7 @@ const PROJECTS = [
     image: './winnie.webp',
     video: './winnie.mp4',
     featured: true,
+    rank: '3rd',
     color: 'from-amber-500/20 to-rose-500/20',
     initial: 'W',
     links: [],
@@ -71,6 +72,7 @@ const PROJECTS = [
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
     image: './spottern.webp',
     featured: true,
+    rank: 'Top 8',
     color: 'from-violet-500/20 to-fuchsia-500/20',
     initial: 'S',
     links: [
@@ -209,7 +211,7 @@ const PROJECTS = [
 // indices (and the roving tabindex that walks them) need no group arithmetic —
 // a heading is emitted at the top and again where the awards run out.
 const groupLabelFor = (i) => {
-  if (i === 0) return 'Projects with Credentials'
+  if (i === 0) return 'Awards'
   if (PROJECTS[i - 1].featured && !PROJECTS[i].featured) return 'Projects'
   return null
 }
@@ -295,12 +297,7 @@ export default function Projects() {
                 }`}
               >
                 <span className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium md:whitespace-normal">
-                  {p.featured && (
-                    <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="flex-none text-amber-500 dark:text-amber-400">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  )}
-                  <ProjectIcon type={p.icon} />
+                  {p.rank ? <RankChip rank={p.rank} /> : <ProjectIcon type={p.icon} />}
                   {p.title}
                 </span>
                 <span className="mt-0.5 hidden text-xs text-grey-500 dark:text-grey-500 md:block">{p.tag}</span>
@@ -337,8 +334,20 @@ export default function Projects() {
   )
 }
 
+// The awards carry their placement instead of a glyph: an identical star on
+// both entries repeated the amber ring and tag line without adding anything,
+// where the rank tells them apart. A fixed min-width keeps the two award
+// titles aligned with each other; the icon rows below start at their own x.
+function RankChip({ rank }) {
+  return (
+    <span className="min-w-[2.6rem] flex-none rounded bg-amber-500/15 px-1 py-0.5 text-center font-mono text-[10px] font-semibold uppercase leading-none tracking-tight text-amber-700 dark:bg-amber-400/15 dark:text-amber-400">
+      {rank}
+    </span>
+  )
+}
+
 // small identifying glyph per project shown in the explorer list (the two
-// competition wins carry the amber award star via `featured` instead)
+// competition wins carry a RankChip instead)
 const ICON_STYLES = {
   shield: 'text-violet-500 dark:text-violet-400',
   cloud: 'text-sky-500 dark:text-sky-400',
@@ -460,12 +469,9 @@ function ProjectCard({ project, space }) {
       </div>
 
       <div className="flex-1 flex flex-col">
+        {/* no award glyph here: the amber ring and this amber tag line already
+            mark the card, and the tag names the placement in words */}
         <div className={`flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest ${featured ? 'text-amber-600 dark:text-amber-400' : 'text-accent dark:text-accent-dark'}`}>
-          {featured && (
-            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-          )}
           {tag}
         </div>
         <h3 className={`mt-1 font-semibold ${space ? 'text-lg' : 'text-xl'}`}>{title}</h3>
