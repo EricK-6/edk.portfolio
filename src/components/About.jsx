@@ -16,7 +16,7 @@ export default function About() {
       <div className="mx-auto max-w-3xl">
         <Reveal className="space-y-4 sm:text-justify text-grey-700 leading-relaxed">
           <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-grey-900">
-            Hardware and software, on the same bench.
+            Hardware and Software, on the same bench.
           </h3>
           <p>
             I'm Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
