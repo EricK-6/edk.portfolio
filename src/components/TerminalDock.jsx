@@ -207,7 +207,23 @@ function completionFor(input, cwd) {
   let names = Object.keys(node.children || {})
   if (cmd === 'cd') names = names.filter((n) => node.children[n].type === 'dir')
   else if (cmd === 'cat') names = names.filter((n) => node.children[n].type === 'file')
-  const m = names.find((n) => n !== prefix && n.startsWith(prefix))
+
+  // `cd` and `ls` reach any section from anywhere, so the hint has to as well.
+  // Offering only the children of the current directory meant the suggestion
+  // went silent the moment you were standing in a section — exactly when the
+  // sibling you want is no longer a child of where you are — and sections
+  // with no files of their own never suggested anything at all.
+  // Real names are searched before aliases, never mixed into one sorted list:
+  // `cd pro` has to complete to `projects`, and plain alphabetical order would
+  // hand it `profile` instead.
+  const pick = (list) => list.sort().find((n) => n !== prefix && n.startsWith(prefix))
+  if ((cmd === 'cd' || cmd === 'ls') && slash === -1) {
+    const sections = Object.keys(FS.children).filter((n) => FS.children[n].type === 'dir')
+    const aliases = Object.keys(CD_ALIASES).filter((n) => /^[a-z]+$/.test(n))
+    const m = pick([...new Set([...names, ...sections])]) ?? pick(aliases)
+    return m ? m.slice(prefix.length) : ''
+  }
+  const m = pick(names)
   return m ? m.slice(prefix.length) : ''
 }
 
@@ -328,7 +344,9 @@ export default function TerminalDock({ open, setOpen }) {
         print(pathLabel(cwd))
         break
       case 'ls': {
-        const segs = resolveSegments(cwd, args[0])
+        // same forgiving lookup as cd, falling back to the literal path so
+        // `ls somefile` still resolves to the file rather than a section
+        const segs = findDir(cwd, args[0]) ?? resolveSegments(cwd, args[0])
         const node = getNode(segs)
         if (!node) { err('ls', `no such file or directory: ${args[0]}`); break }
         if (node.type === 'file') { print(args[0]); break }
