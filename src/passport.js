@@ -32,5 +32,3 @@ export function useVisited() {
     getVisited,
   )
 }
-
-export const isVipPassenger = (set = visited) => set.size >= STAMP_IDS.length

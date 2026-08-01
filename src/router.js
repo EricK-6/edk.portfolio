@@ -16,20 +16,9 @@ export function navigate(route) {
   window.location.hash = route === 'home' ? '/' : `/${route}`
 }
 
-// Go to a section, doing the right thing for the active layout: route to its
-// page in 'space' mode, or smooth-scroll to its anchor in 'scroll' mode (Hero's
-// section id is 'top', so home maps to that).
-export function goTo(id, layout) {
-  if (layout === 'scroll') {
-    const elId = id === 'home' ? 'top' : id
-    const el = document.getElementById(elId)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-      history.replaceState(null, '', `#${elId}`)
-    }
-  } else {
-    navigate(id)
-  }
+// Go to a section: every section is its own tile, so this is just a route.
+export function goTo(id) {
+  navigate(id)
 }
 
 export function useRoute() {

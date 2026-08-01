@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { goTo } from '../router.js'
-import { useLayout } from '../layout.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
 // Cmd/Ctrl+K command palette. Also opens on a custom 'open-command-palette'
 // event so the navbar button (and anything else) can trigger it.
-export default function CommandPalette({ theme, onToggleTheme }) {
+export default function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const [copied, setCopied] = useState(false)
   const inputRef = useRef(null)
   const itemRefs = useRef([])
-  const layout = useLayout()
 
   const close = () => { setOpen(false); setQuery(''); setActive(0) }
 
   const go = (id) => {
     close()
-    goTo(id, layout)
+    goTo(id)
   }
   const openLink = (href) => { close(); window.open(href, '_blank', 'noopener,noreferrer') }
   const downloadCV = (href = './CV_SWE.pdf') => {
@@ -86,16 +84,8 @@ export default function CommandPalette({ theme, onToggleTheme }) {
     { id: 'leadership', label: 'Leadership', hint: 'Activities', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
     { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
-    { id: 'cv-swe', label: 'Download CV — Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV('./CV_SWE.pdf') },
-    { id: 'cv-eee', label: 'Download CV — Hardware', hint: 'PDF', keywords: 'cv resume pdf download hardware electrical electronics eee', icon: <DownloadIcon />, run: () => downloadCV('./CV_EEE.pdf') },
-    {
-      id: 'theme',
-      label: theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
-      hint: 'Theme',
-      keywords: 'theme dark light mode toggle appearance',
-      icon: theme === 'dark' ? <SunIcon /> : <MoonIcon />,
-      run: () => { onToggleTheme(); close() },
-    },
+    { id: 'cv-swe', label: 'Download CV : Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV('./CV_SWE.pdf') },
+    { id: 'cv-eee', label: 'Download CV : Hardware', hint: 'PDF', keywords: 'cv resume pdf download hardware electrical electronics eee', icon: <DownloadIcon />, run: () => downloadCV('./CV_EEE.pdf') },
     { id: 'email', label: 'Copy email', hint: copied ? 'Copied!' : EMAIL, keywords: 'email contact mail copy', icon: <MailIcon />, run: copyEmail },
     { id: 'github', label: 'GitHub', hint: 'EricK-6', keywords: 'github code repos source', icon: <GitHubIcon />, run: () => openLink('https://github.com/EricK-6') },
     { id: 'linkedin', label: 'LinkedIn', hint: 'erick06', keywords: 'linkedin profile network', icon: <LinkedInIcon />, run: () => openLink('https://www.linkedin.com/in/erick06/') },
@@ -220,20 +210,6 @@ function DownloadIcon() {
   return (
     <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
-    </svg>
-  )
-}
-function SunIcon() {
-  return (
-    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-    </svg>
-  )
-}
-function MoonIcon() {
-  return (
-    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   )
 }

@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sunrise theme. One photograph sits behind the whole site and never moves;
+   every section rides on top of it as a frosted glass tile. The palette is
+   locked to light — the photo is a daylight scene, so there is no dark mode
+   and no toggle. (`dark:` variants are still in the markup but can never
+   match: App never puts the `dark` class on <html>.) */
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -9,12 +15,15 @@
   }
 
   body {
-    @apply font-sans antialiased text-grey-900 bg-white dark:text-grey-100 dark:bg-black;
+    @apply font-sans antialiased text-grey-900;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    /* a warm fallback while the photo decodes, so the first paint is never
+       white-on-white with the glass tiles */
+    background-color: #e8d9c0;
   }
 
   ::selection {
-    @apply bg-accent/20 text-accent dark:bg-accent-dark/30 dark:text-accent-dark;
+    @apply bg-accent/20 text-accent;
   }
 }
 
@@ -28,27 +37,67 @@
   }
 
   .section-kicker {
-    @apply text-sm font-medium uppercase tracking-widest text-accent dark:text-accent-dark mb-2;
+    @apply text-sm font-medium uppercase tracking-widest text-accent mb-2;
   }
 
+  /* The frosted tile a whole section sits on.
+     These three numbers are measured, not taste. Transparency costs contrast,
+     so the wash was swept downward against the real painted pixels until text
+     was about to fail WCAG AA: 0.74 is the most see-through it can be. The
+     `brightness` in the backdrop filter is what buys that transparency — it
+     lifts whatever the photo is doing behind the glass rather than hiding it,
+     so the tile is both lighter under text and more transparent than a plain
+     0.86 wash was. Re-measure before lightening any text colour. */
+  .glass-tile {
+    @apply rounded-3xl border border-white/70 bg-white/[0.74] shadow-2xl shadow-black/10;
+    backdrop-filter: blur(30px) saturate(135%) brightness(1.12);
+    -webkit-backdrop-filter: blur(30px) saturate(135%) brightness(1.12);
+  }
+
+  /* Cards nest inside a tile, so they are a lighter wash of the same idea —
+     an opaque card would punch a flat hole in the glass. */
   .card {
-    @apply rounded-2xl border border-grey-300/80 bg-grey-100 p-6
-           transition-[transform,box-shadow,border-color] duration-200 ease-out
-           hover:-translate-y-0.5 hover:border-grey-400/60 hover:shadow-sm hover:shadow-grey-400/30
-           dark:border-grey-800/70 dark:bg-grey-900/60
-           dark:hover:border-grey-700/70 dark:hover:shadow-black/20;
+    @apply rounded-2xl border border-white/80 bg-white/[0.58] p-6
+           transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out
+           hover:-translate-y-0.5 hover:border-white hover:bg-white/75 hover:shadow-lg hover:shadow-black/5;
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 dark:bg-white dark:text-grey-900 dark:hover:bg-grey-200;
+    @apply inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-deep;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 rounded-lg border border-grey-400/70 bg-grey-100 px-4 py-2 text-sm font-medium text-grey-900 transition hover:bg-grey-200 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-100 dark:hover:bg-grey-800;
+    @apply inline-flex items-center gap-2 rounded-lg border border-white/80 bg-white/70 px-4 py-2 text-sm font-medium text-grey-900 transition hover:bg-white;
   }
 
   .tag {
-    @apply inline-block rounded-md bg-grey-200 px-2 py-0.5 text-xs font-medium text-grey-700 dark:bg-grey-800 dark:text-grey-300;
+    @apply inline-block rounded-md bg-white/70 px-2 py-0.5 text-xs font-medium text-grey-700 ring-1 ring-inset ring-white/80;
+  }
+
+  .hero-link {
+    @apply text-grey-700 underline-offset-4 transition hover:text-accent hover:underline;
+  }
+
+  /* The intro's haze. It covers the whole frame on purpose: an ellipse sized
+     to the text became a visible bloom sitting on the photo, so instead the
+     light falls off across the entire viewport and never resolves into a
+     shape. Paired with the defocused photograph behind it, this is what
+     carries the intro's contrast — measured, same as the tiles. */
+  .hero-haze {
+    background:
+      radial-gradient(130% 100% at 50% 42%,
+        rgba(255, 255, 255, 0.74) 0%,
+        rgba(255, 255, 255, 0.6) 38%,
+        rgba(255, 255, 255, 0.34) 68%,
+        rgba(255, 255, 255, 0.12) 100%),
+      linear-gradient(to bottom, rgba(255, 253, 250, 0.28), rgba(255, 250, 242, 0.1));
+  }
+
+  /* Type sitting directly on a photograph. A whisper of light around each
+     glyph — not a drop shadow, a halo — so the letterforms hold their edge
+     against whatever the picture is doing without looking pasted on. */
+  .on-photo {
+    text-shadow: 0 0 18px rgba(255, 255, 255, 0.75), 0 1px 2px rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -59,12 +108,6 @@
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
-  }
-
-  /* fades the peeking prev/next cards out toward the edges */
-  .edge-fade {
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
-    mask-image: linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
   }
 
   /* waving hand emoji */
@@ -83,100 +126,79 @@
   50% { transform: rotate(10deg); }
 }
 
+/* Tile travel is always on one vertical axis: moving on lifts the next tile
+   up from below, moving back lowers the previous one down from above. The
+   old layout threw panels around an orbit, which is what made the direction
+   feel arbitrary.
+   The tile arrives like a card being set down — it swings in from a tilt,
+   overshoots a hair, and the blur clears as it settles. Every keyframe ends
+   at `transform: none` on purpose: a lingering transform would make the tile
+   a containing block for its own contents, and this site has been bitten by
+   transformed ancestors eating clicks before. */
+@keyframes tile-rise {
+  0%   { opacity: 0; transform: perspective(1400px) translate3d(0, 64px, 0) scale(0.965) rotateX(6deg); filter: blur(6px); }
+  55%  { opacity: 1; filter: blur(0); }
+  70%  { transform: perspective(1400px) translate3d(0, -6px, 0) scale(1.004) rotateX(-0.6deg); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes tile-descend {
+  0%   { opacity: 0; transform: perspective(1400px) translate3d(0, -64px, 0) scale(0.965) rotateX(-6deg); filter: blur(6px); }
+  55%  { opacity: 1; filter: blur(0); }
+  70%  { transform: perspective(1400px) translate3d(0, 6px, 0) scale(1.004) rotateX(0.6deg); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+.tile-rise { animation: tile-rise 760ms cubic-bezier(0.16, 0.84, 0.28, 1) both; }
+.tile-descend { animation: tile-descend 760ms cubic-bezier(0.16, 0.84, 0.28, 1) both; }
+
+/* the contents drift in just behind the glass, so the tile reads as a pane
+   with something inside it rather than one flat picture */
+@keyframes tile-contents {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+.tile-contents { animation: tile-contents 620ms 120ms cubic-bezier(0.22, 0.68, 0.32, 1) both; }
+
+/* the intro's badge, name and lines settle in one after another */
+@keyframes lift-in {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+.lift-in { animation: lift-in 800ms cubic-bezier(0.22, 0.68, 0.32, 1) both; }
+
+/* the availability dot: a soft radar ping behind a solid centre */
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.55; }
+  70%  { transform: scale(2.4); opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.pulse-ring { animation: pulse-ring 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+/* the typewriter's caret blinks only while a phrase is resting */
+@keyframes caret {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.animate-caret { animation: caret 1.1s step-end infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .wave-hand { animation: none; }
-}
-
-/* space mode: a shooting star streaks once per animation cycle, then waits
-   invisible until the loop restarts */
-@keyframes shooting-star {
-  0% { transform: translate3d(0, 0, 0) rotate(-32deg); opacity: 0; }
-  2% { opacity: 0.9; }
-  9%, 100% { transform: translate3d(-620px, 388px, 0) rotate(-32deg); opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shooting-star { animation: none; opacity: 0; }
-}
-
-/* space mode: the spiral galaxy slowly rotates in its tilted plane */
-@keyframes galaxy-spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .galaxy-spin { animation: none; }
-}
-
-/* sky mode (light theme): clouds drift gently side to side */
-@keyframes cloud-drift {
-  from { transform: translateX(-28px); }
-  to { transform: translateX(28px); }
-}
-.cloud-drift {
-  animation: cloud-drift 60s ease-in-out infinite alternate;
-}
-
-/* sky mode: the hot-air balloon bobs on the breeze */
-@keyframes balloon-bob {
-  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-  50% { transform: translateY(-14px) rotate(1.5deg); }
-}
-.balloon-bob {
-  animation: balloon-bob 7s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cloud-drift,
-  .balloon-bob { animation: none; }
-}
-
-/* hero tech ribbon: two identical groups scroll left; -50% lands exactly on
-   the second copy so the loop is seamless */
-@keyframes marquee {
-  to { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 30s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee { animation: none; }
-}
-
-/* hero starfield: each star twinkles on its own randomised cycle */
-@keyframes star-twinkle {
-  0%, 100% { opacity: 0.15; }
-  50% { opacity: 0.9; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .star-twinkle { animation: none !important; opacity: 0.6; }
-}
-
-/* theme toggle: the new palette wipes across the page left-to-right.
-   App.jsx wraps the theme flip in document.startViewTransition; the old
-   snapshot holds still underneath while a clip-path reveals the new one.
-   Browsers without the View Transition API just switch instantly. */
-::view-transition-old(root) {
-  animation: none;
-}
-::view-transition-new(root) {
-  animation: theme-wipe 700ms ease-in-out both;
-  mix-blend-mode: normal;
-}
-@keyframes theme-wipe {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
+  .wave-hand,
+  .tile-rise,
+  .tile-descend,
+  .tile-contents,
+  .lift-in,
+  .pulse-ring,
+  .animate-caret {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
 
-/* print: the page prints as one clean light document. App.jsx flips space
-   mode -> scroll and dark -> light on beforeprint, so these rules only need
-   to strip motion, chrome, and scroll-reveal hiding. */
+/* print: the tiles are stacked into one plain document (App renders every
+   section for print), so these rules only strip motion, chrome and the
+   glass — paper wants ink, not frosted photography. */
 @media print {
   html {
     scroll-padding-top: 0;
@@ -186,15 +208,27 @@
     transition: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .sunrise-backdrop,
+  header,
+  .screen-only {
+    display: none !important;
+  }
+  .glass-tile,
+  .card {
+    background: #fff !important;
+    border-color: #d4dbe5 !important;
   }
   /* Reveal keeps below-fold content at inline opacity 0 until it is
      scrolled into view — paper has no scrolling */
-  main [style] {
+  [style] {
     opacity: 1 !important;
     transform: none !important;
-  }
-  header {
-    position: static !important;
   }
   .card {
     break-inside: avoid;

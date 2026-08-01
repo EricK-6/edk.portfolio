@@ -99,7 +99,7 @@ export default function Education() {
                     className="inline-flex items-center gap-1.5 rounded-md bg-grey-200 py-0.5 pl-1.5 pr-2 text-xs text-grey-700 dark:bg-grey-800 dark:text-grey-300"
                   >
                     <RosetteIcon />
-                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-600/90 dark:text-amber-400/90">
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-award">
                       {syllabus}
                     </span>
                     <span className="font-medium">{subject}</span>
@@ -128,7 +128,7 @@ function RosetteIcon() {
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="flex-none text-amber-600/80 dark:text-amber-400/80"
+      className="flex-none text-award"
     >
       <circle cx="12" cy="9" r="5.5" />
       <path d="M12 6.6l.9 1.85 2.05.3-1.48 1.44.35 2.03L12 11.26l-1.82.96.35-2.03L9.05 8.75l2.05-.3L12 6.6z" fill="currentColor" stroke="none" opacity="0.55" />

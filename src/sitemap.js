@@ -47,9 +47,5 @@ export function cellAt(row, col) {
   return GRID[row]?.[col] ?? null
 }
 
-// Hash for a page link. In 'space' mode it's a route ('#/', '#/about'); in
-// 'scroll' mode it's the on-page anchor ('#top', '#about').
-export const hrefFor = (id, layout = 'space') => {
-  if (layout === 'scroll') return id === 'home' ? '#top' : `#${id}`
-  return id === 'home' ? '#/' : `#/${id}`
-}
+// Hash for a page link. Every section is its own route ('#/', '#/about').
+export const hrefFor = (id) => (id === 'home' ? '#/' : `#/${id}`)

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import Navbar from './components/Navbar.jsx'
 import Hero from './components/Hero.jsx'
@@ -13,15 +13,12 @@ import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
 import TerminalDock from './components/TerminalDock.jsx'
-import BootIntro from './components/BootIntro.jsx'
-import SpaceLayout from './components/SpaceLayout.jsx'
-import PassportWidget from './components/PassportWidget.jsx'
+import SunriseLayout from './components/SunriseLayout.jsx'
 import { useRoute } from './router.js'
-import { LayoutContext } from './layout.js'
 import { LABELS } from './sitemap.js'
 import { markVisited } from './passport.js'
 
-// id -> the component rendered for that cell. Home is the bento (Hero).
+// id -> the component rendered for that tile.
 const COMPONENTS = {
   home: Hero,
   about: About,
@@ -34,166 +31,46 @@ const COMPONENTS = {
   contact: Contact,
 }
 
-// Top-to-bottom order of the classic single-page (scroll) layout.
-const SCROLL_ORDER = [
+// The order tiles travel in: each move lifts the next one up from below.
+const TILE_ORDER = [
   'home', 'about', 'projects', 'experience', 'skills',
   'education', 'certifications', 'leadership', 'contact',
 ]
 
-// On-page anchor ids in document order (Hero's section is 'top', not 'home').
-const ANCHOR_IDS = SCROLL_ORDER.map((id) => (id === 'home' ? 'top' : id))
-
-// Which section is currently nearest the top of the viewport (used to keep
-// the visitor's place when switching scroll -> space).
-function sectionInView() {
-  let current = 'home'
-  for (const elId of ANCHOR_IDS) {
-    const el = document.getElementById(elId)
-    if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.3) {
-      current = elId === 'top' ? 'home' : elId
-    }
-  }
-  return current
-}
-
-
-// Tracks which section is centred in the viewport in scroll mode, so the navbar
-// can highlight it as the visitor scrolls.
-function useScrollSpy(enabled) {
-  const [active, setActive] = useState('home')
-  useEffect(() => {
-    if (!enabled) return
-    const els = ANCHOR_IDS.map((elId) => document.getElementById(elId)).filter(Boolean)
-    if (!els.length) return
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id === 'top' ? 'home' : entry.target.id)
-          }
-        }
-      },
-      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
-    )
-    els.forEach((el) => obs.observe(el))
-    return () => obs.disconnect()
-  }, [enabled])
-  return active
-}
-
 export default function App() {
-  // the visitor's toggle choice is remembered; first-timers follow their OS
-  // preference, defaulting to dark when there's no stated preference
-  const [theme, setTheme] = useState(() => {
-    try {
-      const saved = localStorage.getItem('theme')
-      if (saved === 'light' || saved === 'dark') return saved
-    } catch { /* private mode */ }
-    return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-  })
-
-  useEffect(() => {
-    const root = document.documentElement
-    if (theme === 'dark') root.classList.add('dark')
-    else root.classList.remove('dark')
-    try { localStorage.setItem('theme', theme) } catch { /* private mode */ }
-  }, [theme])
-
-  // theme flips sweep the new palette across the page left-to-right (View
-  // Transition API + clip-path wipe in index.css); browsers without support
-  // switch instantly, as do reduced-motion users (CSS side).
-  const toggleTheme = () => {
-    const flip = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
-    if (document.startViewTransition) document.startViewTransition(() => flushSync(flip))
-    else flip()
-  }
-
-  // 'space' (3D flight between floating panels, the default) or 'scroll'
-  // (classic single page); the visitor's explicit toggle is remembered
-  const [layout, setLayout] = useState(() => {
-    try {
-      const saved = localStorage.getItem('layout')
-      if (saved === 'scroll') return 'scroll'
-    } catch { /* private mode */ }
-    return 'space'
-  })
-  useEffect(() => {
-    try { localStorage.setItem('layout', layout) } catch { /* private mode */ }
-  }, [layout])
-
-  // lifted so the page can reflow (shift right) while the terminal dock is open
+  // The sunrise photo is a daylight scene, so the palette is locked to light:
+  // no theme state, no toggle, and the `dark` class never reaches <html>.
   const [terminalOpen, setTerminalOpen] = useState(false)
 
   const route = useRoute()
-  const routeId = COMPONENTS[route] ? route : 'home' // unknown routes -> home
+  const id = COMPONENTS[route] ? route : 'home' // unknown routes -> home
 
-  // When switching scroll -> space we set the route hash, but hashchange (and so
-  // `route`) updates a tick later. pinnedId pins the target for that first render
-  // to avoid a flash of the wrong section; it clears once route catches up.
-  const [pinnedId, setPinnedId] = useState(null)
+  // every tile the visitor sees earns a passport stamp
+  useEffect(() => { markVisited(id) }, [id])
+
+  // each tile is a discrete page: jump to the top and retitle the tab
   useEffect(() => {
-    if (pinnedId != null && routeId === pinnedId) setPinnedId(null)
-  }, [routeId, pinnedId])
-  const id = pinnedId ?? routeId
-
-  // scroll mode: highlight the section currently in view
-  const activeSection = useScrollSpy(layout === 'scroll')
-  const activeId = layout === 'scroll' ? activeSection : id
-
-  // every section the visitor sees earns a passport stamp
-  useEffect(() => { markVisited(activeId) }, [activeId])
-
-  // in space mode each route is a discrete page: jump to the top and
-  // retitle the tab. scroll mode is one page, so leave both alone.
-  useEffect(() => {
-    if (layout === 'scroll') { document.title = 'Eric Kim_'; return }
     window.scrollTo(0, 0)
-    document.title = id === 'home' ? 'Eric Kim_' : `${LABELS[id]} · Eric Kim_`
-  }, [id, layout])
+    document.title = id === 'home' ? 'Eric Kim' : `${LABELS[id]} · Eric Kim`
+  }, [id])
 
-  // keep the visitor's place across a layout switch (space <-> scroll)
-  const pendingScrollRef = useRef(null) // section to scroll to after -> scroll
-  const toggleLayout = () => {
-    if (layout === 'scroll') {
-      const target = sectionInView()
-      setPinnedId(target)     // show it immediately
-      setRouteHash(target)    // and update the URL (route catches up next tick)
-      setLayout('space')
-    } else {
-      pendingScrollRef.current = id
-      setLayout('scroll')
-    }
-  }
-  useLayoutEffect(() => {
-    if (layout === 'scroll' && pendingScrollRef.current != null) {
-      const elId = pendingScrollRef.current === 'home' ? 'top' : pendingScrollRef.current
-      pendingScrollRef.current = null
-      // jump (not smooth) so the toggle feels instant
-      document.getElementById(elId)?.scrollIntoView({ behavior: 'auto' })
-    }
-  }, [layout])
-
-  // printing: space mode is a fixed 3D stage and dark mode wastes toner, so
-  // Ctrl+P temporarily renders the one-page scroll layout in light theme
-  // (flushSync commits before the browser snapshots), restored afterwards.
-  const printStateRef = useRef(null)
-  const layoutRef = useRef(layout)
-  layoutRef.current = layout
+  // Printing: the stage shows one tile at a time, which would print a single
+  // section. `printing` swaps in a plain stacked document of every section for
+  // the duration of the print job (flushSync commits before the browser
+  // snapshots). This is print support, not a second layout — it is never
+  // reachable from the UI.
+  const [printing, setPrinting] = useState(false)
+  const printingRef = useRef(false)
   useEffect(() => {
     const before = () => {
-      if (printStateRef.current) return
-      printStateRef.current = { layout: layoutRef.current }
-      const wasDark = document.documentElement.classList.contains('dark')
-      printStateRef.current.wasDark = wasDark
-      if (wasDark) document.documentElement.classList.remove('dark')
-      if (layoutRef.current !== 'scroll') flushSync(() => setLayout('scroll'))
+      if (printingRef.current) return
+      printingRef.current = true
+      flushSync(() => setPrinting(true))
     }
     const after = () => {
-      const prev = printStateRef.current
-      printStateRef.current = null
-      if (!prev) return
-      if (prev.wasDark) document.documentElement.classList.add('dark')
-      if (prev.layout !== 'scroll') setLayout(prev.layout)
+      if (!printingRef.current) return
+      printingRef.current = false
+      setPrinting(false)
     }
     window.addEventListener('beforeprint', before)
     window.addEventListener('afterprint', after)
@@ -203,51 +80,31 @@ export default function App() {
     }
   }, [])
 
+  if (printing) return <PrintDocument />
+
   return (
-    <LayoutContext.Provider value={layout}>
-      <div
-        className={`flex min-h-screen flex-col transition-[padding] duration-300 ease-out ${
-          terminalOpen ? 'sm:pl-[380px]' : ''
-        }`}
-      >
-        <BootIntro />
-        <CommandPalette theme={theme} onToggleTheme={toggleTheme} />
-        <TerminalDock open={terminalOpen} setOpen={setTerminalOpen} theme={theme} onToggleTheme={toggleTheme} />
-        <Navbar
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          layout={layout}
-          onToggleLayout={toggleLayout}
-          activeId={activeId}
-        />
-        {layout === 'space' ? (
-          <SpaceLayout order={SCROLL_ORDER} components={COMPONENTS} id={id} dockOffset={terminalOpen ? 380 : 0} />
-        ) : (
-          <ScrollLayout />
-        )}
-        <PassportWidget />
-        {/* footer belongs to the long scroll page; space panels are discrete and
-            shouldn't carry spare scroll space below their content */}
-        {layout === 'scroll' && <Footer />}
-      </div>
-    </LayoutContext.Provider>
+    <div
+      className={`flex min-h-screen flex-col transition-[padding] duration-300 ease-out ${
+        terminalOpen ? 'sm:pl-[380px]' : ''
+      }`}
+    >
+      <CommandPalette />
+      <TerminalDock open={terminalOpen} setOpen={setTerminalOpen} />
+      <Navbar activeId={id} />
+      <SunriseLayout order={TILE_ORDER} components={COMPONENTS} id={id} />
+    </div>
   )
 }
 
-// Set the route hash directly (used when switching scroll -> space).
-function setRouteHash(target) {
-  window.location.hash = target === 'home' ? '/' : `/${target}`
-}
-
-// The classic single page: every section stacked in reading order.
-function ScrollLayout() {
+// Every section stacked in reading order, for paper only.
+function PrintDocument() {
   return (
-    <main className="flex-1">
-      {SCROLL_ORDER.map((sid) => {
+    <main>
+      {TILE_ORDER.map((sid) => {
         const Component = COMPONENTS[sid]
         return <Component key={sid} />
       })}
+      <Footer />
     </main>
   )
 }
-

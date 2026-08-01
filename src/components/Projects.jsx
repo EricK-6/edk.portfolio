@@ -25,30 +25,30 @@ const PROJECTS = [
     color: 'from-amber-500/20 to-rose-500/20',
     initial: 'W',
     links: [],
-    // deeper case study shown in the flight-log modal
+    // deeper case study shown in the build-log modal
     log: [
       {
-        code: '01 · MISSION',
+        code: '01 · BRIEF',
         body: [
           'Build a companion robot for the UoA ECSE Design Competition 2025 that can hold your gaze, wave, and talk back. An embedded system that reads as a character, not a circuit board.',
         ],
       },
       {
-        code: '02 · AIRFRAME',
+        code: '02 · BUILD',
         body: [
           'Dual ATmega328P NANOs share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue, all running simultaneously on hardware with no operating system underneath.',
           'The enclosure was 3D modelled and physically prototyped to pack every board, servo, and speaker into a compact, desk-friendly form factor.',
         ],
       },
       {
-        code: '03 · TURBULENCE',
+        code: '03 · SETBACK',
         body: [
           "The enclosure fought back at the CAD stage. Winnie's parts are doll sized, small enough that measuring them by eye was hopeless and their true dimensions were genuinely hard to pin down.",
           'The fix was proper metrology: vernier calipers and lab grade measurement equipment, one component at a time, recording actual sizes until the numbers could be trusted. Those measurements became the 3D CAD model the final enclosure was built from.',
         ],
       },
       {
-        code: '04 · LANDING',
+        code: '04 · OUTCOME',
         body: [
           '3rd place at the UoA ECSE Design Competition 2025, awarded by the Department of ECSE in September 2025.',
         ],
@@ -85,7 +85,7 @@ const PROJECTS = [
     icon: 'cloud',
     tag: 'AWS · Individual Project',
     year: '2026',
-    period: 'May 2026 – Jun 2026',
+    period: 'May 2026 to Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
       'Built a serverless NLP pipeline on AWS (Kinesis, Lambda, Comprehend, DynamoDB) with AWS SAM in order to classify streaming text sentiment in real time.',
@@ -226,7 +226,7 @@ function GroupLabel({ children, first }) {
       role="presentation"
       aria-hidden="true"
       className={`flex-none self-center whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600 md:self-start md:px-4 ${
-        first ? 'md:pb-0.5' : 'ml-1 md:ml-0 md:mt-3 md:pb-0.5'
+        first ? 'md:pb-0.5' : 'ml-1 md:ml-0 md:mt-2 md:pb-0.5'
       }`}
     >
       {children}
@@ -237,7 +237,7 @@ function GroupLabel({ children, first }) {
 export default function Projects() {
   // space mode fits the whole section in one floating panel, so the cards
   // trade some padding and image height for a layout that needs no zoom-out
-  const space = useLayout() === 'space'
+  const space = useLayout() === 'tile'
   const [sel, setSel] = useState(0)
   const current = PROJECTS[sel]
   const tabRefs = useRef([])
@@ -275,7 +275,7 @@ export default function Projects() {
           <div
             role="tablist"
             aria-label="Awards and projects"
-            className="no-scrollbar flex gap-2 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0"
+            className={`no-scrollbar flex overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0 ${space ? 'gap-1.5' : 'gap-2'}`}
           >
           {PROJECTS.map((p, i) => (
             <Fragment key={p.title}>
@@ -290,7 +290,7 @@ export default function Projects() {
                 tabIndex={i === sel ? 0 : -1}
                 onClick={() => setSel(i)}
                 onKeyDown={onTabKeyDown}
-                className={`shrink-0 rounded-xl border px-4 ${space ? 'py-2' : 'py-2.5'} text-left transition md:w-full ${
+                className={`shrink-0 rounded-xl border px-4 ${space ? 'py-1' : 'py-2.5'} text-left transition md:w-full ${
                   i === sel
                     ? 'border-accent/60 bg-grey-200/80 dark:border-accent-dark/50 dark:bg-grey-900'
                     : 'border-grey-300/70 text-grey-600 hover:border-grey-400 hover:text-grey-900 dark:border-grey-800 dark:text-grey-400 dark:hover:border-grey-700 dark:hover:text-grey-100'
@@ -309,7 +309,7 @@ export default function Projects() {
             href="https://github.com/EricK-6"
             target="_blank"
             rel="noreferrer"
-            className="hidden items-center gap-1 px-4 pt-1 mt-2 text-xs text-grey-500 underline-offset-2 hover:text-accent hover:underline dark:text-grey-500 dark:hover:text-accent-dark md:flex"
+            className={`hidden items-center gap-1 px-4 text-xs text-grey-500 underline-offset-2 hover:text-accent hover:underline md:flex ${space ? 'mt-1.5' : 'pt-1 mt-2'}`}
           >
             More on my GitHub →
           </a>
@@ -340,7 +340,7 @@ export default function Projects() {
 // titles aligned with each other; the icon rows below start at their own x.
 function RankChip({ rank }) {
   return (
-    <span className="min-w-[2.6rem] flex-none rounded bg-amber-500/15 px-1 py-0.5 text-center font-mono text-[10px] font-semibold uppercase leading-none tracking-tight text-amber-700 dark:bg-amber-400/15 dark:text-amber-400">
+    <span className="min-w-[2.6rem] flex-none rounded bg-award-soft/20 px-1 py-0.5 text-center font-mono text-[10px] font-semibold uppercase leading-none tracking-tight text-award">
       {rank}
     </span>
   )
@@ -348,14 +348,18 @@ function RankChip({ rank }) {
 
 // small identifying glyph per project shown in the explorer list (the two
 // competition wins carry a RankChip instead)
+// A hue per project so the list stays scannable at a glance. These sit one
+// stop darker than the originals and at 80% opacity: full-strength 500s were
+// a rainbow competing with the award chips directly above them, and a single
+// flat grey went too far the other way and vanished on the glass.
 const ICON_STYLES = {
-  shield: 'text-violet-500 dark:text-violet-400',
-  cloud: 'text-sky-500 dark:text-sky-400',
-  globe: 'text-indigo-500 dark:text-indigo-400',
-  zap: 'text-yellow-500 dark:text-yellow-400',
-  cpu: 'text-lime-600 dark:text-lime-400',
-  chart: 'text-orange-500 dark:text-orange-400',
-  phone: 'text-emerald-500 dark:text-emerald-400',
+  shield: 'text-violet-600/80',
+  cloud: 'text-sky-600/80',
+  globe: 'text-indigo-600/80',
+  zap: 'text-yellow-600/80',
+  cpu: 'text-lime-700/80',
+  chart: 'text-orange-600/80',
+  phone: 'text-emerald-600/80',
 }
 
 const ICON_PATHS = {
@@ -400,12 +404,12 @@ function ProjectIcon({ type }) {
   return (
     <svg
       aria-hidden="true"
-      width="13"
-      height="13"
+      width="14"
+      height="14"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="2.1"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={`flex-none ${ICON_STYLES[type] ?? ''}`}
@@ -432,8 +436,8 @@ function ProjectCard({ project, space }) {
   }, [panelActive])
 
   return (
-    <article className={`card flex h-full flex-col overflow-hidden ${space ? 'p-4' : ''} ${featured ? 'ring-2 ring-amber-400/60 dark:ring-amber-500/40' : ''}`}>
-      <div className={`relative ${space ? '-m-4 mb-4 h-28' : '-m-6 mb-6 h-44'} overflow-hidden ${image || video ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
+    <article className={`card flex h-full flex-col overflow-hidden ${space ? 'p-4' : ''} ${featured ? 'ring-2 ring-award-soft/60' : ''}`}>
+      <div className={`relative ${space ? '-m-4 mb-3 h-24' : '-m-6 mb-6 h-44'} overflow-hidden ${image || video ? 'bg-grey-100 dark:bg-grey-800' : `bg-gradient-to-br ${color} flex items-center justify-center`}`}>
         {video ? (
           <video
             ref={videoRef}
@@ -471,7 +475,7 @@ function ProjectCard({ project, space }) {
       <div className="flex-1 flex flex-col">
         {/* no award glyph here: the amber ring and this amber tag line already
             mark the card, and the tag names the placement in words */}
-        <div className={`flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest ${featured ? 'text-amber-600 dark:text-amber-400' : 'text-accent dark:text-accent-dark'}`}>
+        <div className={`flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest ${featured ? 'text-award' : 'text-accent'}`}>
           {tag}
         </div>
         <h3 className={`mt-1 font-semibold ${space ? 'text-lg' : 'text-xl'}`}>{title}</h3>
@@ -486,7 +490,7 @@ function ProjectCard({ project, space }) {
         )}
 
         {highlights?.length > 0 && (
-          <ul className={`${space ? 'mt-2.5' : 'mt-4'} space-y-1.5 text-sm sm:text-justify text-grey-700 dark:text-grey-300`}>
+          <ul className={`${space ? 'mt-2' : 'mt-4'} ${space ? 'space-y-1' : 'space-y-1.5'} text-sm sm:text-justify text-grey-700 dark:text-grey-300`}>
             {highlights.map((h) => (
               <li key={h} className="flex gap-2">
                 <span className="mt-1 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent dark:bg-accent-dark" />
@@ -497,7 +501,7 @@ function ProjectCard({ project, space }) {
         )}
 
         {tech?.length > 0 && (
-          <div className={`${space ? 'mt-3' : 'mt-5'} flex flex-wrap gap-1.5`}>
+          <div className={`${space ? 'mt-2' : 'mt-5'} flex flex-wrap gap-1.5`}>
             {tech.map((t) => (
               <span key={t} className="tag">
                 {t}
@@ -507,14 +511,14 @@ function ProjectCard({ project, space }) {
         )}
 
         {(links?.length > 0 || log) && (
-          <div className={`${space ? 'mt-3' : 'mt-5'} flex flex-wrap items-center gap-3`}>
+          <div className={`${space ? 'mt-2.5' : 'mt-5'} flex flex-wrap items-center gap-3`}>
             {log && (
               <button
                 type="button"
                 onClick={() => setLogOpen(true)}
                 className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
               >
-                Open the flight log →
+                Open the build log →
               </button>
             )}
             {links?.map((l) => {
@@ -538,7 +542,7 @@ function ProjectCard({ project, space }) {
           </div>
         )}
       </div>
-      {logOpen && <FlightLogModal project={project} onClose={() => setLogOpen(false)} />}
+      {logOpen && <BuildLogModal project={project} onClose={() => setLogOpen(false)} />}
     </article>
   )
 }
@@ -553,7 +557,6 @@ function ProjectCard({ project, space }) {
 const LOGOS = {
   AWS: './aws.jpg',
   BNZ: './bnz.jpg',
-  CODE: './code.png',
   KEB: './KEB.webp',
   UoA: './UoA.jpg',
 }
@@ -629,7 +632,7 @@ function GitHubIcon() {
 
 // Case-study modal styled as a flight log. Rendered through a portal because
 // space mode's 3D transforms would otherwise hijack position:fixed.
-function FlightLogModal({ project, onClose }) {
+function BuildLogModal({ project, onClose }) {
   const closeRef = useRef(null)
 
   useEffect(() => {
@@ -657,19 +660,19 @@ function FlightLogModal({ project, onClose }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`Flight log — ${project.title}`}
+        aria-label={`Build log: ${project.title}`}
         onClick={(e) => e.stopPropagation()}
         className="relative max-h-full w-full max-w-xl overflow-y-auto rounded-2xl border border-grey-300 bg-white shadow-2xl dark:border-grey-800 dark:bg-grey-950"
       >
         <div className="flex items-center justify-between border-b border-grey-200 px-5 py-3.5 dark:border-grey-800">
           <div className="font-mono text-xs font-medium uppercase tracking-[0.25em] text-grey-500">
-            Flight log · {project.title}
+            Build log · {project.title}
           </div>
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Close flight log"
+            aria-label="Close build log"
             className="rounded-lg p-1 text-grey-500 hover:bg-grey-200 hover:text-grey-800 dark:hover:bg-grey-900 dark:hover:text-grey-100"
           >
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

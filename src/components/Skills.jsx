@@ -1,38 +1,25 @@
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
-// Each group carries its own icon and hue. Three identically grey blocks gave
-// the eye nothing to aim at; the tinted header rule, icon tile and count let a
-// reader find the stack they care about without reading all twenty-six chips.
+// Each group carries its own icon, count and ruled header so a reader can find
+// the stack they care about without reading all twenty-six chips. The groups
+// used to be told apart by hue as well (accent / sky / violet), but the site's
+// palette is now one accent plus a reserved award colour, and three unrelated
+// hues here were the loudest thing fighting it.
 const GROUPS = [
   {
     label: 'Languages & Frameworks',
     icon: 'code',
-    // [rule gradient, icon tile, count pill]
-    tone: {
-      rule: 'from-accent/80 to-accent/10 dark:from-accent-dark/80 dark:to-accent-dark/10',
-      tile: 'bg-accent/10 text-accent dark:bg-accent-dark/15 dark:text-accent-dark',
-    },
     items: ['Python', 'Java', 'C', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL'],
   },
   {
     label: 'Cloud & Software Tools',
     icon: 'cloud',
-    tone: {
-      rule: 'from-sky-500/80 to-sky-500/10 dark:from-sky-400/70 dark:to-sky-400/10',
-      tile: 'bg-sky-500/10 text-sky-600 dark:bg-sky-400/15 dark:text-sky-400',
-    },
     items: ['AWS', 'Lambda', 'Bedrock', 'Textract', 'Kinesis', 'Comprehend', 'DynamoDB', 'Amplify', 'Git', 'Android Studio', 'Figma'],
   },
   {
     label: 'Hardware & EDA Tools',
     icon: 'chip',
-    // violet, not the obvious green: the dark theme's accent IS emerald, so a
-    // green here would read as the same group as Languages after a theme flip
-    tone: {
-      rule: 'from-violet-500/80 to-violet-500/10 dark:from-violet-400/70 dark:to-violet-400/10',
-      tile: 'bg-violet-500/10 text-violet-600 dark:bg-violet-400/15 dark:text-violet-400',
-    },
     items: ['Altium Designer', 'LTSpice', 'ModelSim', 'Intel Quartus Prime', 'Proteus', 'Atmel AVR', 'AutoCAD'],
   },
 ]
@@ -51,10 +38,10 @@ export default function Skills() {
             <div key={g.label} className="flex flex-col">
               {/* hue rule: doubles as the divider between stacked columns
                   below lg, where there is no vertical rule to carry it */}
-              <span aria-hidden="true" className={`block h-1 w-full bg-gradient-to-r ${g.tone.rule}`} />
+              <span aria-hidden="true" className="block h-1 w-full bg-gradient-to-r from-accent/80 to-accent/10" />
               <div className="p-5">
                 <div className="flex items-center gap-2.5">
-                  <span className={`inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg ${g.tone.tile}`}>
+                  <span className="inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-accent/10 text-accent">
                     <GroupIcon type={g.icon} />
                   </span>
                   <h3 className="flex-1 text-sm font-semibold text-grey-800 dark:text-grey-200">{g.label}</h3>

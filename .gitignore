@@ -34,3 +34,8 @@ pnpm-debug.log*
 # Claude Code local data
 .claude/
 me-original.jpg
+
+# full-resolution source art (originals kept locally, optimised copies live in public/)
+assets-src/
+
+.DS_Store

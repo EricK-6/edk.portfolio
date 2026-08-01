@@ -1,292 +1,204 @@
-import { useEffect } from 'react'
-import { useLayout } from '../layout.js'
+import { useEffect, useState } from 'react'
 import { hrefFor } from '../sitemap.js'
-import { NAME, autoCheckIn, cancelAutoCheckIn, getNameTyped, setNameTyped, useNameTyped } from '../nameReveal.js'
-import { isVipPassenger, useVisited } from '../passport.js'
 
-// The passenger name prints itself shortly after load (autoCheckIn), but
-// visitors can take over and type it themselves: correctly typed characters
-// of NAME reveal in white; a wrong key resets back to the grey hint.
-// Progress lives in a shared store (nameReveal.js) so it survives Hero
-// remounting on layout switches. Returns how many leading characters match
-// and whether it's complete.
-function useTypeChallenge() {
-  const typed = useNameTyped()
+// The intro tile. Minimal, but not static: an availability badge, a greeting,
+// the name, and one line that types itself through the things he actually
+// builds. Everything else the visitor might want is one tile away, so this
+// page introduces rather than summarises.
+
+// One line per project, in the order the Projects tile lists them, so the
+// intro is a table of contents for the work rather than a list of buzzwords.
+// One line per project, in the order the Projects tile lists them, so the
+// intro is a table of contents for the work rather than a list of buzzwords.
+// Kept under ~30 characters each: at 390px anything longer wraps, and a row
+// that reserves two lines for a phrase that only sometimes needs them leaves
+// a hole under the name the rest of the time.
+const BUILDS = [
+  'embedded systems', // Intro
+  'robots that hold your gaze',    // Winnie the Bot
+  'statement level fraud detection',// Spottern!
+  'live sentiment dashboards',     // Sentiment PULSE
+  'websites a club runs on',       // KEB Web Design
+  'energy monitors, PCB and all',  // Smart Energy Monitor
+  'arcade games on an FPGA',       // Flappy Universe
+  'analytics that forecast',       // RoastWorks Analytics
+  'Android apps for meal plans',   // MealHub
+]
+
+const TYPE_MS = 55
+const ERASE_MS = 28
+const HOLD_MS = 1600
+
+// One phrase types out, holds, erases, and the next takes over — forever.
+function useTypewriter(phrases) {
+  const reduce =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const [text, setText] = useState(reduce ? phrases[0] : '')
+  const [done, setDone] = useState(reduce)
 
   useEffect(() => {
-    autoCheckIn()
-    function onKey(e) {
-      // don't hijack typing inside form fields / editable elements
-      const el = document.activeElement
-      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return
-      // leave keyboard shortcuts alone
-      if (e.metaKey || e.ctrlKey || e.altKey) return
+    if (reduce) return
+    let i = 0        // which phrase
+    let n = 0        // how much of it is showing
+    let erasing = false
+    let timer
 
-      const n = getNameTyped()
-
-      if (e.key === 'Backspace') {
-        cancelAutoCheckIn() // the visitor is playing the game themselves
-        setNameTyped(n - 1)
-        return
-      }
-      if (e.key.length !== 1) return // ignore Tab, Enter, arrows, etc.
-      if (n >= NAME.length) return // already complete
-      cancelAutoCheckIn()
-
-      if (e.key === NAME[n]) {
-        if (e.key === ' ') e.preventDefault() // typing the space shouldn't scroll the page
-        setNameTyped(n + 1)
+    const tick = () => {
+      const phrase = phrases[i]
+      if (!erasing) {
+        n += 1
+        setText(phrase.slice(0, n))
+        if (n === phrase.length) {
+          setDone(true)
+          erasing = true
+          timer = setTimeout(tick, HOLD_MS)
+          return
+        }
+        timer = setTimeout(tick, TYPE_MS)
       } else {
-        // wrong key: fall back to the grey hint
-        setNameTyped(0)
+        n -= 1
+        setDone(false)
+        setText(phrase.slice(0, n))
+        if (n === 0) {
+          erasing = false
+          i = (i + 1) % phrases.length
+        }
+        timer = setTimeout(tick, n === 0 ? 320 : ERASE_MS)
       }
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
+    timer = setTimeout(tick, 700)
+    return () => clearTimeout(timer)
+  }, [phrases, reduce])
 
-  return { typed, done: typed >= NAME.length }
+  return { text, done }
 }
 
-function Field({ label, children, className = '' }) {
-  return (
-    <div className={className}>
-      <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
-        {label}
-      </div>
-      <div className="mt-0.5 text-sm font-semibold text-grey-900 dark:text-grey-100">{children}</div>
-    </div>
-  )
-}
-
-// The boarding-pass hero: the site has a flight mode, so the landing page is
-// the ticket. Passenger name is the typing game; the stub holds the barcode,
-// CV and socials.
 export default function Hero() {
-  const layout = useLayout()
-  const { typed, done } = useTypeChallenge()
-  const visited = useVisited()
-  const vip = isVipPassenger(visited)
+  const { text, done } = useTypewriter(BUILDS)
 
   return (
-    <section
-      id="top"
-      className={`relative ${layout === 'space' ? 'py-6' : 'pt-12 pb-16 sm:pt-20 sm:pb-24'}`}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px] max-h-full
-                   bg-gradient-to-b from-accent/[0.08] via-white to-transparent
-                   dark:from-accent-dark/[0.04] dark:via-black dark:to-transparent"
-      />
-      {/* max-w-7xl beats container-page's max-w-5xl so the ticket can run wide */}
-      <div className="container-page max-w-7xl animate-fade-in-up">
-        <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-2xl dark:border-grey-800 dark:bg-grey-950 md:grid-cols-[auto_auto_1fr_auto_250px]">
-          {/* accent strip */}
-          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent/70 via-accent/30 to-transparent dark:from-accent-dark/70 dark:via-accent-dark/30" />
-
-          {/* tear-off stub on the left edge (desktop): vertical BOARDING PASS
-              reading bottom-to-top (vertical-rl + rotate-180) */}
-          <div aria-hidden="true" className="hidden select-none items-center px-3 md:flex">
-            <span className="rotate-180 font-mono text-sm font-semibold uppercase tracking-[0.4em] text-grey-500 [writing-mode:vertical-rl] dark:text-grey-500">
-              Boarding Pass
+    // No glass tile here: the intro sits straight on the photograph and the
+    // first tile rises over it. Readability comes from the backdrop itself —
+    // it defocuses and hazes over on this route (see SunriseBackdrop) — plus
+    // the halo on the type, rather than from any panel behind the words.
+    <section id="top" className="on-photo relative px-2 py-12 sm:px-6 sm:py-16">
+      <div className="mx-auto max-w-2xl text-center">
+        {/* availability, with a live green pulse */}
+        <div className="lift-in flex justify-center" style={{ animationDelay: '60ms' }}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-green-700/25 bg-green-50/80 px-3 py-1 text-xs font-medium text-green-800">
+            <span className="relative flex h-2 w-2" aria-hidden="true">
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-green-500" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-600" />
             </span>
-          </div>
-          {/* perforation tearing the stub off the main segment */}
-          <div aria-hidden="true" className="relative hidden w-0 md:block">
-            <div className="absolute inset-y-3 left-0 border-l-2 border-dashed border-grey-300 dark:border-grey-800" />
-            <span className="absolute -top-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
-            <span className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
-          </div>
+            Open to 2026/27 summer internships
+          </span>
+        </div>
 
-          {/* main segment */}
-          <div className="relative px-6 py-4 sm:px-8 sm:py-5">
-            {/* rubber stamp earned by visiting every section (see passport.js) */}
-            {vip && (
-              <div
-                aria-label="VIP passenger — all sections visited"
-                className="pointer-events-none absolute right-4 top-14 z-10 hidden -rotate-12 animate-fade-in rounded-lg border-2 border-emerald-600/60 px-2.5 py-1.5 text-center sm:block dark:border-emerald-500/60"
-              >
-                <div className="rounded border border-emerald-600/40 px-2 py-1 dark:border-emerald-500/40">
-                  <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-600/90 dark:text-emerald-500/90">
-                    ★ VIP Passenger
-                  </div>
-                  <div className="font-mono text-[8px] uppercase tracking-[0.25em] text-emerald-600/70 dark:text-emerald-500/70">
-                    all sectors · EK-2027
-                  </div>
-                </div>
-              </div>
-            )}
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <div className="font-mono text-xs font-medium uppercase tracking-[0.3em] text-grey-500 dark:text-grey-500">
-                erickk·cloud
-              </div>
-              <div className="font-mono text-xs text-grey-400 dark:text-grey-600">FLIGHT EK-2027</div>
-            </div>
+        <p
+          className="lift-in mt-7 text-lg font-medium text-grey-800"
+          style={{ animationDelay: '140ms' }}
+        >
+          Kia ora! <span className="wave-hand mx-0.5 inline-block">👋</span> This is
+        </p>
 
-            <div className="mt-3">
-              <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
-                Kia Ora! Passenger <span className="normal-case tracking-normal">👋</span>
-              </div>
-              <h1 aria-label={NAME} className="mt-1 min-h-[1.1em] text-3xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">
-                <span aria-hidden="true">
-                  {/* correctly typed characters; glow once the full name is complete */}
-                  <span className={done ? 'animate-glow-in dark:animate-glow-in-green' : undefined}>{NAME.slice(0, typed)}</span>
-                  {/* blinking cursor */}
-                  <span className="animate-blink font-normal text-accent dark:text-accent-dark">_</span>
-                  {/* untyped remainder shown as a grey hint */}
-                  <span className="text-grey-400 dark:text-grey-600">{NAME.slice(typed)}</span>
-                </span>
-              </h1>
-              <p
-                aria-hidden="true"
-                className="mt-1.5 flex min-h-[1.25em] items-center gap-1.5 text-xs font-medium"
-              >
-                {done ? (
-                  <span className="animate-fade-in text-sm font-semibold text-accent dark:text-accent-dark">Identity verified - Welcome aboard :)</span>
-                ) : typed > 0 ? (
-                  <span className="text-grey-400 dark:text-grey-500">checking in…</span>
-                ) : (
-                  <span className="text-grey-400 dark:text-grey-500">⌨ type my name to check in</span>
-                )}
-              </p>
-            </div>
+        <h1
+          className="lift-in mt-2 font-display text-5xl font-semibold tracking-tight text-grey-900 sm:text-7xl"
+          style={{ animationDelay: '220ms' }}
+        >
+          Eric Kim
+        </h1>
 
-            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
-              <Field label="From">Auckland, NZ (AKL)</Field>
-              <Field label="To">Your Team</Field>
-              <Field label="Seat">Nov 2026 – Feb 2027</Field>
-              <Field label="Class">CSE (Hons) @ UoA</Field>
-              <Field label="Status">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                  </span>
-                  Open to internships
-                </span>
-              </Field>
-              <Field label="Certs">☁ AWS ×2 · Cloud + AI</Field>
-              <Field label="Carry-on" className="col-span-2 sm:col-span-3">
-                embedded systems · full stack development · digital hardware design
-              </Field>
-            </div>
+        {/* the typing line. min-height reserves the row so the layout never
+            jumps as phrases swap. */}
+        <p
+          className="lift-in mt-6 flex min-h-[2rem] flex-wrap items-center justify-center gap-x-2 text-lg text-grey-800 sm:text-xl"
+          style={{ animationDelay: '300ms' }}
+        >
+          <span>I build</span>
+          <span className="font-medium text-accent">
+            {text}
+            <span
+              aria-hidden="true"
+              className={`ml-0.5 inline-block w-[2px] translate-y-[2px] self-stretch bg-accent ${done ? 'animate-caret' : ''}`}
+              style={{ height: '1.05em' }}
+            />
+          </span>
+          {/* the phrase is decorative motion; keep the sentence whole for AT */}
+          <span className="sr-only">robots, fraud detection, live dashboards, websites, energy monitors, FPGA games, analytics and Android apps.</span>
+        </p>
 
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <a href={hrefFor('projects', layout)} className="btn-primary">Board · View projects</a>
-              <a href={hrefFor('contact', layout)} className="btn-secondary">Get in touch</a>
-            </div>
-          </div>
+        <p
+          className="lift-in mt-4 text-[15px] text-grey-700"
+          style={{ animationDelay: '380ms' }}
+        >
+          Computer Systems Engineering (Hons)
+          <span className="text-grey-500"> · </span>
+          University of Auckland
+        </p>
 
-          {/* perforation */}
-          <div aria-hidden="true" className="relative hidden w-0 md:block">
-            <div className="absolute inset-y-3 left-0 border-l-2 border-dashed border-grey-300 dark:border-grey-800" />
-            <span className="absolute -top-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
-            <span className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-white dark:bg-black" />
-          </div>
-          <div aria-hidden="true" className="relative mx-6 md:hidden">
-            <div className="border-t-2 border-dashed border-grey-300 dark:border-grey-800" />
-          </div>
+        {/* the tour starts at the beginning, not at the projects */}
+        <div className="lift-in mt-9" style={{ animationDelay: '460ms' }}>
+          <a href={hrefFor('about')} className="btn-primary group px-5 py-2.5 text-[15px]">
+            Let&apos;s explore
+            <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+          </a>
+        </div>
 
-          {/* stub */}
-          <div className="flex flex-col justify-between gap-3 px-6 py-4 sm:px-8 sm:py-5 md:pl-9">
-            <div>
-              <div className="flex items-baseline justify-between">
-                <span className="font-mono text-xs uppercase tracking-[0.25em] text-grey-500 dark:text-grey-500">Gate</span>
-                <span className="font-mono text-lg font-bold text-grey-900 dark:text-grey-100">P·01</span>
-              </div>
-              <div className="mt-3">
-                <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">Resume</div>
-                {/* one "Resume" tile, invisibly split: left half previews the
-                    SWE CV, right half the EEE CV */}
-                <div className="mt-1.5">
-                  {/* the label lives inside the tile so it centres exactly;
-                      pointer-events-none keeps both halves clickable */}
-                  <div className="relative flex h-9 overflow-hidden rounded-lg border border-grey-300 dark:border-grey-700">
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 z-10 flex items-center text-sm font-medium text-grey-700 dark:text-grey-300"
-                    >
-                      {/* each label centres over its clickable half (1/4 and
-                          3/4 points); "vs" is pinned to the exact middle */}
-                      <span className="w-1/2 text-center">SWE</span>
-                      <span className="w-1/2 text-center">EEE</span>
-                      <span className="absolute left-1/2 -translate-x-1/2 text-xs text-grey-400 dark:text-grey-600">vs</span>
-                    </span>
-                    <a
-                      href="./CV_SWE.pdf"
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label="Preview software engineering CV in the browser (left half)"
-                      className="flex-1 transition hover:bg-grey-200/80 dark:hover:bg-grey-800/60"
-                    />
-                    <a
-                      href="./CV_EEE.pdf"
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label="Preview electrical/electronics engineering CV in the browser (right half)"
-                      className="flex-1 transition hover:bg-grey-200/80 dark:hover:bg-grey-800/60"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-3 space-y-1.5 text-sm">
-                <a
-                  href="https://github.com/EricK-6"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex w-fit items-center gap-2 text-grey-600 transition-colors hover:text-accent dark:text-grey-400 dark:hover:text-accent-dark"
-                >
-                  <GitHubIcon /> EricK-6
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/erick06/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex w-fit items-center gap-2 text-grey-600 transition-colors hover:text-accent dark:text-grey-400 dark:hover:text-accent-dark"
-                >
-                  <LinkedInIcon /> erick06
-                </a>
-              </div>
-            </div>
+        {/* Two CVs, because the software and hardware versions are different
+            documents. They open in a tab to read rather than downloading —
+            most people want a look before they want a file. */}
+        <div
+          className="lift-in mt-8 text-sm text-grey-700"
+          style={{ animationDelay: '540ms' }}
+        >
+          <span className="text-grey-600">Resume: </span>
+          <a href="./CV_SWE.pdf" target="_blank" rel="noreferrer" className="hero-link">SWE</a>
+          <span className="mx-2 text-grey-500">·</span>
+          <a href="./CV_EEE.pdf" target="_blank" rel="noreferrer" className="hero-link">EEE</a>
+        </div>
 
-            {/* QR code in the barcode's old spot; white padding keeps the
-                quiet zone scannable in dark mode. Hidden on phones (you
-                can't scan the screen you're holding) and clickable as a
-                LinkedIn link for everyone else. */}
-            <a
-              href="https://www.linkedin.com/in/erick06/"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Open Eric's LinkedIn profile (the QR code links there too)"
-              className="mx-auto hidden md:block"
-            >
-              <img
-                src="./qr.webp"
-                alt="QR code linking to Eric's LinkedIn profile"
-                loading="lazy"
-                decoding="async"
-                className="h-36 w-36 rounded-lg bg-white object-contain p-1 ring-1 ring-grey-200 transition hover:ring-accent/60 dark:ring-grey-800 dark:hover:ring-accent-dark/60"
-              />
-            </a>
-          </div>
+        <div
+          className="lift-in mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
+          style={{ animationDelay: '620ms' }}
+        >
+          <a href="mailto:dohyunkim290106@gmail.com" className="hero-link inline-flex items-center gap-1.5">
+            <MailIcon /> Email
+          </a>
+          <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="hero-link inline-flex items-center gap-1.5">
+            <LinkedInIcon /> LinkedIn
+          </a>
+          <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="hero-link inline-flex items-center gap-1.5">
+            <GitHubIcon /> GitHub
+          </a>
         </div>
       </div>
     </section>
   )
 }
 
-function GitHubIcon() {
+function MailIcon() {
   return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.35.77 1.05.77 2.11 0 1.52-.01 2.75-.01 3.12 0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5z" />
+    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 7-10 6L2 7" />
     </svg>
   )
 }
+
 function LinkedInIcon() {
   return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
       <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.05-1.86-3.05-1.86 0-2.15 1.45-2.15 2.95v5.67H9.32V9h3.42v1.56h.05a3.75 3.75 0 0 1 3.38-1.86c3.61 0 4.28 2.38 4.28 5.47v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.2 24 24 23.23 24 22.28V1.72C24 .77 23.2 0 22.22 0z" />
+    </svg>
+  )
+}
+
+function GitHubIcon() {
+  return (
+    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.35.77 1.05.77 2.11 0 1.52-.01 2.75-.01 3.12 0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5z" />
     </svg>
   )
 }

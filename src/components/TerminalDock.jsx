@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { goTo } from '../router.js'
 import { useVisited } from '../passport.js'
-import { useLayout } from '../layout.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 
@@ -64,18 +63,17 @@ const HELP = [
   ['cv <swe|eee>', 'download my CV (software / hardware)'],
   ['status', 'live systems check'],
   ['fortune', 'a fortune cookie for engineers'],
-  ['theme', 'toggle light / dark'],
   ['clear', 'clear the screen'],
 ]
 
 const FORTUNES = [
-  '"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements." — Brian Kernighan',
-  '"Simplicity is prerequisite for reliability." — Edsger Dijkstra',
-  '"First, solve the problem. Then, write the code." — John Johnson',
-  '"Any sufficiently advanced technology is indistinguishable from magic." — Arthur C. Clarke',
-  '"Weeks of coding can save you hours of planning." — unknown',
+  '"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements." (Brian Kernighan)',
+  '"Simplicity is prerequisite for reliability." (Edsger Dijkstra)',
+  '"First, solve the problem. Then, write the code." (John Johnson)',
+  '"Any sufficiently advanced technology is indistinguishable from magic." (Arthur C. Clarke)',
+  '"Weeks of coding can save you hours of planning." (unknown)',
   'There are 10 types of people: those who understand binary and those who don\'t.',
-  'It works on my machine. — every engineer, eventually',
+  'It works on my machine. (every engineer, eventually)',
   'A clean solder joint is worth a thousand debug sessions.',
 ]
 
@@ -114,7 +112,7 @@ function resolveSegments(cwd, arg) {
 const pathLabel = (segs) => (segs.length ? `~/${segs.join('/')}` : '~')
 
 // commands offered for inline completion (sorted so the suggestion is stable)
-const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'fortune', 'help', 'ls', 'pwd', 'social', 'status', 'sudo', 'theme', 'whoami']
+const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'fortune', 'help', 'ls', 'pwd', 'social', 'status', 'sudo', 'whoami']
 
 // fish-style inline suggestion: given the half-typed line, return the *suffix*
 // that would complete the current word — a command name (first word) or a
@@ -160,10 +158,19 @@ function Prompt({ path = '~' }) {
   )
 }
 
-export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
+export default function TerminalDock({ open, setOpen }) {
   // the handle hint fades once the visitor starts exploring (like the navbar hints)
   const showHints = useVisited().size <= 1
+  // A short power-on trace, inherited from the full-screen boot intro this
+  // replaced. It belongs in here: a kernel log is the one place a terminal is
+  // the right voice for it, and it no longer interrupts anyone who did not ask.
   const [lines, setLines] = useState(() => [
+    '[ 0.000000 ] erickk.cloud bootloader v1.0',
+    '[ 0.000412 ] cpu: Computer Systems Engineering @ UoA',
+    '[ 0.001033 ] mem: portfolio modules ................. ok',
+    '[ 0.002566 ] net: status = open to internships ...... up',
+    '[ 0.003733 ] starting shell ...................... ok',
+    '',
     'erickk.cloud - interactive shell',
     "run 'ls' to look around, or 'help' for commands.",
     '',
@@ -174,7 +181,6 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
   const [cwd, setCwd] = useState([])
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
-  const layout = useLayout()
 
   const print = (...nodes) => setLines((prev) => [...prev, ...nodes])
 
@@ -208,7 +214,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
 
   // 'cd <section>' navigates to that section (a flight in space mode, a scroll
   // in scroll mode); 'top' / 'cd ~' is home
-  const go = (id) => goTo(id === 'top' ? 'home' : id, layout)
+  const go = (id) => goTo(id === 'top' ? 'home' : id)
   const downloadCV = (href = './CV_SWE.pdf') => {
     const a = document.createElement('a')
     a.href = href
@@ -290,7 +296,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
         const which = (args[0] || '').toLowerCase()
         if (which === 'swe' || which === 'software') { print('↓ downloading software CV…'); downloadCV('./CV_SWE.pdf') }
         else if (which === 'eee' || which === 'hardware' || which === 'electrical') { print('↓ downloading hardware CV…'); downloadCV('./CV_EEE.pdf') }
-        else print('usage: cv <swe | eee>  — software or hardware/electronics CV')
+        else print('usage: cv <swe | eee>  : software or hardware/electronics CV')
         break
       }
       case 'social':
@@ -308,12 +314,6 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
           </span>
         )
         break
-      case 'theme': {
-        const target = (args[0] || '').toLowerCase()
-        if (target === theme) print(`already in ${theme} mode.`)
-        else { onToggleTheme(); print(`theme → ${theme === 'dark' ? 'light' : 'dark'} mode`) }
-        break
-      }
       case 'echo':
         print(args.join(' '))
         break
@@ -348,11 +348,11 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
               <span className={state === 'OK' ? 'text-emerald-600 dark:text-emerald-400' : 'text-grey-400 dark:text-grey-600'}>[ {state} ]</span>
             </span>
           )
-        okLine('sys/website', 'erickk.cloud — you are here')
+        okLine('sys/website', 'erickk.cloud : you are here')
         okLine('sys/available', 'open to internships · summer 26/27')
         okLine(
           'sys/local-time',
-          new Date().toLocaleTimeString('en-NZ', { timeZone: 'Pacific/Auckland', hour: '2-digit', minute: '2-digit' }) + ' — Auckland, NZ'
+          new Date().toLocaleTimeString('en-NZ', { timeZone: 'Pacific/Auckland', hour: '2-digit', minute: '2-digit' }) + ' : Auckland, NZ'
         )
         fetch('https://api.github.com/users/EricK-6/events/public?per_page=1')
           .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
@@ -362,7 +362,7 @@ export default function TerminalDock({ open, setOpen, theme, onToggleTheme }) {
             const action = (e.type || '').replace('Event', '').toLowerCase() || 'activity'
             okLine('sys/github', `${action} on ${e.repo?.name?.split('/')[1] ?? 'a repo'} · ${relTime(e.created_at)}`)
           })
-          .catch(() => okLine('sys/github', 'live check unreachable — github.com/EricK-6', '??'))
+          .catch(() => okLine('sys/github', 'live check unreachable : github.com/EricK-6', '??'))
         break
       }
       case 'fortune':

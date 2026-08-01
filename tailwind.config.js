@@ -15,6 +15,12 @@ const grey = {
   100: '#f4f6f9', // tiles + cards
   200: '#e7ecf3', // chips, tags, hover fills
   300: '#d4dbe5', // soft borders + rings
+  // 400/500 are the muted text ramp and are darker than stone's, measured
+  // rather than picked: on the sunrise theme every surface a label can land
+  // on is light (the frosted tile, a white card, a #e7ecf3 chip), and stone's
+  // own 400/500 miss WCAG AA on all three at the 10-14px these are used at.
+  400: '#6f6862', // micro-labels ("Awarded by", group headings)
+  500: '#635c57', // secondary text (dates, org lines, form labels)
 }
 
 /** @type {import('tailwindcss').Config} */
@@ -34,85 +40,44 @@ export default {
           'sans-serif',
         ],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        // the one expressive face on the site: everything supporting it is
+        // technical (Inter, and JetBrains Mono for the gate codes), so the
+        // name gets a warm high-contrast serif rather than a third grotesque
+        display: ['Fraunces Variable', 'Fraunces', 'ui-serif', 'Georgia', 'serif'],
         sketch: ['Caveat', 'ui-rounded', 'cursive'],
       },
       colors: {
         grey,
-        // two personalities: blue on warm light grey, dark green accents on jet black
+        // Deep teal, pulled out of the lake in the photograph. Darker and
+        // greener than the water itself, which is what keeps it from sinking
+        // into the picture the way the old blue did.
         accent: {
-          DEFAULT: '#2563eb', // blue-600 (light mode)
-          light: '#3b82f6',   // blue-500 (decorative)
-          dark: '#059669',    // emerald-600 (dark mode, deep green, AA on black)
+          DEFAULT: '#0f766e', // teal
+          light: '#0d9488',   // decorative strokes and fills
+          deep: '#115e59',    // pressed / hovered solid, and small type: at
+                              // 10px on the navbar's thin glass the DEFAULT
+                              // measures 3.6:1, which is under AA
+        },
+        // Awards keep a token of their own so a placement never depends on
+        // whatever the accent happens to be. Amber is complementary to the
+        // teal, so a medal still announces itself.
+        award: {
+          DEFAULT: '#92400e', // amber-800
+          soft: '#f59e0b',    // amber-500, for rings and low-alpha fills
         },
       },
       animation: {
         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
         'fade-in': 'fadeIn 0.8s ease-out forwards',
-        blink: 'blink 1.1s step-end infinite',
-        'glow-in': 'glowIn 0.9s ease-out forwards',
-        'glow-in-green': 'glowInGreen 0.9s ease-out forwards',
-        'glow-green': 'glowGreen 1.1s ease-out',
-        // directional page transitions for box-mode grid navigation
-        'slide-from-right': 'slideFromRight 0.4s ease-out both',
-        'slide-from-left': 'slideFromLeft 0.4s ease-out both',
-        'slide-from-top': 'slideFromTop 0.4s ease-out both',
-        'slide-from-bottom': 'slideFromBottom 0.4s ease-out both',
-        // edge-dwell navigation: the arrow silhouette glows/grows over the hold
-        // (keep the 0.8s in sync with EDGE_DWELL_MS in App.jsx)
-        dwell: 'dwell 0.8s ease-in forwards',
-        'dwell-green': 'dwellGreen 0.8s ease-in forwards',
       },
       keyframes: {
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        slideFromRight: {
-          '0%': { opacity: '0', transform: 'translateX(36px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        slideFromLeft: {
-          '0%': { opacity: '0', transform: 'translateX(-36px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        slideFromTop: {
-          '0%': { opacity: '0', transform: 'translateY(-36px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideFromBottom: {
-          '0%': { opacity: '0', transform: 'translateY(36px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        dwell: {
-          '0%': { opacity: '0.4', transform: 'scale(1)', filter: 'drop-shadow(0 0 0 rgba(37,99,235,0))' },
-          '100%': { opacity: '1', transform: 'scale(1.35)', filter: 'drop-shadow(0 0 7px rgba(37,99,235,0.9))' },
-        },
-        dwellGreen: {
-          '0%': { opacity: '0.4', transform: 'scale(1)', filter: 'drop-shadow(0 0 0 rgba(5,150,105,0))' },
-          '100%': { opacity: '1', transform: 'scale(1.35)', filter: 'drop-shadow(0 0 7px rgba(5,150,105,0.9))' },
-        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
-        },
-        blink: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0' },
-        },
-        glowIn: {
-          '0%': { textShadow: '0 0 0 rgba(96,165,250,0)' },
-          '40%': { textShadow: '0 0 30px rgba(96,165,250,0.95), 0 0 12px rgba(59,130,246,0.7)' },
-          '100%': { textShadow: '0 0 16px rgba(96,165,250,0.45)' },
-        },
-        glowInGreen: {
-          '0%': { textShadow: '0 0 0 rgba(5,150,105,0)' },
-          '40%': { textShadow: '0 0 30px rgba(5,150,105,0.95), 0 0 12px rgba(4,120,87,0.7)' },
-          '100%': { textShadow: '0 0 16px rgba(5,150,105,0.45)' },
-        },
-        glowGreen: {
-          '0%': { boxShadow: '0 0 0 0 rgba(16,185,129,0)' },
-          '35%': { boxShadow: '0 0 26px 5px rgba(16,185,129,0.7)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(16,185,129,0)' },
         },
       },
     },

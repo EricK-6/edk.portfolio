@@ -56,7 +56,7 @@ const ITEMS = [
 export default function Leadership() {
   // space mode: trim card padding so the section sits near full scale in its
   // floating panel without the serpentine columns colliding
-  const space = useLayout() === 'space'
+  const space = useLayout() === 'tile'
   const wrapRef = useRef(null)
   const nodeRefs = useRef([])
   const [path, setPath] = useState('')
@@ -129,18 +129,15 @@ export default function Leadership() {
             strokeWidth="2.5"
             strokeLinecap="round"
           />
-          {/* the navbar's paper plane travelling the curve bottom-to-top, forever */}
+          {/* a pulse travelling the curve bottom-to-top, forever: this used to
+              be a paper plane, which went with the retired flight theme */}
           {runnerPath && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
             <g className="fill-accent dark:fill-accent-dark">
-              {/* 24x24 icon scaled down and centred on the motion point */}
-              <path
-                d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"
-                transform="translate(-10.2 -10.2) scale(0.85)"
-              />
+              <circle r="4" />
+              <circle r="8" fillOpacity="0.22" />
               <animateMotion
                 dur="4.5s"
                 repeatCount="indefinite"
-                rotate="auto"
                 path={runnerPath}
               />
             </g>
@@ -160,9 +157,9 @@ export default function Leadership() {
                 as="li"
                 key={`${r.title}-${r.org}`}
                 delay={i * 70}
-                className="relative block pl-12 md:pl-0 mt-6 first:mt-0 md:-mt-16 md:first:mt-0"
+                className={`relative block pl-12 md:pl-0 first:mt-0 md:first:mt-0 ${space ? 'mt-3.5 md:-mt-[4.75rem]' : 'mt-6 md:-mt-16'}`}
               >
-                <div className={`card relative md:w-[calc(50%-3rem)] ${space ? 'p-4' : ''} ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                <div className={`card relative md:w-[calc(50%-3rem)] ${space ? 'p-3 md:min-h-[170px]' : ''} ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el) => (nodeRefs.current[i] = el)}
@@ -178,7 +175,7 @@ export default function Leadership() {
                         alt={r.org}
                         loading="lazy"
                         decoding="async"
-                        className="h-14 w-14 flex-none rounded-full bg-grey-50 object-contain p-1.5 ring-1 ring-grey-200 dark:ring-grey-800"
+                        className={`${space ? 'h-11 w-11' : 'h-14 w-14'} flex-none rounded-full bg-grey-50 object-contain p-1.5 ring-1 ring-grey-200`}
                       />
                     )}
                     <div className="flex-1 min-w-0">

@@ -74,13 +74,13 @@ function HexMedallion({ cert, index }) {
       href={cert.credlyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`${cert.name} — verify on Credly (opens in a new tab)`}
-      className="group relative block aspect-[300/346] w-full max-w-sm cursor-pointer select-none rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-grey-300 dark:focus-visible:ring-offset-grey-950"
+      aria-label={`${cert.name}: verify on Credly (opens in a new tab)`}
+      className="group relative block aspect-[300/346] w-full max-w-sm cursor-pointer select-none rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-grey-300 dark:focus-visible:ring-offset-grey-950"
     >
       {/* soft glow pad grounding the badge (static, so nothing can flicker) */}
       <div
         aria-hidden="true"
-        className="absolute inset-10 rounded-full bg-orange-500/10 blur-2xl dark:bg-orange-400/[0.08]"
+        className="absolute inset-10 rounded-full bg-award-soft/10 blur-2xl"
       />
       {/* the shadow stays constant: transitioning a filter re-composites the
           layer on every hover, which showed up as cursor/paint flicker */}
@@ -92,8 +92,8 @@ function HexMedallion({ cert, index }) {
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#fb923c" />
-            <stop offset="100%" stopColor="#f59e0b" />
+            <stop offset="0%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#92400e" />
           </linearGradient>
         </defs>
         <path
@@ -117,7 +117,7 @@ function HexMedallion({ cert, index }) {
         />
         <div>
           <h3 className="mx-auto max-w-[15rem] text-base font-semibold leading-snug">{cert.name}</h3>
-          <div className="mt-1 text-xs font-medium uppercase tracking-wide text-orange-600/80 dark:text-orange-400/80">
+          <div className="mt-1 text-xs font-medium uppercase tracking-wide text-award">
             {cert.issuer} · {cert.date}
           </div>
         </div>
