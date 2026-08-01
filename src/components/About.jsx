@@ -16,7 +16,7 @@ export default function About() {
             Hardware and software, on the same bench.
           </h3>
           <p>
-            I am a penultimate-year <Bold>Computer Systems Engineering (Hons)</Bold> student at
+            I am a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at
             the University of Auckland, specialising in <Bold>embedded systems</Bold>,{' '}
             <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>, with{' '}
             <Bold>C, Java, Python, and React</Bold> in my toolkit.
