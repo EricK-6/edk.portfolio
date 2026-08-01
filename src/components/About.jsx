@@ -19,13 +19,15 @@ export default function About() {
             Hardware and software, on the same bench.
           </h3>
           <p>
-            I am a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
+            I'm Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
             University of Auckland, working across <Bold>embedded systems</Bold>,{' '}
             <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>.
           </p>
           <p>
-            Right now I research robot navigation at <Bold>CARES</Bold> and teach robotics at{' '}
-            <Bold>ciLab</Bold>. I am open to <Bold>2026/27 summer internships</Bold>.
+            My strongest weapon is AWS tooling, which sets me apart from most
+            candidates. Right now I research robot navigation at <Bold>CARES</Bold> and teach
+            robotics at{' '}
+            <Bold>ciLab</Bold>. I'm open to <Bold>2026/27 summer internships</Bold>.
           </p>
         </Reveal>
 
