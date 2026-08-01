@@ -1,56 +1,44 @@
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
-// Checked against the other tiles rather than written from memory, because
-// this section restates facts that live elsewhere and had drifted from them:
-// the CARES research post is the newest role in Experience and was missing
-// here entirely, and the closing line still pointed "below" at a scrolling
-// page that no longer exists. The greeting moved out too, since the intro
-// tile now opens with one.
+// Short on purpose. The Highlights beside this were listing the certificates,
+// the placements and the roles, and the prose was saying all of it again in
+// sentences: the same tile told you everything twice. The bullets keep the
+// facts, so the paragraphs only have to say who he is and what he is doing
+// now. The toolkit went too, because the Skills tile is a list of exactly
+// that and does it better.
 export default function About() {
   return (
     <Section id="about" kicker="Profile" title="About me">
-      <div className="grid gap-8 md:grid-cols-3">
-        <Reveal className="md:col-span-2 space-y-4 sm:text-justify text-grey-700 leading-relaxed">
+      {/* Prose on top, highlights underneath in a row. The old shape put them
+          side by side, which worked when the text ran three paragraphs and
+          left a column of empty glass once it was cut to two. */}
+      <div className="mx-auto max-w-3xl">
+        <Reveal className="space-y-4 sm:text-justify text-grey-700 leading-relaxed">
           <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-grey-900">
             Hardware and software, on the same bench.
           </h3>
           <p>
-            I am a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at
-            the University of Auckland, specialising in <Bold>embedded systems</Bold>,{' '}
-            <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>, with{' '}
-            <Bold>C, Java, Python, and React</Bold> in my toolkit.
+            I am a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
+            University of Auckland, working across <Bold>embedded systems</Bold>,{' '}
+            <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>.
           </p>
           <p>
-            Right now I am a <Bold>Research Assistant at CARES</Bold>, the University&apos;s Centre
-            for Automation and Robotic Engineering Science, developing and testing navigation and
-            control algorithms for TurtleBot2 robots. Alongside it I teach as a{' '}
-            <Bold>Robotics Instructor</Bold> at ciLab, coaching student teams toward nationwide
-            competitions.
-          </p>
-          <p>
-            I am <Bold>2× AWS certified</Bold>, and my project work spans{' '}
-            <Bold>serverless cloud pipelines</Bold>, <Bold>React web apps</Bold>, and{' '}
-            <Bold>embedded robotics</Bold>, including <Bold>3rd place</Bold> at the 2025 ECSE
-            Design Competition and a <Bold>top 8 finish</Bold> at the 2026 AWS×BNZ AI Hackathon.
-            I am open to <Bold>2026/27 summer internships</Bold>.
+            Right now I research robot navigation at <Bold>CARES</Bold> and teach robotics at{' '}
+            <Bold>ciLab</Bold>. I am open to <Bold>2026/27 summer internships</Bold>.
           </p>
         </Reveal>
 
-        <Reveal as="aside" delay={120} className="space-y-4 block">
-          <div className="card">
-            <div className="text-xs uppercase tracking-widest text-grey-500">
-              Highlights
-            </div>
-            <ul className="mt-3 space-y-2.5 text-sm text-grey-700">
-              {HIGHLIGHTS.map((h) => (
-                <li key={h} className="flex gap-2.5">
-                  <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent" />
-                  <span>{h}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <Reveal as="aside" delay={120} className="mt-7 block border-t border-white/70 pt-5">
+          <div className="text-xs uppercase tracking-widest text-grey-500">Highlights</div>
+          <ul className="mt-3 grid gap-x-6 gap-y-2.5 text-sm text-grey-700 sm:grid-cols-2">
+            {HIGHLIGHTS.map((h) => (
+              <li key={h} className="flex gap-2.5">
+                <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-none rounded-full bg-accent" />
+                <span>{h}</span>
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </div>
     </Section>
