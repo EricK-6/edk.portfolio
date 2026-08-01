@@ -55,7 +55,7 @@ export default function Contact() {
       id="contact"
       kicker="Contact"
       title="Let's talk"
-      subtitle="Fill in the form to contact me, I read every message."
+      subtitle="Fill in the form to contact me, I read every email."
     >
       <div className="mx-auto max-w-2xl">
         <Reveal className="mb-5 flex flex-wrap items-center justify-center gap-3">
