@@ -34,7 +34,7 @@ const DESIGN_W = 1104 // sections' designed layout width (container-page + paddi
 // only scrolls if it is still too tall at MIN_SCALE. The sizer div exists
 // because transforms don't change layout size — it converts the scaled
 // visual height into real layout height, which is what sizes the box.
-function FitPanel({ scrollerRef, maxScale = MAX_SCALE, designWidth = DESIGN_W, dockOffset = 0, children }) {
+function FitPanel({ scrollerRef, maxScale = MAX_SCALE, minScale = MIN_SCALE, designWidth = DESIGN_W, dockOffset = 0, children }) {
   const outerRef = useRef(null)
   const innerRef = useRef(null)
   const sizerRef = useRef(null)
@@ -54,7 +54,7 @@ function FitPanel({ scrollerRef, maxScale = MAX_SCALE, designWidth = DESIGN_W, d
       if (designW <= 0 || maxH <= 0) return
       inner.style.width = `${designW}px`
       const h = inner.scrollHeight
-      const s = Math.min(Math.max(MIN_SCALE, Math.min(maxH / h, maxW / designW)), maxScale)
+      const s = Math.min(Math.max(minScale, Math.min(maxH / h, maxW / designW)), maxScale)
       inner.style.transform = `scale(${s})`
       inner.style.transformOrigin = 'top left'
       sizer.style.height = `${Math.round(h * s)}px`
@@ -78,7 +78,7 @@ function FitPanel({ scrollerRef, maxScale = MAX_SCALE, designWidth = DESIGN_W, d
       cancelAnimationFrame(raf)
       clearTimeout(settle)
     }
-  }, [maxScale, designWidth, dockOffset])
+  }, [maxScale, minScale, designWidth, dockOffset])
 
   return (
     <div
@@ -817,164 +817,172 @@ export default function SpaceLayout({ order, components, id, dockOffset = 0 }) {
       className="fixed right-0 top-16 bottom-0 overflow-hidden bg-gradient-to-b from-grey-200 to-white [perspective-origin:50%_45%] [transition:left_300ms_ease-out,perspective-origin_500ms_ease-out] dark:from-black dark:to-grey-950"
       style={{ left: off, perspective: '1200px' }}
     >
-      <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
-        {/* the world: the camera flight is one animated inverse transform,
-            driven by the WAAPI arc keyframes above */}
-        <div
-          ref={worldRef}
-          className="absolute inset-0"
-          style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
-        >
-          {/* night sky (dark theme) */}
-          {stars.map((st, i) => (
-            <span
-              key={i}
-              aria-hidden="true"
-              className="absolute left-1/2 top-1/2 hidden rounded-full bg-white dark:block"
-              style={{
-                width: st.s,
-                height: st.s,
-                opacity: st.o,
-                transform: `translate3d(${st.x}px, ${st.y}px, ${st.z}px)`,
-                boxShadow: st.s > 2 ? '0 0 8px currentColor' : undefined,
-              }}
-            />
-          ))}
+      {/* the world: the camera flight is one animated inverse transform,
+          driven by the WAAPI arc keyframes above. This is a direct child of
+          <main> on purpose — an extra preserve-3d wrapper between the two
+          made Chrome resolve elementFromPoint to that wrapper instead of the
+          controls painted on the panels, which silently ate clicks and hovers
+          on whichever targets the projection happened to land on (the Projects
+          list, one of the two Credly medallions) at a given window size. */}
+      <div
+        ref={worldRef}
+        className="absolute inset-0"
+        style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+      >
+        {/* night sky (dark theme) */}
+        {stars.map((st, i) => (
+          <span
+            key={i}
+            aria-hidden="true"
+            className="absolute left-1/2 top-1/2 hidden rounded-full bg-white dark:block"
+            style={{
+              width: st.s,
+              height: st.s,
+              opacity: st.o,
+              transform: `translate3d(${st.x}px, ${st.y}px, ${st.z}px)`,
+              boxShadow: st.s > 2 ? '0 0 8px currentColor' : undefined,
+            }}
+          />
+        ))}
 
-          {NEBULAS.map((n) => <Nebula key={n.z} n={n} />)}
-          {CONSTELLATIONS.map((c) => <Constellation key={c.name} c={c} />)}
-          {PLANETS.map((p) => <Planet key={p.z} p={p} />)}
-          <Galaxy />
-          <Comet />
-          <Moon />
-          <Satellite />
-          {ASTEROIDS.map(([x, y, z, s]) => (
+        {NEBULAS.map((n) => <Nebula key={n.z} n={n} />)}
+        {CONSTELLATIONS.map((c) => <Constellation key={c.name} c={c} />)}
+        {PLANETS.map((p) => <Planet key={p.z} p={p} />)}
+        <Galaxy />
+        <Comet />
+        <Moon />
+        <Satellite />
+        {ASTEROIDS.map(([x, y, z, s]) => (
+          <span
+            key={`${x}-${z}`}
+            aria-hidden="true"
+            className="absolute left-1/2 top-1/2 hidden bg-grey-400/70 dark:block"
+            style={{
+              width: s,
+              height: s * 0.8,
+              borderRadius: '42%',
+              transform: `translate3d(${x}px, ${y}px, ${z}px) rotate(${(x + z) % 60}deg)`,
+            }}
+          />
+        ))}
+        {SHOOTING_STARS.map((sh) => (
+          <div
+            key={sh.z}
+            aria-hidden="true"
+            className="absolute left-1/2 top-1/2 hidden dark:block"
+            style={{ transform: `translate3d(${sh.x}px, ${sh.y}px, ${sh.z}px)` }}
+          >
             <span
-              key={`${x}-${z}`}
-              aria-hidden="true"
-              className="absolute left-1/2 top-1/2 hidden bg-grey-400/70 dark:block"
+              className="shooting-star block h-0.5 w-36 rounded-full text-white"
               style={{
-                width: s,
-                height: s * 0.8,
-                borderRadius: '42%',
-                transform: `translate3d(${x}px, ${y}px, ${z}px) rotate(${(x + z) % 60}deg)`,
+                backgroundImage: 'linear-gradient(90deg, transparent, currentColor)',
+                animation: `shooting-star ${sh.duration} linear infinite`,
+                animationDelay: sh.delay,
+                opacity: 0,
               }}
             />
-          ))}
-          {SHOOTING_STARS.map((sh) => (
+          </div>
+        ))}
+
+        {/* daytime sky (light theme) */}
+        <Sun />
+        {clouds.map((c, i) => <Cloud key={i} c={c} />)}
+        {BIRDS.map((b) => <Bird key={`${b.x}-${b.z}`} b={b} />)}
+        <Balloon />
+
+        {order.map((pid, i) => {
+          const s = stopFor(i)
+          const d = Math.abs(i - index)
+          const active = i === index
+          const Component = components[pid]
+          const nudge = OVERVIEW_NUDGE[i]
+          // the nudge rides the same curve as the fan-out, so contact keeps
+          // clear of its neighbours at every window size
+          const px = overview ? s.x * spread + (nudge?.x ?? 0) * nudgeFit : s.x
+          const py = overview ? s.y * spread + (nudge?.y ?? 0) * nudgeFit : s.y
+          return (
+            // NOTE: panels must stay opacity:1 — Chrome flattens translucent
+            // participants of a preserve-3d context to DOM paint order, which
+            // breaks both depth sorting and hit testing. Distance dimming is
+            // done by the veil inside, and z-index mirrors proximity so
+            // nearer panels win paint order and clicks. Only the immediate
+            // neighbour is previewed; anything further is hidden outright —
+            // unless the overview map is open, which shows every stop.
             <div
-              key={sh.z}
-              aria-hidden="true"
-              className="absolute left-1/2 top-1/2 hidden dark:block"
-              style={{ transform: `translate3d(${sh.x}px, ${sh.y}px, ${sh.z}px)` }}
+              key={pid}
+              className="absolute left-1/2 top-1/2 h-0 w-0"
+              style={{
+                transformStyle: 'preserve-3d',
+                // on the map, positions fan outward and cards grow a touch
+                // so every stop is individually visible
+                transform: `translate3d(${px}px, ${py}px, ${s.z}px) rotateY(${s.ry}deg) rotateX(${s.rx}deg) rotateZ(${s.rz}deg) scale(${overview ? 1.2 : 1})`,
+                transition: reduce ? undefined : `transform ${ARC_MS}ms ease`,
+                // map paint order follows the route (home in front); in
+                // flight it mirrors proximity so neighbours win clicks
+                zIndex: overview ? order.length - i : order.length - d,
+                visibility: overview || d <= 1 ? undefined : 'hidden',
+              }}
             >
-              <span
-                className="shooting-star block h-0.5 w-36 rounded-full text-white"
-                style={{
-                  backgroundImage: 'linear-gradient(90deg, transparent, currentColor)',
-                  animation: `shooting-star ${sh.duration} linear infinite`,
-                  animationDelay: sh.delay,
-                  opacity: 0,
-                }}
-              />
-            </div>
-          ))}
-
-          {/* daytime sky (light theme) */}
-          <Sun />
-          {clouds.map((c, i) => <Cloud key={i} c={c} />)}
-          {BIRDS.map((b) => <Bird key={`${b.x}-${b.z}`} b={b} />)}
-          <Balloon />
-
-          {order.map((pid, i) => {
-            const s = stopFor(i)
-            const d = Math.abs(i - index)
-            const active = i === index
-            const Component = components[pid]
-            const nudge = OVERVIEW_NUDGE[i]
-            // the nudge rides the same curve as the fan-out, so contact keeps
-            // clear of its neighbours at every window size
-            const px = overview ? s.x * spread + (nudge?.x ?? 0) * nudgeFit : s.x
-            const py = overview ? s.y * spread + (nudge?.y ?? 0) * nudgeFit : s.y
-            return (
-              // NOTE: panels must stay opacity:1 — Chrome flattens translucent
-              // participants of a preserve-3d context to DOM paint order, which
-              // breaks both depth sorting and hit testing. Distance dimming is
-              // done by the veil inside, and z-index mirrors proximity so
-              // nearer panels win paint order and clicks. Only the immediate
-              // neighbour is previewed; anything further is hidden outright —
-              // unless the overview map is open, which shows every stop.
+              {/* the wrapper shrink-wraps the box, whose size comes from the
+                  content (FitPanel sizes itself in both dimensions). The
+                  -36px bias centres it in the free band between the navbar
+                  and the HUD rather than in the stage. */}
               <div
-                key={pid}
-                className="absolute left-1/2 top-1/2 h-0 w-0"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  // on the map, positions fan outward and cards grow a touch
-                  // so every stop is individually visible
-                  transform: `translate3d(${px}px, ${py}px, ${s.z}px) rotateY(${s.ry}deg) rotateX(${s.rx}deg) rotateZ(${s.rz}deg) scale(${overview ? 1.2 : 1})`,
-                  transition: reduce ? undefined : `transform ${ARC_MS}ms ease`,
-                  // map paint order follows the route (home in front); in
-                  // flight it mirrors proximity so neighbours win clicks
-                  zIndex: overview ? order.length - i : order.length - d,
-                  visibility: overview || d <= 1 ? undefined : 'hidden',
-                }}
+                ref={(el) => (panelBoxRefs.current[i] = el)}
+                className="absolute"
+                style={{ transform: 'translate(-50%, calc(-50% - 36px))' }}
               >
-                {/* the wrapper shrink-wraps the box, whose size comes from the
-                    content (FitPanel sizes itself in both dimensions). The
-                    -36px bias centres it in the free band between the navbar
-                    and the HUD rather than in the stage. */}
                 <div
-                  ref={(el) => (panelBoxRefs.current[i] = el)}
-                  className="absolute"
-                  style={{ transform: 'translate(-50%, calc(-50% - 36px))' }}
+                  {...(!active && { inert: '' })}
+                  className={`w-fit overflow-hidden rounded-2xl border bg-white shadow-2xl dark:bg-grey-950 ${
+                    active
+                      ? 'border-accent/40 dark:border-accent-dark/40'
+                      : 'border-grey-300/70 dark:border-grey-800/70'
+                  }`}
                 >
-                  <div
-                    {...(!active && { inert: '' })}
-                    className={`w-fit overflow-hidden rounded-2xl border bg-white shadow-2xl dark:bg-grey-950 ${
-                      active
-                        ? 'border-accent/40 dark:border-accent-dark/40'
-                        : 'border-grey-300/70 dark:border-grey-800/70'
-                    }`}
+                  <FitPanel
+                    scrollerRef={(el) => (scrollers.current[i] = el)}
+                    maxScale={pid === 'education' ? 1 : undefined}
+                    // projects is the tallest section, so pure fit-to-height
+                    // shrank it to ~0.84 and the explorer read small next to
+                    // its neighbours. Hold it at its designed size and let the
+                    // panel scroll the small remainder instead.
+                    minScale={pid === 'projects' ? 1 : undefined}
+                    // home is the boarding pass (max-w-4xl card): hug it;
+                    // leadership is wide (max-w-7xl serpentine): give it room
+                    designWidth={pid === 'home' ? 950 : pid === 'leadership' ? 1360 : undefined}
+                    dockOffset={off}
                   >
-                    <FitPanel
-                      scrollerRef={(el) => (scrollers.current[i] = el)}
-                      maxScale={pid === 'education' ? 1 : undefined}
-                      // home is the boarding pass (max-w-4xl card): hug it;
-                      // leadership is wide (max-w-7xl serpentine): give it room
-                      designWidth={pid === 'home' ? 950 : pid === 'leadership' ? 1360 : undefined}
-                      dockOffset={off}
-                    >
-                      <PanelActiveContext.Provider value={active}>
-                        <Component />
-                      </PanelActiveContext.Provider>
-                    </FitPanel>
-                  </div>
-                  {/* distance fog: the neighbour is a dim preview in flight;
-                      the map shows every card at full brightness */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 z-[5] rounded-2xl bg-white dark:bg-black"
-                    style={{
-                      opacity: overview || d === 0 ? 0 : d === 1 ? 0.55 : 1,
-                      transition: `opacity ${ARC_MS}ms ease`,
-                    }}
-                  />
-                  {/* the dimmed neighbour is one big "fly here" button; on the
-                      map these 3D buttons are unreachable by the pointer, so
-                      the screen-space click layer takes over instead */}
-                  {!active && !overview && (
-                    <button
-                      type="button"
-                      aria-label={`Fly to ${LABELS[pid]}`}
-                      onClick={() => goTo(pid, 'space')}
-                      className="absolute inset-0 z-10 cursor-pointer rounded-2xl"
-                    />
-                  )}
+                    <PanelActiveContext.Provider value={active}>
+                      <Component />
+                    </PanelActiveContext.Provider>
+                  </FitPanel>
                 </div>
+                {/* distance fog: the neighbour is a dim preview in flight;
+                    the map shows every card at full brightness */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 z-[5] rounded-2xl bg-white dark:bg-black"
+                  style={{
+                    opacity: overview || d === 0 ? 0 : d === 1 ? 0.55 : 1,
+                    transition: `opacity ${ARC_MS}ms ease`,
+                  }}
+                />
+                {/* the dimmed neighbour is one big "fly here" button; on the
+                    map these 3D buttons are unreachable by the pointer, so
+                    the screen-space click layer takes over instead */}
+                {!active && !overview && (
+                  <button
+                    type="button"
+                    aria-label={`Fly to ${LABELS[pid]}`}
+                    onClick={() => goTo(pid, 'space')}
+                    className="absolute inset-0 z-10 cursor-pointer rounded-2xl"
+                  />
+                )}
               </div>
-            )
-          })}
-        </div>
+            </div>
+          )
+        })}
       </div>
 
       {/* the map's screen-space click layer (see mapRects above) */}
