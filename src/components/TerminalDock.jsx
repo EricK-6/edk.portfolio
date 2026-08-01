@@ -54,10 +54,25 @@ const FS = dir('top', {
   }),
 })
 
+const BOOT_LINES = [
+  '[ 0.000000 ] erickk.cloud bootloader v1.0',
+  '[ 0.000412 ] cpu: Computer Systems Engineering @ UoA',
+  '[ 0.001033 ] mem: portfolio modules ................. ok',
+  '[ 0.002566 ] net: status = open to internships ...... up',
+  '[ 0.003733 ] starting shell ...................... ok',
+]
+
+const SHELL_BANNER = [
+  '',
+  'erickk.cloud - interactive shell',
+  "run 'ls' to look around, or 'help' for commands.",
+  '',
+]
+
 const HELP = [
   ['pwd', 'print current location'],
   ['ls [dir]', 'list sections / files'],
-  ['cd <dir>', 'go to a section (cd .. , cd ~)'],
+  ['cd <dir>', 'go to any section from anywhere'],
   ['cat <file>', 'read a file'],
   ['whoami', 'who is this'],
   ['cv <swe|eee>', 'download my CV (software / hardware)'],
@@ -111,6 +126,55 @@ function resolveSegments(cwd, arg) {
 
 const pathLabel = (segs) => (segs.length ? `~/${segs.join('/')}` : '~')
 
+// A few names people reach for that are not what the directory is called.
+const CD_ALIASES = {
+  home: [], top: [], root: [], '~': [],
+  work: ['experience'], jobs: ['experience'], job: ['experience'],
+  credentials: ['certifications'], certs: ['certifications'], cert: ['certifications'],
+  awards: ['projects'], project: ['projects'], work_history: ['experience'],
+  school: ['education'], uni: ['education'], study: ['education'],
+  me: ['about'], bio: ['about'], profile: ['about'],
+  stack: ['skills'], tech: ['skills'],
+  volunteering: ['leadership'], activities: ['leadership'],
+  email: ['contact'], hire: ['contact'],
+}
+
+// `cd` is deliberately more forgiving than a real shell. This is a portfolio,
+// not a filesystem: making someone type `cd ..` before `cd skills` is a puzzle
+// with no reward. Anything that names a section gets you there from anywhere,
+// so `cd skills` works while sitting in ~/projects, and so do `cd /skills`,
+// `cd SKILLS`, `cd skil` and `cd stack`. Real relative paths still resolve
+// first, so `cd ..` and `cd ~` keep behaving exactly as they always did.
+function findDir(cwd, arg) {
+  const raw = (arg || '').trim()
+  if (!raw || raw === '~' || raw === '/') return []
+
+  const isDir = (segs) => { const n = getNode(segs); return n && n.type === 'dir' ? segs : null }
+
+  // 1. exactly what was typed, relative to where you are
+  const literal = isDir(resolveSegments(cwd, raw))
+  if (literal) return literal
+
+  // 2. the same thing read from the root
+  const fromRoot = isDir(resolveSegments([], raw))
+  if (fromRoot) return fromRoot
+
+  // 3. a name people use for a section that is not its directory name
+  const key = raw.replace(/^[~/]+|\/+$/g, '').toLowerCase()
+  if (key in CD_ALIASES) return CD_ALIASES[key]
+
+  // 4. case-insensitive, then unique prefix, then unique substring
+  const names = Object.keys(FS.children)
+  const exact = names.find((n) => n.toLowerCase() === key)
+  if (exact) return [exact]
+  const starts = names.filter((n) => n.toLowerCase().startsWith(key))
+  if (starts.length === 1) return [starts[0]]
+  const has = names.filter((n) => n.toLowerCase().includes(key))
+  if (has.length === 1) return [has[0]]
+
+  return null
+}
+
 // commands offered for inline completion (sorted so the suggestion is stable)
 const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'fortune', 'help', 'ls', 'pwd', 'social', 'status', 'sudo', 'whoami']
 
@@ -161,20 +225,11 @@ function Prompt({ path = '~' }) {
 export default function TerminalDock({ open, setOpen }) {
   // the handle hint fades once the visitor starts exploring (like the navbar hints)
   const showHints = useVisited().size <= 1
-  // A short power-on trace, inherited from the full-screen boot intro this
-  // replaced. It belongs in here: a kernel log is the one place a terminal is
-  // the right voice for it, and it no longer interrupts anyone who did not ask.
-  const [lines, setLines] = useState(() => [
-    '[ 0.000000 ] erickk.cloud bootloader v1.0',
-    '[ 0.000412 ] cpu: Computer Systems Engineering @ UoA',
-    '[ 0.001033 ] mem: portfolio modules ................. ok',
-    '[ 0.002566 ] net: status = open to internships ...... up',
-    '[ 0.003733 ] starting shell ...................... ok',
-    '',
-    'erickk.cloud - interactive shell',
-    "run 'ls' to look around, or 'help' for commands.",
-    '',
-  ])
+  // The boot trace prints itself the first time the dock is opened, a line at
+  // a time, rather than being there already: a kernel log that has clearly
+  // just run is the whole charm of it. Once per mount, and instant for anyone
+  // who asked for reduced motion.
+  const [lines, setLines] = useState([])
   const [input, setInput] = useState('')
   const [history, setHistory] = useState([])
   const [hIdx, setHIdx] = useState(-1)
@@ -183,6 +238,27 @@ export default function TerminalDock({ open, setOpen }) {
   const inputRef = useRef(null)
 
   const print = (...nodes) => setLines((prev) => [...prev, ...nodes])
+
+  const bootedRef = useRef(false)
+  const bootTimers = useRef([])
+  useEffect(() => () => bootTimers.current.forEach(clearTimeout), [])
+  useEffect(() => {
+    if (!open || bootedRef.current) return
+    bootedRef.current = true
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setLines([...BOOT_LINES, ...SHELL_BANNER])
+      return
+    }
+    const all = [...BOOT_LINES, ...SHELL_BANNER]
+    let i = 0
+    const tick = () => {
+      setLines((prev) => [...prev, all[i]])
+      i += 1
+      // the kernel lines land at a steady beat; the banner follows quickly
+      if (i < all.length) bootTimers.current.push(setTimeout(tick, i < BOOT_LINES.length ? 105 : 45))
+    }
+    bootTimers.current.push(setTimeout(tick, 140))
+  }, [open])
 
   // toggle via Ctrl/Cmd + backtick, plus an 'open-terminal' event (navbar / palette)
   useEffect(() => {
@@ -270,12 +346,13 @@ export default function TerminalDock({ open, setOpen }) {
         break
       }
       case 'cd': {
-        const segs = resolveSegments(cwd, args[0])
-        const node = getNode(segs)
-        if (!node) { err('cd', `no such directory: ${args[0]}`); break }
-        if (node.type !== 'dir') { err('cd', `not a directory: ${args[0]}`); break }
+        const segs = findDir(cwd, args[0])
+        if (!segs) {
+          err('cd', `no section called '${args[0]}'. try: ${Object.keys(FS.children).join(', ')}`)
+          break
+        }
         setCwd(segs)
-        go(node.id || 'top')
+        go(getNode(segs).id || 'top')
         break
       }
       case 'cat': {
