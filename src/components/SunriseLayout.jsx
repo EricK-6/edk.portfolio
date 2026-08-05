@@ -11,7 +11,10 @@ import { navigate } from '../router.js'
 // wrapper instead of the controls painted on the tile. Everything here is
 // ordinary 2D flow, so a tile's hit box is exactly where it is drawn.
 
-const RISE_MS = 620
+// Matches the 760ms tile-rise / tile-descend animations in index.css. A shorter
+// lock let a second wheel notch land while the tile was still settling, which
+// restarted the animation from its first keyframe.
+const RISE_MS = 760
 
 export default function SunriseLayout({ order, components, id }) {
   const index = Math.max(0, order.indexOf(id))
@@ -20,14 +23,19 @@ export default function SunriseLayout({ order, components, id }) {
 
   // +1 travelling forward (the next tile rises from below), -1 going back
   // (the previous one lowers from above). One axis, always.
+  //
+  // Derived during render, not in an effect: `key` remounts the tile the moment
+  // the route changes, so a direction that only arrives afterwards meant every
+  // backward move painted one frame of the forward animation and then swapped
+  // class mid-flight — which restarts the animation from opacity 0, and reads
+  // as a flicker. Adjusting state during render re-renders before the browser
+  // paints, so the tile mounts already knowing which way it is going.
   const [dir, setDir] = useState(1)
-  const prevIndex = useRef(index)
-  useEffect(() => {
-    if (index !== prevIndex.current) {
-      setDir(index > prevIndex.current ? 1 : -1)
-      prevIndex.current = index
-    }
-  }, [index])
+  const [seenIndex, setSeenIndex] = useState(index)
+  if (index !== seenIndex) {
+    setDir(index > seenIndex ? 1 : -1)
+    setSeenIndex(index)
+  }
 
   const scroller = useRef(null)
   const indexRef = useRef(index)
@@ -48,16 +56,19 @@ export default function SunriseLayout({ order, components, id }) {
   // wheel / keys / touch: the tile scrolls its own content first, and only a
   // push past its top or bottom edge moves to the neighbouring tile
   useEffect(() => {
-    const blocked = () => {
-      if (document.body.style.overflow === 'hidden') return true // modal open
+    const modalOpen = () => document.body.style.overflow === 'hidden'
+    const typing = () => {
       const el = document.activeElement
       return !!(el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable))
     }
-    // Tiles are clipped, not scrollable, and the intro is not even a tile —
-    // so in practice both of these are always true and any wheel/swipe/arrow
-    // travels. The scroll arithmetic is kept for the case where a tile does
-    // overflow (a very short window): without the `scrollable` guard the tile
-    // would report "not at the bottom" forever and strand the visitor there.
+    // A panel that scrolls its own content and must never be mistaken for the
+    // page: the terminal dock. It marks itself, rather than being sniffed for,
+    // so a wheel inside it scrolls its log and nothing else.
+    const inOwnScroller = (node) => !!node?.closest?.('[data-travel-ignore]')
+
+    // A tile scrolls its own content first; only a push past its top or bottom
+    // edge travels. Sections do overflow — Leadership on a phone runs hundreds
+    // of pixels past the tile — so this is the normal path, not a fallback.
     const scrollable = () => {
       const s = scroller.current
       return !!s && getComputedStyle(s).overflowY !== 'hidden' && s.scrollHeight > s.clientHeight + 2
@@ -68,16 +79,6 @@ export default function SunriseLayout({ order, components, id }) {
       const s = scroller.current
       return s.scrollTop + s.clientHeight >= s.scrollHeight - 2
     }
-    // leave horizontally-scrollable strips (the Projects list on phones) alone
-    const overScrollerX = (node) => {
-      for (let el = node; el && el !== document.body; el = el.parentElement) {
-        if (el.scrollWidth > el.clientWidth + 4) {
-          const ox = getComputedStyle(el).overflowX
-          if (ox === 'auto' || ox === 'scroll') return true
-        }
-      }
-      return false
-    }
 
     let lock = 0
     const throttled = (delta) => {
@@ -86,34 +87,47 @@ export default function SunriseLayout({ order, components, id }) {
       if (go(delta)) lock = now + RISE_MS
     }
 
+    // Keys are blocked while a field has focus — the terminal's own prompt uses
+    // the arrows for its history. The wheel is not: the dock is a side panel
+    // with the page fully visible beside it, and holding focus in its prompt
+    // used to make the whole site look frozen to a trackpad.
     const onKey = (e) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || blocked()) return
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || modalOpen() || typing()) return
       if (e.key === 'ArrowDown' && atBottom()) { e.preventDefault(); throttled(1) }
       else if (e.key === 'ArrowUp' && atTop()) { e.preventDefault(); throttled(-1) }
       else if (e.key === 'PageDown') { e.preventDefault(); throttled(1) }
       else if (e.key === 'PageUp') { e.preventDefault(); throttled(-1) }
     }
+    const gestureBlocked = (target) => modalOpen() || inOwnScroller(target)
     const onWheel = (e) => {
-      if (blocked()) return
+      if (gestureBlocked(e.target)) return
       const ax = Math.abs(e.deltaX)
       const ay = Math.abs(e.deltaY)
-      if (ax > ay) {
-        if (ax < 18 || overScrollerX(e.target)) return
-        return
-      }
+      if (ax > ay) return // travel is one vertical axis; sideways is never it
       if (ay < 18) return
       if (e.deltaY > 0 && atBottom()) throttled(1)
       else if (e.deltaY < 0 && atTop()) throttled(-1)
     }
+    // A swipe is judged by where it started as well as where it ended: without
+    // the opening edge, the same flick that scrolls a tile to its bottom also
+    // counts as the push past it, and the visitor overshoots the section they
+    // were reading.
     let touchY = null
-    const onTouchStart = (e) => { touchY = e.touches[0]?.clientY ?? null }
+    let startedAtTop = false
+    let startedAtBottom = false
+    const onTouchStart = (e) => {
+      touchY = e.touches[0]?.clientY ?? null
+      startedAtTop = atTop()
+      startedAtBottom = atBottom()
+    }
     const onTouchEnd = (e) => {
-      if (touchY == null || blocked()) return
-      const dy = touchY - (e.changedTouches[0]?.clientY ?? touchY)
+      const from = touchY
       touchY = null
+      if (from == null || gestureBlocked(e.target)) return
+      const dy = from - (e.changedTouches[0]?.clientY ?? from)
       if (Math.abs(dy) < 60) return
-      if (dy > 0 && atBottom()) throttled(1)
-      else if (dy < 0 && atTop()) throttled(-1)
+      if (dy > 0 && startedAtBottom && atBottom()) throttled(1)
+      else if (dy < 0 && startedAtTop && atTop()) throttled(-1)
     }
 
     window.addEventListener('keydown', onKey)
@@ -140,11 +154,12 @@ export default function SunriseLayout({ order, components, id }) {
       {/* The intro is not a tile: it sits straight on the photograph, and the
           first tile then rises over it. `key` remounts on every move so the
           rise/descend animation replays.
-          Nothing scrolls inside a tile — a section either fits its screen or
-          it is too loose, so the spacing is tightened in tile mode instead.
-          The scroller ref stays for the wheel/key handlers, which treat a
-          non-scrolling tile as permanently at both its top and bottom edge. */}
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-4 sm:px-6">
+          Tile mode tightens the spacing so a section aims to fit its screen —
+          but aiming is not arriving, and when it overflows the tile scrolls
+          rather than swallowing the rest. It was clipped before: on a phone
+          that silently ate three of the five Leadership entries and half the
+          Contact page, with no scrollbar and no way to reach them. */}
+      <div className="stage-min flex items-center justify-center px-4 py-4 sm:px-6">
         {home ? (
           <div key={id} className={`w-full max-w-3xl ${dir > 0 ? 'tile-rise' : 'tile-descend'}`}>
             <PanelActiveContext.Provider value>
@@ -156,7 +171,10 @@ export default function SunriseLayout({ order, components, id }) {
             key={id}
             className={`glass-tile w-full max-w-5xl overflow-hidden ${dir > 0 ? 'tile-rise' : 'tile-descend'}`}
           >
-            <div ref={scroller} className="max-h-[calc(100vh-6.5rem)] overflow-hidden">
+            <div
+              ref={scroller}
+              className="tile-max overflow-y-auto overscroll-contain"
+            >
               <div className="tile-contents">
                 <PanelActiveContext.Provider value>
                   <Component />

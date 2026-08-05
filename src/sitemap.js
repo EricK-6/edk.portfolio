@@ -1,16 +1,11 @@
-// The site as a 3x3 spatial grid. Home (the bento) is the centre cell; the
-// other eight cells are the section pages. A page's position here drives both
-// the navbar minimap and the edge arrows / arrow-key navigation — moving in a
-// direction goes to the adjacent cell, and edges (no neighbour) show no arrow.
+// The site's pages, in one place. Home is the intro; the other eight are the
+// sections, each its own hash route.
 //
-//   Education    About        Experience
-//   Credentials  Home         Skills
-//   Leadership   Projects     Contact
-export const GRID = [
-  ['education', 'about', 'experience'],
-  ['certifications', 'home', 'skills'],
-  ['leadership', 'projects', 'contact'],
-]
+// This used to also describe the site as a 3x3 spatial grid, which drove a
+// navbar minimap and edge arrows that moved you to the adjacent cell. Both are
+// gone — travel is one vertical axis now and the navbar is a numbered contents
+// list — so the grid and its lookups went with them rather than sitting here
+// describing navigation the site no longer has.
 
 export const LABELS = {
   home: 'Home',
@@ -24,28 +19,12 @@ export const LABELS = {
   contact: 'Contact',
 }
 
-// The eight section ids in reading order (everything except home).
-export const SECTION_IDS = GRID.flat().filter((id) => id !== 'home')
-
-// All pages in a sensible reading order (home first), used by the navbar's
-// flight deck and the mobile menu — the grid above is laid out spatially,
-// not in reading order.
+// Every page in reading order, home first: the navbar's contents index, the
+// mobile menu and the passport stamps all walk this.
 export const MENU_IDS = [
   'home', 'about', 'projects', 'experience', 'skills',
   'education', 'certifications', 'leadership', 'contact',
 ]
-
-export function positionOf(id) {
-  for (let row = 0; row < GRID.length; row++) {
-    const col = GRID[row].indexOf(id)
-    if (col !== -1) return { row, col }
-  }
-  return null
-}
-
-export function cellAt(row, col) {
-  return GRID[row]?.[col] ?? null
-}
 
 // Hash for a page link. Every section is its own route ('#/', '#/about').
 export const hrefFor = (id) => (id === 'home' ? '#/' : `#/${id}`)

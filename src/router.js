@@ -12,8 +12,19 @@ export function parseRoute() {
   return h || 'home'
 }
 
+const hashFor = (route) => (route === 'home' ? '#/' : `#/${route}`)
+
 export function navigate(route) {
-  window.location.hash = route === 'home' ? '/' : `/${route}`
+  window.location.hash = hashFor(route)
+}
+
+// Same destination, but without leaving a history entry behind. Used to tidy a
+// hash that names no page ('#/nonsense') back to '#/': the visitor already sees
+// home, so the URL should say so, and Back should still return them to wherever
+// they actually came from rather than to the address that never existed.
+export function replaceRoute(route) {
+  if (window.location.hash === hashFor(route)) return
+  window.location.replace(hashFor(route))
 }
 
 // Go to a section: every section is its own tile, so this is just a route.

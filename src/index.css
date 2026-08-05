@@ -32,6 +32,21 @@
     @apply mx-auto w-full max-w-5xl px-6 sm:px-8;
   }
 
+  /* The stage, and the tile's ceiling.
+     Phones report 100vh as the viewport with the browser chrome retracted, so
+     a tile sized in vh hides its last centimetre behind the URL bar until you
+     happen to scroll it away. svh is the small viewport — the one that is
+     always really on screen — and the vh line above each is the fallback for
+     engines that predate it. */
+  .stage-min {
+    min-height: calc(100vh - 4rem);
+    min-height: calc(100svh - 4rem);
+  }
+  .tile-max {
+    max-height: calc(100vh - 6.5rem);
+    max-height: calc(100svh - 6.5rem);
+  }
+
   .section-title {
     @apply text-2xl sm:text-3xl font-bold tracking-tight mb-2;
   }
@@ -76,6 +91,44 @@
 
   .hero-link {
     @apply text-grey-700 underline-offset-4 transition hover:text-accent hover:underline;
+  }
+
+  /* Everything a finger has to hit, in one place.
+     Keyed off the pointer, not the viewport: a phone held sideways is 844px
+     across, so a width breakpoint hands landscape back the 16px targets and
+     the zooming inputs it was meant to fix. `pointer: coarse` asks the real
+     question — is the thing driving this a fingertip — and leaves a mouse at
+     the tighter sizing it can actually use. */
+  @media (pointer: coarse) {
+    /* iOS zooms the page in when a focused field is smaller than 16px, and
+       never zooms back out: a recruiter tapping "Your name" was left on a
+       magnified form, scrolling sideways to read what they had typed.
+       The terminal is sized on its log rather than its prompt, because the
+       ghost-suffix overlay aligns by measuring an invisible copy of the typed
+       text — size the input alone and the hint drifts off the letters.
+       Doubled selectors: these have to out-specify the `text-sm` / `text-[13px]`
+       utilities on the same elements, which a bare element selector cannot. */
+    .field.field,
+    .terminal-log.terminal-log {
+      font-size: 16px;
+    }
+
+    /* 44px is the Apple HIG / WCAG 2.5.5 target. min-width matters as much as
+       height here: "EEE" is 25px of text, and a tall-but-narrow target is
+       still a miss. */
+    .tap-44 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      min-width: 44px;
+    }
+    .btn-primary,
+    .btn-secondary,
+    .field,
+    [role='tab'] {
+      min-height: 44px;
+    }
   }
 
   /* The intro's haze. It covers the whole frame on purpose: an ellipse sized

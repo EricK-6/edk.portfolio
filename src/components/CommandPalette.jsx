@@ -13,8 +13,15 @@ export default function CommandPalette() {
   const [copied, setCopied] = useState(false)
   const inputRef = useRef(null)
   const itemRefs = useRef([])
+  const panelRef = useRef(null)
 
-  const close = () => { setOpen(false); setQuery(''); setActive(0) }
+  const close = () => setOpen(false)
+
+  // Closing by any route — a command, Escape, a click on the dim, Cmd+K again —
+  // leaves it ready rather than still holding the last search.
+  useEffect(() => {
+    if (!open) { setQuery(''); setActive(0) }
+  }, [open])
 
   const go = (id) => {
     close()
@@ -65,13 +72,41 @@ export default function CommandPalette() {
     }
   }, [])
 
-  // focus input + lock body scroll while open
+  // While open: focus the input, lock the page behind it, keep Tab inside the
+  // dialog, and hand focus back to whatever opened it on the way out. It claims
+  // aria-modal, so the keyboard has to actually be modal — Tab used to walk
+  // straight out into the tile behind the dim.
   useEffect(() => {
     if (!open) return
+    const restoreTo = document.activeElement
     inputRef.current?.focus()
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = prev }
+
+    const onKey = (e) => {
+      // Escape from anywhere in the dialog, not only from the input: once you
+      // Tab to a row, the input's own handler is no longer the one listening
+      if (e.key === 'Escape') { e.preventDefault(); setOpen(false); return }
+      if (e.key !== 'Tab') return
+      const stops = panelRef.current?.querySelectorAll('input, button')
+      if (!stops?.length) return
+      const first = stops[0]
+      const last = stops[stops.length - 1]
+      if (!panelRef.current.contains(document.activeElement)) { e.preventDefault(); first.focus() }
+      else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+    // Back/forward (or any hash change the palette didn't cause) moves the page
+    // underneath it; a menu for a tile you have already left should not survive.
+    const onHash = () => setOpen(false)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('hashchange', onHash)
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('hashchange', onHash)
+      restoreTo?.focus?.()
+    }
   }, [open])
 
   const commands = [
@@ -122,6 +157,7 @@ export default function CommandPalette() {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
 
       <div
+        ref={panelRef}
         onMouseDown={(e) => e.stopPropagation()}
         className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-grey-900"
       >

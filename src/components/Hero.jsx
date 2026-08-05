@@ -154,22 +154,22 @@ export default function Hero() {
           style={{ animationDelay: '540ms' }}
         >
           <span className="text-grey-600">Resume: </span>
-          <a href="./CV_SWE.pdf" target="_blank" rel="noreferrer" className="hero-link">SWE</a>
-          <span className="mx-2 text-grey-500">·</span>
-          <a href="./CV_EEE.pdf" target="_blank" rel="noreferrer" className="hero-link">EEE</a>
+          <a href="./CV_SWE.pdf" target="_blank" rel="noreferrer" className="hero-link tap-44">SWE</a>
+          <span className="mx-1 text-grey-500 sm:mx-2">·</span>
+          <a href="./CV_EEE.pdf" target="_blank" rel="noreferrer" className="hero-link tap-44">EEE</a>
         </div>
 
         <div
-          className="lift-in mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
+          className="lift-in mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm sm:gap-x-5 sm:gap-y-2"
           style={{ animationDelay: '620ms' }}
         >
-          <a href="mailto:dohyunkim290106@gmail.com" className="hero-link inline-flex items-center gap-1.5">
+          <a href="mailto:dohyunkim290106@gmail.com" className="hero-link tap-44 inline-flex items-center gap-1.5">
             <MailIcon /> Email
           </a>
-          <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="hero-link inline-flex items-center gap-1.5">
+          <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="hero-link tap-44 inline-flex items-center gap-1.5">
             <LinkedInIcon /> LinkedIn
           </a>
-          <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="hero-link inline-flex items-center gap-1.5">
+          <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="hero-link tap-44 inline-flex items-center gap-1.5">
             <GitHubIcon /> GitHub
           </a>
         </div>

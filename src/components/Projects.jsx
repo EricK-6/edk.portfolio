@@ -516,7 +516,7 @@ function ProjectCard({ project, space }) {
               <button
                 type="button"
                 onClick={() => setLogOpen(true)}
-                className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
+                className="tap-44 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline dark:text-accent-dark"
               >
                 Open the build log →
               </button>
@@ -530,7 +530,7 @@ function ProjectCard({ project, space }) {
                   href={l.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-grey-400/70 bg-grey-100 px-3 py-1.5 text-sm font-medium text-grey-900 transition hover:bg-grey-200 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-100 dark:hover:bg-grey-800"
+                  className="tap-44 inline-flex items-center gap-1.5 rounded-lg border border-grey-400/70 bg-grey-100 px-3 py-1.5 text-sm font-medium text-grey-900 transition hover:bg-grey-200 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-100 dark:hover:bg-grey-800"
                 >
                   {demo && <LiveLed />}
                   {git && <GitHubIcon />}

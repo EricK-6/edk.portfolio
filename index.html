@@ -6,8 +6,11 @@
     <!-- the cloud mark in its own ink, with the white paper lifted out to
          alpha: as supplied it was a non-square opaque PNG, which a tab strip
          would have shown as a white tile -->
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- relative, like every other asset reference on the site: `base` is './'
+         so the bundle survives a subpath deploy, and a root-absolute icon
+         path would have been the one thing that didn't -->
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
     <title>Eric Kim</title>
     <meta

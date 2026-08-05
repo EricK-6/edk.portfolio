@@ -23,7 +23,10 @@ export default function Navbar({ activeId }) {
     <header className="screen-only sticky top-0 z-40 border-b border-white/45 bg-white/55 backdrop-blur-xl">
       <nav className="relative mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-6 px-6 sm:px-8">
         <div className="flex flex-none items-baseline">
-          <a href={hrefFor('home')} className="font-display text-lg font-semibold tracking-tight">
+          <a
+            href={hrefFor('home')}
+            className="tap-44 font-display text-lg font-semibold tracking-tight"
+          >
             Eric Kim<span className="text-accent">.</span>
           </a>
         </div>
@@ -35,15 +38,16 @@ export default function Navbar({ activeId }) {
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
             aria-label="Open command menu"
-            className="hidden sm:inline-flex h-9 items-center gap-2 rounded-lg border border-white/70 bg-white/50 px-2.5 text-xs text-grey-600 hover:bg-white hover:text-grey-900"
+            className="tap-44 hidden sm:inline-flex h-9 items-center gap-2 rounded-lg border border-white/70 bg-white/50 px-2.5 text-xs text-grey-600 hover:bg-white hover:text-grey-900"
           >
             <SearchIcon />
             <span className="font-mono">{isMac ? '⌘' : 'Ctrl'} K</span>
           </button>
           <button
             onClick={() => setOpen((o) => !o)}
-            aria-label="Open menu"
-            className="xl:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/70 bg-white/50 text-grey-700"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            className="tap-44 xl:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/70 bg-white/50 text-grey-700"
           >
             <MenuIcon open={open} />
           </button>
@@ -59,7 +63,7 @@ export default function Navbar({ activeId }) {
                   href={hrefFor(linkId)}
                   onClick={() => setOpen(false)}
                   aria-current={activeId === linkId ? 'page' : undefined}
-                  className={`flex items-baseline gap-3 rounded-lg px-3 py-2 text-sm hover:bg-white ${
+                  className={`flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-white ${
                     activeId === linkId ? 'text-accent' : 'text-grey-700'
                   }`}
                 >

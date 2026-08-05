@@ -156,8 +156,10 @@ export default function Contact() {
   )
 }
 
+// `field` is the touch hook: on a coarse pointer index.css gives these 16px
+// type (or iOS zooms the page on focus) and a 44px minimum height.
 const inputClass = (error) =>
-  `w-full rounded-lg border px-3 py-2 text-sm placeholder:text-grey-400 focus:outline-none focus:ring-2 transition
+  `field w-full rounded-lg border px-3 py-2 text-sm placeholder:text-grey-400 focus:outline-none focus:ring-2 transition
    bg-grey-50 text-grey-900 dark:bg-grey-900 dark:text-grey-100 dark:placeholder:text-grey-500
    ${error
      ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20 dark:border-red-500 dark:focus:border-red-500 dark:focus:ring-red-500/20'
@@ -185,7 +187,7 @@ function IconLink({ href, label, external, children }) {
       rel={external ? 'noreferrer' : undefined}
       aria-label={label}
       title={label}
-      className="inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent dark:border-grey-800 dark:bg-grey-900/60 dark:text-grey-300 dark:hover:border-accent-dark/60 dark:hover:text-accent-dark"
+      className="tap-44 inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent dark:border-grey-800 dark:bg-grey-900/60 dark:text-grey-300 dark:hover:border-accent-dark/60 dark:hover:text-accent-dark"
     >
       {children}
     </a>

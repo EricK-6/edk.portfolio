@@ -268,7 +268,12 @@ export default function TerminalDock({ open, setOpen }) {
     const all = [...BOOT_LINES, ...SHELL_BANNER]
     let i = 0
     const tick = () => {
-      setLines((prev) => [...prev, all[i]])
+      // read the line out before the counter moves: React runs the updater
+      // after `tick` has returned, so a closure over `i` saw it already
+      // incremented and the trace printed one line short (the cpu line was
+      // the casualty) with an empty line tacked on the end
+      const line = all[i]
+      setLines((prev) => [...prev, line])
       i += 1
       // the kernel lines land at a steady beat; the banner follows quickly
       if (i < all.length) bootTimers.current.push(setTimeout(tick, i < BOOT_LINES.length ? 105 : 45))
@@ -349,7 +354,8 @@ export default function TerminalDock({ open, setOpen }) {
         const segs = findDir(cwd, args[0]) ?? resolveSegments(cwd, args[0])
         const node = getNode(segs)
         if (!node) { err('ls', `no such file or directory: ${args[0]}`); break }
-        if (node.type === 'file') { print(args[0]); break }
+        // a real `ls` echoes the name it resolved, not the path you typed
+        if (node.type === 'file') { print(segs[segs.length - 1] ?? args[0]); break }
         const names = Object.keys(node.children || {})
         if (!names.length) { print(<span className="text-grey-400 dark:text-grey-600">(no files - cd here to view it on the page)</span>); break }
         print(
@@ -524,6 +530,9 @@ export default function TerminalDock({ open, setOpen }) {
 
       <aside
         aria-label="Interactive terminal"
+        // the log scrolls itself: a wheel in here is never a request to travel
+        // to the next tile (see SunriseLayout)
+        data-travel-ignore=""
         className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,380px)] transform transition-transform duration-300 ease-out print:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
@@ -535,10 +544,12 @@ export default function TerminalDock({ open, setOpen }) {
             <span className="h-3 w-3 rounded-full bg-grey-400 dark:bg-grey-500" />
             <span className="h-3 w-3 rounded-full bg-grey-500 dark:bg-grey-300" />
             <span className="ml-2 flex-1 font-mono text-xs text-grey-500 dark:text-grey-500">visitor@erickk.cloud: ~</span>
+            {/* -my-2 keeps the title bar close to its own height while the hit
+                area grows to a fingertip: the glyph alone was a 16px target */}
             <button
               onClick={() => setOpen(false)}
               aria-label="Close terminal"
-              className="text-grey-500 hover:text-grey-800 dark:text-grey-500 dark:hover:text-grey-100"
+              className="tap-44 -my-2 -mr-1.5 flex h-8 w-8 flex-none items-center justify-center rounded-lg text-grey-500 hover:text-grey-800 dark:text-grey-500 dark:hover:text-grey-100"
             >
               <CloseIcon />
             </button>
@@ -548,7 +559,10 @@ export default function TerminalDock({ open, setOpen }) {
           <div
             ref={bodyRef}
             onClick={() => inputRef.current?.focus()}
-            className="flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed text-grey-700 dark:text-grey-300"
+            // `terminal-log` is the touch hook: on a coarse pointer index.css
+            // takes the whole log to 16px, so the prompt does not trip iOS's
+            // focus zoom and the ghost suffix stays aligned with it.
+            className="terminal-log flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed text-grey-700 dark:text-grey-300"
           >
             {lines.map((l, i) => (
               <div key={i} className="whitespace-pre-wrap break-words">
@@ -595,10 +609,13 @@ export default function TerminalDock({ open, setOpen }) {
               terminal
             </span>
           </button>
+          {/* sm and up only: the hint is written in the margin beside the tile,
+              and a phone has no margin — it was landing in teal handwriting on
+              top of whichever card happened to be there */}
           {!open && showHints && (
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute left-full top-32 ml-10 flex items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 dark:text-accent-dark/80"
+              className="pointer-events-none absolute left-full top-32 ml-10 hidden items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 sm:flex dark:text-accent-dark/80"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="-rotate-90">
                 <path d="M8 15 C 8 9.5, 6 6, 5 3" />
