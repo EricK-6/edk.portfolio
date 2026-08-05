@@ -21,7 +21,7 @@ export default function About() {
           <p>
             I'm Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
             University of Auckland, working across <Bold>embedded systems</Bold>,{' '}
-            <Bold>full stack development</Bold>, and <Bold>digital hardware design</Bold>.
+            <Bold>AI cloud computing</Bold>, and <Bold>robotics</Bold>.
           </p>
           <p>
             My strongest weapon is AWS tooling, which sets me apart from most
