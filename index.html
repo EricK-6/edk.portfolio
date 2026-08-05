@@ -6,6 +6,9 @@
     <!-- the cloud mark in its own ink, with the white paper lifted out to
          alpha: as supplied it was a non-square opaque PNG, which a tab strip
          would have shown as a white tile -->
+    <!-- relative, like every other asset reference on the site: `base` is './'
+         so the bundle survives a subpath deploy, and a root-absolute icon
+         path would have been the one thing that didn't -->
     <link rel="icon" type="image/png" href="./favicon.png" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 
@@ -56,8 +59,8 @@
     <!-- Fonts are self-hosted (Fontsource, imported in src/main.jsx) so the
          page needs no third-party origins and first paint isn't blocked on
          a remote stylesheet. -->
-    <script type="module" crossorigin src="./assets/index-CnSR19mP.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CHAi9omf.css">
+    <script type="module" crossorigin src="./assets/index-C1YoiMd8.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BmWFiZYz.css">
   </head>
   <body>
     <div id="root"></div>
