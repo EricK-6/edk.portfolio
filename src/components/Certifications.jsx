@@ -117,8 +117,14 @@ function HexMedallion({ cert, index }) {
         />
         <div>
           <h3 className="mx-auto max-w-[15rem] text-base font-semibold leading-snug">{cert.name}</h3>
-          <div className="mt-1 text-xs font-medium uppercase tracking-wide text-award">
-            {cert.issuer} · {cert.date}
+          {/* Issuer over date, not joined by a dot. This line sits below the
+              hexagon's widest band — the sides have already begun tapering to
+              the bottom vertex — so the width it can use is well under the
+              full 300. Run together it measured 23% too wide on a small phone
+              and "AMAZON" and "2026" hung off the sloped edges. */}
+          <div className="mt-1 text-xs font-medium uppercase leading-relaxed tracking-wide text-award">
+            <span className="block whitespace-nowrap">{cert.issuer}</span>
+            <span className="block whitespace-nowrap">{cert.date}</span>
           </div>
         </div>
       </div>
@@ -156,7 +162,11 @@ function ExternalLinkIcon() {
 export default function Certifications() {
   return (
     <Section id="certifications" kicker="Certifications" title="Credentials" className="!py-10 sm:!py-12">
-      <div className="mx-auto grid max-w-3xl gap-10 sm:grid-cols-2 sm:gap-12">
+      {/* Two across from md, not sm. At 640 the pair squeezed each hexagon down
+          to 239px — the narrowest it gets anywhere, tighter than a phone's
+          single column — and the issuer line was left with 4% of margin. One
+          column holds until there is room for two. */}
+      <div className="mx-auto grid max-w-3xl gap-10 md:grid-cols-2 md:gap-12">
         {CERTS.map((c, i) => (
           <Reveal key={c.name} delay={i * 80} className="flex justify-center">
             <HexMedallion cert={c} index={i} />
