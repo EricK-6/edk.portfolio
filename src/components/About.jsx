@@ -26,7 +26,7 @@ export default function About() {
           <p>
             My strongest weapon is AWS tooling, which sets me apart from most
             candidates. My newest certificate,{' '}
-            <Bold>Solutions Architect – Associate</Bold>, is the one that changed how I
+            <Bold>Solutions Architect - Associate</Bold>, is the one that changed how I
             build: designing for the failure modes, not just wiring the services together.
             Right now I research robot navigation at <Bold>CARES</Bold> and teach
             robotics at{' '}
