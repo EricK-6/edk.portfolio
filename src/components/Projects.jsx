@@ -66,7 +66,7 @@ const PROJECTS = [
       'Bank of New Zealand (BNZ)',
     ],
     highlights: [
-      'Built a serverless fraud pipeline on AWS (SNS, Lambda, Textract, Bedrock, DynamoDB) in order to extract, normalise, and reason over an entire bank statement in a single LLM call rather than scoring each transaction alone.',
+      'Built a serverless fraud pipeline on AWS (SNS, Lambda, Textract, Bedrock, DynamoDB) in order to extract, normalise, and reason over an entire bank statement in a single LLM call rather than scoring each transaction alone, placing top 8 out of 20+ teams.',
       'Designed a schema validated JSON contract for Claude Opus 4.8 in order to cite transaction IDs behind every fraud flag, rejecting any output referencing a non-existent charge.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
@@ -113,7 +113,7 @@ const PROJECTS = [
       "Delivered the Korean Engineering Body's first-ever website using React 19, Vite, and React Bootstrap in order to give the club a centralised hub for events and activities.",
       'Collaborated with senior software students in order to ship a production-ready platform from scratch.',
     ],
-    tech: ['JavaScript', 'React.js', 'Vite'],
+    tech: ['JavaScript', 'React.js'],
     image: './KEBWebDesign.webp',
     color: 'from-sky-500/20 to-indigo-500/20',
     initial: 'K',

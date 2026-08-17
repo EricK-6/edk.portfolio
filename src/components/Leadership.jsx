@@ -11,11 +11,11 @@ const ROLES = [
     period: 'Jul 2024 - Present',
     image: './KEB.webp',
     description:
-      'Tutor junior engineering students and assist in planning academic events for the student community.',
+      'Tutor 20+ junior engineering students and assist in planning academic events for the student community.',
   },
   {
-    title: 'Full-time Volunteer',
-    org: 'IEEE · NZ Robotics Olympiad 2025',
+    title: 'Full-time Student Volunteer',
+    org: 'IEEE · NZRO 2025',
     period: 'Jul 2025',
     image: './IEEE.webp',
     description:
@@ -31,7 +31,7 @@ const ROLES = [
   },
   {
     title: 'Competition Staff',
-    org: 'CARES · World Robot Olympiad 2026',
+    org: 'CARES · WRO 2026',
     period: 'May 2026',
     image: './cares.jpeg',
     description:
@@ -39,11 +39,11 @@ const ROLES = [
   },
   {
     title: 'Competition Staff',
-    org: 'IEEE R&A · NZ Robotics Olympiad 2026',
+    org: 'IEEE R&A · NZRO 2026',
     period: 'Jul 2026',
     image: './ieee_r&a.webp',
     description:
-      'Returned to the NZ Robotics Olympiad (NZRO) 2026 as competition staff, building on experience as a full time volunteer at NZRO 2025 and as a robotics instructor at ciLab.',
+      'Selected as official Competition Staff for NZ Robotics Olympiad (NZRO) 2026 based on prior volunteering and robotics instructor experience at ciLab.',
   },
 ]
 

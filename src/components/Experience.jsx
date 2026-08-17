@@ -22,8 +22,8 @@ const EXPERIENCE = [
     period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Teach robot hardware assembly and programming, turning sensors and motor control into hands-on lessons.',
-      'Coach and support teams preparing for nationwide contests, including the NZ Robotics Olympiad.',
+      'Instructed 50+ students in robot hardware assembly and software programming to complete assigned missions.',
+      'Supported student development and coached teams in preparation for nationwide robotics competitions.',
     ],
   },
   {

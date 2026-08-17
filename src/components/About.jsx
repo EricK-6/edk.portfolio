@@ -25,7 +25,10 @@ export default function About() {
           </p>
           <p>
             My strongest weapon is AWS tooling, which sets me apart from most
-            candidates. Right now I research robot navigation at <Bold>CARES</Bold> and teach
+            candidates. My newest certificate,{' '}
+            <Bold>Solutions Architect – Associate</Bold>, is the one that changed how I
+            build: designing for the failure modes, not just wiring the services together.
+            Right now I research robot navigation at <Bold>CARES</Bold> and teach
             robotics at{' '}
             <Bold>ciLab</Bold>. I'm open to <Bold>2026/27 summer internships</Bold>.
           </p>
