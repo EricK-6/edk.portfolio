@@ -104,7 +104,7 @@ const PROJECTS = [
   {
     title: 'KEB Web Design',
     icon: 'globe',
-    tag: 'KEB Project Playground · Team Competition',
+    tag: 'KEB Project Playground 2025 · Team Competition',
     year: '2025',
     period: 'Aug 2025',
     role: 'Homepage for club',
