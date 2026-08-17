@@ -56,7 +56,7 @@ function Bold({ children }) {
 // Projects list itself.
 const HIGHLIGHTS = [
   'Research Assistant · CARES robotics lab, UoA',
-  '2× AWS Certified · Cloud & AI Practitioner',
+  '3× AWS Certified · Solutions Architect, Cloud & AI',
   'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
   '3rd place · 2025 ECSE Design Competition',
   '8 projects across hardware & software',

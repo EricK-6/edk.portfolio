@@ -27,7 +27,7 @@ const FS = dir('top', {
     'about.txt': file(
       'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
       'Specialising in embedded systems, full stack development, and digital hardware design.',
-      'AWS certified in Cloud & AI/ML. Open to internships.'
+      '3× AWS certified - Solutions Architect, Cloud & AI/ML. Open to internships.'
     ),
   }),
   projects: dir('projects', PROJECTS.reduce((acc, [name, desc]) => {

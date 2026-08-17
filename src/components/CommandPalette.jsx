@@ -115,7 +115,7 @@ export default function CommandPalette() {
     { id: 'experience', label: 'Experience', hint: 'Where I’ve worked', keywords: 'experience work jobs roles', icon: <HashIcon />, run: () => go('experience') },
     { id: 'skills', label: 'Skills', hint: 'What I work with', keywords: 'skills tech stack tools', icon: <HashIcon />, run: () => go('skills') },
     { id: 'education', label: 'Education', hint: 'Academic background', keywords: 'education university degree uoa', icon: <HashIcon />, run: () => go('education') },
-    { id: 'certifications', label: 'Credentials', hint: 'Certifications', keywords: 'certifications credentials awards', icon: <HashIcon />, run: () => go('certifications') },
+    { id: 'certifications', label: 'Credentials', hint: 'Certifications', keywords: 'certifications credentials awards aws credly', icon: <HashIcon />, run: () => go('certifications') },
     { id: 'leadership', label: 'Leadership', hint: 'Activities', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
     { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
