@@ -10,7 +10,7 @@ const GROUPS = [
   {
     label: 'Languages & Frameworks',
     icon: 'code',
-    items: ['Python', 'Java', 'C', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL'],
+    items: ['Python', 'Java', 'C', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL', 'HTML/CSS'],
   },
   {
     label: 'Cloud & Software Tools',
