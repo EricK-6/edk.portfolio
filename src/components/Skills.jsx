@@ -10,12 +10,12 @@ const GROUPS = [
   {
     label: 'Languages & Frameworks',
     icon: 'code',
-    items: ['Python', 'Java', 'C', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL', 'HTML/CSS'],
+    items: ['Python', 'Java', 'C', 'HTML/CSS', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL'],
   },
   {
     label: 'Cloud & Software Tools',
     icon: 'cloud',
-    items: ['AWS', 'Lambda', 'Bedrock', 'Textract', 'Kinesis', 'Comprehend', 'DynamoDB', 'Amplify', 'Git', 'Android Studio', 'Figma'],
+    items: ['AWS', 'Lambda', 'Bedrock', 'Textract', 'Kinesis', 'Comprehend', 'DynamoDB', 'SNS','Amplify', 'Git', 'Android Studio', 'Figma'],
   },
   {
     label: 'Hardware & EDA Tools',
