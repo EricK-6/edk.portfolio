@@ -29,7 +29,7 @@ const GROUPS = [
     label: 'Frameworks & Tools',
     icon: 'wrench',
     // The rest of the SWE CV's second row, in its order.
-    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'Git', 'GitHub Actions', 'Android Studio', 'Figma'],
+    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'GitHub Actions', 'Android Studio', 'Figma'],
   },
   {
     label: 'Hardware & EDA Tools',
