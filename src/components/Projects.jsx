@@ -142,9 +142,9 @@ const PROJECTS = [
     focus: '50% 20%',
     color: 'from-emerald-500/20 to-teal-500/20',
     initial: 'E',
-    links: [
-      { label: 'Git repo', href: 'https://github.com/uoa-ece209-2025/ec209-2025-project-2025_team_41' },
-    ],
+    // Coursework repo: it lives in a private university org, so a link here
+    // would 404 for every visitor. The media and the tech list carry the tile.
+    links: [],
   },
   {
     title: 'Flappy Universe',
@@ -162,9 +162,9 @@ const PROJECTS = [
     video: './flappy.mp4',
     color: 'from-lime-500/20 to-green-500/20',
     initial: 'F',
-    links: [
-      { label: 'Git repo', href: 'https://github.com/jpar483/COMPSYS305_MiniProject' },
-    ],
+    // Coursework repo: it lives in a private university org, so a link here
+    // would 404 for every visitor. The media and the tech list carry the tile.
+    links: [],
   },
   {
     title: 'RoastWorks Analytics',
@@ -181,9 +181,9 @@ const PROJECTS = [
     image: './roastworks.webp',
     color: 'from-orange-500/20 to-amber-500/20',
     initial: 'R',
-    links: [
-      { label: 'Git repo', href: 'https://github.com/COMPSYS302/project-python-cs302-2026-python-project-24' },
-    ],
+    // Coursework repo: it lives in a private university org, so a link here
+    // would 404 for every visitor. The media and the tech list carry the tile.
+    links: [],
   },
   {
     title: 'MealHub',
@@ -200,9 +200,9 @@ const PROJECTS = [
     image: './MealHub.webp',
     color: 'from-green-500/20 to-emerald-500/20',
     initial: 'M',
-    links: [
-      { label: 'Git repo', href: 'https://github.com/COMPSYS302/project-java-2026-project-java-team-10-1' },
-    ],
+    // Coursework repo: it lives in a private university org, so a link here
+    // would 404 for every visitor. The media and the tech list carry the tile.
+    links: [],
   },
 ]
 

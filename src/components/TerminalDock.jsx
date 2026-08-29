@@ -15,7 +15,7 @@ const PROJECTS = [
   ['keb-web-design', "KEB's first ever club website · React 19 + Vite"],
 ]
 
-const SKILLS = 'Python  Java  C  JavaScript  React.js  R  MATLAB  VHDL  AWS  Git  Android Studio  Figma  Altium Designer'
+const SKILLS = 'Python  Java  C  JavaScript  TypeScript  SQL  R  MATLAB  VHDL  AWS  React.js  Node.js  Express.js  JUnit  Git  GitHub Actions  Android Studio  Figma  Altium Designer'
 
 const file = (...content) => ({ type: 'file', content })
 const dir = (id, children = {}) => ({ type: 'dir', id, children })

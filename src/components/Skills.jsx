@@ -2,20 +2,34 @@ import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
 // Each group carries its own icon, count and ruled header so a reader can find
-// the stack they care about without reading all twenty-six chips. The groups
+// the stack they care about without reading all thirty-six chips. The groups
 // used to be told apart by hue as well (accent / sky / violet), but the site's
 // palette is now one accent plus a reserved award colour, and three unrelated
 // hues here were the loudest thing fighting it.
 const GROUPS = [
   {
-    label: 'Languages & Frameworks',
+    label: 'Programming Languages',
     icon: 'code',
-    items: ['Python', 'Java', 'C', 'HTML/CSS', 'JavaScript', 'React.js', 'R', 'MATLAB', 'VHDL'],
+    // The CV's own first row, plus VHDL — that one is a language on the EEE CV
+    // and has nowhere else to sit here. React.js lives under Frameworks & Tools
+    // instead, which is where the SWE CV files it.
+    items: ['Python', 'Java', 'C', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL'],
   },
   {
-    label: 'Cloud & Software Tools',
+    label: 'Cloud & AWS',
     icon: 'cloud',
-    items: ['AWS', 'Lambda', 'Bedrock', 'Textract', 'Kinesis', 'Comprehend', 'DynamoDB', 'SNS','Amplify', 'Git', 'Android Studio', 'Figma'],
+    // The CV collapses all of this to the word "AWS" because a one-page PDF has
+    // no room. The site does have room, so the services stay named — every one
+    // of them appears in a project's tech list two tiles up, which is the whole
+    // reason for naming them rather than asking the reader to take "AWS" on
+    // faith. Core service first, then roughly the order they get reached for.
+    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM'],
+  },
+  {
+    label: 'Frameworks & Tools',
+    icon: 'wrench',
+    // The rest of the SWE CV's second row, in its order.
+    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'Git', 'GitHub Actions', 'Android Studio', 'Figma'],
   },
   {
     label: 'Hardware & EDA Tools',
@@ -27,13 +41,15 @@ const GROUPS = [
 export default function Skills() {
   return (
     <Section id="skills" kicker="Skills" title="What I work with">
-      {/* One panel split into three ruled columns rather than three separate
-          tiles. The groups hold 8, 11 and 7 items, so equal-size tiles always
-          left the short two with a band of empty card; inside a single box the
-          columns simply end where they end, the way a spec sheet does, and the
-          outer shape stays a clean rectangle. */}
+      {/* One panel split into ruled columns rather than separate tiles: equal
+          -size tiles always left the short groups with a band of empty card,
+          where inside a single box the columns simply end where they end, the
+          way a spec sheet does, and the outer shape stays a clean rectangle.
+          Two across, not three. The groups hold 10, 11, 8 and 7 items — close
+          enough in length to sit level in a 2x2, where the old three-column
+          split had one 19-item column towering over two 3-row ones. */}
       <Reveal className="overflow-hidden rounded-2xl border border-grey-300/80 bg-grey-100 dark:border-grey-800/70 dark:bg-grey-900/60">
-        <div className="grid lg:grid-cols-3 lg:divide-x lg:divide-grey-300/70 lg:dark:divide-grey-800/70">
+        <div className="grid lg:grid-cols-2 lg:divide-x lg:divide-grey-300/70 lg:dark:divide-grey-800/70">
           {GROUPS.map((g) => (
             <div key={g.label} className="flex flex-col">
               {/* hue rule: doubles as the divider between stacked columns
@@ -71,6 +87,7 @@ export default function Skills() {
 const GROUP_PATHS = {
   code: <path d="m8 6-6 6 6 6M16 6l6 6-6 6M14 4l-4 16" />,
   cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
+  wrench: <path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.1-2.1 2.5-2.5Z" />,
   chip: (
     <>
       <rect x="4" y="4" width="16" height="16" rx="2" />
