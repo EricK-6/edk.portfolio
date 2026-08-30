@@ -38,6 +38,56 @@ const GROUPS = [
   },
 ]
 
+// Logo per chip, keyed by the exact label in GROUPS above. Kept as a lookup
+// rather than folded into the group arrays so those stay plain lists that can
+// be read straight against the CV's own skills rows.
+//
+// A skill with no entry here degrades to a text-only chip by design, so this
+// map never has to stay exhaustive to stay correct.
+const LOGOS = {
+  // languages
+  Python: './python.png',
+  Java: './java.png',
+  C: './c.png',
+  'HTML/CSS': './htmlcss.jpeg',
+  JavaScript: './js.png',
+  TypeScript: './ts.png',
+  R: './r.jpeg',
+  MATLAB: './matlab.jpeg',
+  SQL: './sql.png',
+  VHDL: './vhdl.png',
+  // cloud
+  AWS: './aws.jpg',
+  Lambda: './lambda.png',
+  S3: './s3.jpeg',
+  DynamoDB: './dynamodb.jpeg',
+  Bedrock: './bedrock.png',
+  Textract: './textract.jpeg',
+  Comprehend: './comprehend.png',
+  Kinesis: './kinesis.png',
+  SNS: './sns.png',
+  Amplify: './amplify.png',
+  SAM: './sam.jpeg',
+  // frameworks & tools
+  'React.js': './react.png',
+  'Node.js': './nodejs.png',
+  'Express.js': './express.png',
+  JUnit: './junit.png',
+  ROS: './ros.jpeg',
+  Git: './git.png',
+  'GitHub Actions': './ghubactions.png',
+  'Android Studio': './android.jpeg',
+  Figma: './figma.png',
+  // hardware & EDA
+  'Altium Designer': './altium.jpeg',
+  LTSpice: './ltspice.png',
+  ModelSim: './modelsim.png',
+  'Intel Quartus Prime': './quartus.png',
+  Proteus: './proteus.jpeg',
+  'Atmel AVR': './avr.png',
+  AutoCAD: './cad.png',
+}
+
 export default function Skills() {
   return (
     <Section id="skills" kicker="Skills" title="What I work with">
@@ -45,7 +95,7 @@ export default function Skills() {
           -size tiles always left the short groups with a band of empty card,
           where inside a single box the columns simply end where they end, the
           way a spec sheet does, and the outer shape stays a clean rectangle.
-          Two across, not three. The groups hold 10, 11, 8 and 7 items — close
+          Two across, not three. The groups hold 10, 11, 9 and 7 items — close
           enough in length to sit level in a 2x2, where the old three-column
           split had one 19-item column towering over two 3-row ones. */}
       <Reveal className="overflow-hidden rounded-2xl border border-grey-300/80 bg-grey-100 dark:border-grey-800/70 dark:bg-grey-900/60">
@@ -69,8 +119,24 @@ export default function Skills() {
                   {g.items.map((item) => (
                     <span
                       key={item}
-                      className="inline-flex items-center rounded-lg border border-grey-300/80 bg-grey-200/70 px-2.5 py-1 text-sm font-medium text-grey-800 transition-colors hover:border-grey-400 hover:bg-grey-200 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200 dark:hover:border-grey-700"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-grey-300/80 bg-grey-200/70 py-1 pl-1.5 pr-2.5 text-sm font-medium text-grey-800 transition-colors hover:border-grey-400 hover:bg-grey-200 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200 dark:hover:border-grey-700"
                     >
+                      {LOGOS[item] && (
+                        // Height is fixed and width runs free: these marks are
+                        // every shape from a 1:1 roundel to a 3.5:1 wordmark
+                        // (JUnit, SQL), and squaring them would shrink the wide
+                        // ones to a sliver. The white pad is what lets the
+                        // opaque JPEGs sit next to the transparent PNGs without
+                        // one set showing a visible box — it becomes the mark's
+                        // own background either way.
+                        <img
+                          src={LOGOS[item]}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="h-4 w-auto max-w-[26px] flex-none rounded-[3px] bg-white object-contain p-px"
+                        />
+                      )}
                       {item}
                     </span>
                   ))}

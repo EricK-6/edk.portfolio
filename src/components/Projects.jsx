@@ -107,7 +107,7 @@ const PROJECTS = [
     tag: 'KEB Project Playground 2025 · Team Competition',
     year: '2025',
     period: 'Aug 2025',
-    role: 'Homepage for club',
+    role: 'Homepage for Club',
     hostedBy: ['Korean Engineering Body (KEB)'],
     highlights: [
       "Delivered the Korean Engineering Body's first-ever website using React 19, Vite, and React Bootstrap in order to give the club a centralised hub for events and activities.",
