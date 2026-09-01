@@ -91,7 +91,7 @@ const PROJECTS = [
       'Built a serverless NLP pipeline with AWS (Kinesis, Lambda, Comprehend, DynamoDB) using AWS SAM, with a dead letter queue for failed batches, to classify streaming text sentiment in real time.',
       'Developed a live React dashboard on AWS Amplify, applying cloud and AI/ML fundamentals from certification study to a hands on project.',
     ],
-    tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'React.js', 'AWS Amplify'],
+    tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'GitHub Actions', 'React.js', 'AWS Amplify'],
     image: './pulse.webp',
     video: './pulse.mp4',
     color: 'from-cyan-500/20 to-blue-500/20',
