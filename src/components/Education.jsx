@@ -43,7 +43,7 @@ export default function Education() {
               Bachelor of Engineering (Honours) · Computer Systems Engineering
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Concentration: Embedded Systems · Software & Digital Hardware Design
+              Concentrations: Embedded Systems · Software & Hardware Design
             </div>
 
             <div className="mt-6">

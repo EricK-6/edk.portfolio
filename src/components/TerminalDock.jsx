@@ -8,9 +8,9 @@ const PROJECTS = [
   ['winnie-the-bot', 'AI interactive robot · dual ATmega328P · 3rd place ECSE'],
   ['spottern', 'Statement-level fraud detection on AWS · top 8 AWS×BNZ hackathon'],
   ['sentiment-pulse', 'Serverless NLP pipeline on AWS + live React dashboard'],
-  ['smart-energy-monitor', 'ATmega328P firmware · Altium Designer PCB · LTspice'],
-  ['flappy-universe', 'VHDL game on an Altera FPGA · VGA + PS/2'],
-  ['roastworks-analytics', 'PyQt6 + pandas forecasting desktop app'],
+  ['smart-energy-monitor', 'Dual-channel ATmega328P firmware · 2-layer Altium PCB · ±5% FS'],
+  ['flappy-universe', 'VHDL game on a DE0-CV FPGA · custom VGA sync · LFSR pipe gaps'],
+  ['roastworks-analytics', 'PyQt6 + pandas desktop app · 3 forecasting models'],
   ['mealhub', 'Android meal planner · Java + Firebase'],
   ['keb-web-design', "KEB's first ever club website · React 19 + Vite"],
 ]
@@ -26,7 +26,7 @@ const FS = dir('top', {
   about: dir('about', {
     'about.txt': file(
       'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
-      'Specialising in embedded systems, full stack development, and digital hardware design.',
+      'Specialising in embedded systems, full stack development, and hardware design.',
       '3× AWS certified - Solutions Architect, Cloud & AI/ML. Open to internships.'
     ),
   }),

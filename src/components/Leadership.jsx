@@ -11,7 +11,7 @@ const ROLES = [
     period: 'Jul 2024 - Present',
     image: './KEB.webp',
     description:
-      'Tutor 20+ junior engineering students and assist in planning academic events for the student community.',
+      'Developed and delivered tutorial sessions for 20+ junior engineering students across various courses, and helped plan academic events for the student community.',
   },
   {
     title: 'Full-time Student Volunteer',
@@ -19,7 +19,7 @@ const ROLES = [
     period: 'Jul 2025',
     image: './IEEE.webp',
     description:
-      'Volunteered 40+ hours full time supporting competition operations at the NZ Robotics Olympiad (NZRO) 2025 with the Institute of Electrical and Electronics Engineers (IEEE).',
+      'Volunteered 40+ hours full time supporting operations and logistics at the NZ Robotics Olympiad (NZRO) 2025 with the Institute of Electrical and Electronics Engineers (IEEE), collaborating with organisers to ensure a smooth event experience for participants.',
   },
   {
     title: 'Logistics Team Member',
@@ -43,7 +43,7 @@ const ROLES = [
     period: 'Jul 2026',
     image: './ieee_r&a.webp',
     description:
-      'Selected as official Competition Staff for NZ Robotics Olympiad (NZRO) 2026 based on prior volunteering and robotics instructor experience at ciLab.',
+      'Selected as official Competition Staff for NZ Robotics Olympiad (NZRO) 2026 based on prior volunteering and robotics instructor experience at ciLab, leading competition operations and resolving technical issues to keep matches running smoothly for all teams.',
   },
 ]
 
