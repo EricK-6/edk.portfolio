@@ -12,8 +12,8 @@ const EXPERIENCE = [
     period: 'Jul 2026 - Present',
     image: './UoA.jpg',
     bullets: [
-      'Develop and test navigation and control algorithms for TurtleBot2 robots, including sensor integration.',
-      'Assist with experiment design, data collection, and analysis to support ongoing robotics research.',
+      "Contribute to the lab's robot soccer system, spanning control, decision making, and framework migration.",
+      'Develop and test navigation algorithms for TurtleBot2, with sensor integration and performance evaluation.',
     ],
   },
   {
