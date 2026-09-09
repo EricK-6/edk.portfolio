@@ -148,7 +148,12 @@ export default function SunriseLayout({ order, components, id }) {
     // that width, and applying it in both places pushed the tile twice as far
     // as the dock is wide. The backdrop is fixed, so the photograph still
     // fills the viewport while the tile re-centres in what is left.
-    <main className="relative flex-1">
+    // The stage clips: the tile and its contents both fly in from below, and a
+    // transform that reaches past the fold still counts as scrollable overflow,
+    // so landing on a tall section at a short window flashed a page scrollbar for
+    // the length of the entrance and then took it away again. Nothing here is
+    // ever meant to scroll the document — the tile scrolls itself, inside this.
+    <main className="relative flex flex-1 flex-col overflow-hidden">
       <SunriseBackdrop soft={home} />
 
       {/* The intro is not a tile: it sits straight on the photograph, and the
@@ -159,12 +164,21 @@ export default function SunriseLayout({ order, components, id }) {
           rather than swallowing the rest. It was clipped before: on a phone
           that silently ate three of the five Leadership entries and half the
           Contact page, with no scrollbar and no way to reach them. */}
-      <div className="stage-min flex items-center justify-center px-4 py-4 sm:px-6">
+      <div className="flex flex-1 items-center justify-center px-4 py-4 sm:px-6">
         {home ? (
+          // The intro is capped and scrolls exactly like a tile, even though it
+          // has no tile drawn around it. It used to be the one thing on the
+          // stage with no ceiling, which was survivable while the document
+          // could scroll — but the stage clips now, so on a short phone the
+          // last row of the intro was simply cut off with no way to reach it.
+          // Sharing `scroller` also means the wheel and the arrows read the
+          // intro's own scroll position before they decide to travel.
           <div key={id} className={`w-full max-w-3xl ${dir > 0 ? 'tile-rise' : 'tile-descend'}`}>
-            <PanelActiveContext.Provider value>
-              <Component />
-            </PanelActiveContext.Provider>
+            <div ref={scroller} className="tile-max overflow-y-auto overscroll-contain">
+              <PanelActiveContext.Provider value>
+                <Component />
+              </PanelActiveContext.Provider>
+            </div>
           </div>
         ) : (
           <div

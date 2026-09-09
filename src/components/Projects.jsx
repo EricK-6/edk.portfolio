@@ -632,22 +632,47 @@ function GitHubIcon() {
 
 // Case-study modal styled as a flight log. Rendered through a portal because
 // space mode's 3D transforms would otherwise hijack position:fixed.
+// Everything a Tab is allowed to land on inside the dialog.
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 function BuildLogModal({ project, onClose }) {
   const closeRef = useRef(null)
+  const panelRef = useRef(null)
 
   useEffect(() => {
-    // freeze the page behind the modal; SpaceLayout reads this to pause
-    // its wheel/arrow flight handlers too
+    // freeze the page behind the modal; SunriseLayout reads this to pause
+    // its wheel/arrow travel handlers too
     const prev = document.body.style.overflow
+    const opener = document.activeElement // the control that opened this
     document.body.style.overflow = 'hidden'
     closeRef.current?.focus()
+
     const onKey = (e) => {
-      if (e.key === 'Escape') { e.stopPropagation(); onClose() }
+      if (e.key === 'Escape') { e.stopPropagation(); onClose(); return }
+      if (e.key !== 'Tab') return
+      // Tab has to stay inside. The dialog is portalled to the end of
+      // <body>, so the first Tab used to walk straight past it into the page
+      // it is covering — the terminal drawer, then the whole navbar — with
+      // the modal still open and nothing on screen to say where focus went.
+      const items = [...(panelRef.current?.querySelectorAll(FOCUSABLE) ?? [])]
+      if (!items.length) { e.preventDefault(); return }
+      const first = items[0]
+      const last = items[items.length - 1]
+      const active = document.activeElement
+      const inside = panelRef.current.contains(active)
+      if (e.shiftKey ? (active === first || !inside) : (active === last || !inside)) {
+        e.preventDefault()
+        ;(e.shiftKey ? last : first).focus()
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
+      // hand the keyboard back to the control that opened the dialog, rather
+      // than dropping it wherever the last Tab happened to leave it
+      if (opener instanceof HTMLElement && document.contains(opener)) opener.focus()
     }
   }, [onClose])
 
@@ -658,6 +683,7 @@ function BuildLogModal({ project, onClose }) {
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={`Build log: ${project.title}`}

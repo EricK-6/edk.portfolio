@@ -12,6 +12,7 @@ import Leadership from './components/Leadership.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
+import Cursor from './components/Cursor.jsx'
 import TerminalDock from './components/TerminalDock.jsx'
 import SunriseLayout from './components/SunriseLayout.jsx'
 import { useRoute, replaceRoute } from './router.js'
@@ -90,10 +91,11 @@ export default function App() {
 
   return (
     <div
-      className={`flex min-h-screen flex-col transition-[padding] duration-300 ease-out ${
+      className={`app-shell flex flex-col transition-[padding] duration-300 ease-out ${
         terminalOpen ? 'sm:pl-[380px]' : ''
       }`}
     >
+      <Cursor />
       <CommandPalette />
       <TerminalDock open={terminalOpen} setOpen={setTerminalOpen} />
       <Navbar activeId={id} />

@@ -1,28 +1,25 @@
 import { useEffect, useState } from 'react'
 import { hrefFor } from '../sitemap.js'
 
-// The intro tile. Minimal, but not static: an availability badge, a greeting,
-// the name, and one line that types itself through the things he actually
-// builds. Everything else the visitor might want is one tile away, so this
-// page introduces rather than summarises.
+// The intro. It sits straight on the photograph — no panel, no tile — and its
+// readability comes from the backdrop itself (which defocuses and hazes over on
+// this route, see SunriseBackdrop) plus the halo `.on-photo` puts around the
+// type.
+//
+// It lost a row along the way. "Kia ora! 👋 This is" was a whole line of
+// furniture whose only job was to arrive at the name underneath it; the
+// greeting now opens the one sentence that was already doing the work.
 
-// One line per project, in the order the Projects tile lists them, so the
-// intro is a table of contents for the work rather than a list of buzzwords.
-// One line per project, in the order the Projects tile lists them, so the
-// intro is a table of contents for the work rather than a list of buzzwords.
-// Kept under ~30 characters each: at 390px anything longer wraps, and a row
-// that reserves two lines for a phrase that only sometimes needs them leaves
-// a hole under the name the rest of the time.
 const BUILDS = [
-  'embedded systems', // Intro
-  'robots that hold your gaze',    // Winnie the Bot
-  'statement level fraud detection',// Spottern!
-  'live sentiment dashboards',     // Sentiment PULSE
-  'websites a club runs on',       // KEB Web Design
-  'energy monitors, PCB and all',  // Smart Energy Monitor
-  'arcade games on an FPGA',       // Flappy Universe
-  'analytics that forecast',       // RoastWorks Analytics
-  'Android apps for meal plans',   // MealHub
+  'embedded systems',
+  'robots that hold your gaze',
+  'statement level fraud detection',
+  'live sentiment dashboards',
+  'websites a club runs on',
+  'energy monitors, PCB and all',
+  'arcade games on an FPGA',
+  'analytics that forecast',
+  'Android apps for meal plans',
 ]
 
 const TYPE_MS = 55
@@ -40,8 +37,8 @@ function useTypewriter(phrases) {
 
   useEffect(() => {
     if (reduce) return
-    let i = 0        // which phrase
-    let n = 0        // how much of it is showing
+    let i = 0
+    let n = 0
     let erasing = false
     let timer
 
@@ -79,11 +76,7 @@ export default function Hero() {
   const { text, done } = useTypewriter(BUILDS)
 
   return (
-    // No glass tile here: the intro sits straight on the photograph and the
-    // first tile rises over it. Readability comes from the backdrop itself —
-    // it defocuses and hazes over on this route (see SunriseBackdrop) — plus
-    // the halo on the type, rather than from any panel behind the words.
-    <section id="top" className="on-photo relative px-2 py-12 sm:px-6 sm:py-16">
+    <section id="top" className="on-photo relative px-2 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-2xl text-center">
         {/* availability, with a live green pulse */}
         <div className="lift-in flex justify-center" style={{ animationDelay: '60ms' }}>
@@ -96,16 +89,9 @@ export default function Hero() {
           </span>
         </div>
 
-        <p
-          className="lift-in mt-7 text-lg font-medium text-grey-800"
-          style={{ animationDelay: '140ms' }}
-        >
-          Kia ora! <span className="wave-hand mx-0.5 inline-block">👋</span> This is
-        </p>
-
         <h1
-          className="lift-in mt-2 font-display text-5xl font-semibold tracking-tight text-grey-900 sm:text-7xl"
-          style={{ animationDelay: '220ms' }}
+          className="lift-in mt-6 font-display text-5xl font-semibold tracking-tight text-grey-900 sm:text-7xl"
+          style={{ animationDelay: '160ms' }}
         >
           Eric Kim
         </h1>
@@ -113,15 +99,15 @@ export default function Hero() {
         {/* the typing line. min-height reserves the row so the layout never
             jumps as phrases swap. */}
         <p
-          className="lift-in mt-6 flex min-h-[2rem] flex-wrap items-center justify-center gap-x-2 text-lg text-grey-800 sm:text-xl"
-          style={{ animationDelay: '300ms' }}
+          className="lift-in mt-5 flex min-h-[2rem] flex-wrap items-center justify-center gap-x-2 text-lg text-grey-800 sm:text-xl"
+          style={{ animationDelay: '240ms' }}
         >
-          <span>I build</span>
-          <span className="font-medium text-accent">
+          <span>Kia ora, I build</span>
+          <span className="font-medium text-accent-deep">
             {text}
             <span
               aria-hidden="true"
-              className={`ml-0.5 inline-block w-[2px] translate-y-[2px] self-stretch bg-accent ${done ? 'animate-caret' : ''}`}
+              className={`ml-0.5 inline-block w-[2px] translate-y-[2px] self-stretch bg-accent-deep ${done ? 'animate-caret' : ''}`}
               style={{ height: '1.05em' }}
             />
           </span>
@@ -130,51 +116,111 @@ export default function Hero() {
         </p>
 
         <p
-          className="lift-in mt-4 text-[15px] text-grey-700"
-          style={{ animationDelay: '380ms' }}
+          className="lift-in mt-3 text-[15px] text-grey-700"
+          style={{ animationDelay: '320ms' }}
         >
           Computer Systems Engineering (Hons)
           <span className="text-grey-500"> · </span>
           University of Auckland
         </p>
 
-        {/* the tour starts at the beginning, not at the projects */}
-        <div className="lift-in mt-9" style={{ animationDelay: '460ms' }}>
-          <a href={hrefFor('about')} className="btn-primary group px-5 py-2.5 text-[15px]">
-            Let&apos;s explore
-            <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
-          </a>
-        </div>
-
-        {/* Two CVs, because the software and hardware versions are different
-            documents. They open in a tab to read rather than downloading —
-            most people want a look before they want a file. */}
+        {/* The résumé, as one labelled control with two exact halves. Two equal
+            pills competing across a row made the reader choose between them
+            before understanding what they were; a label in front turns it into
+            one decision with two answers, and lets each target drop everything
+            but the word that distinguishes it. */}
         <div
-          className="lift-in mt-8 text-sm text-grey-700"
-          style={{ animationDelay: '540ms' }}
+          className="lift-in mt-7 flex flex-wrap items-center justify-center gap-x-3 gap-y-2"
+          style={{ animationDelay: '400ms' }}
         >
-          <span className="text-grey-600">Resume: </span>
-          <a href="./CV_SWE.pdf" target="_blank" rel="noreferrer" className="hero-link tap-44">SWE</a>
-          <span className="mx-1 text-grey-500 sm:mx-2">·</span>
-          <a href="./CV_EEE.pdf" target="_blank" rel="noreferrer" className="hero-link tap-44">EEE</a>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-grey-600">
+            Résumé
+          </span>
+          <span className="flex items-center gap-2">
+            <CvLink href="./CV_SWE.pdf" kind="Software" />
+            <CvLink href="./CV_EEE.pdf" kind="Hardware" />
+          </span>
         </div>
 
         <div
-          className="lift-in mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm sm:gap-x-5 sm:gap-y-2"
-          style={{ animationDelay: '620ms' }}
+          className="lift-in mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm sm:gap-x-5"
+          style={{ animationDelay: '480ms' }}
         >
-          <a href="mailto:dohyunkim290106@gmail.com" className="hero-link tap-44 inline-flex items-center gap-1.5">
-            <MailIcon /> Email
-          </a>
-          <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="hero-link tap-44 inline-flex items-center gap-1.5">
-            <LinkedInIcon /> LinkedIn
-          </a>
-          <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="hero-link tap-44 inline-flex items-center gap-1.5">
-            <GitHubIcon /> GitHub
+          <SocialLink href="mailto:dohyunkim290106@gmail.com"><MailIcon /> Email</SocialLink>
+          <SocialLink href="https://www.linkedin.com/in/erick06/" external><LinkedInIcon /> LinkedIn</SocialLink>
+          <SocialLink href="https://github.com/EricK-6" external><GitHubIcon /> GitHub</SocialLink>
+        </div>
+
+        {/* The way on, drawn as the thing that takes you there. A mouse with its
+            wheel turning says "keep going" without a sentence, and it happens to
+            teach the one gesture this site never explained: a scroll past the
+            edge of a tile is what travels to the next one. Still a link, still
+            named, so the keyboard and a screen reader get the same destination
+            the wheel does. */}
+        <div className="lift-in mt-8 flex justify-center" style={{ animationDelay: '560ms' }}>
+          <a
+            href={hrefFor('about')}
+            aria-label="Explore — continue to About"
+            className="explore-cue tap-44 group"
+          >
+            <span className="explore-mouse" aria-hidden="true">
+              <span className="explore-wheel" />
+            </span>
+            <span className="explore-label">explore</span>
           </a>
         </div>
       </div>
     </section>
+  )
+}
+
+// One résumé, two answers. Stripped to the word that tells them apart plus a
+// glyph for where it opens — the label in front already says what they are, so
+// "CV" and "pdf" on each was the same word twice. What is deliberately not
+// minimal is the target: a drawn border, a filled rest state, a real hover and a
+// press that moves, so there is never a question about where to click. As a bare
+// "Resume: SWE · EEE" these were the same ink as the line above them with no
+// underline, and the highest-intent click on the page read as a caption.
+//
+// [text-shadow:none] opts out of the section's .on-photo halo — the pill brings
+// its own background, so the halo only softened the type on it.
+function CvLink({ href, kind }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`${kind} résumé — PDF, opens in a new tab`}
+      className="tap-44 group inline-flex items-center gap-1.5 rounded-lg border border-white/80 bg-white/75 px-3.5 py-2 text-sm font-medium text-grey-800 shadow-sm shadow-black/5 backdrop-blur-sm transition duration-150 [text-shadow:none] hover:border-accent/50 hover:bg-white hover:text-accent-deep active:translate-y-px active:bg-accent/10"
+    >
+      {kind}
+      <OpenIcon />
+    </a>
+  )
+}
+
+function OpenIcon() {
+  return (
+    <svg
+      aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      className="opacity-55 transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px group-hover:opacity-100"
+    >
+      <path d="M7 17 17 7" /><path d="M9 7h8v8" />
+    </svg>
+  )
+}
+
+function SocialLink({ href, external, children }) {
+  return (
+    <a
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+      className="hero-link tap-44 inline-flex items-center gap-1.5"
+    >
+      {children}
+    </a>
   )
 }
 

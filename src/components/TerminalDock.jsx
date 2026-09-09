@@ -252,6 +252,8 @@ export default function TerminalDock({ open, setOpen }) {
   const [cwd, setCwd] = useState([])
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
+  const panelRef = useRef(null) // everything inside the drawer
+  const tabRef = useRef(null)   // the pull-tab, which is always reachable
 
   const print = (...nodes) => setLines((prev) => [...prev, ...nodes])
 
@@ -301,6 +303,20 @@ export default function TerminalDock({ open, setOpen }) {
   // focus the prompt when opened
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 60)
+  }, [open])
+
+  // A shut drawer is off-screen, not gone: without this its close button and
+  // its prompt were the first two things Tab reached on every page. `inert`
+  // is the one property that removes both at once — tab order and the
+  // accessibility tree — and it is set on the panel rather than the <aside>
+  // so the pull-tab beside it stays operable.
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+    panel.inert = !open
+    // closing while the caret is in the prompt would otherwise strand focus
+    // on an inert node, which drops it to <body> and loses the visitor
+    if (!open && panel.contains(document.activeElement)) tabRef.current?.focus()
   }, [open])
 
   // keep the log pinned to the newest line
@@ -537,7 +553,16 @@ export default function TerminalDock({ open, setOpen }) {
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="relative flex h-full flex-col border-r border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-black">
+        <div className="relative h-full border-r border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-black">
+          {/* Everything the drawer *is*, kept apart from the pull-tab that
+              opens it: closed, the panel is still on the page, parked off the
+              left edge, and it owned the first two tab stops of every fresh
+              load — a "Close terminal" button at x=-43 and a text input at
+              x=-185. A keyboard visitor's opening Tabs went somewhere they
+              could not see, and anything they typed went into an invisible
+              shell. `inert` takes the whole panel out of the tab order and
+              off the accessibility tree while it is shut; the tab stays. */}
+          <div ref={panelRef} className="flex h-full flex-col">
           {/* title bar */}
           <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3 dark:border-grey-800 dark:bg-black">
             <span className="h-3 w-3 rounded-full bg-grey-300 dark:bg-grey-700" />
@@ -597,8 +622,11 @@ export default function TerminalDock({ open, setOpen }) {
             </div>
           </div>
 
+          </div>
+
           {/* pull-tab handle - rides the right edge of the panel near the top */}
           <button
+            ref={tabRef}
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Collapse terminal' : 'Open terminal'}
             aria-expanded={open}
