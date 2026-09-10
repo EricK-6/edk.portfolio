@@ -1,4 +1,4 @@
-const REPO = 'https://github.com/EricK-6/EricK-6.github.io'
+const REPO = 'https://github.com/EricK-6/edk.portfolio'
 
 // Name on the left with the date the repo was last touched under it, links on
 // the right. `__LAST_UPDATED__` is the last commit's date, baked in by

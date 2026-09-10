@@ -71,7 +71,7 @@ npm run deploy
 │       ├── Hero.jsx               # the full-bleed photo intro
 │       ├── Divider.jsx            # the rule between sections
 │       ├── About.jsx
-│       ├── Projects.jsx           # project explorer (list + detail card)
+│       ├── Projects.jsx           # feature rows for the two placements, a flip-card grid for the rest
 │       ├── Experience.jsx
 │       ├── Skills.jsx
 │       ├── Education.jsx
