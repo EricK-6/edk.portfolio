@@ -14,7 +14,7 @@ export default function About() {
     // so the page's own hierarchy ran backwards. The kicker carries the
     // section's name (matching the navbar's contents index) and the one line
     // worth reading is the title.
-    <Section id="about" kicker="About" title="Hardware and software, on the same bench." narrow>
+    <Section id="about" kicker="About" title="Hardware and Software, on the same bench." narrow>
       {/* Prose on top, highlights underneath in a row. The old shape put them
           side by side, which worked when the text ran three paragraphs and
           left a column of empty glass once it was cut to two. */}

@@ -60,7 +60,7 @@ const PROJECTS = [
     tag: 'Top 8 Finalist · AWS×BNZ AI Hackathon 2026',
     year: '2026',
     period: 'Jul 2026',
-    role: 'Statement-level fraud detection platform',
+    role: 'Statement-level Fraud Detection Platform',
     awardedBy: [
       'Amazon Web Services (AWS)',
       'Bank of New Zealand (BNZ)',
