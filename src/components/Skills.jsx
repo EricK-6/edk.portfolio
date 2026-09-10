@@ -32,7 +32,7 @@ const GROUPS = [
   },
   {
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'GitHub Actions', 'Android Studio', 'Figma'],
+    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'GitHub Actions', 'Android Studio', 'Figma', 'Docker', 'Terraform'],
   },
   {
     label: 'Hardware & EDA Tools',
