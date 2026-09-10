@@ -15,6 +15,7 @@ import CommandPalette from './components/CommandPalette.jsx'
 import Cursor from './components/Cursor.jsx'
 import TerminalDock from './components/TerminalDock.jsx'
 import { SECTION_IDS } from './sitemap.js'
+import { useHashLanding } from './router.js'
 
 // The whole site is one scrolling document, in reading order.
 //
@@ -38,6 +39,10 @@ const SECTIONS = {
 }
 
 export default function App() {
+  // a deep link has to be honoured after the sections exist, not while the
+  // browser is parsing an empty root div
+  useHashLanding()
+
   return (
     <>
       <Cursor />

@@ -33,6 +33,61 @@ export function goTo(id) {
   window.location.hash = id === 'home' ? 'top' : id
 }
 
+// Landing on a deep link.
+//
+// The browser scrolls to a fragment while parsing the document — which, in a
+// client-rendered app, is before any of the sections exist. So arriving at
+// `erickk.cloud/#projects` found no `#projects` to scroll to and silently left
+// the reader at the top of the page. Every deep link on the site, and every
+// link anyone has already shared, was landing on the intro.
+//
+// So the landing is redone once React has painted. `instant` on purpose: the
+// CSS smooth-scroll is for clicks made on the page, and animating a 7,000px
+// journey the moment a page opens is motion nobody asked for.
+export function useHashLanding() {
+  useEffect(() => {
+    const id = decodeURIComponent((window.location.hash || '').slice(1))
+    if (!id) return
+
+    let cancelled = false
+    // Late media (four videos and eight stills) changes the height of the
+    // document after first paint, so the first landing can drift. It is
+    // retried — but never once the reader has taken over, or the page would
+    // yank itself back under them.
+    let taken = false
+    const takeOver = () => { taken = true }
+
+    const land = () => {
+      if (cancelled || taken) return
+      document.getElementById(id)?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    }
+
+    // a hash naming nothing should not stay in the address bar for the
+    // visitor to copy or bookmark
+    const tidy = () => {
+      if (cancelled || document.getElementById(id)) return
+      history.replaceState(null, '', window.location.pathname + window.location.search)
+    }
+
+    for (const ev of ['wheel', 'touchstart', 'keydown']) {
+      window.addEventListener(ev, takeOver, { passive: true, once: true })
+    }
+    const frame = requestAnimationFrame(land)
+    const timer = setTimeout(() => { land(); tidy() }, 300)
+    window.addEventListener('load', land)
+
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      clearTimeout(timer)
+      window.removeEventListener('load', land)
+      for (const ev of ['wheel', 'touchstart', 'keydown']) {
+        window.removeEventListener(ev, takeOver)
+      }
+    }
+  }, [])
+}
+
 // Which section the reader is currently in, for the navbar's contents index.
 //
 // One rAF-throttled scroll listener that measures every section and picks the
