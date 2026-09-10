@@ -56,8 +56,9 @@ export default function Contact() {
       kicker="Contact"
       title="Let's talk"
       subtitle="Fill in the form to contact me, I read every email."
+      narrow
     >
-      <div className="mx-auto max-w-2xl">
+      <div>
         <Reveal className="mb-5 flex flex-wrap items-center justify-center gap-3">
           <IconLink href={`mailto:${EMAIL}`} label={`Email ${EMAIL}`}><MailIcon />{EMAIL}</IconLink>
           <IconLink href="https://www.linkedin.com/in/erick06/" label="LinkedIn profile erick06" external><LinkedInIcon />erick06</IconLink>

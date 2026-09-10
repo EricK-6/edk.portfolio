@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { goTo } from '../router.js'
-import { useVisited } from '../passport.js'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 
@@ -238,9 +237,26 @@ function Prompt({ path = '~' }) {
   )
 }
 
-export default function TerminalDock({ open, setOpen }) {
-  // the handle hint fades once the visitor starts exploring (like the navbar hints)
-  const showHints = useVisited().size <= 1
+export default function TerminalDock() {
+  // The dock owns whether it is open. It used to be lifted into App because
+  // the shell had to reserve 380px of padding for it; that padding is gone —
+  // on a scrolling document, shoving the whole page sideways reflows every
+  // section under the reader — so nothing outside this component needs to
+  // know, and it overlays instead.
+  const [open, setOpen] = useState(false)
+
+  // The handwritten "For Devs" nudge is for someone who has never found this.
+  // It used to fade once the visitor had travelled past one tile, which was
+  // the passport's reading of "started exploring"; scrolling is not evidence
+  // of anything, so it now fades once the dock has actually been opened.
+  const [seen, setSeen] = useState(() => {
+    try { return localStorage.getItem('terminal-seen') === '1' } catch { return false }
+  })
+  useEffect(() => {
+    if (!open || seen) return
+    setSeen(true)
+    try { localStorage.setItem('terminal-seen', '1') } catch { /* private mode */ }
+  }, [open, seen])
   // The boot trace prints itself the first time the dock is opened, a line at
   // a time, rather than being there already: a kernel log that has clearly
   // just run is the whole charm of it. Once per mount, and instant for anyone
@@ -325,8 +341,8 @@ export default function TerminalDock({ open, setOpen }) {
     if (el) el.scrollTop = el.scrollHeight
   }, [lines, open])
 
-  // 'cd <section>' navigates to that section (a flight in space mode, a scroll
-  // in scroll mode); 'top' / 'cd ~' is home
+  // 'cd <section>' scrolls the page to that section; 'top' / 'cd ~' is the
+  // intro at the head of the document
   const go = (id) => goTo(id === 'top' ? 'home' : id)
   const downloadCV = (href = './CV_SWE.pdf') => {
     const a = document.createElement('a')
@@ -546,9 +562,6 @@ export default function TerminalDock({ open, setOpen }) {
 
       <aside
         aria-label="Interactive terminal"
-        // the log scrolls itself: a wheel in here is never a request to travel
-        // to the next tile (see SunriseLayout)
-        data-travel-ignore=""
         className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,380px)] transform transition-transform duration-300 ease-out print:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
@@ -587,7 +600,7 @@ export default function TerminalDock({ open, setOpen }) {
             // `terminal-log` is the touch hook: on a coarse pointer index.css
             // takes the whole log to 16px, so the prompt does not trip iOS's
             // focus zoom and the ghost suffix stays aligned with it.
-            className="terminal-log flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed text-grey-700 dark:text-grey-300"
+            className="terminal-log flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-[13px] leading-relaxed text-grey-700 dark:text-grey-300"
           >
             {lines.map((l, i) => (
               <div key={i} className="whitespace-pre-wrap break-words">
@@ -630,7 +643,14 @@ export default function TerminalDock({ open, setOpen }) {
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Collapse terminal' : 'Open terminal'}
             aria-expanded={open}
-            className="absolute left-full top-20 flex flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
+            // Hidden below lg, where it has nowhere safe to sit. The tab rides
+            // the left edge of the viewport, and the document's column only
+            // keeps 24px of padding there — so on a phone it landed on top of
+            // whatever section kicker happened to be at that height ("SKILLS"
+            // rendered as "KILLS"). From lg up the centred column leaves at
+            // least 64px of margin and the tab clears it. Below that, the
+            // menu carries the terminal instead.
+            className="absolute left-full top-20 hidden flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 lg:flex dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
           >
             <PromptGlyph />
             <span className="font-mono text-[11px] tracking-wider [writing-mode:vertical-rl] rotate-180">
@@ -640,10 +660,10 @@ export default function TerminalDock({ open, setOpen }) {
           {/* sm and up only: the hint is written in the margin beside the tile,
               and a phone has no margin — it was landing in teal handwriting on
               top of whichever card happened to be there */}
-          {!open && showHints && (
+          {!open && !seen && (
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute left-full top-32 ml-10 hidden items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 sm:flex dark:text-accent-dark/80"
+              className="pointer-events-none absolute left-full top-32 ml-10 hidden items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 lg:flex dark:text-accent-dark/80"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="-rotate-90">
                 <path d="M8 15 C 8 9.5, 6 6, 5 3" />

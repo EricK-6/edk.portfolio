@@ -13,7 +13,13 @@ import '@fontsource-variable/fraunces'
 import '@fontsource/caveat/500.css'
 import '@fontsource/caveat/600.css'
 import App from './App.jsx'
+import { upgradeLegacyHash } from './router.js'
 import './index.css'
+
+// Bookmarks and shared links from the route-per-section era used '#/about'.
+// Rewrite them to the anchor form before React paints, so an old link still
+// lands on the right section instead of at the top of the page.
+upgradeLegacyHash()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

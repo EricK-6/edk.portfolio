@@ -1,43 +1,82 @@
 import { useEffect, useState } from 'react'
 
-// Minimal hash-based router. The home page (the bento) lives at '#/' and every
-// section is its own page at '#/<id>'. Hash routing keeps deep links and page
-// refreshes working on static hosts (GitHub Pages) with no server rewrites,
-// and plain <a href="#/about"> links navigate for free via the hashchange event.
+// The site is one scrolling document. Every section is an <section id="...">
+// in reading order, so navigation is nothing but anchors.
+//
+// This replaces a hash router that gave each section its own route and moved
+// between them by hijacking the wheel. That is what made the site feel
+// unstable: a trackpad flick emits momentum events for a second or more, and
+// a gesture that was meant to read the end of a section instead teleported
+// past it. A document has none of those failure modes, and it gets the
+// scrollbar, Cmd+F, Back, and deep links back for free.
+//
+// Smooth scrolling and the header offset are pure CSS (`scroll-behavior` and
+// `scroll-padding-top` in index.css), so a plain <a href="#about"> is the
+// whole navigation implementation. No click handler, nothing to keep in sync.
 
-// Read the current route id from the URL. '' / '#/' -> 'home'. Also tolerates
-// the old bare-anchor form ('#about') so existing links/bookmarks still land.
-export function parseRoute() {
-  const h = (window.location.hash || '').replace(/^#\/?/, '')
-  return h || 'home'
+// Old links and bookmarks used the '#/about' route form. Rewrite them to the
+// anchor form once on boot, before React paints, so an existing bookmark
+// still lands on the right section instead of at the top of the page.
+export function upgradeLegacyHash() {
+  const h = window.location.hash
+  if (!h.startsWith('#/')) return
+  const id = h.slice(2)
+  // '#/' was home; anything else was a section id
+  window.location.replace(`${window.location.pathname}${window.location.search}#${id || 'top'}`)
 }
 
-const hashFor = (route) => (route === 'home' ? '#/' : `#/${route}`)
-
-export function navigate(route) {
-  window.location.hash = hashFor(route)
-}
-
-// Same destination, but without leaving a history entry behind. Used to tidy a
-// hash that names no page ('#/nonsense') back to '#/': the visitor already sees
-// home, so the URL should say so, and Back should still return them to wherever
-// they actually came from rather than to the address that never existed.
-export function replaceRoute(route) {
-  if (window.location.hash === hashFor(route)) return
-  window.location.replace(hashFor(route))
-}
-
-// Go to a section: every section is its own tile, so this is just a route.
+// Jump to a section. Setting the hash is deliberate rather than calling
+// scrollIntoView: it goes through the same CSS smooth-scroll and
+// scroll-padding the anchors use, it leaves a history entry so Back works,
+// and it puts the section in the address bar so the URL is copyable.
 export function goTo(id) {
-  navigate(id)
+  window.location.hash = id === 'home' ? 'top' : id
 }
 
-export function useRoute() {
-  const [route, setRoute] = useState(parseRoute)
+// Which section the reader is currently in, for the navbar's contents index.
+//
+// One rAF-throttled scroll listener that measures every section and picks the
+// last one to have passed under the header. Deriving the answer from all the
+// rects at once — rather than from whichever element happened to fire an
+// event — is what keeps it from flickering between two neighbours mid-scroll.
+//
+// `ids` must be a stable reference (a module-level constant); an array built
+// inline in render would retrigger this effect on every render.
+export function useActiveSection(ids, offset = 96) {
+  const [active, setActive] = useState(ids[0])
+
   useEffect(() => {
-    const onChange = () => setRoute(parseRoute())
-    window.addEventListener('hashchange', onChange)
-    return () => window.removeEventListener('hashchange', onChange)
-  }, [])
-  return route
+    let frame = 0
+    const measure = () => {
+      frame = 0
+      const nodes = ids.map((id) => document.getElementById(id)).filter(Boolean)
+      if (!nodes.length) return
+
+      let current = nodes[0]
+      for (const node of nodes) {
+        if (node.getBoundingClientRect().top <= offset) current = node
+      }
+      // The last section is often too short to ever reach the band, so it
+      // would never light up. Hitting the bottom of the document counts as
+      // being in it.
+      const atEnd =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
+      setActive(atEnd ? nodes[nodes.length - 1].id : current.id)
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure)
+    }
+
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    measure()
+
+    return () => {
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [ids, offset])
+
+  return active
 }

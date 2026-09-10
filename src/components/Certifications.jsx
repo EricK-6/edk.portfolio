@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
@@ -92,30 +93,59 @@ const HEX_PATH = roundedHex(HEX_W, HEX_H, 16)
 
 // medallion that links to the Credly badge: the hexagon frames only the badge
 // art (which already carries the cert name); hovering or focusing crossfades
-// to the description. Pure opacity swap on a static element — no 3D, no
-// filters animating, nothing hover can destabilise.
+// Pure opacity swap between two faces on a static element — no 3D, no filters
+// animating, nothing that can destabilise.
 function HexMedallion({ cert, index }) {
   const gradientId = `hexBorder-${index}`
   // A certificate without a Credly badge yet is still worth showing — it just
-  // renders as a plain figure instead of a link, so there is no dead href and
-  // no "click to verify" promise the page cannot keep.
+  // has no second step, so there is no "verify" promise the page cannot keep.
   const linked = Boolean(cert.credlyUrl)
-  const Frame = linked ? 'a' : 'div'
-  const frameProps = linked
-    ? {
-        href: cert.credlyUrl,
-        target: '_blank',
-        rel: 'noopener noreferrer',
-        'aria-label': `${cert.name}: verify on Credly (opens in a new tab)`,
-      }
-    // still focusable, or the description face would be hover-only
-    : { 'aria-label': cert.name, tabIndex: 0 }
+
+  // The badge is now completely static until it is asked for.
+  //
+  // It used to swap to its description on hover, which meant the row of three
+  // flickered between two faces as the pointer crossed them on the way to
+  // anything else — you could not read a badge while moving past it, and on a
+  // trackpad the whole section shimmered. Nothing on this page should change
+  // because the cursor happened to pass over it.
+  //
+  // So: first press reveals the description, second press opens Credly. Two
+  // presses for a new tab is only acceptable if the second one is announced,
+  // which is what the line at the foot of the open face is for — it names the
+  // next click before you make it.
+  const [open, setOpen] = useState(false)
+
+  const press = () => {
+    if (!open) { setOpen(true); return }
+    if (linked) window.open(cert.credlyUrl, '_blank', 'noopener,noreferrer')
+  }
+
   return (
-    <Frame
-      {...frameProps}
-      className={`group relative block aspect-[300/346] w-full max-w-sm select-none rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-grey-300 dark:focus-visible:ring-offset-grey-950 ${
-        linked ? 'cursor-pointer' : ''
-      }`}
+    // The hexagon plus a caption underneath it.
+    //
+    // The caption used to sit inside the badge, which is the one place it
+    // cannot go: a hexagon's usable width collapses toward both vertices, so
+    // an extra line at the bottom landed on top of the issuer and date. Out
+    // here it always has the full column width, it never overlaps anything,
+    // and it is the natural home for naming the second click before it
+    // happens.
+    <div className="flex w-full max-w-sm flex-col items-center gap-3">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={press}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); press() }
+        else if (e.key === 'Escape') setOpen(false)
+      }}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}
+      aria-expanded={open}
+      aria-label={
+        open && linked
+          ? `${cert.name}: verify on Credly (opens in a new tab)`
+          : `${cert.name}: show details`
+      }
+      className="group relative block aspect-[300/346] w-full max-w-sm cursor-pointer select-none rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page"
     >
       {/* soft glow pad grounding the badge (static, so nothing can flicker) */}
       <div
@@ -137,18 +167,25 @@ function HexMedallion({ cert, index }) {
             <stop offset="100%" stopColor={cert.hue.deep} />
           </linearGradient>
         </defs>
+        {/* the border is the one thing hover still touches: a border warming
+            under the cursor says "this responds" without replacing what you
+            are looking at */}
         <path
           d={HEX_PATH}
-          className="fill-grey-100 transition-[stroke-opacity] [stroke-opacity:0.45] group-hover:[stroke-opacity:0.9] dark:fill-grey-900"
+          className={`fill-grey-50 transition-[stroke-opacity] ${
+            open ? '[stroke-opacity:0.9]' : '[stroke-opacity:0.45] group-hover:[stroke-opacity:0.7]'
+          }`}
           stroke={`url(#${gradientId})`}
           strokeWidth="2.5"
         />
       </svg>
 
-      {/* badge face — art, name and date all kept inside the hexagon; the
-          name wraps within a width the mid-band holds, and the small issuer
-          line clears the bottom taper */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-8 text-center transition-opacity duration-300 group-hover:opacity-0 group-focus-visible:opacity-0 motion-reduce:transition-none">
+      {/* badge face — art, name and date all kept inside the hexagon */}
+      <div
+        className={`absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-8 py-[14%] text-center transition-opacity duration-300 motion-reduce:transition-none ${
+          open ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
         <img
           src={cert.image}
           alt=""
@@ -165,10 +202,8 @@ function HexMedallion({ cert, index }) {
             {cert.name}
           </h3>
           {/* Issuer over date, not joined by a dot. This line sits below the
-              hexagon's widest band — the sides have already begun tapering to
-              the bottom vertex — so the width it can use is well under the
-              full 300. Run together it measured 23% too wide on a small phone
-              and "AMAZON" and "2026" hung off the sloped edges. */}
+              hexagon's widest band, so the width it can use is well under the
+              full 300; run together it measured 23% too wide on a small phone. */}
           <div
             className="mt-1 text-xs font-medium uppercase leading-relaxed tracking-wide"
             style={{ color: cert.hue.deep }}
@@ -179,25 +214,41 @@ function HexMedallion({ cert, index }) {
         </div>
       </div>
 
-      {/* details face — fades in over the badge */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
-        <p className="max-w-[15rem] text-sm sm:text-justify leading-relaxed text-grey-700 dark:text-grey-300">
+      {/* details face */}
+      <div
+        // py-[18%]: the description face is the taller of the two, and a
+        // hexagon has least room exactly where a centred block of four lines
+        // wants to go. Capping the band is what keeps the text off the
+        // sloped edges instead of running out over them.
+        className={`absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-8 py-[18%] text-center transition-opacity duration-300 motion-reduce:transition-none ${
+          open ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+      >
+        <p className="max-w-[13.5rem] text-[13px] leading-relaxed text-grey-700">
           {cert.description}
         </p>
         {cert.tags?.length > 0 && (
-          <div className="flex max-w-[16rem] flex-wrap justify-center gap-1.5">
+          <div className="flex max-w-[14rem] flex-wrap justify-center gap-1.5">
             {cert.tags.map((t) => (
               <span key={t} className="tag">{t}</span>
             ))}
           </div>
         )}
-        {linked && (
-          <div className="flex items-center gap-1.5 text-xs text-grey-500 dark:text-grey-500">
-            <ExternalLinkIcon /> click to verify on Credly
-          </div>
-        )}
       </div>
-    </Frame>
+    </div>
+
+    {/* the affordance, in full width under the badge */}
+    <p
+      className="flex min-h-[1.25rem] items-center gap-1.5 text-center font-mono text-[10px] uppercase tracking-[0.14em] transition-colors duration-200"
+      style={{ color: open && linked ? cert.hue.deep : undefined }}
+    >
+      {open && linked ? (
+        <><ExternalLinkIcon /> Click again to verify on Credly</>
+      ) : (
+        <span className="text-grey-400">{open ? 'Click to close' : 'Click for details'}</span>
+      )}
+    </p>
+    </div>
   )
 }
 

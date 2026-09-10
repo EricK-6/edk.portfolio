@@ -1,11 +1,5 @@
-// The site's pages, in one place. Home is the intro; the other eight are the
-// sections, each its own hash route.
-//
-// This used to also describe the site as a 3x3 spatial grid, which drove a
-// navbar minimap and edge arrows that moved you to the adjacent cell. Both are
-// gone — travel is one vertical axis now and the navbar is a numbered contents
-// list — so the grid and its lookups went with them rather than sitting here
-// describing navigation the site no longer has.
+// The site's sections, in reading order. One scrolling document, so these are
+// anchors on the page rather than routes — 'home' is the intro at the top.
 
 export const LABELS = {
   home: 'Home',
@@ -19,12 +13,27 @@ export const LABELS = {
   contact: 'Contact',
 }
 
-// Every page in reading order, home first: the navbar's contents index, the
-// mobile menu and the passport stamps all walk this.
+// Reading order, home first: the navbar's contents index, the mobile menu and
+// the command palette all walk this.
 export const MENU_IDS = [
   'home', 'about', 'projects', 'experience', 'skills',
   'education', 'certifications', 'leadership', 'contact',
 ]
 
-// Hash for a page link. Every section is its own route ('#/', '#/about').
-export const hrefFor = (id) => (id === 'home' ? '#/' : `#/${id}`)
+// Home is the cover, so it is not numbered; the eight sections run 01 to 08.
+// Module-level and frozen because `useActiveSection` keys an effect on it.
+export const SECTION_IDS = MENU_IDS.filter((id) => id !== 'home')
+
+// The intro's anchor. 'home' is the id the rest of the app uses for it; 'top'
+// is what it is called in the document, so the URL reads '#top'.
+export const anchorOf = (id) => (id === 'home' ? 'top' : id)
+
+// Every link on the site is a plain anchor into the same document.
+export const hrefFor = (id) => `#${anchorOf(id)}`
+
+// What the scrollspy watches: the anchor ids as they actually appear in the
+// document, intro included. It has to be the anchors, not MENU_IDS — the
+// intro's element is <section id="top">, so looking up 'home' found nothing,
+// the intro dropped out of the list, and 'About' was reported as the current
+// section while the reader was still looking at the photograph.
+export const SPY_IDS = MENU_IDS.map(anchorOf)

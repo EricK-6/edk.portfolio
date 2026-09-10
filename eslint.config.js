@@ -12,7 +12,12 @@ export default [
     files: ['**/*.{js,jsx,mjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
-      globals: { ...globals.browser, ...globals.node },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        // baked in at build time by vite.config.js (`define`)
+        __LAST_UPDATED__: 'readonly',
+      },
     },
     settings: { react: { version: 'detect' } },
     plugins: { 'react-hooks': reactHooks },

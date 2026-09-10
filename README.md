@@ -4,13 +4,12 @@ Hey, I'm **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at
 
 🔗 **Live at [erickk.cloud](https://erickk.cloud/)**
 
-It's a single-page site, but I didn't want it to feel like a CV crammed into a webpage, so I had some fun with it:
+It's one page that scrolls, top to bottom, and I've deliberately kept it that way:
 
-- **Space mode (the default)** — every section floats as a panel in a 3D starfield (constellations, planets, a comet, the odd shooting star) and the camera flies between them. Scroll, use the arrow keys, or click a floating panel to fly to it.
-- **Scroll mode** — the classic single page for reading everything at a glance (the navbar toggle switches modes).
-- **A boarding-pass hero** — the landing page is a ticket for the flight: type my name to check in, and the stub holds the CV previews.
+- **A full-bleed intro** — one photograph from Queenstown, my name on it, and the line about what I build. It's the only place on the site type sits on a picture.
+- **Everything below is paper** — a flat off-white document, a narrow reading measure, hairline rules between sections, and a numbered contents index in the header that tracks where you are.
 - **Command palette** (`Cmd`/`Ctrl + K`) and a small terminal dock for the keyboard people.
-- **Dark / light themes**, remembered between visits.
+- **The page never fights the scroll.** There's no wheel hijacking, no snap, nothing that moves once it's arrived — the animation is all entrance. That's on purpose: an earlier version made each section its own route and reinterpreted the wheel as travel between them, which cost the scrollbar, `Cmd+F`, and a sane Back button.
 
 ---
 
@@ -56,17 +55,21 @@ npm run deploy
 ├── .github/workflows/deploy.yml   # auto-deploy on push to main
 ├── scripts/make-og.mjs            # regenerates public/og-image.png (see its header)
 ├── public/
-│   ├── CV_SWE.pdf                 # the two CVs the boarding-pass stub links to
+│   ├── CV_SWE.pdf                 # the two CVs the intro links to
 │   ├── CV_EEE.pdf
-│   └── saturn.svg
+│   ├── qt.jpg                     # the intro photograph (+ qt-sm.jpg for small screens)
+│   └── og-image.png
 ├── src/
-│   ├── App.jsx                    # theme + layout (space vs scroll mode)
+│   ├── App.jsx                    # the document: every section, in reading order
 │   ├── main.jsx
+│   ├── router.js                  # anchors + the scrollspy the contents index uses
+│   ├── sitemap.js                 # the sections and their labels, in one place
+│   ├── useOnScreen.js             # pauses the project demo clips when off screen
 │   ├── index.css                  # Tailwind + my shared component classes
 │   └── components/
-│       ├── Navbar.jsx
-│       ├── Hero.jsx               # boarding-pass hero + type-my-name check-in
-│       ├── SpaceLayout.jsx        # 3D flight mode (the default layout)
+│       ├── Navbar.jsx             # masthead + numbered contents index
+│       ├── Hero.jsx               # the full-bleed photo intro
+│       ├── Divider.jsx            # the rule between sections
 │       ├── About.jsx
 │       ├── Projects.jsx           # project explorer (list + detail card)
 │       ├── Experience.jsx
@@ -76,6 +79,9 @@ npm run deploy
 │       ├── Leadership.jsx
 │       ├── Contact.jsx            # Formspree contact form
 │       ├── Footer.jsx
+│       ├── CommandPalette.jsx     # Cmd/Ctrl + K
+│       ├── TerminalDock.jsx        # the drawer for the keyboard people
+│       ├── Cursor.jsx             # the dot-and-ring cursor (fine pointers only)
 │       ├── Section.jsx            # shared section wrapper
 │       └── Reveal.jsx             # scroll-into-view animation
 ├── tailwind.config.js
@@ -97,10 +103,11 @@ For real project screenshots, I drop an image into `public/` and swap the placeh
 
 ## Updating my CV
 
-Both CVs (`CV_SWE.pdf` and `CV_EEE.pdf`) live in `public/` and are committed to the repo — the boarding-pass stub links straight to them. To update one, just replace the PDF in `public/` and push.
+Both CVs (`CV_SWE.pdf` and `CV_EEE.pdf`) live in `public/` and are committed to the repo — the RÉSUMÉ control in the intro links straight to them. To update one, just replace the PDF in `public/` and push.
 
 ## A few notes to self
 
-- Dark mode follows the system on first load, then remembers whatever I last picked.
+- The palette is locked light — there's no theme toggle. (`dark:` classes are still in the markup, but nothing ever puts `dark` on `<html>`; they were left in so the decision stays reversible.)
+- Anchor offsets are `scroll-padding-top` on `<html>`, in one place. Don't also add `scroll-mt` to sections — they add up.
 - The contact form posts to Formspree (set by `FORMSPREE_ENDPOINT` in `Contact.jsx`), with a plain `mailto:` fallback underneath it.
 - `public/CV_SWE.pdf` is public once the site is deployed — if I don't want my phone number scraped, I can keep a redacted PDF in `public/` and the full one to myself.

@@ -9,15 +9,17 @@ import Reveal from './Reveal.jsx'
 // that and does it better.
 export default function About() {
   return (
-    <Section id="about" kicker="Profile" title="About me">
+    // The statement *is* the heading. It used to be an h3 inside the section
+    // under an h2 that said "About me" — and it was set larger than that h2,
+    // so the page's own hierarchy ran backwards. The kicker carries the
+    // section's name (matching the navbar's contents index) and the one line
+    // worth reading is the title.
+    <Section id="about" kicker="About" title="Hardware and software, on the same bench." narrow>
       {/* Prose on top, highlights underneath in a row. The old shape put them
           side by side, which worked when the text ran three paragraphs and
           left a column of empty glass once it was cut to two. */}
-      <div className="mx-auto max-w-3xl">
-        <Reveal className="space-y-4 sm:text-justify text-grey-700 leading-relaxed">
-          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-grey-900">
-            Hardware and Software, on the same bench.
-          </h3>
+      <div>
+        <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
             I'm Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
             University of Auckland, working across <Bold>embedded systems</Bold>,{' '}
@@ -34,8 +36,8 @@ export default function About() {
           </p>
         </Reveal>
 
-        <Reveal as="aside" delay={120} className="mt-7 block border-t border-white/70 pt-5">
-          <div className="text-xs uppercase tracking-widest text-grey-500">Highlights</div>
+        <Reveal as="aside" delay={120} className="mt-8 block border-t border-grey-200 pt-6">
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-grey-500">Highlights</div>
           <ul className="mt-3 grid gap-x-6 gap-y-2.5 text-sm text-grey-700 sm:grid-cols-2">
             {HIGHLIGHTS.map((h) => (
               <li key={h} className="flex gap-2.5">

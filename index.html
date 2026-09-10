@@ -60,25 +60,27 @@
          page needs no third-party origins and first paint isn't blocked on
          a remote stylesheet. -->
   </head>
-  <body>
+  <!-- the page colour up front, so the first paint before the stylesheet
+       arrives is the paper rather than a white flash -->
+  <body style="background-color: #fbfaf9">
+    <!-- A 7,600px document behind a fixed header earns a skip link. It is the
+         first thing in the tab order and invisible until focused. -->
+    <a
+      href="#main"
+      style="position:absolute;left:-9999px;top:0;z-index:100;padding:10px 16px;background:#fff;color:#115e59;border-radius:0 0 8px 0;font:500 14px/1 system-ui,sans-serif"
+      onfocus="this.style.left='0'"
+      onblur="this.style.left='-9999px'"
+    >Skip to content</a>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- GoatCounter (privacy-friendly analytics). The site is a hash-routed
-         SPA, so '#/about' is normalised to '/about' and every hash navigation
-         counts as a pageview; it skips localhost by itself. -->
-    <script>
-      window.goatcounter = {
-        path: function () {
-          return '/' + location.hash.replace(/^#\/?/, '')
-        },
-      }
-      window.addEventListener('hashchange', function () {
-        if (window.goatcounter && typeof window.goatcounter.count === 'function') {
-          window.goatcounter.count()
-        }
-      })
-    </script>
+    <!-- GoatCounter (privacy-friendly analytics); it skips localhost by
+         itself. The hash is deliberately NOT counted any more. It used to be:
+         the site was a hash-routed SPA where '#/about' really was another
+         page, so each hashchange was a pageview. The site is now one scrolling
+         document and '#about' is an anchor inside it, so counting those turned
+         a single visitor who clicked through the contents index into nine
+         pageviews. One page, one count. -->
     <script data-goatcounter="https://erickk.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
   </body>

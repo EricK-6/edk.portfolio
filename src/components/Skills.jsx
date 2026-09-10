@@ -1,182 +1,75 @@
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
-// Each group carries its own icon, count and ruled header so a reader can find
-// the stack they care about without reading all thirty-six chips. The groups
-// used to be told apart by hue as well (accent / sky / violet), but the site's
-// palette is now one accent plus a reserved award colour, and three unrelated
-// hues here were the loudest thing fighting it.
+// Four groups, read straight off the two CVs' skills rows.
+//
+// This section used to carry a logo beside every one of the thirty-seven
+// chips, a 4px accent gradient bar over each column, and an accent-tinted icon
+// tile per group. On a page whose whole premise is calm it was the loudest
+// block on the site — and the decoration was working against the only job the
+// section has, which is letting someone check whether a particular tool is on
+// the list. Thirty-seven third-party marks at 16px are thirty-seven different
+// hues fighting for the same glance, and at that size a wordmark like JUnit or
+// SQL is mush: the word "Python" is more legible than the Python logo. So the
+// marks are gone, and with them thirty-seven image requests. What is left is
+// the thing a reader was scanning for in the first place — the words.
 const GROUPS = [
   {
     label: 'Programming Languages',
-    icon: 'code',
-    // The CV's own first row, plus VHDL — that one is a language on the EEE CV
-    // and has nowhere else to sit here. React.js lives under Frameworks & Tools
-    // instead, which is where the SWE CV files it.
+    // The SWE CV's own first row, plus VHDL — that one is a language on the
+    // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
+    // & Tools instead, which is where the SWE CV files it.
     items: ['Python', 'Java', 'C', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL'],
   },
   {
     label: 'Cloud & AWS',
-    icon: 'cloud',
     // The CV collapses all of this to the word "AWS" because a one-page PDF has
     // no room. The site does have room, so the services stay named — every one
-    // of them appears in a project's tech list two tiles up, which is the whole
+    // of them appears in a project's tech list further up, which is the whole
     // reason for naming them rather than asking the reader to take "AWS" on
-    // faith. Core service first, then roughly the order they get reached for.
+    // faith.
     items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM'],
   },
   {
     label: 'Frameworks & Tools',
-    icon: 'wrench',
-    // The rest of the SWE CV's second row, in its order.
     items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'GitHub Actions', 'Android Studio', 'Figma'],
   },
   {
     label: 'Hardware & EDA Tools',
-    icon: 'chip',
     items: ['Altium Designer', 'LTSpice', 'ModelSim', 'Intel Quartus Prime', 'Proteus', 'Atmel AVR', 'AutoCAD'],
   },
 ]
 
-// Logo per chip, keyed by the exact label in GROUPS above. Kept as a lookup
-// rather than folded into the group arrays so those stay plain lists that can
-// be read straight against the CV's own skills rows.
-//
-// A skill with no entry here degrades to a text-only chip by design, so this
-// map never has to stay exhaustive to stay correct.
-const LOGOS = {
-  // languages
-  Python: './python.png',
-  Java: './java.png',
-  C: './c.png',
-  'HTML/CSS': './htmlcss.jpeg',
-  JavaScript: './js.png',
-  TypeScript: './ts.png',
-  R: './r.jpeg',
-  MATLAB: './matlab.jpeg',
-  SQL: './sql.png',
-  VHDL: './vhdl.png',
-  // cloud
-  AWS: './aws.jpg',
-  Lambda: './lambda.png',
-  S3: './s3.jpeg',
-  DynamoDB: './dynamodb.jpeg',
-  Bedrock: './bedrock.png',
-  Textract: './textract.jpeg',
-  Comprehend: './comprehend.png',
-  Kinesis: './kinesis.png',
-  SNS: './sns.png',
-  Amplify: './amplify.png',
-  SAM: './sam.jpeg',
-  // frameworks & tools
-  'React.js': './react.png',
-  'Node.js': './nodejs.png',
-  'Express.js': './express.png',
-  JUnit: './junit.png',
-  ROS: './ros.jpeg',
-  Git: './git.png',
-  'GitHub Actions': './ghubactions.png',
-  'Android Studio': './android.jpeg',
-  Figma: './figma.png',
-  // hardware & EDA
-  'Altium Designer': './altium.jpeg',
-  LTSpice: './ltspice.png',
-  ModelSim: './modelsim.png',
-  'Intel Quartus Prime': './quartus.png',
-  Proteus: './proteus.jpeg',
-  'Atmel AVR': './avr.png',
-  AutoCAD: './cad.png',
-}
-
 export default function Skills() {
   return (
     <Section id="skills" kicker="Skills" title="What I work with">
-      {/* One panel split into ruled columns rather than separate tiles: equal
-          -size tiles always left the short groups with a band of empty card,
-          where inside a single box the columns simply end where they end, the
-          way a spec sheet does, and the outer shape stays a clean rectangle.
-          Two across, not three. The groups hold 10, 11, 9 and 7 items — close
-          enough in length to sit level in a 2x2, where the old three-column
-          split had one 19-item column towering over two 3-row ones. */}
-      <Reveal className="overflow-hidden rounded-2xl border border-grey-300/80 bg-grey-100 dark:border-grey-800/70 dark:bg-grey-900/60">
-        <div className="grid lg:grid-cols-2 lg:divide-x lg:divide-grey-300/70 lg:dark:divide-grey-800/70">
-          {GROUPS.map((g) => (
-            <div key={g.label} className="flex flex-col">
-              {/* hue rule: doubles as the divider between stacked columns
-                  below lg, where there is no vertical rule to carry it */}
-              <span aria-hidden="true" className="block h-1 w-full bg-gradient-to-r from-accent/80 to-accent/10" />
-              <div className="p-5">
-                <div className="flex items-center gap-2.5">
-                  <span className="inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-accent/10 text-accent">
-                    <GroupIcon type={g.icon} />
-                  </span>
-                  <h3 className="flex-1 text-sm font-semibold text-grey-800 dark:text-grey-200">{g.label}</h3>
-                  <span className="font-mono text-[11px] tabular-nums text-grey-400 dark:text-grey-600">
-                    {String(g.items.length).padStart(2, '0')}
-                  </span>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {g.items.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-grey-300/80 bg-grey-200/70 py-1 pl-1.5 pr-2.5 text-sm font-medium text-grey-800 transition-colors hover:border-grey-400 hover:bg-grey-200 dark:border-grey-800 dark:bg-grey-900 dark:text-grey-200 dark:hover:border-grey-700"
-                    >
-                      {LOGOS[item] && (
-                        // Height is fixed and width runs free: these marks are
-                        // every shape from a 1:1 roundel to a 3.5:1 wordmark
-                        // (JUnit, SQL), and squaring them would shrink the wide
-                        // ones to a sliver. The white pad is what lets the
-                        // opaque JPEGs sit next to the transparent PNGs without
-                        // one set showing a visible box — it becomes the mark's
-                        // own background either way.
-                        <img
-                          src={LOGOS[item]}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="h-4 w-auto max-w-[26px] flex-none rounded-[3px] bg-white object-contain p-px"
-                        />
-                      )}
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
+      {/* Two across, not three. The groups hold 10, 11, 9 and 7 items — close
+          enough in length to sit level in a 2x2, where a three-column split
+          left one tall column towering over two short ones. */}
+      <div className="grid gap-x-10 gap-y-9 sm:grid-cols-2">
+        {GROUPS.map((g, i) => (
+          <Reveal key={g.label} delay={i * 70}>
+            <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
+              <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
+                {g.label}
+              </h3>
+              <span className="ml-auto font-mono text-[11px] tabular-nums text-grey-400">
+                {String(g.items.length).padStart(2, '0')}
+              </span>
             </div>
-          ))}
-        </div>
-      </Reveal>
+            <ul className="mt-3.5 flex flex-wrap gap-1.5">
+              {g.items.map((item) => (
+                <li
+                  key={item}
+                  className="rounded-md bg-grey-100 px-2.5 py-1 text-sm text-grey-800 ring-1 ring-inset ring-grey-200"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        ))}
+      </div>
     </Section>
-  )
-}
-
-const GROUP_PATHS = {
-  code: <path d="m8 6-6 6 6 6M16 6l6 6-6 6M14 4l-4 16" />,
-  cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
-  wrench: <path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.1-2.1 2.5-2.5Z" />,
-  chip: (
-    <>
-      <rect x="4" y="4" width="16" height="16" rx="2" />
-      <rect x="9" y="9" width="6" height="6" />
-      <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
-    </>
-  ),
-}
-
-function GroupIcon({ type }) {
-  return (
-    <svg
-      aria-hidden="true"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {GROUP_PATHS[type]}
-    </svg>
   )
 }

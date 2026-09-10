@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
-import { useLayout } from '../layout.js'
 
+// One line a role.
+//
+// These were two CV bullets each, which is right on a PDF and wrong in a
+// timeline card: the cards sit in two interleaved columns, so every extra line
+// pushes the next card further down the curve and the serpentine stretches
+// until you are scrolling past mostly whitespace. A role in a list like this
+// has to earn its space in a sentence — the CV is one click away in the navbar
+// for anyone who wants the full pair.
 const ROLES = [
   {
     title: 'Academic Team Executive',
@@ -11,7 +18,7 @@ const ROLES = [
     period: 'Jul 2024 - Present',
     image: './KEB.webp',
     description:
-      'Developed and delivered tutorial sessions for 20+ junior engineering students across various courses, and helped plan academic events for the student community.',
+      'Ran tutorial sessions for 20+ junior engineering students, and helped plan academic events.',
   },
   {
     title: 'Full-time Student Volunteer',
@@ -19,7 +26,7 @@ const ROLES = [
     period: 'Jul 2025',
     image: './IEEE.webp',
     description:
-      'Volunteered 40+ hours full time supporting operations and logistics at the NZ Robotics Olympiad (NZRO) 2025 with the Institute of Electrical and Electronics Engineers (IEEE), collaborating with organisers to ensure a smooth event experience for participants.',
+      'Volunteered 40+ hours on operations and logistics, working with organisers to keep the event running.',
   },
   {
     title: 'Logistics Team Member',
@@ -27,7 +34,7 @@ const ROLES = [
     period: 'Jul 2025',
     image: './nzpmc.jpeg',
     description:
-      'Part of the logistics team for the New Zealand Physics and Math Competition (NZPMC).',
+      'Logistics team for the New Zealand Physics and Math Competition.',
   },
   {
     title: 'Competition Staff',
@@ -35,7 +42,7 @@ const ROLES = [
     period: 'May 2026',
     image: './cares.jpeg',
     description:
-      'Volunteered at the World Robot Olympiad (WRO) 2026 with the Centre for Automation and Robotic Engineering Science (CARES).',
+      'Volunteered at the World Robot Olympiad 2026 with CARES.',
   },
   {
     title: 'Competition Staff',
@@ -43,7 +50,7 @@ const ROLES = [
     period: 'Jul 2026',
     image: './ieee_r&a.webp',
     description:
-      'Selected as official Competition Staff for NZ Robotics Olympiad (NZRO) 2026 based on prior volunteering and robotics instructor experience at ciLab, leading competition operations and resolving technical issues to keep matches running smoothly for all teams.',
+      'Selected on prior ciLab experience; led competition operations and resolved technical issues to keep matches running.',
   },
 ]
 
@@ -54,9 +61,6 @@ const ITEMS = [
 ]
 
 export default function Leadership() {
-  // space mode: trim card padding so the section sits near full scale in its
-  // floating panel without the serpentine columns colliding
-  const space = useLayout() === 'tile'
   const wrapRef = useRef(null)
   const nodeRefs = useRef([])
   const [path, setPath] = useState('')
@@ -69,7 +73,7 @@ export default function Leadership() {
     const build = () => {
       // measure in layout space (offsetLeft/Top): unlike client rects these
       // ignore transforms, so the curve lands exactly on the dots even while
-      // the reveal animation is mid-translate or space mode scales the panel
+      // the reveal animation is mid-translate
       const centerOf = (el) => {
         let x = el.offsetWidth / 2
         let y = el.offsetHeight / 2
@@ -116,9 +120,8 @@ export default function Leadership() {
   }, [])
 
   return (
-    // wide only in space mode: its floating panel is sized for the serpentine
     // (1360px); in scroll mode the section keeps the page's normal column
-    <Section id="leadership" kicker="Leadership" title="Activities & Leadership" wide={space}>
+    <Section id="leadership" kicker="Leadership" title="Activities & Leadership">
       <div ref={wrapRef} className="relative">
         {/* curved Z connector (desktop) */}
         <svg className="pointer-events-none absolute inset-0 hidden h-full w-full md:block" aria-hidden="true">
@@ -157,9 +160,9 @@ export default function Leadership() {
                 as="li"
                 key={`${r.title}-${r.org}`}
                 delay={i * 70}
-                className={`relative block pl-12 md:pl-0 first:mt-0 md:first:mt-0 ${space ? 'mt-3.5 md:-mt-[4.75rem]' : 'mt-6 md:-mt-16'}`}
+                className={`relative block pl-12 md:pl-0 first:mt-0 md:first:mt-0 mt-4 md:-mt-20`}
               >
-                <div className={`card relative md:w-[calc(50%-3rem)] ${space ? 'p-3 md:min-h-[170px]' : ''} ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                <div className={`card relative md:w-[calc(50%-3rem)] ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el) => (nodeRefs.current[i] = el)}
@@ -175,7 +178,7 @@ export default function Leadership() {
                         alt={r.org}
                         loading="lazy"
                         decoding="async"
-                        className={`${space ? 'h-11 w-11' : 'h-14 w-14'} flex-none rounded-full bg-grey-50 object-contain p-1.5 ring-1 ring-grey-200`}
+                        className={`h-14 w-14 flex-none rounded-full bg-grey-50 object-contain p-1.5 ring-1 ring-grey-200`}
                       />
                     )}
                     <div className="flex-1 min-w-0">
@@ -187,7 +190,7 @@ export default function Leadership() {
                       <div className="mt-1 text-xs text-grey-500 dark:text-grey-500">{r.period}</div>
                     </div>
                   </div>
-                  <p className="mt-3 text-sm sm:text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
+                  <p className="mt-3 text-sm leading-relaxed text-grey-700">
                     {r.description}
                   </p>
                 </div>

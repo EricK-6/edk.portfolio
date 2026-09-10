@@ -5,20 +5,21 @@ import colors from 'tailwindcss/colors'
 //   colors.slate   -> cold grey (calm, cool/blue)
 //   colors.neutral -> true grey (neutral)
 //   colors.zinc    -> original (cool, faintly blue)
-// Soft cool-grey surfaces on a pure-white page: tiles/cards lift gently off
-// the white background while staying in the cool white+blue palette. 50-300
-// are custom light-mode values; 400+ stay stone so text colours and dark
-// mode are untouched.
+// Warm neutral surfaces on warm off-white paper. 50-300 were cool blue-greys
+// chosen when every surface was frosted glass over a photograph, where the
+// mismatch with the warm 400/500 text ramp was invisible. On a flat page it
+// is not, so the light end was rewarmed to sit in the same family as the
+// type. 400+ stay stone so the measured text colours are untouched.
 const grey = {
   ...colors.stone,
-  50: '#ffffff',  // inputs, brightest inset
-  100: '#f4f6f9', // tiles + cards
-  200: '#e7ecf3', // chips, tags, hover fills
-  300: '#d4dbe5', // soft borders + rings
+  50: '#ffffff',  // cards, inputs, the brightest surface
+  100: '#f4f2ef', // subtle fills, chips, image wells
+  200: '#e8e5e0', // hairline borders and rings — the workhorse
+  300: '#d6d2cb', // stronger borders, the section rule
   // 400/500 are the muted text ramp and are darker than stone's, measured
-  // rather than picked: on the sunrise theme every surface a label can land
-  // on is light (the frosted tile, a white card, a #e7ecf3 chip), and stone's
-  // own 400/500 miss WCAG AA on all three at the 10-14px these are used at.
+  // rather than picked. They were measured against frosted glass over a
+  // photograph; on the flat page they now sit on they have more headroom,
+  // not less, so they carry over unchanged and still pass at 10-14px.
   400: '#6f6862', // micro-labels ("Awarded by", group headings)
   500: '#635c57', // secondary text (dates, org lines, form labels)
 }
@@ -48,6 +49,11 @@ export default {
       },
       colors: {
         grey,
+        // The paper the whole document is printed on. Barely off-white and
+        // faintly warm, so it sits under the Queenstown photograph in the
+        // intro rather than cutting against it — a pure #fff page made the
+        // seam where the picture ends read as a hard edge.
+        page: '#fbfaf9',
         // Deep teal, pulled out of the lake in the photograph. Darker and
         // greener than the water itself, which is what keeps it from sinking
         // into the picture the way the old blue did.

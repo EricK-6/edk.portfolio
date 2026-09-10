@@ -10,14 +10,43 @@ const DILIGENCE = [
   { syllabus: 'AS', subject: 'Physics' },
 ]
 
+// The union of both CVs' "Related Courseworks" lines, which is more than
+// either PDF carries on its own: the SWE CV lists the software half and the
+// EEE CV the hardware half, because each is fighting for one page. The site
+// has room for both, and showing both is the point — the degree really is a
+// computer *systems* degree, and the About headline claims exactly that.
+//
+// Seven of these were missing before: Data Structures & Algorithms, Database
+// Systems and Operating Systems from the SWE CV, and Electrical Engineering,
+// Electronics, Electromagnetics and Signals & Control Systems from the EEE CV.
+//
+// Split into the two families rather than run as one list of fourteen chips,
+// so the pair of columns says the same thing the headline does.
 const COURSEWORK = [
-  'Computer Architecture',
-  'AI & Machine Learning',
-  'Hardware-Software Systems',
-  'Software Architecture',
-  'Digital Systems Design',
-  'Software Quality Assurance',
-  'Object Oriented Programming',
+  {
+    label: 'Software & Systems',
+    items: [
+      'Object Oriented Programming',
+      'Data Structures & Algorithms',
+      'Software Architecture',
+      'Software Quality Assurance',
+      'Database Systems',
+      'Operating Systems',
+      'AI & Machine Learning',
+    ],
+  },
+  {
+    label: 'Hardware & Signals',
+    items: [
+      'Digital Systems Design',
+      'Computer Architecture',
+      'Hardware-Software Systems',
+      'Electrical Engineering',
+      'Electronics',
+      'Electromagnetics',
+      'Signals & Control Systems',
+    ],
+  },
 ]
 
 export default function Education() {
@@ -46,17 +75,33 @@ export default function Education() {
               Concentrations: Embedded Systems · Software & Hardware Design
             </div>
 
-            <div className="mt-6">
-              <div className="text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500 mb-2">
-                Relevant coursework
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {COURSEWORK.map((c) => (
-                  <span key={c} className="tag">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            {/* A grid of rows, not a wrap of chips.
+                Chips are pills whose width is their text, so fourteen of them
+                wrapped into a ragged block with a different number per line in
+                each column and a torn right edge — the two families did not
+                even line up with each other. Course names are a list, and a
+                list wants one per row: both columns now hold exactly seven,
+                every row starts on the same baseline as its neighbour, and the
+                pair reads as the two halves of one degree. */}
+            <div className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+              {COURSEWORK.map((group) => (
+                <div key={group.label}>
+                  <div className="border-b border-grey-200 pb-2 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
+                    {group.label}
+                  </div>
+                  <ul className="mt-1">
+                    {group.items.map((c) => (
+                      <li
+                        key={c}
+                        className="flex items-baseline gap-2.5 border-b border-grey-100 py-[7px] text-sm text-grey-700 last:border-0"
+                      >
+                        <span aria-hidden="true" className="h-1 w-1 flex-none rounded-full bg-accent/45" />
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -89,7 +134,7 @@ export default function Education() {
                 degree above it. Same information, chip-sized — the rosette and
                 the amber syllabus carry it without a box each. */}
             <div className="mt-4">
-              <div className="mb-2 text-xs font-medium uppercase tracking-widest text-grey-500 dark:text-grey-500">
+              <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
                 Diligence awards
               </div>
               <div className="flex flex-wrap gap-1.5">

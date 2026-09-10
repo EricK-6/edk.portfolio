@@ -22,7 +22,7 @@ const EXPERIENCE = [
     period: 'Apr 2026 - Present',
     image: './ciLab.jpg',
     bullets: [
-      'Instructed 50+ students in robot hardware assembly and software programming to complete assigned missions.',
+      'Instructed 50+ students in robot hardware assembly and software programming to complete missions.',
       'Supported student development and coached teams in preparation for nationwide robotics competitions.',
     ],
   },
@@ -66,7 +66,7 @@ export default function Experience() {
                 {job.detail && (
                   <div className="mt-0.5 text-sm font-medium text-accent dark:text-accent-dark">{job.detail}</div>
                 )}
-                <ul className="mt-3 space-y-1.5 text-sm sm:text-justify text-grey-700 dark:text-grey-300 leading-relaxed">
+                <ul className="mt-3 space-y-1.5 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
                   {job.bullets.map((b) => (
                     <li key={b} className="flex gap-2">
                       <span className="mt-2 inline-block h-1 w-1 flex-none rounded-full bg-grey-400 dark:bg-grey-600" />
