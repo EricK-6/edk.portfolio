@@ -47,6 +47,7 @@ export function goTo(id) {
 export function useHashLanding() {
   useEffect(() => {
     const id = decodeURIComponent((window.location.hash || '').slice(1))
+    console.log('[hashLanding] effect ran, id=', id)
     if (!id) return
 
     let cancelled = false
@@ -55,11 +56,13 @@ export function useHashLanding() {
     // retried — but never once the reader has taken over, or the page would
     // yank itself back under them.
     let taken = false
-    const takeOver = () => { taken = true }
+    const takeOver = (e) => { taken = true; console.log('[hashLanding] takeOver via', e.type) }
 
     const land = () => {
+      console.log('[hashLanding] land() called, cancelled=', cancelled, 'taken=', taken, 'el=', !!document.getElementById(id))
       if (cancelled || taken) return
       document.getElementById(id)?.scrollIntoView({ behavior: 'instant', block: 'start' })
+      console.log('[hashLanding] scrolled, scrollY now', window.scrollY)
     }
 
     // a hash naming nothing should not stay in the address bar for the
