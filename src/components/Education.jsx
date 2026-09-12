@@ -1,6 +1,30 @@
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
+// Three of the fourteen papers the two CVs list between them, on one line
+// under the concentration rather than the fourteen-row grid this used to be.
+//
+// Three because the line has 654px to live in — the column is capped by the
+// section, so it is the same 654 at 1024 as at 1440 — and a fourth paper
+// needs ~703px whichever one is added. Four would wrap, and a wrapped
+// one-liner is just a short list again.
+//
+// So they have to earn the slot. These are the three a software reader
+// scans for: the algorithms core, the design paper, and the systems paper
+// that backs up the embedded concentration named just above. Of the rest of
+// the software half, Object Oriented Programming is assumed of anyone
+// holding the degree, Software Quality Assurance is the least looked-for,
+// and Database Systems and AI & Machine Learning are both already evidenced
+// harder further up the page — by DynamoDB and Redshift in the projects, and
+// by the AI Practitioner certificate. The hardware half is not here at all:
+// this is a line about software papers, and the degree's own name has
+// already said "Computer Systems".
+const KEY_PAPERS = [
+  'Data Structures & Algorithms',
+  'Software Architecture',
+  'Operating Systems',
+]
+
 // The diligence awards were the substance of the "multiple diligence awards"
 // line, so they are shown as the awards themselves — one tile per subject,
 // with the syllabus it was sat under.
@@ -8,45 +32,6 @@ const DILIGENCE = [
   { syllabus: 'NCEA', subject: 'English' },
   { syllabus: 'IGCSE', subject: 'Computer Science' },
   { syllabus: 'AS', subject: 'Physics' },
-]
-
-// The union of both CVs' "Related Courseworks" lines, which is more than
-// either PDF carries on its own: the SWE CV lists the software half and the
-// EEE CV the hardware half, because each is fighting for one page. The site
-// has room for both, and showing both is the point — the degree really is a
-// computer *systems* degree, and the About headline claims exactly that.
-//
-// Seven of these were missing before: Data Structures & Algorithms, Database
-// Systems and Operating Systems from the SWE CV, and Electrical Engineering,
-// Electronics, Electromagnetics and Signals & Control Systems from the EEE CV.
-//
-// Split into the two families rather than run as one list of fourteen chips,
-// so the pair of columns says the same thing the headline does.
-const COURSEWORK = [
-  {
-    label: 'Software & Systems',
-    items: [
-      'Object Oriented Programming',
-      'Data Structures & Algorithms',
-      'Software Architecture',
-      'Software Quality Assurance',
-      'Database Systems',
-      'Operating Systems',
-      'AI & Machine Learning',
-    ],
-  },
-  {
-    label: 'Hardware & Signals',
-    items: [
-      'Digital Systems Design',
-      'Computer Architecture',
-      'Hardware-Software Systems',
-      'Electrical Engineering',
-      'Electronics',
-      'Electromagnetics',
-      'Signals & Control Systems',
-    ],
-  },
 ]
 
 export default function Education() {
@@ -72,36 +57,10 @@ export default function Education() {
               Bachelor of Engineering (Honours) · Computer Systems Engineering
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Concentrations: Embedded Systems · Software & Hardware Design
+              Concentrations: Embedded Systems & Software Design
             </div>
-
-            {/* A grid of rows, not a wrap of chips.
-                Chips are pills whose width is their text, so fourteen of them
-                wrapped into a ragged block with a different number per line in
-                each column and a torn right edge — the two families did not
-                even line up with each other. Course names are a list, and a
-                list wants one per row: both columns now hold exactly seven,
-                every row starts on the same baseline as its neighbour, and the
-                pair reads as the two halves of one degree. */}
-            <div className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2">
-              {COURSEWORK.map((group) => (
-                <div key={group.label}>
-                  <div className="border-b border-grey-200 pb-2 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
-                    {group.label}
-                  </div>
-                  <ul className="mt-1">
-                    {group.items.map((c) => (
-                      <li
-                        key={c}
-                        className="flex items-baseline gap-2.5 border-b border-grey-100 py-[7px] text-sm text-grey-700 last:border-0"
-                      >
-                        <span aria-hidden="true" className="h-1 w-1 flex-none rounded-full bg-accent/45" />
-                        {c}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+            <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
+              Key papers: {KEY_PAPERS.join(' · ')}
             </div>
           </div>
         </div>
