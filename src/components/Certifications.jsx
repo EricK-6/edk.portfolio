@@ -113,8 +113,11 @@ const TIERS = ['Associate', 'Foundational']
 // to be computed, because a rule can't measure the flex row beneath it: it is
 // the cells plus the gaps between them, and `max-w-full` hands it back to the
 // column on a screen too narrow to hold the row unwrapped.
-const CELL = 142 // px — must match w-[142px] on a badge
-const GAP = 32 // px — must match gap-x-8 on the row
+// Both are the sm-and-up values: below sm the cell and the gap step down
+// (142/16) so two badges still fit a 360px phone rather than dropping to one
+// per row, and the rule is on max-w-full there anyway, so it never uses these.
+const CELL = 158 // px — must match sm:w-[158px] on a badge
+const GAP = 32 // px — must match sm:gap-x-8 on the row
 
 function Badge({ cert }) {
   const inner = (
@@ -124,7 +127,7 @@ function Badge({ cert }) {
         alt=""
         loading="lazy"
         decoding="async"
-        className="mx-auto h-[104px] w-auto drop-shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5"
+        className="mx-auto h-[130px] w-auto drop-shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5"
       />
       <h3 className="mt-3 text-[13px] font-semibold leading-snug text-grey-900">
         {cert.short}
@@ -147,7 +150,7 @@ function Badge({ cert }) {
       </div>
     </>
   )
-  const cls = 'group block w-[142px] text-center'
+  const cls = 'group block w-[142px] text-center sm:w-[158px]'
   return cert.credlyUrl ? (
     <a
       href={cert.credlyUrl}
@@ -190,7 +193,7 @@ export default function Certifications() {
                   {String(items.length).padStart(2, '0')}
                 </span>
               </div>
-              <div className="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-9">
+              <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-8">
                 {items.map((c, i) => (
                   <Reveal key={c.name} delay={gi * 100 + i * 60}>
                     <Badge cert={c} />

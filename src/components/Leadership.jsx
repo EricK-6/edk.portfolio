@@ -162,26 +162,16 @@ export default function Leadership() {
                 delay={i * 70}
                 className={`relative block pl-12 md:pl-0 first:mt-0 md:first:mt-0 mt-4 md:-mt-20`}
               >
-                {/* Not a `.card`. A box is worth drawing when it is a target
-                    or has to clip something, and this is neither — but the
-                    padding and the opaque fill both stay, because they are
-                    load-bearing here and the border was not: the nodes are
-                    positioned against this block's inner edge and measured to
-                    build the curve, and `md:-mt-20` overlaps each entry with
-                    the one before it, so an opaque ground is what keeps two
-                    entries from printing on top of each other.
-
-                    Each entry closes on a hairline the width of its own
-                    block. Without the borders the five ran together — the
-                    curve says they are a sequence but nothing said where one
-                    stopped — and a rule under each is the lightest thing that
-                    answers that. The last one has none: there is nothing
-                    after it to be divided from. */}
-                <div
-                  className={`relative rounded-xl bg-page px-6 pt-6 pb-5 md:w-[calc(50%-3rem)] ${
-                    left ? 'md:mr-auto' : 'md:ml-auto'
-                  } ${i < ITEMS.length - 1 ? 'border-b border-grey-200' : ''}`}
-                >
+                {/* Boxed, unlike Education just above it, and the overlap is
+                    why. `md:-mt-20` pulls every entry up over the one before
+                    it so the serpentine stays tight, and the nodes are
+                    positioned against this block's inner edge and then
+                    measured to build the curve. Borderless it still worked,
+                    but the five ran together — the curve says they are a
+                    sequence, nothing said where one stopped. A hairline under
+                    each was not enough either, so the outline is back: here it
+                    is the thing doing the separating, not decoration. */}
+                <div className={`card relative md:w-[calc(50%-3rem)] ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el) => (nodeRefs.current[i] = el)}
