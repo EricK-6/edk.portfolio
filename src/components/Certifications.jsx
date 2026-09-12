@@ -13,6 +13,7 @@ const HUES = {
   amber: { soft: '#f59e0b', deep: '#92400e' }, // the original award pair
   blue: { soft: '#3b82f6', deep: '#1e3a8a' },  // pulled from the SAA badge art
   teal: { soft: '#14b8a6', deep: '#115e59' },  // the site accent
+  violet: { soft: '#543bd5', deep: '#4c1d95' }, // sampled off the Terraform hexagon
 }
 
 const CERTS = [
@@ -51,6 +52,16 @@ const CERTS = [
     tags: ['SageMaker', 'Bedrock', 'Rekognition'],
     credlyUrl:
       'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
+  },
+  {
+    name: 'HashiCorp Certified: Terraform Associate',
+    issuer: 'HashiCorp',
+    date: 'Sep 2026',
+    image: './terraform.webp',
+    hue: HUES.violet,
+    description:
+      'Validated the ability to provision and manage infrastructure as code with Terraform, from state and modules to remote backends.',
+    tags: ['HCL', 'Modules', 'State', 'Providers'],
   },
 ]
 
@@ -269,11 +280,11 @@ export default function Certifications() {
           to 239px — the narrowest it gets anywhere, tighter than a phone's
           single column — and the issuer line was left with 4% of margin. One
           column holds until there is room for two.
-          Three across only from lg, and only with the column widened to 5xl:
-          at md the row would be 328px a hexagon, at lg with 5xl it is 293px,
-          both clear of that 239 floor. Three inside the 3xl column would be
-          230px, under it. */}
-      <div className="mx-auto grid max-w-3xl gap-10 md:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3 lg:gap-10">
+          Two stays the widest the grid goes, now that there are four badges:
+          three across left the fourth alone on a second row against the left
+          edge, and four across inside the 5xl column would be 226px a hexagon,
+          under that 239 floor. A 2x2 at 3xl is 360px each and stays square. */}
+      <div className="mx-auto grid max-w-3xl gap-10 md:grid-cols-2 md:gap-12">
         {CERTS.map((c, i) => {
           // An odd last badge is alone on the md row: let it span the pair so
           // it centres under them rather than hanging off the left column.
@@ -288,7 +299,7 @@ export default function Certifications() {
               delay={i * 80}
               className={`flex justify-center ${
                 strandedAtMd
-                  ? 'md:col-span-2 md:mx-auto md:w-full md:max-w-[calc((100%-3rem)/2)] lg:col-span-1 lg:max-w-none'
+                  ? 'md:col-span-2 md:mx-auto md:w-full md:max-w-[calc((100%-3rem)/2)]'
                   : ''
               }`}
             >
