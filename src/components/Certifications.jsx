@@ -25,13 +25,12 @@ const INK = {
   violet: '#4c1d95', // HashiCorp — sampled off the Terraform hexagon
 }
 
-// The five, in the order they sit on the ring — clockwise from the top.
+// The five, in the order they sit in their row, left to right.
 //
-// Not date order. The top vertex is the one the eye lands on first, so the
-// two associate-level AWS certificates take the top and upper-right, the two
-// foundational ones sit along the bottom, and Terraform — the only non-AWS
-// badge — holds the upper-left. Each entry still carries its own date; it is
-// shown, not sorted on.
+// Within each group that works out oldest first — Solutions Architect,
+// Data Engineer, Terraform for the associates; Cloud Practitioner then AI
+// Practitioner for the foundations — so each row reads as the order they
+// were earned in. The grouping, not this array, decides which row.
 const CERTS = [
   {
     name: 'AWS Certified Solutions Architect – Associate',
@@ -54,17 +53,6 @@ const CERTS = [
     ink: INK.blue,
   },
   {
-    name: 'AWS Certified AI Practitioner',
-    short: 'AI Practitioner',
-    tier: 'Foundational',
-    issuer: 'AWS',
-    date: 'May 2026',
-    image: './ai.webp',
-    ink: INK.amber,
-    credlyUrl:
-      'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
-  },
-  {
     name: 'AWS Certified Cloud Practitioner',
     short: 'Cloud Practitioner',
     tier: 'Foundational',
@@ -74,6 +62,17 @@ const CERTS = [
     ink: INK.amber,
     credlyUrl:
       'https://www.credly.com/badges/9865f524-64b4-45e4-9f56-8c226ec8308a/public_url',
+  },
+  {
+    name: 'AWS Certified AI Practitioner',
+    short: 'AI Practitioner',
+    tier: 'Foundational',
+    issuer: 'AWS',
+    date: 'May 2026',
+    image: './ai.webp',
+    ink: INK.amber,
+    credlyUrl:
+      'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
   },
   {
     name: 'HashiCorp Certified: Terraform Associate',
@@ -107,6 +106,15 @@ const CERTS = [
 // stranding the fifth; Associate (3) and Foundational (2) both land clean,
 // and a sixth certificate just lengthens whichever row it belongs to.
 const TIERS = ['Associate', 'Foundational']
+
+// The header rule is drawn to the width of the badges underneath it rather
+// than to the column, so each group reads as one block — the label and count
+// sit exactly above the first and last badge of their own row. That width has
+// to be computed, because a rule can't measure the flex row beneath it: it is
+// the cells plus the gaps between them, and `max-w-full` hands it back to the
+// column on a screen too narrow to hold the row unwrapped.
+const CELL = 142 // px — must match w-[142px] on a badge
+const GAP = 32 // px — must match gap-x-8 on the row
 
 function Badge({ cert }) {
   const inner = (
@@ -171,8 +179,9 @@ export default function Certifications() {
       <div className="space-y-10">
         {TIERS.map((tier, gi) => {
           const items = CERTS.filter((c) => c.tier === tier)
+          const width = items.length * CELL + (items.length - 1) * GAP
           return (
-            <div key={tier}>
+            <div key={tier} className="mx-auto max-w-full" style={{ width }}>
               <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
                 <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
                   {tier}
