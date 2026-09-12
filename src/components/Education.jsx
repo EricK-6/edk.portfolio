@@ -37,13 +37,20 @@ const DILIGENCE = [
 export default function Education() {
   return (
     <Section id="education" kicker="Education" title="Academic background">
-      <div className="space-y-4">
-      <Reveal className="card">
+      {/* No cards here. A box is worth drawing when it is a target or has
+          to clip something — the project tiles are both — and these two
+          entries are neither. Experience already sets the same kind of
+          content (logo, role, org, period, lines) with no box at all, so a
+          bordered panel round the degree was the odd one out. A hairline
+          between the two does the separating, which is what the rest of the
+          page uses. */}
+      <div className="divide-y divide-grey-200">
+      <Reveal className="pb-8">
         <div className="flex gap-4">
           <img
             src="./UoA.jpg"
             alt="University of Auckland"
-            className="hidden sm:block h-28 w-auto flex-none rounded-xl object-contain drop-shadow-md"
+            className="hidden sm:block h-24 w-auto flex-none rounded-xl object-contain"
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -66,12 +73,12 @@ export default function Education() {
         </div>
       </Reveal>
 
-      <Reveal className="card" delay={120}>
+      <Reveal className="pt-8" delay={120}>
         <div className="flex gap-4">
           <img
             src="./pinehurst.jpeg"
             alt="Pinehurst School"
-            className="hidden sm:block h-28 w-auto flex-none rounded-xl object-contain drop-shadow-md"
+            className="hidden sm:block h-24 w-auto flex-none rounded-xl object-contain"
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
