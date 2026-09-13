@@ -180,8 +180,8 @@ const PROJECTS = [
     org: 'University of Auckland (UoA)',
     role: 'Business Analytics Dashboard',
     highlights: [
-      'Built a PyQt6 desktop analytics app powered by **pandas** for KPI computation and **Matplotlib** for charting, automating a manual Excel reporting workflow across three business units.',
-      "Implemented **three forecasting models**, combining **scikit-learn** regression with a custom NumPy build of Holt's Exponential Smoothing, validated with MAE and RMSE.",
+      'Built a PyQt6 desktop analytics app with **pandas and Matplotlib**, automating a manual Excel workflow across **3 business units** and **52,000+ records**, cutting report time from a full day to **under 30 seconds**.',
+      "Implemented three forecasting models across **36 months of data**, combining **scikit-learn** regression with a custom **NumPy** build of Holt's Exponential Smoothing, validated with MAE and RMSE.",
     ],
     tech: ['Python', 'PyQt6', 'Pandas', 'Matplotlib', 'NumPy', 'scikit-learn'],
     image: './roastworks.webp',

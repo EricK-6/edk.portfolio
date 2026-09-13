@@ -19,7 +19,7 @@ const GROUPS = [
     // The SWE CV's own first row, plus VHDL — that one is a language on the
     // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
     // & Tools instead, which is where the SWE CV files it.
-    items: ['Python', 'Java', 'C', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL'],
+    items: ['Python', 'Java', 'C/C++', 'C#', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL'],
   },
   {
     label: 'Cloud & AWS',
@@ -43,7 +43,7 @@ const GROUPS = [
 export default function Skills() {
   return (
     <Section id="skills" kicker="Skills" title="What I work with">
-      {/* Two across, not three. The groups hold 10, 11, 9 and 7 items — close
+      {/* Two across, not three. The groups hold 11, 11, 11 and 7 items — close
           enough in length to sit level in a 2x2, where a three-column split
           left one tall column towering over two short ones. */}
       <div className="grid gap-x-10 gap-y-9 sm:grid-cols-2">

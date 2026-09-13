@@ -13,12 +13,12 @@ import Reveal from './Reveal.jsx'
 const ROLES = [
   {
     title: 'Academic Team Executive',
-    detail: 'Co-Founding Member',
+    detail: 'Founding Member',
     org: 'Korean Engineering Body (KEB)',
     period: 'Jul 2024 - Present',
     image: './KEB.webp',
     description:
-      'Ran tutorial sessions for 20+ junior engineering students, and helped plan academic events.',
+      'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
   },
   {
     title: 'Full-time Student Volunteer',
