@@ -9,14 +9,6 @@ import Reveal from './Reveal.jsx'
 // HashiCorp. The two AWS pairs now read as pairs at a glance, which is the
 // one thing the names alone are slow to tell you.
 //
-// The tile behind each badge is deliberately neutral. It used to carry a
-// tint of the same colour, and that had to go when the Data Engineer badge
-// arrived: its artwork is the same blue as the Solutions Architect badge
-// (both sample to #222cc1) and the row above them is Terraform's violet, so
-// no tint both matched the artwork and stayed distinct from its neighbours.
-// The badges supply the colour in that column; the artwork was always going
-// to win that fight.
-//
 // Each ink only has to hold small uppercase type on white — all three
 // measure above 7:1 there.
 const INK = {
@@ -25,12 +17,12 @@ const INK = {
   violet: '#4c1d95', // HashiCorp — sampled off the Terraform hexagon
 }
 
-// The five, in the order they sit in their row, left to right.
+// The four, in the order they sit in their row, left to right.
 //
-// Within each group that works out oldest first — Solutions Architect,
-// Data Engineer, Terraform for the associates; Cloud Practitioner then AI
-// Practitioner for the foundations — so each row reads as the order they
-// were earned in. The grouping, not this array, decides which row.
+// Within each group that works out oldest first — Solutions Architect then
+// Terraform for the associates, Cloud Practitioner then AI Practitioner for
+// the foundations — so each row reads as the order they were earned in. The
+// grouping, not this array, decides which row.
 const CERTS = [
   {
     name: 'AWS Certified Solutions Architect – Associate',
@@ -42,15 +34,6 @@ const CERTS = [
     ink: INK.blue,
     credlyUrl:
       'https://www.credly.com/badges/c24fa5a9-1240-4555-8119-2e1decdf0a25/public_url',
-  },
-  {
-    name: 'AWS Certified Data Engineer – Associate',
-    short: 'Data Engineer',
-    tier: 'Associate',
-    issuer: 'AWS',
-    date: 'Sep 2026',
-    image: './dea.webp',
-    ink: INK.blue,
   },
   {
     name: 'AWS Certified Cloud Practitioner',
@@ -85,26 +68,25 @@ const CERTS = [
   },
 ]
 
-
 // Grouped by level, laid out the way the rest of the page lays things out.
 //
-// This was a pentagon for a while — the five badges on the vertices of a
-// figure, then in five wedges of one. Both were the same mistake: every
-// other section here is a left-aligned block of type with hairlines and
-// small mono labels, and a centred diagram with spokes through it reads as
-// something pasted in from a different site. Skills already threw out
-// thirty-seven logos for being the loudest thing on the page; a wireframe
-// pentagon was louder.
+// This was a pentagon for a while — the badges on the vertices of a figure,
+// then in wedges of one. Both were the same mistake: every other section here
+// is a left-aligned block of type with hairlines and small mono labels, and a
+// centred diagram with spokes through it reads as something pasted in from a
+// different site. Skills already threw out thirty-seven logos for being the
+// loudest thing on the page; a wireframe pentagon was louder.
 //
-// So the badges stay large — they are the one asset this section has that
-// no other section has — but they sit in the Skills grouping: a mono label,
-// a hairline, a count, and the row beneath it. The rule spans the column and
-// the badges are centred under it, which is the one place this section
-// departs from the page's left margin: a row of three and a row of two hung
-// off the left edge read as a list that had run out, rather than as a set. Two groups also solve the
-// wrap. Five badges across do not fit the column at this size and wrap 4+1,
-// stranding the fifth; Associate (3) and Foundational (2) both land clean,
-// and a sixth certificate just lengthens whichever row it belongs to.
+// So the badges stay large — they are the one asset this section has that no
+// other section has — but they sit in the Skills grouping: a mono label, a
+// hairline, a count, and the row beneath it. The badges are centred under the
+// rule, which is the one place this section departs from the page's left
+// margin: short rows hung off the left edge read as a list that had run out
+// rather than as a set.
+//
+// The grouping also keeps the rows short enough to never wrap on their own,
+// and it absorbs a new certificate by lengthening whichever row it belongs
+// to rather than by re-flowing the whole set.
 const TIERS = ['Associate', 'Foundational']
 
 // The header rule is drawn to the width of the badges underneath it rather
@@ -113,6 +95,7 @@ const TIERS = ['Associate', 'Foundational']
 // to be computed, because a rule can't measure the flex row beneath it: it is
 // the cells plus the gaps between them, and `max-w-full` hands it back to the
 // column on a screen too narrow to hold the row unwrapped.
+//
 // Both are the sm-and-up values: below sm the cell and the gap step down
 // (142/16) so two badges still fit a 360px phone rather than dropping to one
 // per row, and the rule is on max-w-full there anyway, so it never uses these.
