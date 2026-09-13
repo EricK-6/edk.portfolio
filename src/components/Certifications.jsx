@@ -154,7 +154,7 @@ export default function Certifications() {
       <div className="mx-auto max-w-full" style={{ width }}>
         <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
           <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
-            Associate → Foundational
+            AWS & HashiCorp
           </h3>
           <span className="ml-auto font-mono text-[11px] tabular-nums text-grey-400">
             {String(CERTS.length).padStart(2, '0')}
