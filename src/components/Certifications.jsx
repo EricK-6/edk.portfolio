@@ -17,16 +17,12 @@ const INK = {
   violet: '#4c1d95', // HashiCorp — sampled off the Terraform hexagon
 }
 
-// The four, in the order they sit in the row, left to right: the two
-// associate-level certificates first, then the two foundational ones.
-//
-// The tier is not labelled anywhere any more, because it does not need to be
-// — every badge states its own level in its artwork (ASSOCIATE, FOUNDATIONAL)
-// and the ink repeats it. Ordering them by level is what the row adds.
+// The four, grouped by level. Order within a group is oldest-earned first.
 const CERTS = [
   {
     name: 'AWS Certified Solutions Architect – Associate',
     short: 'Solutions Architect',
+    tier: 'Associate',
     issuer: 'AWS',
     date: 'Aug 2026',
     image: './saa.webp',
@@ -37,6 +33,7 @@ const CERTS = [
   {
     name: 'HashiCorp Certified: Terraform Associate',
     short: 'Terraform Associate',
+    tier: 'Associate',
     issuer: 'HashiCorp',
     date: 'Sep 2026',
     image: './terraform.webp',
@@ -45,6 +42,7 @@ const CERTS = [
   {
     name: 'AWS Certified Cloud Practitioner',
     short: 'Cloud Practitioner',
+    tier: 'Foundational',
     issuer: 'AWS',
     date: 'Apr 2026',
     image: './cloud.webp',
@@ -55,6 +53,7 @@ const CERTS = [
   {
     name: 'AWS Certified AI Practitioner',
     short: 'AI Practitioner',
+    tier: 'Foundational',
     issuer: 'AWS',
     date: 'May 2026',
     image: './ai.webp',
@@ -63,8 +62,9 @@ const CERTS = [
       'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
   },
 ]
+const TIERS = ['Associate', 'Foundational']
 
-// One row, laid out the way the rest of the page lays things out.
+// Two labelled groups, laid out the way the rest of the page lays things out.
 //
 // This was a pentagon for a while — the badges on the vertices of a figure,
 // then in wedges of one. Both were the same mistake: every other section here
@@ -73,17 +73,21 @@ const CERTS = [
 // different site. Skills already threw out thirty-seven logos for being the
 // loudest thing on the page; a wireframe pentagon was louder.
 //
-// It was then split into Associate and Foundational groups, which existed to
-// stop five badges wrapping 4+1 and stranding the fifth. Four fit on one line
-// — 4 x 158 + 3 x 24 = 704px against the 720px the column has at md, its
-// narrowest desktop width — so the groups have nothing left to solve, and the
-// section is one row again.
+// Each group carries its own header — "Associate" over the two AWS/HashiCorp
+// associate badges, "Foundational" over the two foundational ones — rather
+// than one label spanning all four, because the label's job is to name what
+// is under it, and a single word cannot honestly name two different levels.
 //
-// The badges are centred, which is the one place this section departs from
-// the page's left margin: a short row hung off the left edge reads as a list
-// that had run out rather than as a set.
+// The two groups sit in one flex row rather than stacked, so on any screen
+// with the room for it (two group widths plus the gap between them: 340 + 24
+// + 340 = 704px, which the column already clears from md up) they read as a
+// single continuous row of four — the header is the only thing that reveals
+// the split. Where there is not room, the same flex-wrap that already broke
+// four badges into two rows of two now breaks two groups into two labelled
+// blocks instead, which if anything reads more clearly than an unlabelled
+// wrap did.
 const CELL = 158 // px — must match sm:w-[158px] on a badge
-const GAP = 24 // px — must match sm:gap-x-6 on the row
+const GAP = 24 // px — must match sm:gap-x-6 on the row and the gap between groups
 
 function Badge({ cert }) {
   const inner = (
@@ -143,30 +147,36 @@ function ExternalLinkIcon() {
 }
 
 export default function Certifications() {
-  // the rule is drawn to the width of the badges under it, not to the column,
-  // so the label and count sit exactly above the first and last badge. It has
-  // to be computed: a rule cannot measure the flex row beneath it. `max-w-full`
-  // hands it back to the column on a screen too narrow to hold the row.
-  const width = CERTS.length * CELL + (CERTS.length - 1) * GAP
-
   return (
     <Section id="certifications" kicker="Certifications" title="Credentials" className="!py-10 sm:!py-12">
-      <div className="mx-auto max-w-full" style={{ width }}>
-        <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
-          <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
-            AWS & HashiCorp
-          </h3>
-          <span className="ml-auto font-mono text-[11px] tabular-nums text-grey-400">
-            {String(CERTS.length).padStart(2, '0')}
-          </span>
-        </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-6">
-          {CERTS.map((c, i) => (
-            <Reveal key={c.name} delay={i * 60}>
-              <Badge cert={c} />
-            </Reveal>
-          ))}
-        </div>
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-10">
+        {TIERS.map((tier, gi) => {
+          const items = CERTS.filter((c) => c.tier === tier)
+          // each group's rule is drawn to the width of its own two badges, not
+          // to the column — a rule cannot measure the flex row beneath it, so
+          // the width has to be computed. `max-w-full` hands it back to the
+          // column on a screen too narrow to hold even one group unwrapped.
+          const width = items.length * CELL + (items.length - 1) * GAP
+          return (
+            <div key={tier} className="max-w-full" style={{ width }}>
+              <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
+                <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
+                  {tier}
+                </h3>
+                <span className="ml-auto font-mono text-[11px] tabular-nums text-grey-400">
+                  {String(items.length).padStart(2, '0')}
+                </span>
+              </div>
+              <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-6">
+                {items.map((c, i) => (
+                  <Reveal key={c.name} delay={(gi * 2 + i) * 60}>
+                    <Badge cert={c} />
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </Section>
   )
