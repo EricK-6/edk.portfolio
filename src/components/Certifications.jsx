@@ -163,12 +163,8 @@ export default function Certifications() {
                 <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
                   {tier}
                 </h3>
-                {/* The total, not this group's own count. "02" beside each
-                    label read as if the two groups were being sized against
-                    each other; the number a reader actually wants here is
-                    how many credentials there are altogether. */}
                 <span className="ml-auto font-mono text-[11px] tabular-nums text-grey-400">
-                  {String(CERTS.length).padStart(2, '0')}
+                  {String(items.length).padStart(2, '0')}
                 </span>
               </div>
               <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-6">
