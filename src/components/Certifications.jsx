@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Section from './Section.jsx'
 import Reveal from './Reveal.jsx'
 
@@ -27,6 +28,7 @@ const CERTS = [
     date: 'Aug 2026',
     image: './saa.webp',
     ink: INK.blue,
+    description: 'Designs resilient, secure, cost-optimised architectures on AWS.',
     credlyUrl:
       'https://www.credly.com/badges/c24fa5a9-1240-4555-8119-2e1decdf0a25/public_url',
   },
@@ -38,6 +40,7 @@ const CERTS = [
     date: 'Sep 2026',
     image: './terraform.webp',
     ink: INK.violet,
+    description: 'Provisions and manages infrastructure as code with Terraform.',
   },
   {
     name: 'AWS Certified Cloud Practitioner',
@@ -47,6 +50,7 @@ const CERTS = [
     date: 'Apr 2026',
     image: './cloud.webp',
     ink: INK.amber,
+    description: 'Covers core AWS concepts, services and best practices.',
     credlyUrl:
       'https://www.credly.com/badges/9865f524-64b4-45e4-9f56-8c226ec8308a/public_url',
   },
@@ -58,6 +62,7 @@ const CERTS = [
     date: 'May 2026',
     image: './ai.webp',
     ink: INK.amber,
+    description: 'Covers AI/ML fundamentals and generative AI on AWS.',
     credlyUrl:
       'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
   },
@@ -89,50 +94,94 @@ const TIERS = ['Associate', 'Foundational']
 const CELL = 158 // px — must match sm:w-[158px] on a badge
 const GAP = 24 // px — must match sm:gap-x-6 on the row and the gap between groups
 
+// Same contract as the project tiles: a press turns the badge over for the
+// one line a name and a date cannot carry, and nothing moves until asked.
+// Where it differs from a project card is the second press — a badge is a
+// credential with somewhere to be verified, not a piece of work with a
+// separate footer of links, so the second click is the verify step rather
+// than a close. First click: brief and powerful description. Second click:
+// Credly, in a new tab. A badge with no Credly link yet (Terraform) has
+// nowhere to send a second click, so that one closes instead — the only
+// promise a "Click to close" label can honestly make.
+//
+// The two faces share a CSS grid cell (both `col-start-1 row-start-1`)
+// rather than being absolutely positioned, so the tile's height is however
+// tall the taller face is, always — crossfading between them never resizes
+// the tile, without having to hand-measure and hard-code a height.
 function Badge({ cert }) {
-  const inner = (
-    <>
-      <img
-        src={cert.image}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        className="mx-auto h-[130px] w-auto drop-shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5"
-      />
-      <h3 className="mt-3 text-[13px] font-semibold leading-snug text-grey-900">
-        {cert.short}
-      </h3>
-      <div className="mt-0.5 font-mono text-[10px] tabular-nums tracking-wide">
-        <span style={{ color: cert.ink }}>{cert.issuer}</span>
-        <span className="text-grey-400"> · {cert.date}</span>
-      </div>
-      {/* The badge being a link is not something you can see, so the
-          affordance is spelled out — the same micro-label the rest of the
-          page uses. The slot keeps its height when there is no Credly badge
-          yet, so the row of captions stays level. */}
-      <div className="mt-1.5 flex h-4 items-center justify-center font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400 transition-colors group-hover:text-grey-700">
-        {cert.credlyUrl && (
-          <>
-            <ExternalLinkIcon />
-            <span className="ml-1.5">Verify</span>
-          </>
-        )}
-      </div>
-    </>
-  )
-  const cls = 'group block w-[142px] text-center sm:w-[158px]'
-  return cert.credlyUrl ? (
-    <a
-      href={cert.credlyUrl}
-      target="_blank"
-      rel="noreferrer"
-      className={`${cls} rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-page`}
+  const [open, setOpen] = useState(false)
+  const linked = Boolean(cert.credlyUrl)
+
+  const press = () => {
+    if (!open) { setOpen(true); return }
+    if (linked) { window.open(cert.credlyUrl, '_blank', 'noopener,noreferrer'); return }
+    setOpen(false)
+  }
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-expanded={open}
+      aria-label={
+        open && linked
+          ? `${cert.name}: verify on Credly (opens in a new tab)`
+          : `${cert.name}: show details`
+      }
+      onClick={press}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); press() }
+        else if (e.key === 'Escape') setOpen(false)
+      }}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}
+      className="group grid w-[142px] cursor-pointer text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-page sm:w-[158px]"
     >
-      {inner}
-      <span className="sr-only">{cert.name} — verify on Credly (opens in a new tab)</span>
-    </a>
-  ) : (
-    <div className={cls}>{inner}</div>
+      {/* front face: what it is */}
+      <div
+        className={`col-start-1 row-start-1 transition-opacity duration-300 motion-reduce:transition-none ${
+          open ? 'pointer-events-none opacity-0' : 'opacity-100'
+        }`}
+      >
+        <img
+          src={cert.image}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="mx-auto h-[130px] w-auto drop-shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5"
+        />
+        <h3 className="mt-3 text-[13px] font-semibold leading-snug text-grey-900">
+          {cert.short}
+        </h3>
+        <div className="mt-0.5 font-mono text-[10px] tabular-nums tracking-wide">
+          <span style={{ color: cert.ink }}>{cert.issuer}</span>
+          <span className="text-grey-400"> · {cert.date}</span>
+        </div>
+        <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400">
+          Click for details
+        </div>
+      </div>
+
+      {/* back face: what it means, then where it leads */}
+      <div
+        className={`col-start-1 row-start-1 flex flex-col justify-center transition-opacity duration-300 motion-reduce:transition-none ${
+          open ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+      >
+        <p className="text-[12px] leading-relaxed text-grey-700">
+          {cert.description}
+        </p>
+        <div className="mt-2.5 flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400 transition-colors group-hover:text-grey-700">
+          {linked ? (
+            <>
+              <ExternalLinkIcon />
+              Click again to verify
+            </>
+          ) : (
+            'Click to close'
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 
