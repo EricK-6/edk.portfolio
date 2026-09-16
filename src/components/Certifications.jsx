@@ -41,6 +41,8 @@ const CERTS = [
     image: './terraform.webp',
     ink: INK.violet,
     description: 'Provisions and manages infrastructure as code with Terraform.',
+    credlyUrl:
+      'https://www.credly.com/badges/5e4289f2-8f20-4b81-b842-1b34501d85d4/public_url',
   },
   {
     name: 'AWS Certified Cloud Practitioner',
