@@ -397,9 +397,13 @@ export default function TerminalDock() {
         print(pathLabel(cwd))
         break
       case 'ls': {
-        // same forgiving lookup as cd, falling back to the literal path so
-        // `ls somefile` still resolves to the file rather than a section
-        const segs = findDir(cwd, args[0]) ?? resolveSegments(cwd, args[0])
+        // No argument lists where you are, not home — `findDir(cwd, undefined)`
+        // resolves to [] (its "go home" case, correct for bare `cd`), which
+        // made bare `ls` show the root section list from any directory.
+        // With an argument: same forgiving lookup as cd, falling back to the
+        // literal path so `ls somefile` still resolves to the file rather
+        // than a section.
+        const segs = args[0] ? (findDir(cwd, args[0]) ?? resolveSegments(cwd, args[0])) : cwd
         const node = getNode(segs)
         if (!node) { err('ls', `no such file or directory: ${args[0]}`); break }
         // a real `ls` echoes the name it resolved, not the path you typed
