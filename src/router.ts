@@ -29,7 +29,7 @@ export function upgradeLegacyHash() {
 // scrollIntoView: it goes through the same CSS smooth-scroll and
 // scroll-padding the anchors use, it leaves a history entry so Back works,
 // and it puts the section in the address bar so the URL is copyable.
-export function goTo(id) {
+export function goTo(id: string) {
   window.location.hash = id === 'home' ? 'top' : id
 }
 
@@ -97,14 +97,14 @@ export function useHashLanding() {
 //
 // `ids` must be a stable reference (a module-level constant); an array built
 // inline in render would retrigger this effect on every render.
-export function useActiveSection(ids, offset = 96) {
+export function useActiveSection(ids: readonly string[], offset = 96) {
   const [active, setActive] = useState(ids[0])
 
   useEffect(() => {
     let frame = 0
     const measure = () => {
       frame = 0
-      const nodes = ids.map((id) => document.getElementById(id)).filter(Boolean)
+      const nodes = ids.map((id) => document.getElementById(id)).filter((n): n is HTMLElement => n !== null)
       if (!nodes.length) return
 
       let current = nodes[0]

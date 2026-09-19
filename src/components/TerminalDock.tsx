@@ -1,9 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
-import { goTo } from '../router.js'
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
+import { goTo } from '../router'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 
-const PROJECTS = [
+interface FileNode {
+  type: 'file'
+  content: ReactNode[]
+  download?: string
+}
+
+interface DirNode {
+  type: 'dir'
+  id: string
+  children: Record<string, FsNode>
+}
+
+type FsNode = FileNode | DirNode
+
+const PROJECTS: [string, string][] = [
   ['winnie-the-bot', 'AI interactive robot · dual ATmega328P · 3rd place ECSE'],
   ['spottern', 'Statement-level fraud detection on AWS · top 8 AWS×BNZ hackathon'],
   ['sentiment-pulse', 'Serverless NLP pipeline on AWS + live React dashboard'],
@@ -16,8 +30,8 @@ const PROJECTS = [
 
 const SKILLS = 'Python  Java  C  JavaScript  TypeScript  SQL  R  MATLAB  VHDL  AWS  React.js  Node.js  Express.js  JUnit  Git  GitHub Actions  Android Studio  Figma  Altium Designer'
 
-const file = (...content) => ({ type: 'file', content })
-const dir = (id, children = {}) => ({ type: 'dir', id, children })
+const file = (...content: ReactNode[]): FileNode => ({ type: 'file', content })
+const dir = (id: string, children: Record<string, FsNode> = {}): DirNode => ({ type: 'dir', id, children })
 
 // the page modelled as a filesystem: each section is a directory (cd scrolls
 // the page to it), rich sections also hold readable files (cat).
@@ -29,7 +43,7 @@ const FS = dir('top', {
       '3× AWS certified - Solutions Architect, Cloud & AI/ML. Open to internships.'
     ),
   }),
-  projects: dir('projects', PROJECTS.reduce((acc, [name, desc]) => {
+  projects: dir('projects', PROJECTS.reduce<Record<string, FsNode>>((acc, [name, desc]) => {
     acc[name] = file(desc)
     return acc
   }, {})),
@@ -92,8 +106,8 @@ const FORTUNES = [
 ]
 
 // "pushed 3 h ago" for the status command
-function relTime(iso) {
-  const mins = Math.max(1, Math.round((Date.now() - new Date(iso)) / 60000))
+function relTime(iso: string) {
+  const mins = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000))
   if (mins < 60) return `${mins} min ago`
   const hrs = Math.round(mins / 60)
   if (hrs < 48) return `${hrs} h ago`
@@ -101,17 +115,19 @@ function relTime(iso) {
 }
 
 // walk the tree to the node at `segs`, or null if any segment is missing
-function getNode(segs) {
-  let node = FS
+function getNode(segs: string[]): FsNode | null {
+  let node: FsNode = FS
   for (const s of segs) {
-    node = node.children?.[s]
-    if (!node) return null
+    if (node.type !== 'dir') return null
+    const next: FsNode | undefined = node.children[s]
+    if (!next) return null
+    node = next
   }
   return node
 }
 
 // resolve a cd/ls/cat argument (relative, absolute, ~, .., .) to a path array
-function resolveSegments(cwd, arg) {
+function resolveSegments(cwd: string[], arg?: string): string[] {
   if (!arg || arg === '~' || arg === '/') return []
   const fromRoot = arg.startsWith('/') || arg.startsWith('~')
   let segs = fromRoot ? [] : [...cwd]
@@ -123,10 +139,10 @@ function resolveSegments(cwd, arg) {
   return segs
 }
 
-const pathLabel = (segs) => (segs.length ? `~/${segs.join('/')}` : '~')
+const pathLabel = (segs: string[]) => (segs.length ? `~/${segs.join('/')}` : '~')
 
 // A few names people reach for that are not what the directory is called.
-const CD_ALIASES = {
+const CD_ALIASES: Record<string, string[]> = {
   home: [], top: [], root: [], '~': [],
   work: ['experience'], jobs: ['experience'], job: ['experience'],
   credentials: ['certifications'], certs: ['certifications'], cert: ['certifications'],
@@ -144,11 +160,11 @@ const CD_ALIASES = {
 // so `cd skills` works while sitting in ~/projects, and so do `cd /skills`,
 // `cd SKILLS`, `cd skil` and `cd stack`. Real relative paths still resolve
 // first, so `cd ..` and `cd ~` keep behaving exactly as they always did.
-function findDir(cwd, arg) {
+function findDir(cwd: string[], arg?: string): string[] | null {
   const raw = (arg || '').trim()
   if (!raw || raw === '~' || raw === '/') return []
 
-  const isDir = (segs) => { const n = getNode(segs); return n && n.type === 'dir' ? segs : null }
+  const isDir = (segs: string[]) => { const n = getNode(segs); return n && n.type === 'dir' ? segs : null }
 
   // 1. exactly what was typed, relative to where you are
   const literal = isDir(resolveSegments(cwd, raw))
@@ -181,7 +197,7 @@ const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'fortune', 'help',
 // that would complete the current word — a command name (first word) or a
 // cd/ls/cat path argument — or '' when there's nothing to suggest. Pure, so it's
 // re-derived on every keystroke during render.
-function completionFor(input, cwd) {
+function completionFor(input: string, cwd: string[]): string {
   if (!input || input.endsWith(' ')) return ''
   const parts = input.split(/\s+/)
 
@@ -215,7 +231,7 @@ function completionFor(input, cwd) {
   // Real names are searched before aliases, never mixed into one sorted list:
   // `cd pro` has to complete to `projects`, and plain alphabetical order would
   // hand it `profile` instead.
-  const pick = (list) => list.sort().find((n) => n !== prefix && n.startsWith(prefix))
+  const pick = (list: string[]) => list.sort().find((n) => n !== prefix && n.startsWith(prefix))
   if ((cmd === 'cd' || cmd === 'ls') && slash === -1) {
     const sections = Object.keys(FS.children).filter((n) => FS.children[n].type === 'dir')
     const aliases = Object.keys(CD_ALIASES).filter((n) => /^[a-z]+$/.test(n))
@@ -226,7 +242,7 @@ function completionFor(input, cwd) {
   return m ? m.slice(prefix.length) : ''
 }
 
-function Prompt({ path = '~' }) {
+function Prompt({ path = '~' }: { path?: string }) {
   return (
     <>
       <span className="text-grey-700 dark:text-grey-100">visitor@erickk.cloud</span>
@@ -261,20 +277,20 @@ export default function TerminalDock() {
   // a time, rather than being there already: a kernel log that has clearly
   // just run is the whole charm of it. Once per mount, and instant for anyone
   // who asked for reduced motion.
-  const [lines, setLines] = useState([])
+  const [lines, setLines] = useState<ReactNode[]>([])
   const [input, setInput] = useState('')
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState<string[]>([])
   const [hIdx, setHIdx] = useState(-1)
-  const [cwd, setCwd] = useState([])
-  const bodyRef = useRef(null)
-  const inputRef = useRef(null)
-  const panelRef = useRef(null) // everything inside the drawer
-  const tabRef = useRef(null)   // the pull-tab, which is always reachable
+  const [cwd, setCwd] = useState<string[]>([])
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null) // everything inside the drawer
+  const tabRef = useRef<HTMLButtonElement>(null)   // the pull-tab, which is always reachable
 
-  const print = (...nodes) => setLines((prev) => [...prev, ...nodes])
+  const print = (...nodes: ReactNode[]) => setLines((prev) => [...prev, ...nodes])
 
   const bootedRef = useRef(false)
-  const bootTimers = useRef([])
+  const bootTimers = useRef<ReturnType<typeof setTimeout>[]>([])
   useEffect(() => () => bootTimers.current.forEach(clearTimeout), [])
   useEffect(() => {
     if (!open || bootedRef.current) return
@@ -301,7 +317,7 @@ export default function TerminalDock() {
 
   // toggle via Ctrl/Cmd + backtick, plus an 'open-terminal' event (navbar / palette)
   useEffect(() => {
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === '`') {
         e.preventDefault()
         setOpen((o) => !o)
@@ -343,7 +359,7 @@ export default function TerminalDock() {
 
   // 'cd <section>' scrolls the page to that section; 'top' / 'cd ~' is the
   // intro at the head of the document
-  const go = (id) => goTo(id === 'top' ? 'home' : id)
+  const go = (id: string) => goTo(id === 'top' ? 'home' : id)
   const downloadCV = (href = './CV_SWE.pdf') => {
     const a = document.createElement('a')
     a.href = href
@@ -353,9 +369,9 @@ export default function TerminalDock() {
     a.remove()
   }
 
-  const err = (c, msg) => print(<span><span className="font-semibold text-grey-900 dark:text-white">{c}:</span> {msg}</span>)
+  const err = (c: string, msg: ReactNode) => print(<span><span className="font-semibold text-grey-900 dark:text-white">{c}:</span> {msg}</span>)
 
-  const run = (raw) => {
+  const run = (raw: string) => {
     const trimmed = raw.trim()
     print(<span><Prompt path={pathLabel(cwd)} />{trimmed}</span>)
     if (trimmed) setHistory((h) => [...h, trimmed])
@@ -408,7 +424,10 @@ export default function TerminalDock() {
           break
         }
         setCwd(segs)
-        go(getNode(segs).id || 'top')
+        {
+          const target = getNode(segs)
+          go((target?.type === 'dir' ? target.id : undefined) || 'top')
+        }
         break
       }
       case 'cat': {
@@ -473,7 +492,7 @@ export default function TerminalDock() {
       }
       case 'status': {
         print('querying live systems…')
-        const okLine = (label, value, state = 'OK') =>
+        const okLine = (label: string, value: string, state = 'OK') =>
           print(
             <span className="grid grid-cols-[8.5rem_1fr_auto] gap-x-2">
               <span className="text-grey-800 dark:text-grey-200">{label}</span>
@@ -517,7 +536,7 @@ export default function TerminalDock() {
   const suggestion = completionFor(input, cwd)
   const accept = () => suggestion && setInput(input + suggestion)
 
-  const onKeyDown = (e) => {
+  const onKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       run(input)
       setInput('')
@@ -527,7 +546,8 @@ export default function TerminalDock() {
       if (suggestion) { e.preventDefault(); accept() }
     } else if (e.key === 'ArrowRight') {
       // accept the suggestion when the caret sits at the very end of the line
-      if (suggestion && e.target.selectionStart === input.length && e.target.selectionStart === e.target.selectionEnd) {
+      const target = e.target as HTMLInputElement
+      if (suggestion && target.selectionStart === input.length && target.selectionStart === target.selectionEnd) {
         e.preventDefault()
         accept()
       }

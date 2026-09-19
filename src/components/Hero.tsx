@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hrefFor } from '../sitemap.js'
+import { hrefFor } from '../sitemap'
 
 // The intro, and the one place on the site where type sits on a photograph.
 //
@@ -39,7 +39,7 @@ const ERASE_MS = 28
 const HOLD_MS = 1600
 
 // One phrase types out, holds, erases, and the next takes over — forever.
-function useTypewriter(phrases) {
+function useTypewriter(phrases: readonly string[]) {
   const reduce =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -52,7 +52,7 @@ function useTypewriter(phrases) {
     let i = 0
     let n = 0
     let erasing = false
-    let timer
+    let timer: ReturnType<typeof setTimeout>
 
     const tick = () => {
       const phrase = phrases[i]

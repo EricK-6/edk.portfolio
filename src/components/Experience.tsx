@@ -1,5 +1,5 @@
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
+import Section from './Section'
+import Reveal from './Reveal'
 
 // Bullets are kept to a similar length on purpose: at the section's width
 // each one then sets a single line, so the list reads as an even block

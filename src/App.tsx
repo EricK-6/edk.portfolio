@@ -1,21 +1,21 @@
-import { Fragment } from 'react'
-import Navbar from './components/Navbar.jsx'
-import Hero from './components/Hero.jsx'
-import About from './components/About.jsx'
-import Projects from './components/Projects.jsx'
-import Experience from './components/Experience.jsx'
-import Skills from './components/Skills.jsx'
-import Education from './components/Education.jsx'
-import Certifications from './components/Certifications.jsx'
-import Leadership from './components/Leadership.jsx'
-import Contact from './components/Contact.jsx'
-import Footer from './components/Footer.jsx'
-import Divider from './components/Divider.jsx'
-import CommandPalette from './components/CommandPalette.jsx'
-import Cursor from './components/Cursor.jsx'
-import TerminalDock from './components/TerminalDock.jsx'
-import { SECTION_IDS } from './sitemap.js'
-import { useHashLanding } from './router.js'
+import { Fragment, type ComponentType } from 'react'
+import Navbar from './components/Navbar'
+import Hero from './components/Hero'
+import About from './components/About'
+import Projects from './components/Projects'
+import Experience from './components/Experience'
+import Skills from './components/Skills'
+import Education from './components/Education'
+import Certifications from './components/Certifications'
+import Leadership from './components/Leadership'
+import Contact from './components/Contact'
+import Footer from './components/Footer'
+import Divider from './components/Divider'
+import CommandPalette from './components/CommandPalette'
+import Cursor from './components/Cursor'
+import TerminalDock from './components/TerminalDock'
+import { SECTION_IDS, type SectionId } from './sitemap'
+import { useHashLanding } from './router'
 
 // The whole site is one scrolling document, in reading order.
 //
@@ -27,7 +27,7 @@ import { useHashLanding } from './router.js'
 // spacing so it could fit inside a tile, and a separate stacked document had
 // to be swapped in on `beforeprint` because printing a one-tile stage printed
 // one section. All of that is gone: the page prints because it is a page.
-const SECTIONS = {
+const SECTIONS: Record<Exclude<SectionId, 'home'>, ComponentType> = {
   about: About,
   projects: Projects,
   experience: Experience,

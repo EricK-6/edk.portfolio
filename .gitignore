@@ -30,6 +30,7 @@ pnpm-debug.log*
 
 # Optional cache
 .eslintcache
+*.tsbuildinfo
 
 # Claude Code local data
 .claude/

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 
 // Is this element currently in the viewport?
 //
@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 // document has no such thing as "on stage", so the honest question is whether
 // the video is actually on screen, and the answer keeps doing the same job:
 // a looping clip three screens above the reader is pure battery drain.
-export function useOnScreen(ref, rootMargin = '200px') {
+export function useOnScreen(ref: RefObject<Element | null>, rootMargin = '200px') {
   const [onScreen, setOnScreen] = useState(false)
 
   useEffect(() => {

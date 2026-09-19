@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { goTo } from '../router.js'
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
+import { goTo } from '../router'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
@@ -11,9 +11,9 @@ export default function CommandPalette() {
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const [copied, setCopied] = useState(false)
-  const inputRef = useRef(null)
-  const itemRefs = useRef([])
-  const panelRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const panelRef = useRef<HTMLDivElement>(null)
 
   const close = () => setOpen(false)
 
@@ -23,11 +23,11 @@ export default function CommandPalette() {
     if (!open) { setQuery(''); setActive(0) }
   }, [open])
 
-  const go = (id) => {
+  const go = (id: string) => {
     close()
     goTo(id)
   }
-  const openLink = (href) => { close(); window.open(href, '_blank', 'noopener,noreferrer') }
+  const openLink = (href: string) => { close(); window.open(href, '_blank', 'noopener,noreferrer') }
   const downloadCV = (href = './CV_SWE.pdf') => {
     close()
     const a = document.createElement('a')
@@ -47,7 +47,7 @@ export default function CommandPalette() {
 
   // global open/close shortcut + event hook
   useEffect(() => {
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault()
         setOpen((o) => !o)
@@ -56,7 +56,7 @@ export default function CommandPalette() {
       // bare "/" opens it too - but not while typing in a field
       if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
         const el = document.activeElement
-        const typing = el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)
+        const typing = el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable)
         if (!typing) {
           e.preventDefault()
           setOpen(true)
@@ -83,16 +83,16 @@ export default function CommandPalette() {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       // Escape from anywhere in the dialog, not only from the input: once you
       // Tab to a row, the input's own handler is no longer the one listening
       if (e.key === 'Escape') { e.preventDefault(); setOpen(false); return }
       if (e.key !== 'Tab') return
-      const stops = panelRef.current?.querySelectorAll('input, button')
+      const stops = panelRef.current?.querySelectorAll<HTMLElement>('input, button')
       if (!stops?.length) return
       const first = stops[0]
       const last = stops[stops.length - 1]
-      if (!panelRef.current.contains(document.activeElement)) { e.preventDefault(); first.focus() }
+      if (!panelRef.current?.contains(document.activeElement)) { e.preventDefault(); first.focus() }
       else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
     }
@@ -105,7 +105,7 @@ export default function CommandPalette() {
       document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('hashchange', onHash)
-      restoreTo?.focus?.()
+      if (restoreTo instanceof HTMLElement) restoreTo.focus()
     }
   }, [open])
 
@@ -132,7 +132,7 @@ export default function CommandPalette() {
     : commands
   const activeIdx = Math.min(active, Math.max(0, filtered.length - 1))
 
-  const onInputKey = (e) => {
+  const onInputKey = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(a + 1, filtered.length - 1)) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)) }
     else if (e.key === 'Enter') { e.preventDefault(); filtered[activeIdx]?.run() }
@@ -183,7 +183,7 @@ export default function CommandPalette() {
           {filtered.map((c, i) => (
             <li key={c.id}>
               <button
-                ref={(el) => (itemRefs.current[i] = el)}
+                ref={(el: HTMLButtonElement | null) => { itemRefs.current[i] = el }}
                 type="button"
                 onMouseEnter={() => setActive(i)}
                 onClick={c.run}
@@ -213,7 +213,7 @@ export default function CommandPalette() {
   )
 }
 
-function Kbd({ children }) {
+function Kbd({ children }: { children: ReactNode }) {
   return (
     <kbd className="inline-flex min-w-[18px] items-center justify-center rounded border border-grey-300 px-1 py-0.5 font-mono text-[10px] leading-none text-grey-500 dark:border-grey-700 dark:text-grey-400">
       {children}

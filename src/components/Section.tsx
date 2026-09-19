@@ -1,4 +1,16 @@
-import Reveal from './Reveal.jsx'
+import type { ReactNode } from 'react'
+import Reveal from './Reveal'
+
+interface SectionProps {
+  id: string
+  kicker?: string
+  title?: string
+  subtitle?: string
+  wide?: boolean
+  narrow?: boolean
+  children: ReactNode
+  className?: string
+}
 
 // One section of the document.
 //
@@ -12,7 +24,7 @@ import Reveal from './Reveal.jsx'
 // uppercase kicker in muted grey doing the labelling, and the sentence
 // underneath carrying the weight. A section name is a signpost, not a
 // headline, and it should not shout louder than the work it introduces.
-export default function Section({ id, kicker, title, subtitle, wide = false, narrow = false, children, className = '' }) {
+export default function Section({ id, kicker, title, subtitle, wide = false, narrow = false, children, className = '' }: SectionProps) {
   return (
     // No `scroll-mt` here: the header offset for every anchor on the site is
     // `scroll-padding-top` on <html> (index.css), in one place. Setting both

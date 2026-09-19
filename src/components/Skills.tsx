@@ -1,5 +1,5 @@
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
+import Section from './Section'
+import Reveal from './Reveal'
 
 // Four groups, read straight off the two CVs' skills rows.
 //

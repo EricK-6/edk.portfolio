@@ -1,5 +1,6 @@
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
+import type { ReactNode } from 'react'
+import Section from './Section'
+import Reveal from './Reveal'
 
 // Short on purpose. The Highlights beside this were listing the certificates,
 // the placements and the roles, and the prose was saying all of it again in
@@ -52,7 +53,7 @@ export default function About() {
   )
 }
 
-function Bold({ children }) {
+function Bold({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-grey-900">{children}</strong>
 }
 

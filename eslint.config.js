@@ -2,20 +2,22 @@ import js from '@eslint/js'
 import globals from 'globals'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
+import tseslint from 'typescript-eslint'
 
 export default [
   { ignores: ['dist/'] },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'], // new JSX transform: no React import needed
   {
-    files: ['**/*.{js,jsx,mjs}'],
+    files: ['**/*.{js,jsx,mjs,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       globals: {
         ...globals.browser,
         ...globals.node,
-        // baked in at build time by vite.config.js (`define`)
+        // baked in at build time by vite.config.ts (`define`)
         __LAST_UPDATED__: 'readonly',
       },
     },
@@ -26,6 +28,7 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
       'react/prop-types': 'off', // no PropTypes here; shapes live in the data constants
       'react/no-unescaped-entities': 'off', // plain apostrophes in copy are fine
+      '@typescript-eslint/no-unused-vars': 'error',
     },
   },
 ]

@@ -1,16 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ElementType, type ReactNode } from 'react'
 
-export default function Reveal({
+type RevealProps<T extends ElementType> = {
+  children: ReactNode
+  delay?: number
+  y?: number
+  duration?: number
+  threshold?: number
+  className?: string
+  as?: T
+} & Omit<ComponentPropsWithoutRef<T>, 'children' | 'className' | 'as'>
+
+export default function Reveal<T extends ElementType = 'div'>({
   children,
   delay = 0,
   y = 24,
   duration = 700,
   threshold = 0.15,
   className = '',
-  as: Tag = 'div',
+  as,
   ...rest
-}) {
-  const ref = useRef(null)
+}: RevealProps<T>) {
+  const Tag = (as ?? 'div') as ElementType
+  const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {

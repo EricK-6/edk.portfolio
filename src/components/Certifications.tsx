@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
+import Section from './Section'
+import Reveal from './Reveal'
 
 // One ink per credential tier, used for the issuer line and nothing else.
 //
@@ -71,6 +71,8 @@ const CERTS = [
 ]
 const TIERS = ['Associate', 'Foundational']
 
+type Cert = (typeof CERTS)[number]
+
 // Two labelled groups, laid out the way the rest of the page lays things out.
 //
 // This was a pentagon for a while — the badges on the vertices of a figure,
@@ -110,7 +112,7 @@ const GAP = 24 // px — must match sm:gap-x-6 on the row and the gap between gr
 // rather than being absolutely positioned, so the tile's height is however
 // tall the taller face is, always — crossfading between them never resizes
 // the tile, without having to hand-measure and hard-code a height.
-function Badge({ cert }) {
+function Badge({ cert }: { cert: Cert }) {
   const [open, setOpen] = useState(false)
   const linked = Boolean(cert.credlyUrl)
 

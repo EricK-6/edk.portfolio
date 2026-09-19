@@ -1,9 +1,43 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
-import Section from './Section.jsx'
-import { useOnScreen } from '../useOnScreen.js'
+import Section from './Section'
+import { useOnScreen } from '../useOnScreen'
 
-const PROJECTS = [
+interface BuildLogEntry {
+  code: string
+  body: string[]
+}
+
+interface ProjectLink {
+  label: string
+  href: string
+}
+
+interface Project {
+  title: string
+  tag?: string
+  year: string
+  period?: string
+  org?: string
+  awardedBy?: string[]
+  hostedBy?: string[]
+  role: string
+  highlights?: string[]
+  tech?: string[]
+  image?: string
+  video?: string
+  aspect?: string
+  focus?: string
+  featured?: boolean
+  rank?: string
+  color?: string
+  initial?: string
+  icon?: string
+  links: ProjectLink[]
+  log?: BuildLogEntry[]
+}
+
+const PROJECTS: Project[] = [
   {
     title: 'Winnie the Bot',
     tag: '3rd Place · ECSE Design Competition 2025',
@@ -103,7 +137,7 @@ const PROJECTS = [
     color: 'from-cyan-500/20 to-blue-500/20',
     initial: 'S',
     links: [
-      { label: 'Deployed DEMO', href: 'https://master.d3t61ak2oiedfz.amplifyapp.com/' },
+      { label: 'Deployed DEMO', href: 'https://master.d1vwgts5qfrat7.amplifyapp.com/' },
       { label: 'Git repo', href: 'https://github.com/EricK-6/sentiment-dashboard' },
     ],
   },
@@ -217,7 +251,7 @@ const PROJECTS = [
 // indices (and the roving tabindex that walks them) need no group arithmetic —
 // a heading is emitted at the top and again where the awards run out.
 // A quiet rule-and-label separating the two shelves of the section.
-function SubLabel({ children, count, className = '' }) {
+function SubLabel({ children, count, className = '' }: { children: ReactNode; count: number; className?: string }) {
   return (
     <div className={`flex items-baseline gap-3 border-b border-grey-200 pb-2.5 ${className}`}>
       <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
@@ -280,14 +314,14 @@ export default function Projects() {
 // section, letting them all loop the whole way down the page is real battery
 // for no benefit, and `useOnScreen` answers the honest question of whether
 // anyone can see it.
-function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }) {
+function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { project: Project; rounded?: string; fill?: boolean }) {
   const { title, image, video, focus, aspect, color, initial, year, rank } = project
-  const ref = useRef(null)
+  const ref = useRef<HTMLVideoElement | HTMLImageElement>(null)
   const onScreen = useOnScreen(ref)
 
   useEffect(() => {
     const v = ref.current
-    if (!v || !video) return
+    if (!v || !video || !(v instanceof HTMLVideoElement)) return
     if (onScreen) v.play().catch(() => { /* autoplay policy: the poster stays */ })
     else v.pause()
   }, [onScreen, video])
@@ -312,7 +346,7 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }) {
     >
       {video ? (
         <video
-          ref={ref}
+          ref={ref as RefObject<HTMLVideoElement>}
           src={video}
           poster={image}
           muted
@@ -325,7 +359,7 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }) {
         />
       ) : image ? (
         <img
-          ref={ref}
+          ref={ref as RefObject<HTMLImageElement>}
           src={image}
           alt={title}
           loading="lazy"
@@ -356,7 +390,7 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }) {
 
 // An awarded project, full width: the clip on one side and the case for it on
 // the other. The two alternate sides so the pair does not read as one block.
-function FeatureRow({ project, reverse }) {
+function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }) {
   const { title, tag, period, role, awardedBy, hostedBy, org, highlights, tech, links, log } = project
   const [logOpen, setLogOpen] = useState(false)
 
@@ -389,11 +423,11 @@ function FeatureRow({ project, reverse }) {
         {(awardedBy || hostedBy || org) && (
           <Affiliation
             label={awardedBy ? 'Awarded by' : hostedBy ? 'Hosted by' : 'Associated with'}
-            names={awardedBy ?? hostedBy ?? [org]}
+            names={awardedBy ?? hostedBy ?? (org ? [org] : [])}
           />
         )}
 
-        {highlights?.length > 0 && (
+        {highlights && highlights.length > 0 && (
           <ul className="mt-4 space-y-2 text-sm leading-relaxed text-grey-700">
             {highlights.map((h) => (
               <li key={h} className="flex gap-2">
@@ -406,7 +440,7 @@ function FeatureRow({ project, reverse }) {
 
         {/* mt-auto: the stack below the prose sits on the bottom edge of the
             row, level with the foot of the picture beside it */}
-        {tech?.length > 0 && (
+        {tech && tech.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-1.5 pt-5">
             {tech.map((t) => <span key={t} className="tag">{t}</span>)}
           </div>
@@ -416,7 +450,7 @@ function FeatureRow({ project, reverse }) {
           links={links}
           log={log}
           onOpenLog={() => setLogOpen(true)}
-          className={tech?.length > 0 ? 'mt-5' : 'mt-auto pt-5'}
+          className={tech && tech.length > 0 ? 'mt-5' : 'mt-auto pt-5'}
         />
       </div>
 
@@ -441,12 +475,12 @@ function FeatureRow({ project, reverse }) {
 // The detail is an overlay pinned to the flip region rather than an expansion,
 // so opening one never changes the height of its grid row and never pushes the
 // five cards around it.
-function ProjectCard({ project }) {
+function ProjectCard({ project }: { project: Project }) {
   const { title, tag, role, highlights, tech, icon, links, log } = project
   const [open, setOpen] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
-  const frontRef = useRef(null)
-  const detailRef = useRef(null)
+  const frontRef = useRef<HTMLDivElement>(null)
+  const detailRef = useRef<HTMLDivElement>(null)
   const hasOpened = useRef(false)
 
   // A disclosure has to hand focus back where it came from. Opening moves it
@@ -495,7 +529,7 @@ function ProjectCard({ project }) {
             <div className="mt-0.5 text-xs text-grey-500">{tag}</div>
             <div className="mt-2 text-sm text-grey-700">{role}</div>
 
-            {tech?.length > 0 && (
+            {tech && tech.length > 0 && (
               // capped at four on the front; the detail face carries the lot
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {tech.slice(0, 4).map((t) => <span key={t} className="tag">{t}</span>)}
@@ -525,7 +559,7 @@ function ProjectCard({ project }) {
               {title}
             </h4>
 
-            {highlights?.length > 0 && (
+            {highlights && highlights.length > 0 && (
               <ul className="space-y-2 text-[13px] leading-relaxed text-grey-700">
                 {highlights.map((h) => (
                   <li key={h} className="flex gap-2">
@@ -536,7 +570,7 @@ function ProjectCard({ project }) {
               </ul>
             )}
 
-            {tech?.length > 0 && (
+            {tech && tech.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {tech.map((t) => <span key={t} className="tag">{t}</span>)}
               </div>
@@ -565,7 +599,7 @@ function ProjectCard({ project }) {
   )
 }
 
-function ProjectLinks({ links, log, onOpenLog, className = '' }) {
+function ProjectLinks({ links, log, onOpenLog, className = '' }: { links?: ProjectLink[]; log?: BuildLogEntry[]; onOpenLog: () => void; className?: string }) {
   if (!log && !links?.length) return null
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
@@ -600,7 +634,7 @@ function ProjectLinks({ links, log, onOpenLog, className = '' }) {
   )
 }
 
-function RankChip({ rank }) {
+function RankChip({ rank }: { rank: string }) {
   return (
     <span className="min-w-[2.6rem] flex-none rounded bg-award-soft/20 px-1 py-0.5 text-center font-mono text-[10px] font-semibold uppercase leading-none tracking-tight text-award">
       {rank}
@@ -614,7 +648,7 @@ function RankChip({ rank }) {
 // stop darker than the originals and at 80% opacity: full-strength 500s were
 // a rainbow competing with the award chips directly above them, and a single
 // flat grey went too far the other way and vanished on the glass.
-const ICON_STYLES = {
+const ICON_STYLES: Record<string, string> = {
   shield: 'text-violet-600/80',
   cloud: 'text-sky-600/80',
   globe: 'text-indigo-600/80',
@@ -624,7 +658,7 @@ const ICON_STYLES = {
   phone: 'text-emerald-600/80',
 }
 
-const ICON_PATHS = {
+const ICON_PATHS: Record<string, ReactNode> = {
   shield: (
     <>
       <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" />
@@ -661,7 +695,7 @@ const ICON_PATHS = {
   ),
 }
 
-function ProjectIcon({ type }) {
+function ProjectIcon({ type }: { type?: string }) {
   if (!type) return null
   return (
     <svg
@@ -687,7 +721,7 @@ function ProjectIcon({ type }) {
 // are the ones the CV itself bolds, so the site and the PDF stress the same
 // things. Kept as markers in the data rather than JSX so the strings stay
 // readable straight against the CV.
-function emphasise(text) {
+function emphasise(text: string) {
   return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
     i % 2 === 1
       ? <strong key={i} className="font-semibold text-grey-900">{part}</strong>
@@ -695,22 +729,22 @@ function emphasise(text) {
   )
 }
 
-const LOGOS = {
+const LOGOS: Record<string, string> = {
   AWS: './aws.jpg',
   BNZ: './bnz.jpg',
   KEB: './KEB.webp',
   UoA: './UoA.jpg',
 }
 
-const shortForm = (name) => {
+const shortForm = (name: string) => {
   const bracketed = name.match(/\(([^)]+)\)/)
   if (bracketed) return bracketed[1]
   const initials = name.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).map((w) => w[0]).join('')
   return initials.slice(0, 4) || name.slice(0, 2).toUpperCase()
 }
-const fullName = (name) => name.replace(/\s*\([^)]*\)\s*/g, ' ').trim()
+const fullName = (name: string) => name.replace(/\s*\([^)]*\)\s*/g, ' ').trim()
 
-function Affiliation({ label, names }) {
+function Affiliation({ label, names }: { label: string; names: string[] }) {
   return (
     <div className="mt-3">
       <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
@@ -779,9 +813,9 @@ function GitHubIcon() {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-function BuildLogModal({ project, onClose }) {
-  const closeRef = useRef(null)
-  const panelRef = useRef(null)
+function BuildLogModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // freeze the page behind the modal; SunriseLayout reads this to pause
@@ -791,19 +825,19 @@ function BuildLogModal({ project, onClose }) {
     document.body.style.overflow = 'hidden'
     closeRef.current?.focus()
 
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.stopPropagation(); onClose(); return }
       if (e.key !== 'Tab') return
       // Tab has to stay inside. The dialog is portalled to the end of
       // <body>, so the first Tab used to walk straight past it into the page
       // it is covering — the terminal drawer, then the whole navbar — with
       // the modal still open and nothing on screen to say where focus went.
-      const items = [...(panelRef.current?.querySelectorAll(FOCUSABLE) ?? [])]
+      const items = [...(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])]
       if (!items.length) { e.preventDefault(); return }
       const first = items[0]
       const last = items[items.length - 1]
       const active = document.activeElement
-      const inside = panelRef.current.contains(active)
+      const inside = panelRef.current?.contains(active) ?? false
       if (e.shiftKey ? (active === first || !inside) : (active === last || !inside)) {
         e.preventDefault()
         ;(e.shiftKey ? last : first).focus()
@@ -850,7 +884,7 @@ function BuildLogModal({ project, onClose }) {
           </button>
         </div>
         <div className="space-y-5 px-5 py-5">
-          {project.log.map((entry) => (
+          {project.log?.map((entry) => (
             <section key={entry.code}>
               <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent dark:text-accent-dark">
                 {entry.code}

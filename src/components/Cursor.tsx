@@ -19,8 +19,8 @@ const INTERACTIVE = 'a[href], button, [role="button"], [role="tab"], summary, la
 const TEXTUAL = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]'
 
 export default function Cursor() {
-  const dotRef = useRef(null)
-  const ringRef = useRef(null)
+  const dotRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // A coarse pointer has no arrow to replace, and a device with no pointer at
@@ -43,7 +43,7 @@ export default function Cursor() {
     let raf = 0
     let seen = false
 
-    const setState = (el) => {
+    const setState = (el: Element | null) => {
       const overText = !!el?.closest?.(TEXTUAL)
       const overHit = !overText && !!el?.closest?.(INTERACTIVE)
       // over a field the whole cursor stands down and `has-cursor` lets the
@@ -54,7 +54,7 @@ export default function Cursor() {
       targetScale = overHit ? 1.55 : 1
     }
 
-    const onMove = (e) => {
+    const onMove = (e: PointerEvent) => {
       x = e.clientX
       y = e.clientY
       if (!seen) { seen = true; rx = x; ry = y; ring.dataset.ready = 'true'; dot.dataset.ready = 'true' }

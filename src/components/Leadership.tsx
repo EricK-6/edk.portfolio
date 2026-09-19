@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
+import Section from './Section'
+import Reveal from './Reveal'
 
 // One line a role.
 //
@@ -60,9 +60,11 @@ const ITEMS = [
   ...ROLES.filter((r) => !r.period.includes('Present')).reverse(),
 ]
 
+type Point = { x: number; y: number }
+
 export default function Leadership() {
-  const wrapRef = useRef(null)
-  const nodeRefs = useRef([])
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const nodeRefs = useRef<(HTMLElement | null)[]>([])
   const [path, setPath] = useState('')
   const [runnerPath, setRunnerPath] = useState('')
 
@@ -74,17 +76,17 @@ export default function Leadership() {
       // measure in layout space (offsetLeft/Top): unlike client rects these
       // ignore transforms, so the curve lands exactly on the dots even while
       // the reveal animation is mid-translate
-      const centerOf = (el) => {
+      const centerOf = (el: HTMLElement): Point => {
         let x = el.offsetWidth / 2
         let y = el.offsetHeight / 2
-        for (let n = el; n && n !== wrap; n = n.offsetParent) {
+        for (let n: HTMLElement | null = el; n && n !== wrap; n = n.offsetParent as HTMLElement | null) {
           x += n.offsetLeft
           y += n.offsetTop
         }
         return { x, y }
       }
       const pts = nodeRefs.current
-        .filter((n) => n && n.offsetParent) // skip nodes hidden on mobile
+        .filter((n): n is HTMLElement => n !== null && n.offsetParent !== null) // skip nodes hidden on mobile
         .map(centerOf)
       if (pts.length < 2) {
         setPath('')
@@ -92,7 +94,7 @@ export default function Leadership() {
         return
       }
       // smooth serpentine: vertical control points create flowing S-curves
-      const curveThrough = (points) => {
+      const curveThrough = (points: Point[]) => {
         let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`
         for (let i = 1; i < points.length; i++) {
           const a = points[i - 1]
@@ -174,7 +176,7 @@ export default function Leadership() {
                 <div className={`card relative md:w-[calc(50%-3rem)] ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
-                    ref={(el) => (nodeRefs.current[i] = el)}
+                    ref={(el: HTMLSpanElement | null) => { nodeRefs.current[i] = el }}
                     className={`absolute top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-grey-300 dark:bg-accent-dark dark:ring-grey-950 md:block ${left ? '-right-1.5' : '-left-1.5'}`}
                   />
                   {/* node on the spine (mobile) */}

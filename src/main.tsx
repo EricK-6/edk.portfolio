@@ -12,8 +12,8 @@ import '@fontsource/jetbrains-mono/500.css'
 import '@fontsource-variable/fraunces'
 import '@fontsource/caveat/500.css'
 import '@fontsource/caveat/600.css'
-import App from './App.jsx'
-import { upgradeLegacyHash } from './router.js'
+import App from './App'
+import { upgradeLegacyHash } from './router'
 import './index.css'
 
 // Bookmarks and shared links from the route-per-section era used '#/about'.
@@ -21,7 +21,7 @@ import './index.css'
 // lands on the right section instead of at the top of the page.
 upgradeLegacyHash()
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,

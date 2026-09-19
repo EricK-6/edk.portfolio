@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { LABELS, MENU_IDS, SECTION_IDS, SPY_IDS, anchorOf, hrefFor } from '../sitemap.js'
-import { useActiveSection } from '../router.js'
+import { LABELS, MENU_IDS, SECTION_IDS, SPY_IDS, anchorOf, hrefFor } from '../sitemap'
+import { useActiveSection } from '../router'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
@@ -160,12 +160,12 @@ export default function Navbar() {
 // competing buttons. Minimal in chrome, never in target.
 function ResumeMenu() {
   const [open, setOpen] = useState(false)
-  const wrap = useRef(null)
+  const wrap = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!open) return
-    const onDown = (e) => { if (!wrap.current?.contains(e.target)) setOpen(false) }
-    const onKey = (e) => { if (e.key === 'Escape') { setOpen(false); wrap.current?.querySelector('button')?.focus() } }
+    const onDown = (e: MouseEvent) => { if (!wrap.current?.contains(e.target as Node)) setOpen(false) }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { setOpen(false); wrap.current?.querySelector('button')?.focus() } }
     // a menu that scrolls away from its button is a menu you cannot close
     const onScroll = () => setOpen(false)
     document.addEventListener('mousedown', onDown)
@@ -222,7 +222,7 @@ function ResumeMenu() {
 
 // The mobile menu's flavour: a real pill, because it sits in a list of plain
 // text links and would otherwise read as one more row.
-function CvLink({ href, kind, onClick }) {
+function CvLink({ href, kind, onClick }: { href: string; kind: string; onClick: () => void }) {
   return (
     <a
       href={href}
@@ -250,7 +250,7 @@ function OpenIcon() {
   )
 }
 
-function ChevronIcon({ open }) {
+function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
       aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none"
@@ -266,7 +266,7 @@ function ChevronIcon({ open }) {
 // The numbers are the payload — they say both where you are and how much is
 // left, which is worth more in a long document than it ever was when each
 // section was its own screen.
-function ContentsIndex({ active }) {
+function ContentsIndex({ active }: { active: string }) {
   return (
     <ul className="hidden items-baseline gap-4 xl:flex">
       {SECTION_IDS.map((id, i) => {
@@ -344,7 +344,7 @@ function SearchIcon() {
   )
 }
 
-function MenuIcon({ open }) {
+function MenuIcon({ open }: { open: boolean }) {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       {open ? <path d="M18 6L6 18M6 6l12 12" /> : <path d="M3 6h18M3 12h18M3 18h18" />}

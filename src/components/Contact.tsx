@@ -1,11 +1,14 @@
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
-import { useState } from 'react'
+import Section from './Section'
+import Reveal from './Reveal'
+import { useState, type FormEvent, type ReactNode } from 'react'
 
 const EMAIL = 'dohyunkim290106@gmail.com'
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mvzdebnb'
 
-function isValidEmail(v) {
+type FormErrors = Partial<Record<'name' | 'email' | 'message', string>>
+type Status = 'idle' | 'sending' | 'success' | 'error'
+
+function isValidEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 }
 
@@ -15,11 +18,11 @@ export default function Contact() {
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [gotcha, setGotcha] = useState('') // honeypot: humans never see it, bots fill it
-  const [errors, setErrors] = useState({})
-  const [status, setStatus] = useState('idle') // idle | sending | success | error
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [status, setStatus] = useState<Status>('idle')
 
-  const validate = () => {
-    const e = {}
+  const validate = (): FormErrors => {
+    const e: FormErrors = {}
     if (!name.trim()) e.name = 'Name is required'
     if (!email.trim()) e.email = 'Email is required'
     else if (!isValidEmail(email)) e.email = 'Enter a valid email address'
@@ -27,7 +30,7 @@ export default function Contact() {
     return e
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
@@ -159,7 +162,7 @@ export default function Contact() {
 
 // `field` is the touch hook: on a coarse pointer index.css gives these 16px
 // type (or iOS zooms the page on focus) and a 44px minimum height.
-const inputClass = (error) =>
+const inputClass = (error?: string) =>
   `field w-full rounded-lg border px-3 py-2 text-sm placeholder:text-grey-400 focus:outline-none focus:ring-2 transition
    bg-grey-50 text-grey-900 dark:bg-grey-900 dark:text-grey-100 dark:placeholder:text-grey-500
    ${error
@@ -167,7 +170,7 @@ const inputClass = (error) =>
      : 'border-grey-300 focus:border-accent focus:ring-accent/20 dark:border-grey-700 dark:focus:border-accent-dark dark:focus:ring-accent-dark/20'
    }`
 
-function Field({ label, error, children }) {
+function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-grey-500 dark:text-grey-400">
@@ -180,7 +183,7 @@ function Field({ label, error, children }) {
 }
 
 // compact pill links for the direct contact channels: icon + address / id
-function IconLink({ href, label, external, children }) {
+function IconLink({ href, label, external, children }: { href: string; label: string; external?: boolean; children: ReactNode }) {
   return (
     <a
       href={href}

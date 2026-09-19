@@ -1,5 +1,5 @@
-import Section from './Section.jsx'
-import Reveal from './Reveal.jsx'
+import Section from './Section'
+import Reveal from './Reveal'
 
 // Three of the fourteen papers the two CVs list between them, on one line
 // under the concentration rather than the fourteen-row grid this used to be.
