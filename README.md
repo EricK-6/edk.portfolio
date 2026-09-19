@@ -15,7 +15,7 @@ It's one page that scrolls, top to bottom, and I've deliberately kept it that wa
 
 ## Built with
 
-- [Vite](https://vitejs.dev/) + [React 18](https://react.dev/)
+- [Vite](https://vitejs.dev/) + [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - Hosted on **GitHub Pages**, deployed automatically with GitHub Actions
 
@@ -33,8 +33,10 @@ Then open http://localhost:5173.
 ## Building for production
 
 ```bash
-npm run build    # outputs the static site into dist/
-npm run preview  # serve that build locally to double-check it
+npm run build      # type-checks (tsc --noEmit), then outputs the static site into dist/
+npm run preview    # serve that build locally to double-check it
+npm run typecheck  # tsc --noEmit on its own
+npm run lint       # eslint .
 ```
 
 ## Deploying
@@ -47,7 +49,7 @@ If I ever need to push a build by hand:
 npm run deploy
 ```
 
-> **On `base`:** `vite.config.js` uses `base: './'` so the build works wherever it's served from. I'd only touch this if I moved it to a repo subpath like `erick-6.github.io/personal-website/`.
+> **On `base`:** `vite.config.ts` uses `base: './'` so the build works wherever it's served from. I'd only touch this if I moved it to a repo subpath like `erick-6.github.io/personal-website/`.
 
 ## How it's laid out
 
@@ -57,35 +59,36 @@ npm run deploy
 ├── public/
 │   ├── CV_SWE.pdf                 # the two CVs the intro links to
 │   ├── CV_EEE.pdf
-│   ├── qt.jpg                     # the intro photograph (+ qt-sm.jpg for small screens)
+│   ├── qt.jpg / qt.webp           # the intro photograph, WebP with a JPEG fallback (+ qt-sm.* for small screens)
 │   └── og-image.png
 ├── src/
-│   ├── App.jsx                    # the document: every section, in reading order
-│   ├── main.jsx
-│   ├── router.js                  # anchors + the scrollspy the contents index uses
-│   ├── sitemap.js                 # the sections and their labels, in one place
-│   ├── useOnScreen.js             # pauses the project demo clips when off screen
+│   ├── App.tsx                    # the document: every section, in reading order
+│   ├── main.tsx
+│   ├── router.ts                  # anchors + the scrollspy the contents index uses
+│   ├── sitemap.ts                 # the sections and their labels, in one place
+│   ├── useOnScreen.ts             # pauses the project demo clips when off screen
 │   ├── index.css                  # Tailwind + my shared component classes
 │   └── components/
-│       ├── Navbar.jsx             # masthead + numbered contents index
-│       ├── Hero.jsx               # the full-bleed photo intro
-│       ├── Divider.jsx            # the rule between sections
-│       ├── About.jsx
-│       ├── Projects.jsx           # feature rows for the two placements, a flip-card grid for the rest
-│       ├── Experience.jsx
-│       ├── Skills.jsx
-│       ├── Education.jsx
-│       ├── Certifications.jsx     # cert cards that link out to Credly
-│       ├── Leadership.jsx
-│       ├── Contact.jsx            # Formspree contact form
-│       ├── Footer.jsx
-│       ├── CommandPalette.jsx     # Cmd/Ctrl + K
-│       ├── TerminalDock.jsx        # the drawer for the keyboard people
-│       ├── Cursor.jsx             # the dot-and-ring cursor (fine pointers only)
-│       ├── Section.jsx            # shared section wrapper
-│       └── Reveal.jsx             # scroll-into-view animation
+│       ├── Navbar.tsx             # masthead + numbered contents index
+│       ├── Hero.tsx               # the full-bleed photo intro
+│       ├── Divider.tsx            # the rule between sections
+│       ├── About.tsx
+│       ├── Projects.tsx           # feature rows for the two placements, a flip-card grid for the rest
+│       ├── Experience.tsx
+│       ├── Skills.tsx
+│       ├── Education.tsx
+│       ├── Certifications.tsx     # cert cards that link out to Credly
+│       ├── Leadership.tsx
+│       ├── Contact.tsx            # Formspree contact form
+│       ├── Footer.tsx
+│       ├── CommandPalette.tsx     # Cmd/Ctrl + K
+│       ├── TerminalDock.tsx        # the drawer for the keyboard people
+│       ├── Cursor.tsx             # the dot-and-ring cursor (fine pointers only)
+│       ├── Section.tsx            # shared section wrapper
+│       └── Reveal.tsx             # scroll-into-view animation
 ├── tailwind.config.js
-├── vite.config.js
+├── tsconfig.json
+├── vite.config.ts
 └── package.json
 ```
 
@@ -93,13 +96,13 @@ npm run deploy
 
 I kept this dead simple — every section stores its data in a constant at the top of its own file. Open the file, edit the array, save.
 
-- **Projects** → `src/components/Projects.jsx` (`PROJECTS`)
-- **Experience** → `src/components/Experience.jsx`
-- **Skills** → `src/components/Skills.jsx`
-- **Certifications** → `src/components/Certifications.jsx`
-- **Leadership** → `src/components/Leadership.jsx`
+- **Projects** → `src/components/Projects.tsx` (`PROJECTS`)
+- **Experience** → `src/components/Experience.tsx`
+- **Skills** → `src/components/Skills.tsx`
+- **Certifications** → `src/components/Certifications.tsx`
+- **Leadership** → `src/components/Leadership.tsx`
 
-For real project screenshots, I drop an image into `public/` and swap the placeholder in `Projects.jsx` for an `<img>`.
+For real project screenshots, I drop an image into `public/` and swap the placeholder in `Projects.tsx` for an `<img>`.
 
 ## Updating my CV
 
