@@ -176,15 +176,27 @@ export default function Hero() {
 function HeroPhoto() {
   return (
     <div className="hero-photo absolute inset-0 -z-0 overflow-hidden" aria-hidden="true">
-      <img
-        src="./qt.jpg"
-        srcSet="./qt-sm.jpg 1000w, ./qt.jpg 2000w"
-        sizes="100vw"
-        alt=""
-        decoding="async"
-        fetchPriority="high"
-        className="h-full w-full scale-[1.02] object-cover blur-[1.5px]"
-      />
+      {/* WebP first: this is the LCP image, and it's blurred a moment later
+          anyway, so the JPEG's extra detail buys nothing — WebP saves ~40%
+          on the wire for the same picture. The JPEG stays as the <img> so
+          browsers with no WebP support (or a tool reading the DOM) still
+          get a real image. */}
+      <picture>
+        <source
+          type="image/webp"
+          srcSet="./qt-sm.webp 1000w, ./qt.webp 2000w"
+          sizes="100vw"
+        />
+        <img
+          src="./qt.jpg"
+          srcSet="./qt-sm.jpg 1000w, ./qt.jpg 2000w"
+          sizes="100vw"
+          alt=""
+          decoding="async"
+          fetchPriority="high"
+          className="h-full w-full scale-[1.02] object-cover blur-[1.5px]"
+        />
+      </picture>
       {/* the haze: full frame, so it has no edge to read as a shape, and it
           lands on the page colour so the bottom of the picture dissolves */}
       <div className="hero-haze absolute inset-0" />
