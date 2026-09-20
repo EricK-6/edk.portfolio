@@ -172,6 +172,63 @@
   }
   .is-lit .motto-wire { transform: scaleX(1); }
 
+  /* The robot, in the space beside the sentence.
+
+     It waves twice as it arrives and then stands with its hand up, which is
+     the same bargain everything else on this page makes: an entrance, and
+     then stillness. An idle loop here would be the one thing on the site
+     moving while you read, three lines from where you are reading. Hovering
+     it asks for another wave, because that is a reply to the reader rather
+     than a tic.
+
+     It needs room of its own, so it appears only once the sentence has
+     stopped filling the column. Below that it is not shrunk or tucked under
+     the trace, it is simply absent. */
+  .motto-robot { display: none; }
+
+  @media (min-width: 640px) {
+    .motto-robot {
+      position: absolute;
+      right: 0;
+      top: -0.06em;
+      display: block;
+      color: theme(colors.grey.400);
+      opacity: 0;
+      transform: translateY(7px);
+      transition:
+        opacity 420ms ease-out 1240ms,
+        transform 560ms cubic-bezier(0.22, 0.68, 0.32, 1) 1240ms;
+    }
+    .is-lit .motto-robot {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* the antenna's tip and the eyes are the accent, so the robot belongs to
+     the same two-colour story as the chip and the cloud */
+  .robot-spark { color: theme(colors.accent.DEFAULT); }
+
+  /* The arm is drawn already raised, so when the wave finishes on its last
+     keyframe the hand stays up rather than dropping. The pivot is the
+     shoulder in viewBox units: `fill-box` would centre it on the arm's own
+     bounding box, which is a diagonal line, and swing it from its middle. */
+  .robot-arm {
+    transform-box: view-box;
+    transform-origin: 27.5px 27.2px;
+  }
+  .is-lit .robot-arm {
+    animation: robot-wave 1500ms ease-in-out 1460ms 1 both;
+  }
+  /* The reply, on hover: a shorter wave under its own name.
+     It has to be a different name. Re-stating `robot-wave` with a new
+     duration does not restart anything — the browser keeps the animation it
+     already has and only re-times it, and the arrival wave has long since
+     finished, so the arm never moves. */
+  .motto-robot:hover .robot-arm {
+    animation: robot-wave-again 900ms ease-in-out both;
+  }
+
   /* The rule between sections: a hairline that fades to nothing at both ends,
      with a small mark set into it. Never a hard edge across the column. */
   .section-divider {
@@ -460,6 +517,25 @@
 }
 .animate-caret { animation: caret 1.1s step-end infinite; }
 
+/* two swings and a settle: the hand ends where it started, up */
+@keyframes robot-wave {
+  0%   { transform: rotate(0deg); }
+  18%  { transform: rotate(-17deg); }
+  36%  { transform: rotate(12deg); }
+  54%  { transform: rotate(-14deg); }
+  72%  { transform: rotate(9deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* the same hello, said quicker */
+@keyframes robot-wave-again {
+  0%   { transform: rotate(0deg); }
+  22%  { transform: rotate(-16deg); }
+  48%  { transform: rotate(11deg); }
+  74%  { transform: rotate(-12deg); }
+  100% { transform: rotate(0deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
@@ -483,6 +559,15 @@
     transform: translateY(-50%) !important;
   }
   .motto-wire { transform: scaleX(1) !important; }
+  /* the robot keeps its post and its raised hand, it just never swings it */
+  .motto-robot {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .robot-arm,
+  .motto-robot:hover .robot-arm {
+    animation: none !important;
+  }
 }
 
 /* --- print ------------------------------------------------------------- */

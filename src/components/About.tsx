@@ -108,6 +108,7 @@ function Motto() {
         <span className="motto-wire" />
         <CloudMark />
       </span>
+      <RobotMark />
     </span>
   )
 }
@@ -150,6 +151,48 @@ function CloudMark() {
       strokeLinejoin="round"
     >
       <path d="M17.5 18.5H8.5a5.5 5.5 0 1 1 5.28-7h3.72a3.5 3.5 0 1 1 0 7Z" />
+    </svg>
+  )
+}
+
+// The one thing on the page that says hello back.
+//
+// Drawn at the same weight as the chip and the cloud so it reads as part of
+// the same set of marks rather than an illustration dropped beside them. The
+// waving arm is a separate group with its own pivot; everything else holds
+// still. Decorative, so it is hidden from assistive tech: the sentence it
+// stands beside already says what it is there to say.
+function RobotMark() {
+  return (
+    <svg
+      className="motto-robot"
+      width="42"
+      height="42"
+      viewBox="0 0 40 40"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {/* antenna, with the spark on top */}
+      <circle className="robot-spark" cx="20" cy="3.4" r="1.7" fill="currentColor" stroke="none" />
+      <path d="M20 8.5V5.2" />
+      {/* head */}
+      <rect x="10.5" y="8.5" width="19" height="14" rx="4.5" />
+      <circle className="robot-spark" cx="16.2" cy="15.5" r="1.45" fill="currentColor" stroke="none" />
+      <circle className="robot-spark" cx="23.8" cy="15.5" r="1.45" fill="currentColor" stroke="none" />
+      {/* neck and body */}
+      <path d="M20 22.5v2" />
+      <rect x="12.5" y="24.5" width="15" height="10" rx="3.5" />
+      {/* the arm that stays down */}
+      <path d="M12.5 27.5L8.6 30.4" />
+      {/* and the one that waves, drawn raised and clear of the head so it
+          never crosses an outline as it swings */}
+      <g className="robot-arm">
+        <path d="M27.5 27.2L31.8 21.4" />
+      </g>
     </svg>
   )
 }
