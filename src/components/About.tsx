@@ -23,17 +23,19 @@ export default function About() {
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
             I'm Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
-            University of Auckland, working across <Bold>embedded systems</Bold>,{' '}
-            <Bold>AI cloud computing</Bold>, and <Bold>robotics</Bold>.
+            University of Auckland, interested in <Bold>AI</Bold>, <Bold>cloud computing</Bold> and{' '}
+            <Bold>robotics</Bold>.
           </p>
           <p>
-            My strongest weapon is AWS tooling, which sets me apart from most
-            candidates. My newest certificate,{' '}
-            <Bold>Solutions Architect - Associate</Bold>, is the one that changed how I
-            build: designing for the failure modes, not just wiring the services together.
-            Right now I research robot navigation at <Bold>CARES</Bold> and teach
-            robotics at{' '}
-            <Bold>ciLab</Bold>. I'm open to <Bold>2026/27 summer internships</Bold>.
+            I enjoy building practical projects on <Bold>AWS</Bold>, and I've picked up a few
+            certifications along the way — <Bold>Solutions Architect - Associate</Bold> and{' '}
+            <Bold>Terraform Associate</Bold> among them. Right now I'm a research assistant at{' '}
+            <Bold>CARES</Bold>, working on robot soccer and navigation, and I teach robotics at{' '}
+            <Bold>ciLab</Bold>, where I help students build and program robots for competitions.
+          </p>
+          <p>
+            I'm looking for <Bold>internship opportunities</Bold> where I can learn, contribute and
+            grow — so have a look at the work below.
           </p>
         </Reveal>
 
@@ -61,7 +63,7 @@ function Bold({ children }: { children: ReactNode }) {
 // placements in Projects, the certificates in Credentials, the count from the
 // Projects list itself.
 const HIGHLIGHTS = [
-  'Research Assistant · CARES robotics lab, UoA',
+  'Research Assistant · CARES — robot soccer & navigation',
   '3× AWS Certified · Solutions Architect, Cloud & AI',
   'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
   '3rd place · 2025 ECSE Design Competition',

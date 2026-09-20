@@ -39,8 +39,9 @@ const FS = dir('top', {
   about: dir('about', {
     'about.txt': file(
       'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
-      'Specialising in embedded systems, full stack development, and hardware design.',
-      '3× AWS certified - Solutions Architect, Cloud & AI/ML. Open to internships.'
+      'Interested in AI, cloud computing and robotics; building practical projects on AWS.',
+      'Research assistant @ CARES (robot soccer & navigation), robotics instructor @ ciLab.',
+      'AWS Solutions Architect - Associate and Terraform Associate. Open to internships.'
     ),
   }),
   projects: dir('projects', PROJECTS.reduce<Record<string, FsNode>>((acc, [name, desc]) => {
