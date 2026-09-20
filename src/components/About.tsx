@@ -17,21 +17,26 @@ export default function About() {
     // worth reading is the title.
     <Section id="about" kicker="About" title="From silicon to serverless." narrow>
       {/* Prose on top, highlights underneath in a row. The old shape put them
-          side by side, which worked when the text ran three paragraphs and
-          left a column of empty glass once it was cut to two. */}
+          side by side, which left a column of empty glass whenever the text
+          was short. Stacked, the paragraphs can each be two lines without
+          stranding anything, so each one carries a single idea: who he is,
+          how he builds, where he is now, what he is after. */}
       <div>
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
-            I'm Eric, a penultimate year Computer Systems Engineering (Hons) student at the
-            University of Auckland, interested in <Bold>embedded systems</Bold>, <Bold>AI</Bold>,{' '}
+            I'm Eric, a penultimate Computer Systems Engineering (Hons) student at the
+            University of Auckland, working across <Bold>AI</Bold>,{' '}
             <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
           </p>
           <p>
-            I enjoy building projects on <Bold>AWS</Bold>, and studying for the{' '}
-            <Bold>Solutions Architect - Associate</Bold> certification changed how I approach them:
-            I design for the failure modes now, rather than just wiring services together. I'm a
-            research assistant at <Bold>CARES</Bold>, working on robot soccer and navigation, and I
-            teach robotics at <Bold>ciLab</Bold>.
+            Most of what I build ends up on <Bold>AWS</Bold>. Studying for the{' '}
+            <Bold>Solutions Architect - Associate</Bold> certification changed how I get it there:
+            I design for the failure modes now, rather than just wiring services together.
+          </p>
+          <p>
+            I'm a research assistant at <Bold>CARES</Bold>, working on robot soccer and navigation,
+            and I teach robotics at <Bold>ciLab</Bold>, helping students build and program the
+            robots they compete with.
           </p>
           <p>
             I'm looking for <Bold>2026/27 summer internships</Bold> where I can learn, contribute
@@ -59,19 +64,20 @@ function Bold({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-grey-900">{children}</strong>
 }
 
-// Every line here is verifiable in another tile: the placements in Projects,
-// the certificates in Credentials, the volunteering in Leadership, the count
-// from the Projects list itself.
+// Every line here is verifiable in another tile: the roles in Experience, the
+// placements in Projects, the certificates in Credentials, the count from the
+// Projects list itself.
 //
-// CARES and ciLab used to be the first and last bullets. The prose now names
-// both of them, in bold, four lines above — so the tile was introducing the
-// two roles and then immediately listing them back. The bullets are better
-// spent on the things a paragraph this short has no room for.
+// The two roles bookend the list on purpose. The prose names CARES and ciLab
+// in passing, in the middle of a sentence about how he builds; the bullets are
+// where they read as posts held, which is what someone skimming for that is
+// looking for. The volunteering stays out: it is a tile of its own further
+// down, and these six are the ones worth reading twice.
 const HIGHLIGHTS = [
+  'Research Assistant · CARES robotics lab, UoA',
   '4 cloud certifications · AWS and HashiCorp',
   'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
   '3rd place · 2025 ECSE Design Competition',
   '8 projects across hardware & software',
-  'Competition staff · WRO 2026, NZRO 2026',
-  'Academic Team Executive · Korean Engineering Body',
+  'Robotics Instructor & Competition Coach at ciLab',
 ]
