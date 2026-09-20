@@ -39,7 +39,7 @@ const FS = dir('top', {
   about: dir('about', {
     'about.txt': file(
       'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
-      'Interested in AI, cloud computing and robotics; building practical projects on AWS.',
+      'Interested in embedded systems, AI, cloud computing and robotics; builds on AWS.',
       'Research assistant @ CARES (robot soccer & navigation), robotics instructor @ ciLab.',
       'AWS Solutions Architect - Associate and Terraform Associate. Open to internships.'
     ),

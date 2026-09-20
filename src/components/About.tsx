@@ -15,27 +15,27 @@ export default function About() {
     // so the page's own hierarchy ran backwards. The kicker carries the
     // section's name (matching the navbar's contents index) and the one line
     // worth reading is the title.
-    <Section id="about" kicker="About" title="Cloud tooling, robot problems." narrow>
+    <Section id="about" kicker="About" title="From silicon to serverless." narrow>
       {/* Prose on top, highlights underneath in a row. The old shape put them
           side by side, which worked when the text ran three paragraphs and
           left a column of empty glass once it was cut to two. */}
       <div>
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
-            I'm Eric, a penultimate <Bold>Computer Systems Engineering (Hons)</Bold> student at the
-            University of Auckland, interested in <Bold>AI</Bold>, <Bold>cloud computing</Bold> and{' '}
-            <Bold>robotics</Bold>.
+            I'm Eric, a penultimate year Computer Systems Engineering (Hons) student at the
+            University of Auckland, interested in <Bold>embedded systems</Bold>, <Bold>AI</Bold>,{' '}
+            <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
           </p>
           <p>
-            I enjoy building practical projects on <Bold>AWS</Bold>, and I've picked up a few
-            certifications along the way, including <Bold>Solutions Architect - Associate</Bold>{' '}
-            and <Bold>Terraform Associate</Bold>. Right now I'm a research assistant at{' '}
-            <Bold>CARES</Bold>, working on robot soccer and navigation, and I teach robotics at{' '}
-            <Bold>ciLab</Bold>, where I help students build and program robots for competitions.
+            I enjoy building projects on <Bold>AWS</Bold>, and studying for the{' '}
+            <Bold>Solutions Architect - Associate</Bold> certification changed how I approach them:
+            I design for the failure modes now, rather than just wiring services together. I'm a
+            research assistant at <Bold>CARES</Bold>, working on robot soccer and navigation, and I
+            teach robotics at <Bold>ciLab</Bold>.
           </p>
           <p>
-            I'm looking for <Bold>internship opportunities</Bold> where I can learn, contribute and
-            grow, so have a look at the work below.
+            I'm looking for <Bold>2026/27 summer internships</Bold> where I can learn, contribute
+            and grow.
           </p>
         </Reveal>
 
