@@ -4,7 +4,9 @@ import Reveal from './Reveal'
 interface SectionProps {
   id: string
   kicker?: string
-  title?: string
+  // ReactNode rather than string: About's motto animates itself word by word,
+  // so it arrives as markup. Every other section still passes a plain string.
+  title?: ReactNode
   subtitle?: string
   wide?: boolean
   narrow?: boolean

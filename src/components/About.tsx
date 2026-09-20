@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react'
+import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
+import { useOnScreen } from '../useOnScreen'
 
 // Short on purpose. The Highlights beside this were listing the certificates,
 // the placements and the roles, and the prose was saying all of it again in
@@ -15,7 +16,7 @@ export default function About() {
     // so the page's own hierarchy ran backwards. The kicker carries the
     // section's name (matching the navbar's contents index) and the one line
     // worth reading is the title.
-    <Section id="about" kicker="About" title="From silicon to serverless." narrow>
+    <Section id="about" kicker="About" title={<Motto />} narrow>
       {/* Prose on top, highlights underneath in a row. The old shape put them
           side by side, which left a column of empty glass whenever the text
           was short. Stacked, the paragraphs can each be two lines without
@@ -57,6 +58,99 @@ export default function About() {
         </Reveal>
       </div>
     </Section>
+  )
+}
+
+// The motto, and the only line on the site that performs.
+//
+// It is the first sentence a reader meets after the photograph, so it gets
+// the one piece of choreography below the fold: the words light left to
+// right, then a trace draws underneath from a square pad to a round node.
+// That is the sentence's own argument made twice — a board at one end, a
+// cloud at the other, one signal between them.
+//
+// Every rule the rest of the page follows still holds. It is an entrance, so
+// it runs once and then holds still; it animates opacity and transform only,
+// never layout; and it is latched, so scrolling back up does not replay it.
+// `useOnScreen` reports both ways, which is what the project clips want and
+// exactly what a one-shot entrance must not have.
+const MOTTO = ['From', 'silicon', 'to', 'serverless.']
+
+function Motto() {
+  const ref = useRef<HTMLSpanElement>(null)
+  // Roughly where Reveal brings the heading block in, so the words start
+  // lighting as it arrives rather than after a visible pause. Erring early is
+  // the safe direction: the worst case is a motto that is simply already
+  // there, never an empty heading waiting for a trigger.
+  const onScreen = useOnScreen(ref, '0px 0px -40px 0px')
+  const [lit, setLit] = useState(false)
+  useEffect(() => {
+    if (onScreen) setLit(true)
+  }, [onScreen])
+
+  return (
+    <span ref={ref} className={`motto ${lit ? 'is-lit' : ''}`}>
+      {MOTTO.map((word, i) => (
+        <Fragment key={word}>
+          {/* the last word is the destination, so it is the accent */}
+          <span
+            className={`motto-word ${i === MOTTO.length - 1 ? 'motto-cloud' : ''}`}
+            style={{ transitionDelay: `${i * 90}ms` }}
+          >
+            {word}
+          </span>
+          {i < MOTTO.length - 1 ? ' ' : ''}
+        </Fragment>
+      ))}
+      {/* the sentence again, in two marks and a wire between them */}
+      <span className="motto-trace" aria-hidden="true">
+        <ChipMark />
+        <span className="motto-wire" />
+        <CloudMark />
+      </span>
+    </span>
+  )
+}
+
+// The two ends of the sentence, drawn. Inline rather than from an icon set:
+// they are two paths used once, and a dependency for that would cost more
+// than it saves. Stroke is `currentColor` so each end takes its colour from
+// the CSS that positions it.
+function ChipMark() {
+  return (
+    <svg
+      className="motto-chip"
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="5" y="5" width="14" height="14" rx="2" />
+      <rect x="9.5" y="9.5" width="5" height="5" />
+      <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
+    </svg>
+  )
+}
+
+function CloudMark() {
+  return (
+    <svg
+      className="motto-cloud-mark"
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M17.5 18.5H8.5a5.5 5.5 0 1 1 5.28-7h3.72a3.5 3.5 0 1 1 0 7Z" />
+    </svg>
   )
 }
 
