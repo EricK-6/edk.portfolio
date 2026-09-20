@@ -15,7 +15,7 @@ export default function About() {
     // so the page's own hierarchy ran backwards. The kicker carries the
     // section's name (matching the navbar's contents index) and the one line
     // worth reading is the title.
-    <Section id="about" kicker="About" title="Hardware and Software, on the same bench." narrow>
+    <Section id="about" kicker="About" title="Cloud tooling, robot problems." narrow>
       {/* Prose on top, highlights underneath in a row. The old shape put them
           side by side, which worked when the text ran three paragraphs and
           left a column of empty glass once it was cut to two. */}
@@ -28,14 +28,14 @@ export default function About() {
           </p>
           <p>
             I enjoy building practical projects on <Bold>AWS</Bold>, and I've picked up a few
-            certifications along the way — <Bold>Solutions Architect - Associate</Bold> and{' '}
-            <Bold>Terraform Associate</Bold> among them. Right now I'm a research assistant at{' '}
+            certifications along the way, including <Bold>Solutions Architect - Associate</Bold>{' '}
+            and <Bold>Terraform Associate</Bold>. Right now I'm a research assistant at{' '}
             <Bold>CARES</Bold>, working on robot soccer and navigation, and I teach robotics at{' '}
             <Bold>ciLab</Bold>, where I help students build and program robots for competitions.
           </p>
           <p>
             I'm looking for <Bold>internship opportunities</Bold> where I can learn, contribute and
-            grow — so have a look at the work below.
+            grow, so have a look at the work below.
           </p>
         </Reveal>
 
@@ -59,14 +59,19 @@ function Bold({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-grey-900">{children}</strong>
 }
 
-// Every line here is verifiable in another tile: the roles in Experience, the
-// placements in Projects, the certificates in Credentials, the count from the
-// Projects list itself.
+// Every line here is verifiable in another tile: the placements in Projects,
+// the certificates in Credentials, the volunteering in Leadership, the count
+// from the Projects list itself.
+//
+// CARES and ciLab used to be the first and last bullets. The prose now names
+// both of them, in bold, four lines above — so the tile was introducing the
+// two roles and then immediately listing them back. The bullets are better
+// spent on the things a paragraph this short has no room for.
 const HIGHLIGHTS = [
-  'Research Assistant · CARES — robot soccer & navigation',
-  '3× AWS Certified · Solutions Architect, Cloud & AI',
+  '4 cloud certifications · AWS and HashiCorp',
   'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
   '3rd place · 2025 ECSE Design Competition',
   '8 projects across hardware & software',
-  'Robotics Instructor & Competition Coach at ciLab',
+  'Competition staff · WRO 2026, NZRO 2026',
+  'Academic Team Executive · Korean Engineering Body',
 ]
