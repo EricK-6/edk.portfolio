@@ -90,25 +90,42 @@ function Motto() {
 
   return (
     <span ref={ref} className={`motto ${lit ? 'is-lit' : ''}`}>
-      {MOTTO.map((word, i) => (
-        <Fragment key={word}>
-          {/* the last word is the destination, so it is the accent */}
+      {MOTTO.map((word, i) => {
+        const last = i === MOTTO.length - 1
+        const span = (
           <span
-            className={`motto-word ${i === MOTTO.length - 1 ? 'motto-cloud' : ''}`}
+            // the last word is the destination, so it is the accent
+            className={`motto-word ${last ? 'motto-cloud' : ''}`}
             style={{ transitionDelay: `${i * 90}ms` }}
           >
             {word}
           </span>
-          {i < MOTTO.length - 1 ? ' ' : ''}
-        </Fragment>
-      ))}
+        )
+        return (
+          <Fragment key={word}>
+            {/* The robot stands at the end of the sentence, hung off the last
+                word rather than off the column, so it keeps its place beside
+                the full stop at every width. It is positioned out of the line
+                box: inline it would deepen the line and push the trace down
+                by its own height. */}
+            {last ? (
+              <span className="motto-tail">
+                {span}
+                <RobotMark />
+              </span>
+            ) : (
+              span
+            )}
+            {last ? '' : ' '}
+          </Fragment>
+        )
+      })}
       {/* the sentence again, in two marks and a wire between them */}
       <span className="motto-trace" aria-hidden="true">
         <ChipMark />
         <span className="motto-wire" />
         <CloudMark />
       </span>
-      <RobotMark />
     </span>
   )
 }
