@@ -153,7 +153,7 @@ const PROJECTS: Project[] = [
       "Delivered the Korean Engineering Body's **first-ever website** using React 19, Vite, and React Bootstrap, giving the club a centralised hub for events and activities.",
       'Collaborated with senior software students to ship a **production-ready platform** from scratch.',
     ],
-    tech: ['HTML/CSS', 'JavaScript', 'React.js'],
+    tech: ['HTML/CSS', 'JavaScript', 'React.js', 'Node.js'],
     image: './KEBWebDesign.webp',
     color: 'from-sky-500/20 to-indigo-500/20',
     initial: 'K',
