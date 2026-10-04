@@ -19,7 +19,7 @@ const GROUPS = [
     // The SWE CV's own first row, plus VHDL — that one is a language on the
     // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
     // & Tools instead, which is where the SWE CV files it.
-    items: ['Python', 'Java', 'C/C++', 'C#', 'HTML/CSS', 'JavaScript', 'TypeScript', 'Go', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
+    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
   },
   {
     label: 'Cloud & AWS',
