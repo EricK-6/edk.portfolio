@@ -15,7 +15,7 @@ const ROLES = [
     title: 'Academic Team Executive',
     detail: 'Founding Member',
     org: 'Korean Engineering Body (KEB)',
-    period: 'Jul 2024 - Present',
+    period: 'Jul 2024 - Oct 2026',
     image: './KEB.webp',
     description:
       'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
