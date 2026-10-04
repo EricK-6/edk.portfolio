@@ -16,6 +16,7 @@ const ROLES = [
     detail: 'Founding Member',
     org: 'Korean Engineering Body (KEB)',
     period: 'Jul 2024 - Oct 2026',
+    pinned: true,
     image: './KEB.webp',
     description:
       'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
@@ -54,10 +55,12 @@ const ROLES = [
   },
 ]
 
-// ongoing roles pinned on top, then most recent first
+// ongoing or explicitly pinned roles on top (KEB stays first even though its
+// period now has an end date), then most recent first
+const isPinned = (r: (typeof ROLES)[number]) => 'pinned' in r || r.period.includes('Present')
 const ITEMS = [
-  ...ROLES.filter((r) => r.period.includes('Present')),
-  ...ROLES.filter((r) => !r.period.includes('Present')).reverse(),
+  ...ROLES.filter(isPinned),
+  ...ROLES.filter((r) => !isPinned(r)).reverse(),
 ]
 
 type Point = { x: number; y: number }
