@@ -43,6 +43,26 @@ export default function Footer() {
               </a>
             </p>
           )}
+          <p className="mt-1 font-mono text-[11px] tracking-wide text-grey-400">
+            built with{' '}
+            <a
+              href="https://www.typescriptlang.org/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-grey-300 underline-offset-2 transition-colors hover:text-grey-700"
+            >
+              TypeScript
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://tailwindcss.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-grey-300 underline-offset-2 transition-colors hover:text-grey-700"
+            >
+              Tailwind CSS
+            </a>
+          </p>
         </div>
 
         <ul className="flex items-center gap-5 text-sm">
