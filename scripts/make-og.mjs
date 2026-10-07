@@ -68,8 +68,7 @@ const html = `<!doctype html><meta charset="utf-8">
   <img class="photo" src="file://${join(root, 'public/qt.jpg')}">
   <div class="haze"></div>
   <div class="card">
-    <span class="pill"><span class="dot"></span>Open to 2026/27 summer internships</span>
-    <h1>Eric Kim</h1>
+    <h1 style="margin-top:0">Eric Kim</h1>
     <div class="builds">I build <b>robots that hold your gaze</b></div>
     <div class="role">Computer Systems Engineering (Hons) · University of Auckland</div>
     <div class="foot">erickk.cloud</div>

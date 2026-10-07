@@ -126,7 +126,7 @@ export default function Contact() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className={inputClass()}
-              placeholder="Internship opportunity"
+              placeholder="Hello"
             />
           </Field>
           <Field label="Message" error={errors.message}>

@@ -9,17 +9,17 @@ const EXPERIENCE = [
     role: 'Research Assistant',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
-    period: 'Jul 2026 - Present',
+    period: 'Jul 2026 - Oct 2026',
     image: './UoA.jpg',
     bullets: [
-      "Contribute to the lab's robot soccer system, spanning control, decision making, and framework migration.",
-      'Develop and test navigation algorithms for TurtleBot2, with sensor integration and performance evaluation.',
+      "Studied the lab's robot soccer system: camera calibration, vision processing, and decision strategy design.",
+      'Investigated TurtleBot2 navigation, LiDAR integration, and control using ROS and Python.',
     ],
   },
   {
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
-    period: 'Apr 2026 - Present',
+    period: 'Apr 2026 - Oct 2026',
     image: './ciLab.jpg',
     bullets: [
       'Instructed 50+ students in robot hardware assembly and software programming to complete missions.',

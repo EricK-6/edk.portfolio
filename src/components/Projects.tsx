@@ -787,7 +787,7 @@ function Affiliation({ label, names }: { label: string; names: string[] }) {
 }
 
 // blinking green LED marking a live deployed demo — same light as the hero's
-// "Open to internships" status
+// "live demo" status
 function LiveLed() {
   return (
     <span aria-hidden="true" className="relative flex h-2 w-2">

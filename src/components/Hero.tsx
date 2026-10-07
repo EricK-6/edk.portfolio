@@ -95,21 +95,8 @@ export default function Hero() {
       <HeroPhoto />
 
       <div className="on-photo relative z-10 mx-auto max-w-2xl text-center">
-        {/* Availability, with a live green pulse. The one badge left, and the
-            only thing in the intro that is an offer rather than a fact — which
-            is exactly why it survived the cut. */}
-        <div className="lift-in flex justify-center" style={{ animationDelay: '60ms' }}>
-          <span className="inline-flex items-center gap-2 rounded-full border border-green-700/25 bg-green-50/80 px-3 py-1 text-xs font-medium text-green-800">
-            <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-green-500" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-600" />
-            </span>
-            Open to 2026/27 summer internships
-          </span>
-        </div>
-
         <h1
-          className="lift-in mt-7 font-display text-[3.25rem] font-semibold leading-[0.95] text-grey-900 sm:text-7xl"
+          className="lift-in font-display text-[3.25rem] font-semibold leading-[0.95] text-grey-900 sm:text-7xl"
           style={{ animationDelay: '160ms', letterSpacing: '-0.035em' }}
         >
           Eric Kim

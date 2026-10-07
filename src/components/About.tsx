@@ -35,13 +35,9 @@ export default function About() {
             I design for the failure modes now, rather than just wiring services together.
           </p>
           <p>
-            I'm a research assistant at <Bold>CARES</Bold>, working on robot soccer and navigation,
-            and I teach robotics at <Bold>ciLab</Bold>, helping students build and program the
+            I was a research assistant at <Bold>CARES</Bold>, studying robot soccer and navigation,
+            and taught robotics at <Bold>ciLab</Bold>, helping students build and program the
             robots they compete with.
-          </p>
-          <p>
-            I'm looking for <Bold>2026/27 summer internships</Bold> where I can learn, contribute
-            and grow.
           </p>
         </Reveal>
 

@@ -40,8 +40,8 @@ const FS = dir('top', {
     'about.txt': file(
       'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
       'Interested in embedded systems, AI, cloud computing and robotics; builds on AWS.',
-      'Research assistant @ CARES (robot soccer & navigation), robotics instructor @ ciLab.',
-      'AWS Solutions Architect - Associate and Terraform Associate. Open to internships.'
+      'Former research assistant @ CARES (robot soccer & navigation), robotics instructor @ ciLab.',
+      'AWS Solutions Architect - Associate and Terraform Associate.'
     ),
   }),
   projects: dir('projects', PROJECTS.reduce<Record<string, FsNode>>((acc, [name, desc]) => {
@@ -72,7 +72,7 @@ const BOOT_LINES = [
   '[ 0.000000 ] erickk.cloud bootloader v1.0',
   '[ 0.000412 ] cpu: Computer Systems Engineering @ UoA',
   '[ 0.001033 ] mem: portfolio modules ................. ok',
-  '[ 0.002566 ] net: status = open to internships ...... up',
+  '[ 0.002566 ] net: erickk.cloud ....................... up',
   '[ 0.003733 ] starting shell ...................... ok',
 ]
 
@@ -486,10 +486,10 @@ export default function TerminalDock() {
           print(
             <span>
               → opening mail client:&nbsp;
-              <a href={`mailto:${EMAIL}?subject=Internship%20opportunity`} className="text-grey-600 underline dark:text-grey-200">{EMAIL}</a>
+              <a href={`mailto:${EMAIL}?subject=Hello`} className="text-grey-600 underline dark:text-grey-200">{EMAIL}</a>
             </span>
           )
-          setTimeout(() => { window.location.href = `mailto:${EMAIL}?subject=Internship%20opportunity` }, 900)
+          setTimeout(() => { window.location.href = `mailto:${EMAIL}?subject=Hello` }, 900)
         } else {
           print('nice try 😏, but you do not have root here. (unless… `sudo hire-me`)')
         }
@@ -506,7 +506,6 @@ export default function TerminalDock() {
             </span>
           )
         okLine('sys/website', 'erickk.cloud : you are here')
-        okLine('sys/available', 'open to internships · summer 26/27')
         okLine(
           'sys/local-time',
           new Date().toLocaleTimeString('en-NZ', { timeZone: 'Pacific/Auckland', hour: '2-digit', minute: '2-digit' }) + ' : Auckland, NZ'
