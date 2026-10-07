@@ -76,10 +76,11 @@ export default function Projects() {
         ))}
       </div>
 
-      {/* The one line about this site, where the work ends: it is a project
-          too, and it used to sit in the footer where nobody reads. */}
-      <p className="mt-10 font-mono text-[11px] tracking-wide text-grey-400">
-        This site is built with{' '}
+      {/* A postscript, centred, the way a letter ends: the one line about this
+          site, where the work ends. It used to sit in the footer where nobody
+          reads. */}
+      <p className="mt-12 text-center font-mono text-[11px] tracking-wide text-grey-400">
+        P.S. This site is built with{' '}
         <a
           href="https://www.typescriptlang.org/"
           target="_blank"
