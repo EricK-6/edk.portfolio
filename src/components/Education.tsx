@@ -1,17 +1,19 @@
 import Section from './Section'
 import Reveal from './Reveal'
 
-// The software papers a reader scans for, on one line under the concentration
-// rather than the fourteen-row grid this used to be. Five names will wrap on
-// narrower screens, which is fine for a sentence of coursework; the hardware
-// papers are left out, since this line is about the software half and the
-// degree's own name has already said "Computer Systems".
+// The papers a reader scans for, in one line under the concentration
+// rather than the fourteen-row grid this used to be. Seven names will wrap on
+// narrower screens, which is fine for a sentence of coursework; the rest of
+// the hardware papers are left out: the degree's own name has already said
+// "Computer Systems".
 const COURSEWORK = [
   'Object-Oriented Programming',
   'Software Quality Assurance',
   'Data Structures & Algorithms',
   'Database Systems',
   'Software Architecture',
+  'AI & Machine Learning',
+  'Embedded Systems',
 ]
 
 // The diligence awards were the substance of the "multiple diligence awards"
