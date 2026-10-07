@@ -136,6 +136,22 @@ export default function Hero() {
           <span className="text-grey-500"> · </span>
           University of Auckland
         </p>
+
+        {/* One quiet line of status, in place of the internship message that
+            used to sit here. It says what the About and Contact sections say
+            (open to conversations and collaborations) without promising a
+            role. grey-800, not 700: it sits on the photograph, where the
+            local luminance moves with the crop. */}
+        <p
+          className="lift-in mt-3 inline-flex items-center justify-center gap-2 text-sm text-grey-800"
+          style={{ animationDelay: '380ms' }}
+        >
+          <span aria-hidden="true" className="relative flex h-2 w-2 flex-none">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
+          </span>
+          <span>Open to conversations and collaborations</span>
+        </p>
       </div>
 
       {/* The way on. It sits at the foot of the frame rather than in the flow,

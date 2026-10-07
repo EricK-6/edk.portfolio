@@ -182,13 +182,13 @@ export const PROJECTS: Project[] = [
       {
         code: '01 · BRIEF',
         body: [
-          'The AWS×BNZ AI Hackathon 2026, AI Innovation challenge. Spottern reads a whole bank statement, sorts the spending into categories, and flags anything unusual with a plain-language reason a customer can act on.',
+          'The AWS×BNZ AI Hackathon 2026. Spottern reads a whole bank statement, sorts the spending, and flags anything unusual with a plain-language reason.',
         ],
       },
       {
         code: '02 · TEAM',
         body: [
-          'I was grouped with two people I had never met. I volunteered to lead, and before splitting anything up I met each of them one to one to find out where they were strongest. One had really strong front-end skills, the other had real experience presenting, so I divided the work along those lines and took the AWS pipeline myself. Throughout, I made a point of listening to their ideas rather than just handing out tasks.',
+          'I was grouped with two people I had never met. I volunteered to lead and met each of them one to one to find their strengths: one had strong front-end skills, the other real presentation experience. I split the work along those lines, took the AWS pipeline myself, and listened before deciding.',
         ],
       },
       {
@@ -201,15 +201,13 @@ export const PROJECTS: Project[] = [
           { node: 'SNS · SES', does: 'alerts BNZ fraud-ops and the customer' },
         ],
         body: [
-          'The whole statement goes to the model at once, because duplicates and out-of-pattern spending only show up in context: labelling one transaction at a time would miss both.',
-          'The answer is held to a contract. A forced tool call with a JSON schema returns a category from a fixed list, a flag, a 0 to 1 score and a plain-language reason for every transaction, and the merge step still clamps anything out of range, so a bad verdict can never corrupt a stored record. Every stage reads and writes one shared transaction schema.',
+          'The whole statement goes to the model at once, because duplicates and out-of-pattern spending only show up in context. A forced tool call with a JSON schema holds the answer to a contract: a category, a flag, a 0 to 1 score and a plain-language reason for every transaction, clamped on merge so a bad verdict can never corrupt a stored record.',
         ],
       },
       {
         code: '04 · SETBACK',
         body: [
-          "Bedrock was the wall. On the university's AWS account, calling Claude through InvokeModel was blocked by an AWS Marketplace subscription policy that only an org admin could lift. The Converse API was allowed, so I moved the categorize Lambda onto Converse and enforced the structured output with that forced tool call instead. The stack is pinned to Sydney, the only region Bedrock was reachable from on that account, and the au. inference profile keeps a bank statement's data in Australia.",
-          'So the demo could never depend on any of that, the frontend falls back to three sample statements with fraud planted in them: an overseas buy and a duplicate charge, card testing, and a crypto and transfer scam. The hosted demo runs on those.',
+          "Bedrock was the wall. On the university's AWS account, InvokeModel was blocked by a Marketplace subscription policy only an org admin could lift. The Converse API was allowed, so I moved the categorize Lambda onto it and kept the structured output with a forced tool call. The demo cannot depend on any of that, so the frontend falls back to three sample statements with fraud planted in them, and the hosted demo runs on those.",
         ],
       },
       {
@@ -244,7 +242,7 @@ export const PROJECTS: Project[] = [
       {
         code: '01 · BRIEF',
         body: [
-          'A solo project to put certification study into practice: stream text in, classify its sentiment with a managed NLP service, and watch the mood move on a live dashboard, with every piece of it defined as code.',
+          'A solo project to put certification study into practice: stream text in, classify its sentiment with a managed service, and watch it on a live dashboard, all defined as code.',
         ],
       },
       {
@@ -258,27 +256,20 @@ export const PROJECTS: Project[] = [
           { node: 'React on Amplify', does: 'polls every five seconds' },
         ],
         body: [
-          'The whole stack is one AWS SAM template: the stream, both Lambdas, the table, the API and the dead letter queue.',
+          'The whole stack is one AWS SAM template.',
         ],
       },
       {
         code: '03 · FAILURE MODES',
         body: [
-          "The first version worked end to end and was still wrong twice over. Kinesis delivers at least once, so a retried batch could write the same review twice, and every five-second poll scanned the entire table. Carrying the producer's UUID as the table key made retries idempotent, and the ByTimestamp index turned \"latest N\" into a bounded query instead of a scan.",
-          'Then the stream itself. One bad record used to fail its whole batch. The handler now reports only the records that failed (a partial batch response), so the rest are checkpointed; a batch that keeps failing is split in half, and whatever still fails after two retries lands in an SQS dead letter queue for 14 days instead of disappearing.',
+          "Version one worked end to end and was still wrong twice. Kinesis delivers at least once, so a retry could write the same review twice, and every poll scanned the whole table. Using the producer's UUID as the key made retries idempotent, and a ByTimestamp index turned \"latest N\" into a bounded query.",
+          'Then the stream itself: one bad record used to fail its whole batch. Now only the failed records are retried, and whatever still fails after two retries lands in an SQS dead letter queue instead of disappearing.',
         ],
       },
       {
-        code: '04 · COST',
+        code: '04 · OUTCOME',
         body: [
-          'The Kinesis shard bills about $11 a month whether or not anything flows, and it has no free tier. So the backend is deployed on demand and deleted when idle (one sam delete takes it to $0), and the dashboard switches to a built-in simulation whenever the API is unreachable. The demo linked here runs on that simulation.',
-        ],
-      },
-      {
-        code: '05 · OUTCOME',
-        body: [
-          '21 frontend tests (Vitest) and 8 backend tests (pytest with moto) run on every push through GitHub Actions.',
-          'What I would change at real volume: the ByTimestamp index puts every record in one partition, which is fine for a demo and a hot partition at scale, so I would shard it.',
+          'The Kinesis shard bills about $11 a month with no free tier, so the backend is deployed on demand and the hosted demo runs on a built-in simulation. 21 frontend and 8 backend tests run on every push. At real volume I would shard the ByTimestamp index, which keeps every record in one partition.',
         ],
       },
     ],

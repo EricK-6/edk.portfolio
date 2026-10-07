@@ -24,8 +24,7 @@ const BOOT_LINES = [
 
 const SHELL_BANNER: Line[] = [
   [],
-  L('erickk.cloud: interactive shell'),
-  L(dim("type 'help', press a suggestion below, or just ask a question.")),
+  L(dim("type help, press a suggestion below, or just ask a question.")),
   [],
 ]
 

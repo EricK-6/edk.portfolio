@@ -38,13 +38,16 @@ interface Command {
   group: Group
   usage: string
   summary: string
+  hidden?: boolean // works, but is not listed by `help`
   filter?: boolean // reads stdin, so it can sit after a |
   live?: boolean // prints later, so it can't be piped from
   run: (args: string[], io: Io) => void
 }
 
-type Group = 'look around' | 'read' | 'about eric' | 'live' | 'play' | 'shell'
-const GROUPS: Group[] = ['look around', 'read', 'about eric', 'live', 'play', 'shell']
+type Group = 'look around' | 'read' | 'more' | 'extras'
+// `help` lists these three. 'extras' are real commands that are left off the
+// list: a first screen of ten is readable, thirty is not.
+const GROUPS: Group[] = ['look around', 'read', 'more']
 
 const err = (name: string, msg: string, ...rest: Seg[]): Line => L(strong(`${name}: `), msg, ...rest)
 const flags = (args: string[]) => ({ set: new Set(args.filter((a) => /^-\w/.test(a)).flatMap((a) => [...a.slice(1)])), rest: args.filter((a) => !/^-\w/.test(a)) })
@@ -253,9 +256,8 @@ const COMMANDS: Command[] = [
       ctx.goTo((getNode(segs) as DirNode).anchor)
     },
   },
-  { name: 'pwd', group: 'look around', usage: 'pwd', summary: 'where you are', run(_, { ctx, out }) { out.push(L(pathLabel(ctx.cwd))) } },
   {
-    name: 'tree', group: 'look around', usage: 'tree [path]', summary: 'the whole site at a glance',
+    name: 'tree', group: 'extras', hidden: true, usage: 'tree [path]', summary: 'the whole site at a glance',
     run(args, { ctx, out }) {
       const segs = args[0] ? (findDir(ctx.cwd, args[0]) ?? resolve(ctx.cwd, args[0])) : ctx.cwd
       const node = getNode(segs)
@@ -363,10 +365,10 @@ const COMMANDS: Command[] = [
       if (!count) out.push(L(dim(`no matches for '${pattern}'. `), cmd(`ask ${pattern}`), dim(' looks a little wider')))
     },
   },
-  { name: 'head', group: 'read', usage: 'head [-n N]', summary: 'first lines of a pipe', filter: true, run(args, { stdin, out }) { out.push(...(stdin ?? []).slice(0, nOf(args))) } },
-  { name: 'tail', group: 'read', usage: 'tail [-n N]', summary: 'last lines of a pipe', filter: true, run(args, { stdin, out }) { out.push(...(stdin ?? []).slice(-nOf(args))) } },
+  { name: 'head', group: 'extras', hidden: true, usage: 'head [-n N]', summary: 'first lines of a pipe', filter: true, run(args, { stdin, out }) { out.push(...(stdin ?? []).slice(0, nOf(args))) } },
+  { name: 'tail', group: 'extras', hidden: true, usage: 'tail [-n N]', summary: 'last lines of a pipe', filter: true, run(args, { stdin, out }) { out.push(...(stdin ?? []).slice(-nOf(args))) } },
   {
-    name: 'wc', group: 'read', usage: 'wc [-l]', summary: 'count lines, words, characters', filter: true,
+    name: 'wc', group: 'extras', hidden: true, usage: 'wc [-l]', summary: 'count lines, words, characters', filter: true,
     run(args, { stdin, out }) {
       const text = (stdin ?? []).map(plain)
       if (flags(args).set.has('l')) { out.push(L(String(text.length))); return }
@@ -374,25 +376,21 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'sort', group: 'read', usage: 'sort [-r]', summary: 'sort a pipe', filter: true,
+    name: 'sort', group: 'extras', hidden: true, usage: 'sort [-r]', summary: 'sort a pipe', filter: true,
     run(args, { stdin, out }) {
       const sorted = [...(stdin ?? [])].sort((a, b) => plain(a).localeCompare(plain(b)))
       out.push(...(flags(args).set.has('r') ? sorted.reverse() : sorted))
     },
   },
   {
-    name: 'ask', group: 'about eric', usage: 'ask <anything>', summary: 'a question in plain words, answered from the page',
+    name: 'ask', group: 'read', usage: 'ask <anything>', summary: 'a question in plain words, answered from the page',
     run(args, { ctx, out }) {
       if (!args.length) { out.push(L(dim('ask me something, e.g. '), cmd('ask what have you built on aws?'))); return }
       out.push(...answer(args.join(' '), ctx))
     },
   },
   {
-    name: 'whoami', group: 'about eric', usage: 'whoami', summary: 'who is this',
-    run(_, { out }) { out.push(L("visitor, a curious one. The person you're here for is ", cmd(PROFILE.fullName, 'cat ~/about/bio.md'), t('.'))) },
-  },
-  {
-    name: 'neofetch', aliases: ['fastfetch'], group: 'about eric', usage: 'neofetch', summary: 'the system specs, so to speak',
+    name: 'neofetch', aliases: ['fastfetch'], group: 'extras', hidden: true, usage: 'neofetch', summary: 'the system specs, so to speak',
     run(_, { out }) {
       const skills = SKILL_GROUPS.reduce((n, g) => n + g.items.length, 0)
       const awarded = PROJECTS.filter((p) => p.featured).length
@@ -422,7 +420,7 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'cv', aliases: ['resume'], group: 'about eric', usage: 'cv <software|hardware>', summary: 'download a résumé',
+    name: 'cv', aliases: ['resume'], group: 'more', usage: 'cv <software|hardware>', summary: 'download a résumé',
     run(args, { ctx, out }) {
       const key = (args[0] ?? '').toLowerCase()
       const r = RESUMES.find((x) => (x.aliases as readonly string[]).includes(key))
@@ -432,7 +430,7 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'social', aliases: ['links', 'contact'], group: 'about eric', usage: 'social', summary: 'where else to find me',
+    name: 'social', aliases: ['links', 'contact'], group: 'extras', hidden: true, usage: 'social', summary: 'where else to find me',
     run(_, { out }) {
       out.push(
         L(dim('email     '), link(PROFILE.email, `mailto:${PROFILE.email}`)),
@@ -442,23 +440,7 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'status', group: 'live', usage: 'status', summary: 'live systems check', live: true,
-    run(_, { ctx, out }) {
-      const okLine = (label: string, value: string, ok = true) => L(dim(label.padEnd(15)), value, t(ok ? '  [ OK ]' : '  [ ?? ]', ok ? 'ok' : 'dim'))
-      out.push(L(dim('querying live systems…')), okLine('sys/website', 'erickk.cloud: you are here'), okLine('sys/local-time', `${nzTime()} in Auckland`))
-      fetch(`https://api.github.com/users/${PROFILE.github.handle}/events/public?per_page=1`)
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-        .then((events) => {
-          const e = events?.[0]
-          if (!e) throw new Error('no events')
-          const action = (e.type || '').replace('Event', '').toLowerCase() || 'activity'
-          ctx.print(okLine('sys/github', `${action} on ${e.repo?.name?.split('/')[1] ?? 'a repo'}, ${relTime(e.created_at)}`))
-        })
-        .catch(() => ctx.print(okLine('sys/github', 'live check unreachable', false)))
-    },
-  },
-  {
-    name: 'git', group: 'live', usage: 'git log [-n N]', summary: "this site's real commit history", live: true,
+    name: 'git', group: 'extras', hidden: true, usage: 'git log [-n N]', summary: "this site's real commit history", live: true,
     run(args, { ctx, out }) {
       if (args[0] !== 'log') { out.push(err('git', 'only `git log` works in here; this shell is read-only. try ', cmd('git log'))); return }
       const n = Math.min(nOf(args, 5), 20)
@@ -472,31 +454,7 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'ping', group: 'live', usage: 'ping', summary: 'a real round trip to this site', live: true,
-    run(args, { ctx, out }) {
-      const host = args[0]?.replace(/^https?:\/\//, '') ?? 'erickk.cloud'
-      if (!/^(erickk\.cloud|localhost|127\.0\.0\.1)/.test(host)) { out.push(err('ping', `only erickk.cloud answers from in here, not ${host}`)); return }
-      out.push(L(dim(`PING ${location.host || 'erickk.cloud'} over ${location.protocol.replace(':', '')}, fetching favicon.png`)))
-      const times: number[] = []
-      const once = (seq: number) => {
-        const t0 = performance.now()
-        fetch(`./favicon.png?ping=${Date.now()}`, { cache: 'no-store' })
-          .then((r) => r.blob())
-          .then((b) => {
-            const ms = performance.now() - t0
-            times.push(ms)
-            ctx.print(L(`${b.size} bytes: seq=${seq} time=${ms.toFixed(1)} ms`))
-            if (seq < 4) ctx.later(() => once(seq + 1), 400)
-            else ctx.print(L(dim(`4 sent, 4 back. min/avg/max = ${Math.min(...times).toFixed(1)}/${(times.reduce((a, b) => a + b, 0) / times.length).toFixed(1)}/${Math.max(...times).toFixed(1)} ms`)))
-          })
-          .catch(() => ctx.print(err('ping', 'no answer. are you offline?')))
-      }
-      once(1)
-    },
-  },
-  { name: 'date', group: 'live', usage: 'date', summary: 'the time here, and in Auckland', run(_, { out }) { out.push(L(new Date().toString()), L(dim('in Auckland: '), nzTime())) } },
-  {
-    name: 'run', group: 'play', usage: 'run <project>', summary: 'replay what a project does (also ./spottern)', live: true,
+    name: 'run', group: 'more', usage: 'run <project>', summary: 'replay what a project does (also ./spottern)', live: true,
     run(args, { ctx, out }) {
       const p = findProject(args[0] ?? '')
       if (!p) { out.push(L(dim('runnable: '), ...[...EXECUTABLE].flatMap((s, i) => [...(i ? [dim(' · ')] : []), cmd(`./${s}`)]))); return }
@@ -505,9 +463,9 @@ const COMMANDS: Command[] = [
       out.push(L(`${p.title} is ${p.video ? 'hardware or a game you have to see, not run' : 'not runnable from here'}. `, cmd(`open ${p.slug}`), dim(p.video ? ' shows the clip' : ' shows it')))
     },
   },
-  { name: 'fortune', group: 'play', usage: 'fortune', summary: 'a fortune cookie for engineers (try | kiwisay)', run(_, { out }) { out.push(L(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])) } },
+  { name: 'fortune', group: 'extras', hidden: true, usage: 'fortune', summary: 'a fortune cookie for engineers (try | kiwisay)', run(_, { out }) { out.push(L(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])) } },
   {
-    name: 'kiwisay', aliases: ['cowsay'], group: 'play', usage: 'kiwisay <words>', summary: 'cowsay, but a kiwi', filter: true,
+    name: 'kiwisay', aliases: ['cowsay'], group: 'extras', hidden: true, usage: 'kiwisay <words>', summary: 'cowsay, but a kiwi', filter: true,
     run(args, { stdin, out }) {
       const text = (args.length ? args.join(' ') : (stdin ?? []).map(plain).join(' ')) || 'kia ora!'
       const lines: string[] = []
@@ -532,7 +490,7 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'sudo', group: 'play', usage: 'sudo hire-me', summary: 'you know you want to',
+    name: 'sudo', group: 'extras', hidden: true, usage: 'sudo hire-me', summary: 'you know you want to',
     run(args, { ctx, out }) {
       if (args.join(' ').toLowerCase().replace(/\s+/g, '-') !== 'hire-me') { out.push(L('nice try, but you do not have root here. (unless… ', cmd('sudo hire-me'), t(')'))); return }
       out.push(
@@ -544,15 +502,14 @@ const COMMANDS: Command[] = [
       ctx.later(() => ctx.openUrl(`mailto:${PROFILE.email}?subject=Hello`), 900)
     },
   },
-  { name: 'echo', group: 'shell', usage: 'echo <text>', summary: 'say it back', run(args, { out }) { out.push(L(args.join(' '))) } },
   {
-    name: 'history', group: 'shell', usage: 'history', summary: 'what you typed (!! repeats the last)',
+    name: 'history', group: 'extras', hidden: true, usage: 'history', summary: 'what you typed (!! repeats the last)',
     run(_, { ctx, out }) { ctx.history.slice(-20).forEach((h, i, all) => out.push(L(dim(String(ctx.history.length - all.length + i + 1).padStart(4) + '  '), cmd(h)))) },
   },
-  { name: 'clear', group: 'shell', usage: 'clear', summary: 'clear the screen (or ctrl+L)', run(_, { ctx }) { ctx.clear() } },
-  { name: 'exit', aliases: ['close', 'quit'], group: 'shell', usage: 'exit', summary: 'close the terminal (or esc)', run(_, { ctx }) { ctx.close() } },
+  { name: 'clear', group: 'extras', hidden: true, usage: 'clear', summary: 'clear the screen (or ctrl+L)', run(_, { ctx }) { ctx.clear() } },
+  { name: 'exit', aliases: ['close', 'quit'], group: 'extras', hidden: true, usage: 'exit', summary: 'close the terminal (or esc)', run(_, { ctx }) { ctx.close() } },
   {
-    name: 'help', aliases: ['man'], group: 'shell', usage: 'help [command]', summary: 'this list, or one command in detail',
+    name: 'help', aliases: ['man'], group: 'more', usage: 'help [command]', summary: 'this list, or one command in detail',
     run(args, { out }) {
       if (args[0]) {
         const c = find(args[0].replace(/^\.\//, ''))
@@ -561,10 +518,14 @@ const COMMANDS: Command[] = [
         return
       }
       for (const g of GROUPS) {
-        const names = COMMANDS.filter((c) => c.group === g)
-        out.push([{ text: g.padEnd(12), tone: 'dim', gutter: true }, ...names.flatMap((c, i) => [...(i ? [t('  ')] : []), cmd(c.name === 'git' ? 'git log' : c.name === 'run' ? './spottern' : c.name, c.name === 'git' ? 'git log' : c.name === 'run' ? './spottern' : `help ${c.name}`)])])
+        const items = COMMANDS.filter((c) => c.group === g && !c.hidden).flatMap((c) =>
+          c.name === 'run'
+            ? [...EXECUTABLE].map((slug) => ({ label: `./${slug}`, run: `./${slug}` }))
+            : [{ label: c.name, run: `help ${c.name}` }],
+        )
+        out.push([{ text: g.padEnd(12), tone: 'dim', gutter: true }, ...items.flatMap((it, i) => [...(i ? [t('  ')] : []), cmd(it.label, it.run)])])
       }
-      out.push([], L(dim('press any command for its details. pipes work: '), cmd('ls ~/skills | grep cloud')), L(dim('or skip all that and just ask: '), cmd('ask are you open to work?')))
+      out.push([], L(dim('or skip all that and just ask: '), cmd('ask are you open to work?')))
     },
   },
 ]
