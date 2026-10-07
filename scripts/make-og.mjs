@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// Regenerates public/og-image.png, the card LinkedIn / Slack / iMessage show
+// Regenerates public/og-image.jpg, the card LinkedIn / Slack / iMessage show
 // when the site is shared.
 //
 //   node scripts/make-og.mjs
@@ -13,10 +13,10 @@ import { fileURLToPath } from 'node:url'
 // index.html, or those services keep serving the cached old one.
 //
 // This used to compose an SVG with sharp, which meant the preview drifted from
-// the site every time the design moved — it was still showing the retired
-// boarding pass long after the site stopped looking like that. It now renders
-// in headless Chrome from the site's own photograph, fonts and palette, so it
-// can only look like whatever the site currently looks like. No dependencies:
+// the site every time the design moved. It now renders in headless Chrome from
+// the site's own photograph, fonts and palette. It is still a hand-kept copy
+// of the intro, though (the status line, the typing phrase, the degree line),
+// so when Hero.tsx changes, change it here and regenerate. No dependencies:
 // Chrome is already on the machine, everything else is a local file.
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -42,37 +42,41 @@ const html = `<!doctype html><meta charset="utf-8">
   @font-face { font-family: Fraunces; font-weight: 100 900; src: url(data:font/woff2;base64,${b64(fraunces)}) format('woff2'); }
   * { margin: 0; box-sizing: border-box; }
   body { width: ${W}px; height: ${H}px; overflow: hidden; font-family: Inter, sans-serif; }
-  .stage { position: relative; width: ${W}px; height: ${H}px; }
-  .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .stage { position: relative; width: ${W}px; height: ${H}px; overflow: hidden; background: #fbfaf9; }
+  /* the intro as the site draws it: the photograph full bleed, no card, a wide
+     haze behind the type, and the bottom dissolving into the page colour */
+  .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    object-position: 50% 64%; filter: blur(1.5px); transform: scale(1.02); }
   .haze { position: absolute; inset: 0;
-    background: radial-gradient(120% 100% at 50% 45%,
-      rgba(255,255,255,.5) 0%, rgba(255,255,255,.3) 45%, rgba(255,255,255,.1) 100%); }
-  .card { position: absolute; inset: 52px; border-radius: 30px;
-    border: 1px solid rgba(255,255,255,.7); background: rgba(255,255,255,.74);
-    backdrop-filter: blur(30px) saturate(135%) brightness(1.12);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 0 64px; box-shadow: 0 24px 60px rgba(0,0,0,.12); }
-  .pill { display: inline-flex; align-items: center; gap: 9px; border-radius: 999px;
-    border: 1px solid rgba(21,128,61,.25); background: rgba(240,253,244,.8);
-    padding: 7px 16px; font-size: 17px; font-weight: 600; color: #166534; }
-  .dot { width: 9px; height: 9px; border-radius: 999px; background: #16a34a; }
-  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 102px;
-    letter-spacing: -.02em; color: #1c1917; margin: 24px 0 0; line-height: 1; }
-  .builds { margin-top: 22px; font-size: 29px; color: #292524; }
-  .builds b { color: #0f766e; font-weight: 600; }
-  .role { margin-top: 14px; font-size: 21px; color: #44403c; }
-  .foot { position: absolute; bottom: 32px; left: 0; right: 0; text-align: center;
+    background:
+      radial-gradient(95% 62% at 50% 47%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.5) 42%,
+        rgba(255,255,255,.16) 76%, rgba(255,255,255,0) 100%),
+      linear-gradient(to bottom, rgba(251,250,249,.35) 0%, rgba(251,250,249,0) 30%,
+        rgba(251,250,249,0) 62%, #fbfaf9 100%); }
+  .copy { position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding-bottom: 36px;
+    text-shadow: 0 0 18px rgba(255,255,255,.8), 0 1px 2px rgba(255,255,255,.65); }
+  .status { display: inline-flex; align-items: center; gap: 10px; font-size: 21px; color: #292524; }
+  .status b { font-weight: 600; }
+  .dot { width: 11px; height: 11px; border-radius: 999px; background: #059669; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 118px;
+    letter-spacing: -.035em; color: #1c1917; margin-top: 22px; line-height: .95; }
+  .builds { margin-top: 26px; font-size: 32px; color: #292524; }
+  .builds b { color: #115e59; font-weight: 600; }
+  .role { margin-top: 18px; font-size: 23px; color: #44403c; }
+  .foot { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center;
     font-size: 16px; letter-spacing: .22em; text-transform: uppercase; color: #635c57; }
 </style>
 <div class="stage">
   <img class="photo" src="file://${join(root, 'public/qt.jpg')}">
   <div class="haze"></div>
-  <div class="card">
-    <h1 style="margin-top:0">Eric Kim</h1>
-    <div class="builds">I build <b>robots that hold your gaze</b></div>
-    <div class="role">Computer Systems Engineering (Hons) · University of Auckland</div>
-    <div class="foot">erickk.cloud</div>
+  <div class="copy">
+    <div class="status"><span class="dot"></span><span><b>Status:</b> Open to chats and collaborations</span></div>
+    <h1>Eric Kim</h1>
+    <div class="builds">Kia ora, I build <b>embedded systems</b></div>
+    <div class="role">BE(Hons) Computer Systems Engineering · University of Auckland</div>
   </div>
+  <div class="foot">erickk.cloud</div>
 </div>`
 
 const dir = mkdtempSync(join(tmpdir(), 'og-'))
@@ -108,9 +112,11 @@ try {
   await cdp(ws, 'Emulation.setDeviceMetricsOverride',
     { width: W, height: H, deviceScaleFactor: 1, mobile: false })
   await sleep(2500) // photo decode + font load
-  const { data } = await cdp(ws, 'Page.captureScreenshot', { format: 'png' })
-  writeFileSync(join(root, 'public/og-image.png'), Buffer.from(data, 'base64'))
-  console.log('wrote public/og-image.png  (%dx%d)', W, H)
+  // JPEG, not PNG: a photograph as PNG was 530KB, and some apps (WhatsApp
+  // among them) skip a preview image over about 300KB
+  const { data } = await cdp(ws, 'Page.captureScreenshot', { format: 'jpeg', quality: 86 })
+  writeFileSync(join(root, 'public/og-image.jpg'), Buffer.from(data, 'base64'))
+  console.log('wrote public/og-image.jpg  (%dx%d)', W, H)
   ws.close()
 } finally {
   chrome.kill()

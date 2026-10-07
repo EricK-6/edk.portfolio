@@ -55,13 +55,13 @@ npm run deploy
 
 ```
 ├── .github/workflows/deploy.yml   # auto-deploy on push to main
-├── scripts/make-og.mjs            # regenerates public/og-image.png (see its header)
+├── scripts/make-og.mjs            # regenerates public/og-image.jpg (see its header)
 ├── public/
 │   ├── 404.html                   # also catches guessed URLs: /cv, /projects, /spottern …
 │   ├── CV_SWE.pdf                 # the two CVs the navbar links to
 │   ├── CV_EEE.pdf
 │   ├── qt.jpg / qt.webp           # the intro photograph, WebP with a JPEG fallback (+ qt-sm.* for small screens)
-│   └── og-image.png
+│   └── og-image.jpg
 ├── src/
 │   ├── App.tsx                    # the document: every section, in reading order
 │   ├── content.ts                 # every word and link the site shows (see below)
