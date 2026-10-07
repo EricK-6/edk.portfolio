@@ -6,14 +6,16 @@ import Reveal from './Reveal'
 // narrower screens, which is fine for a sentence of coursework; the rest of
 // the hardware papers are left out: the degree's own name has already said
 // "Computer Systems".
+// `focus` marks the papers that belong to the two concentrations named above
+// them, so the connection is visible rather than left for the reader to infer.
 const COURSEWORK = [
-  'Object-Oriented Programming',
-  'Software Quality Assurance',
-  'Data Structures & Algorithms',
-  'Database Systems',
-  'Software Architecture',
-  'AI & Machine Learning',
-  'Embedded Systems',
+  { name: 'Object-Oriented Programming' },
+  { name: 'Software Quality Assurance' },
+  { name: 'Data Structures & Algorithms' },
+  { name: 'Database Systems' },
+  { name: 'Software Architecture', focus: true },
+  { name: 'AI & Machine Learning' },
+  { name: 'Embedded Systems', focus: true },
 ]
 
 // The diligence awards were the substance of the "multiple diligence awards"
@@ -55,10 +57,20 @@ export default function Education() {
               Bachelor of Engineering (Honours) · Computer Systems Engineering
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Concentrations: Embedded Systems & Software Design
+              Concentrations: <span className="font-medium text-accent dark:text-accent-dark">Embedded Systems & Software Design</span>
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Related coursework: {COURSEWORK.join(' · ')}
+              Related coursework:{' '}
+              {COURSEWORK.map((c, i) => (
+                <span key={c.name}>
+                  {i > 0 && ' · '}
+                  {'focus' in c ? (
+                    <span className="font-medium text-accent dark:text-accent-dark">{c.name}</span>
+                  ) : (
+                    c.name
+                  )}
+                </span>
+              ))}
             </div>
           </div>
         </div>
