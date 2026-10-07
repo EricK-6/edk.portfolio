@@ -49,6 +49,7 @@ export default function Projects() {
       // The counts are read off the list, so the sentence stays true as it
       // grows. The logs exist for the projects taken on outside coursework,
       // which is what makes them worth pointing at.
+      subtitleOneLine
       subtitle={
         <>
           {cap(WORDS[featured.length])} award placements and {WORDS[rest.length]} more builds. The{' '}
