@@ -7,7 +7,7 @@ interface SectionProps {
   // ReactNode rather than string: About's motto animates itself word by word,
   // so it arrives as markup. Every other section still passes a plain string.
   title?: ReactNode
-  subtitle?: string
+  subtitle?: ReactNode
   wide?: boolean
   narrow?: boolean
   children: ReactNode

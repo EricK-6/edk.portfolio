@@ -18,6 +18,10 @@ function SubLabel({ children, count, className = '' }: { children: ReactNode; co
   )
 }
 
+// small counts as words: a sentence reads better than a numeral
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+const cap = (w: string) => w[0].toUpperCase() + w.slice(1)
+
 export default function Projects() {
   // Every project shows its own media.
   //
@@ -42,10 +46,19 @@ export default function Projects() {
       id="projects"
       kicker="Projects"
       title="Things I've built"
-      subtitle="Two award placements, plus the robots, circuits, cloud pipelines and apps behind them."
+      // The counts are read off the list, so the sentence stays true as it
+      // grows. The logs exist for the projects taken on outside coursework,
+      // which is what makes them worth pointing at.
+      subtitle={
+        <>
+          {cap(WORDS[featured.length])} award placements and {WORDS[rest.length]} more builds. The{' '}
+          {WORDS[PROJECTS.filter((x) => x.log).length]} I took on outside coursework come with a{' '}
+          <strong className="font-semibold text-grey-900">build log</strong>.
+        </>
+      }
       wide
     >
-      <SubLabel count={featured.length}>Awarded</SubLabel>
+      <SubLabel count={featured.length}>Awarded projects</SubLabel>
       <div className="mt-6 space-y-8 sm:space-y-12">
         {featured.map((p, i) => (
           <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} />
