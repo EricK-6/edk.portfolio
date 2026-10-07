@@ -54,11 +54,11 @@ export default function Education() {
               Bachelor of Engineering (Honours) · Computer Systems Engineering
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              <span className="font-medium text-accent dark:text-accent-dark">Concentrations:</span>{' '}
+              <span className="font-semibold text-grey-900">Concentrations:</span>{' '}
               Embedded Systems & Software Design
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              <span className="font-medium text-accent dark:text-accent-dark">Related coursework:</span>{' '}
+              <span className="font-semibold text-grey-900">Related coursework:</span>{' '}
               {COURSEWORK.join(' · ')}
             </div>
           </div>
