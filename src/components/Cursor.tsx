@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 
 // A cursor of the site's own: a small dot exactly where the pointer is, and a
-// short trail of fading dots behind it.
+// short trail of fading dots behind it. It looks the same over everything: it
+// never grows or changes when it reaches something clickable.
 //
 // The dot is moved straight from the pointer event, with no easing, so it can
 // never lag the real pointer. The trail is a particle dropped at most every
@@ -15,7 +16,6 @@ import { useEffect, useRef } from 'react'
 // `prefers-reduced-motion` the trail is dropped and the dot stays: the cursor
 // is not decoration and should not vanish, but the trailing is motion.
 
-const INTERACTIVE = 'a[href], button, [role="button"], summary, label, select, [tabindex]:not([tabindex="-1"])'
 const TEXTUAL = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]'
 const TRAIL_EVERY_MS = 30
 const TRAIL_LIFE_MS = 600
@@ -37,21 +37,17 @@ export default function Cursor() {
     document.documentElement.classList.add('has-cursor')
 
     let lastDrop = 0
-    let scale = 1
     let overText = false
 
     const place = (x: number, y: number) => {
-      dot.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0)`
     }
 
     const onMove = (e: PointerEvent) => {
       const el = e.target instanceof Element ? e.target : null
       overText = !!el?.closest?.(TEXTUAL)
-      const overHit = !overText && !!el?.closest?.(INTERACTIVE)
       document.documentElement.classList.toggle('cursor-text', overText)
-      dot.dataset.hit = overHit ? 'true' : 'false'
       dot.dataset.ready = 'true'
-      scale = overHit ? 1.9 : 1
       place(e.clientX, e.clientY)
 
       if (reduced || overText) return
