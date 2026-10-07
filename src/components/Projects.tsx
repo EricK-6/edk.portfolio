@@ -42,7 +42,7 @@ export default function Projects() {
       id="projects"
       kicker="Projects"
       title="Things I've built"
-      subtitle="A mix of hardware, software, and everything in between."
+      subtitle="Robots, circuit boards, cloud and apps."
       wide
     >
       <SubLabel count={featured.length}>Awarded</SubLabel>
