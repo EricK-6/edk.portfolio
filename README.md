@@ -87,7 +87,7 @@ npm run deploy
 │       ├── Footer.tsx
 │       ├── CommandPalette.tsx     # Cmd/Ctrl + K
 │       ├── TerminalDock.tsx       # the terminal drawer (src/shell does the work)
-│       ├── Cursor.tsx             # the dot-and-ring cursor (fine pointers only)
+│       ├── Cursor.tsx             # the dot-and-trail cursor (fine pointers only)
 │       ├── Section.tsx            # shared section wrapper
 │       └── Reveal.tsx             # scroll-into-view animation
 ├── tailwind.config.js

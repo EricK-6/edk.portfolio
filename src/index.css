@@ -293,58 +293,52 @@
 
   /* --- the cursor ------------------------------------------------------ */
 
-  /* Only ever active while `.has-cursor` is on <html>, which Cursor.tsx adds
-     after confirming a fine pointer — so the native arrow is hidden only once
-     something is definitely there to replace it. `.cursor-text` lifts the
-     whole thing back off over a field: a text caret says "you can type here"
-     better than any ring. */
-  .cursor-dot,
-  .cursor-ring {
+  /* A small dot that is exactly where the pointer is, and a trail of smaller
+     ones it leaves behind, each fading and shrinking to nothing in 0.6s. The
+     idea is joshuali.work's, in this site's teal. Only ever active while
+     `.has-cursor` is on <html>, which Cursor.tsx adds after confirming a fine
+     pointer — so the native arrow is hidden only once something is definitely
+     there to replace it. `.cursor-text` lifts it off over a field: a text
+     caret says "you can type here" better than any dot. */
+  .cursor-dot {
     position: fixed;
     top: 0;
     left: 0;
     z-index: 90;
     display: none;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
     pointer-events: none;
     border-radius: 9999px;
+    background: linear-gradient(135deg, theme(colors.accent.light), theme(colors.accent.deep));
     opacity: 0;
-    transition: opacity 200ms ease-out, background-color 200ms ease-out,
-      border-color 200ms ease-out, width 200ms ease-out, height 200ms ease-out;
+    will-change: transform;
+    transition: opacity 150ms ease-out;
   }
-  .has-cursor .cursor-dot,
-  .has-cursor .cursor-ring {
-    display: block;
-  }
-  .has-cursor.cursor-text .cursor-dot,
-  .has-cursor.cursor-text .cursor-ring {
-    opacity: 0 !important;
-  }
+  .has-cursor .cursor-dot { display: block; }
+  .cursor-dot[data-ready='true'] { opacity: 1; }
+  .has-cursor.cursor-text .cursor-dot { opacity: 0 !important; }
 
-  .cursor-dot {
+  .cursor-trail {
+    position: fixed;
+    inset: 0;
+    z-index: 89;
+    display: none;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .has-cursor .cursor-trail { display: block; }
+
+  .cursor-particle {
+    position: absolute;
     width: 6px;
     height: 6px;
-    background: theme(colors.accent.deep);
-  }
-  .cursor-dot[data-ready='true'] { opacity: 1; }
-  /* over a target the ring is the whole statement, so the dot steps back */
-  .cursor-dot[data-hit='true'] { opacity: 0.35; }
-
-  .cursor-ring {
-    width: 30px;
-    height: 30px;
-    border: 1.5px solid rgb(41 37 36 / 0.45);
-    background: rgb(255 255 255 / 0.04);
-  }
-  .cursor-ring[data-ready='true'] { opacity: 1; }
-  .cursor-ring[data-hit='true'] {
-    border-color: theme(colors.accent.DEFAULT);
-    background: rgb(13 148 136 / 0.1);
-  }
-  /* a press reads as the ring closing on the point */
-  .cursor-ring[data-press='true'] {
-    width: 22px;
-    height: 22px;
-    background: rgb(13 148 136 / 0.18);
+    pointer-events: none;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, theme(colors.accent.light), theme(colors.accent.deep));
+    will-change: opacity, transform;
+    animation: cursor-fade 600ms ease-out forwards;
   }
 
   /* Hide the native arrow — but never on a field, and never on anything the
@@ -413,6 +407,12 @@
  * carries a backdrop-filter is ever animated. That single rule is most of
  * what separates a page that feels solid from one that feels loose.
  */
+
+/* a trail particle: half-visible where it is dropped, then gone */
+@keyframes cursor-fade {
+  0%   { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+}
 
 @keyframes lift-in {
   from { opacity: 0; transform: translate3d(0, 18px, 0); }

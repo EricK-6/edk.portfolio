@@ -1,26 +1,28 @@
 import { useEffect, useRef } from 'react'
 
-// A cursor of the site's own.
+// A cursor of the site's own: a small dot exactly where the pointer is, and a
+// short trail of fading dots behind it.
 //
-// Two parts, because one is not enough to say anything: a small solid dot that
-// is exactly where the pointer is, and a ring that arrives a beat later. The
-// dot keeps the precision a pointer has to have; the ring is what carries the
-// expression — it swells and turns teal over anything you can act on, tightens
-// when you press, and gets out of the way entirely over a text field, where the
-// system's own I-beam says something this cannot.
+// The dot is moved straight from the pointer event, with no easing, so it can
+// never lag the real pointer. The trail is a particle dropped at most every
+// 30ms that fades and shrinks away over 0.6s and then removes itself, so
+// nothing accumulates. Over a text field the whole thing stands down and the
+// system's own I-beam shows through, which says something a dot cannot.
 //
 // It replaces the native arrow only where a native arrow exists to replace:
-// `pointer: fine` gates the whole thing, so a phone, a tablet and anything
-// driven by touch keep their own behaviour untouched and pay nothing for this.
-// Under `prefers-reduced-motion` the ring stops lagging and simply tracks —
-// the cursor is not decoration and should not vanish, but its trailing is.
+// `pointer: fine` gates all of it, so a phone, a tablet and anything driven
+// by touch keep their own behaviour and pay nothing for this. Under
+// `prefers-reduced-motion` the trail is dropped and the dot stays: the cursor
+// is not decoration and should not vanish, but the trailing is motion.
 
 const INTERACTIVE = 'a[href], button, [role="button"], summary, label, select, [tabindex]:not([tabindex="-1"])'
 const TEXTUAL = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]'
+const TRAIL_EVERY_MS = 30
+const TRAIL_LIFE_MS = 600
 
 export default function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null)
-  const ringRef = useRef<HTMLDivElement>(null)
+  const trailRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // A coarse pointer has no arrow to replace, and a device with no pointer at
@@ -28,86 +30,63 @@ export default function Cursor() {
     if (!window.matchMedia?.('(pointer: fine)').matches) return undefined
 
     const dot = dotRef.current
-    const ring = ringRef.current
-    if (!dot || !ring) return undefined
+    const trail = trailRef.current
+    if (!dot || !trail) return undefined
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     document.documentElement.classList.add('has-cursor')
 
-    let x = window.innerWidth / 2
-    let y = window.innerHeight / 2
-    let rx = x
-    let ry = y
+    let lastDrop = 0
     let scale = 1
-    let targetScale = 1
-    let raf = 0
-    let seen = false
+    let overText = false
 
-    const setState = (el: Element | null) => {
-      const overText = !!el?.closest?.(TEXTUAL)
-      const overHit = !overText && !!el?.closest?.(INTERACTIVE)
-      // over a field the whole cursor stands down and `has-cursor` lets the
-      // native caret back through (see index.css)
-      document.documentElement.classList.toggle('cursor-text', overText)
-      ring.dataset.hit = overHit ? 'true' : 'false'
-      dot.dataset.hit = overHit ? 'true' : 'false'
-      targetScale = overHit ? 1.55 : 1
+    const place = (x: number, y: number) => {
+      dot.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
     }
-
-    // The loop only runs while there is something to animate: the ring still
-    // catching up with the pointer, or still growing or shrinking. Once it has
-    // settled it stops, and the next movement wakes it — a cursor that sat
-    // still was otherwise repainting both elements sixty times a second.
-    const wake = () => { if (!raf) raf = requestAnimationFrame(frame) }
 
     const onMove = (e: PointerEvent) => {
-      x = e.clientX
-      y = e.clientY
-      if (!seen) { seen = true; rx = x; ry = y; ring.dataset.ready = 'true'; dot.dataset.ready = 'true' }
-      setState(e.target instanceof Element ? e.target : null)
-      wake()
-    }
-    const onDown = () => { ring.dataset.press = 'true' }
-    const onUp = () => { ring.dataset.press = 'false' }
-    const onLeave = () => { ring.dataset.ready = 'false'; dot.dataset.ready = 'false' }
-    const onEnter = () => { ring.dataset.ready = 'true'; dot.dataset.ready = 'true' }
+      const el = e.target instanceof Element ? e.target : null
+      overText = !!el?.closest?.(TEXTUAL)
+      const overHit = !overText && !!el?.closest?.(INTERACTIVE)
+      document.documentElement.classList.toggle('cursor-text', overText)
+      dot.dataset.hit = overHit ? 'true' : 'false'
+      dot.dataset.ready = 'true'
+      scale = overHit ? 1.9 : 1
+      place(e.clientX, e.clientY)
 
-    const frame = () => {
-      const k = reduced ? 1 : 0.19
-      rx += (x - rx) * k
-      ry += (y - ry) * k
-      scale += (targetScale - scale) * (reduced ? 1 : 0.16)
-      const settled = Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1 && Math.abs(targetScale - scale) < 0.002
-      if (settled) { rx = x; ry = y; scale = targetScale }
-      raf = settled ? 0 : requestAnimationFrame(frame)
-      dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`
-      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`
+      if (reduced || overText) return
+      const now = performance.now()
+      if (now - lastDrop < TRAIL_EVERY_MS) return
+      lastDrop = now
+      const p = document.createElement('div')
+      p.className = 'cursor-particle'
+      p.style.left = `${e.clientX}px`
+      p.style.top = `${e.clientY}px`
+      trail.appendChild(p)
+      setTimeout(() => p.remove(), TRAIL_LIFE_MS)
     }
-    wake()
+    const onLeave = () => { dot.dataset.ready = 'false' }
+    const onEnter = () => { dot.dataset.ready = 'true' }
 
     window.addEventListener('pointermove', onMove, { passive: true })
-    window.addEventListener('pointerdown', onDown, { passive: true })
-    window.addEventListener('pointerup', onUp, { passive: true })
     document.addEventListener('pointerleave', onLeave)
     document.addEventListener('pointerenter', onEnter)
     // switching away from the window hides it until the pointer comes back
     window.addEventListener('blur', onLeave)
 
     return () => {
-      cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('pointerdown', onDown)
-      window.removeEventListener('pointerup', onUp)
       document.removeEventListener('pointerleave', onLeave)
       document.removeEventListener('pointerenter', onEnter)
       window.removeEventListener('blur', onLeave)
+      trail.replaceChildren()
       document.documentElement.classList.remove('has-cursor', 'cursor-text')
     }
   }, [])
 
   return (
     <>
-      <div ref={ringRef} className="cursor-ring" aria-hidden="true" />
+      <div ref={trailRef} className="cursor-trail" aria-hidden="true" />
       <div ref={dotRef} className="cursor-dot" aria-hidden="true" />
     </>
   )
