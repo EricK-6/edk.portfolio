@@ -1,28 +1,17 @@
 import Section from './Section'
 import Reveal from './Reveal'
 
-// Three of the fourteen papers the two CVs list between them, on one line
-// under the concentration rather than the fourteen-row grid this used to be.
-//
-// Three because the line has 654px to live in — the column is capped by the
-// section, so it is the same 654 at 1024 as at 1440 — and a fourth paper
-// needs ~703px whichever one is added. Four would wrap, and a wrapped
-// one-liner is just a short list again.
-//
-// So they have to earn the slot. These are the three a software reader
-// scans for: the algorithms core, the design paper, and the systems paper
-// that backs up the embedded concentration named just above. Of the rest of
-// the software half, Object Oriented Programming is assumed of anyone
-// holding the degree, Software Quality Assurance is the least looked-for,
-// and Database Systems and AI & Machine Learning are both already evidenced
-// harder further up the page — by DynamoDB and Redshift in the projects, and
-// by the AI Practitioner certificate. The hardware half is not here at all:
-// this is a line about software papers, and the degree's own name has
-// already said "Computer Systems".
-const KEY_PAPERS = [
+// The software papers a reader scans for, on one line under the concentration
+// rather than the fourteen-row grid this used to be. Five names will wrap on
+// narrower screens, which is fine for a sentence of coursework; the hardware
+// papers are left out, since this line is about the software half and the
+// degree's own name has already said "Computer Systems".
+const COURSEWORK = [
+  'Object-Oriented Programming',
+  'Software Quality Assurance',
   'Data Structures & Algorithms',
+  'Database Systems',
   'Software Architecture',
-  'Operating Systems',
 ]
 
 // The diligence awards were the substance of the "multiple diligence awards"
@@ -67,7 +56,7 @@ export default function Education() {
               Concentrations: Embedded Systems & Software Design
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Key papers: {KEY_PAPERS.join(' · ')}
+              Related coursework: {COURSEWORK.join(' · ')}
             </div>
           </div>
         </div>
