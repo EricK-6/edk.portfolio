@@ -1,265 +1,55 @@
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { goTo } from '../router'
 import { track } from '../analytics'
-import { PROFILE, PROJECTS as PROJECT_DATA, SKILL_GROUPS } from '../content'
+import { candidates, execute, suggestions, type Ctx } from '../shell/commands'
+import { pathLabel } from '../shell/fs'
+import { dim, L, type Line, type Seg } from '../shell/lines'
 
-const EMAIL = PROFILE.email
-
-interface FileNode {
-  type: 'file'
-  content: ReactNode[]
-  download?: string
-}
-
-interface DirNode {
-  type: 'dir'
-  id: string
-  children: Record<string, FsNode>
-}
-
-type FsNode = FileNode | DirNode
-
-const PROJECTS: [string, string][] = PROJECT_DATA.map((p) => [p.slug, p.blurb])
-
-// one line per group, straight from the Skills section, so the two can never disagree
-const SKILLS = SKILL_GROUPS.map((g) => `${g.label}: ${g.items.join(", ")}`)
-
-const file = (...content: ReactNode[]): FileNode => ({ type: 'file', content })
-const dir = (id: string, children: Record<string, FsNode> = {}): DirNode => ({ type: 'dir', id, children })
-
-// the page modelled as a filesystem: each section is a directory (cd scrolls
-// the page to it), rich sections also hold readable files (cat).
-const FS = dir('top', {
-  about: dir('about', {
-    'about.txt': file(
-      'Dohyun (Eric) Kim - penultimate-year Computer Systems Engineering (Hons) @ UoA.',
-      'Interested in embedded systems, AI, cloud computing and robotics; builds on AWS.',
-      'Former research assistant @ CARES (robot soccer & navigation), robotics instructor @ ciLab.',
-      'AWS Solutions Architect - Associate and Terraform Associate.'
-    ),
-  }),
-  projects: dir('projects', PROJECTS.reduce<Record<string, FsNode>>((acc, [name, desc]) => {
-    acc[name] = file(desc)
-    return acc
-  }, {})),
-  experience: dir('experience'),
-  skills: dir('skills', { 'skills.txt': file(...SKILLS) }),
-  education: dir('education'),
-  certifications: dir('certifications'),
-  leadership: dir('leadership'),
-  contact: dir('contact', {
-    email: file(
-      <a href={`mailto:${EMAIL}`} className="text-grey-600 underline">{EMAIL}</a>
-    ),
-    github: file(
-      <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline">github.com/EricK-6</a>
-    ),
-    linkedin: file(
-      <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline">linkedin.com/in/erick06</a>
-    ),
-    'cv-swe.pdf': { type: 'file', download: './CV_SWE.pdf', content: ['↓ downloading software CV…'] },
-    'cv-eee.pdf': { type: 'file', download: './CV_EEE.pdf', content: ['↓ downloading hardware CV…'] },
-  }),
-})
+// The terminal drawer: the page, browsable as a filesystem.
+//
+// What it runs lives in src/shell (a filesystem generated from content.ts,
+// the commands, the replays); this file is the drawer, the prompt and the
+// keyboard. Output is data, not markup, so every name the shell prints is a
+// button — a visitor who has never used a terminal can click their way
+// around it, and the row of suggestions under the prompt follows where they
+// are.
 
 const BOOT_LINES = [
-  '[ 0.000000 ] erickk.cloud bootloader v1.0',
+  '[ 0.000000 ] erickk.cloud bootloader v2.0',
   '[ 0.000412 ] cpu: Computer Systems Engineering @ UoA',
   '[ 0.001033 ] mem: portfolio modules ................. ok',
   '[ 0.002566 ] net: erickk.cloud ....................... up',
   '[ 0.003733 ] starting shell ...................... ok',
+].map((s) => L(s))
+
+const SHELL_BANNER: Line[] = [
+  [],
+  L('erickk.cloud: interactive shell'),
+  L(dim("type 'help', press a suggestion below, or just ask a question.")),
+  [],
 ]
 
-const SHELL_BANNER = [
-  '',
-  'erickk.cloud - interactive shell',
-  "run 'ls' to look around, or 'help' for commands.",
-  '',
+const HISTORY_KEY = 'terminal-history'
+
+const promptLine = (path: string, input: string): Line => [
+  { text: 'visitor@erickk.cloud' },
+  { text: ':', tone: 'dim' },
+  { text: path, tone: 'strong' },
+  { text: '$ ', tone: 'dim' },
+  { text: input },
 ]
 
-const HELP = [
-  ['pwd', 'print current location'],
-  ['ls [dir]', 'list sections / files'],
-  ['cd <dir>', 'go to any section from anywhere'],
-  ['cat <file>', 'read a file'],
-  ['whoami', 'who is this'],
-  ['cv <swe|eee>', 'download my CV (software / hardware)'],
-  ['status', 'live systems check'],
-  ['fortune', 'a fortune cookie for engineers'],
-  ['clear', 'clear the screen'],
-]
-
-const FORTUNES = [
-  '"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements." (Brian Kernighan)',
-  '"Simplicity is prerequisite for reliability." (Edsger Dijkstra)',
-  '"First, solve the problem. Then, write the code." (John Johnson)',
-  '"Any sufficiently advanced technology is indistinguishable from magic." (Arthur C. Clarke)',
-  '"Weeks of coding can save you hours of planning." (unknown)',
-  'There are 10 types of people: those who understand binary and those who don\'t.',
-  'It works on my machine. (every engineer, eventually)',
-  'A clean solder joint is worth a thousand debug sessions.',
-]
-
-// "pushed 3 h ago" for the status command
-function relTime(iso: string) {
-  const mins = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000))
-  if (mins < 60) return `${mins} min ago`
-  const hrs = Math.round(mins / 60)
-  if (hrs < 48) return `${hrs} h ago`
-  return `${Math.round(hrs / 24)} d ago`
-}
-
-// walk the tree to the node at `segs`, or null if any segment is missing
-function getNode(segs: string[]): FsNode | null {
-  let node: FsNode = FS
-  for (const s of segs) {
-    if (node.type !== 'dir') return null
-    const next: FsNode | undefined = node.children[s]
-    if (!next) return null
-    node = next
-  }
-  return node
-}
-
-// resolve a cd/ls/cat argument (relative, absolute, ~, .., .) to a path array
-function resolveSegments(cwd: string[], arg?: string): string[] {
-  if (!arg || arg === '~' || arg === '/') return []
-  const fromRoot = arg.startsWith('/') || arg.startsWith('~')
-  let segs = fromRoot ? [] : [...cwd]
-  for (const part of arg.replace(/^~/, '').split('/')) {
-    if (part === '' || part === '.') continue
-    if (part === '..') segs = segs.slice(0, -1)
-    else segs = [...segs, part]
-  }
-  return segs
-}
-
-const pathLabel = (segs: string[]) => (segs.length ? `~/${segs.join('/')}` : '~')
-
-// A few names people reach for that are not what the directory is called.
-const CD_ALIASES: Record<string, string[]> = {
-  home: [], top: [], root: [], '~': [],
-  work: ['experience'], jobs: ['experience'], job: ['experience'],
-  credentials: ['certifications'], certs: ['certifications'], cert: ['certifications'],
-  awards: ['projects'], project: ['projects'], work_history: ['experience'],
-  school: ['education'], uni: ['education'], study: ['education'],
-  me: ['about'], bio: ['about'], profile: ['about'],
-  stack: ['skills'], tech: ['skills'],
-  volunteering: ['leadership'], activities: ['leadership'],
-  email: ['contact'], hire: ['contact'],
-}
-
-// `cd` is deliberately more forgiving than a real shell. This is a portfolio,
-// not a filesystem: making someone type `cd ..` before `cd skills` is a puzzle
-// with no reward. Anything that names a section gets you there from anywhere,
-// so `cd skills` works while sitting in ~/projects, and so do `cd /skills`,
-// `cd SKILLS`, `cd skil` and `cd stack`. Real relative paths still resolve
-// first, so `cd ..` and `cd ~` keep behaving exactly as they always did.
-function findDir(cwd: string[], arg?: string): string[] | null {
-  const raw = (arg || '').trim()
-  if (!raw || raw === '~' || raw === '/') return []
-
-  const isDir = (segs: string[]) => { const n = getNode(segs); return n && n.type === 'dir' ? segs : null }
-
-  // 1. exactly what was typed, relative to where you are
-  const literal = isDir(resolveSegments(cwd, raw))
-  if (literal) return literal
-
-  // 2. the same thing read from the root
-  const fromRoot = isDir(resolveSegments([], raw))
-  if (fromRoot) return fromRoot
-
-  // 3. a name people use for a section that is not its directory name
-  const key = raw.replace(/^[~/]+|\/+$/g, '').toLowerCase()
-  if (key in CD_ALIASES) return CD_ALIASES[key]
-
-  // 4. case-insensitive, then unique prefix, then unique substring
-  const names = Object.keys(FS.children)
-  const exact = names.find((n) => n.toLowerCase() === key)
-  if (exact) return [exact]
-  const starts = names.filter((n) => n.toLowerCase().startsWith(key))
-  if (starts.length === 1) return [starts[0]]
-  const has = names.filter((n) => n.toLowerCase().includes(key))
-  if (has.length === 1) return [has[0]]
-
-  return null
-}
-
-// commands offered for inline completion (sorted so the suggestion is stable)
-const COMMANDS = ['cat', 'cd', 'clear', 'cv', 'date', 'echo', 'fortune', 'help', 'ls', 'pwd', 'social', 'status', 'sudo', 'whoami']
-
-// fish-style inline suggestion: given the half-typed line, return the *suffix*
-// that would complete the current word — a command name (first word) or a
-// cd/ls/cat path argument — or '' when there's nothing to suggest. Pure, so it's
-// re-derived on every keystroke during render.
-function completionFor(input: string, cwd: string[]): string {
-  if (!input || input.endsWith(' ')) return ''
-  const parts = input.split(/\s+/)
-
-  // first word -> complete the command name
-  if (parts.length === 1) {
-    const tok = parts[0]
-    const m = COMMANDS.find((c) => c !== tok && c.startsWith(tok))
-    return m ? m.slice(tok.length) : ''
-  }
-
-  // later words -> complete a path argument for the path-aware commands
-  const cmd = parts[0].toLowerCase()
-  if (cmd !== 'cd' && cmd !== 'ls' && cmd !== 'cat') return ''
-  const token = parts[parts.length - 1]
-  const slash = token.lastIndexOf('/')
-  const prefix = slash === -1 ? token : token.slice(slash + 1)
-  if (!prefix) return ''
-  const baseSegs = slash === -1 ? cwd : resolveSegments(cwd, token.slice(0, slash))
-  const node = getNode(baseSegs)
-  if (!node || node.type !== 'dir') return ''
-
-  let names = Object.keys(node.children || {})
-  if (cmd === 'cd') names = names.filter((n) => node.children[n].type === 'dir')
-  else if (cmd === 'cat') names = names.filter((n) => node.children[n].type === 'file')
-
-  // `cd` and `ls` reach any section from anywhere, so the hint has to as well.
-  // Offering only the children of the current directory meant the suggestion
-  // went silent the moment you were standing in a section — exactly when the
-  // sibling you want is no longer a child of where you are — and sections
-  // with no files of their own never suggested anything at all.
-  // Real names are searched before aliases, never mixed into one sorted list:
-  // `cd pro` has to complete to `projects`, and plain alphabetical order would
-  // hand it `profile` instead.
-  const pick = (list: string[]) => list.sort().find((n) => n !== prefix && n.startsWith(prefix))
-  if ((cmd === 'cd' || cmd === 'ls') && slash === -1) {
-    const sections = Object.keys(FS.children).filter((n) => FS.children[n].type === 'dir')
-    const aliases = Object.keys(CD_ALIASES).filter((n) => /^[a-z]+$/.test(n))
-    const m = pick([...new Set([...names, ...sections])]) ?? pick(aliases)
-    return m ? m.slice(prefix.length) : ''
-  }
-  const m = pick(names)
-  return m ? m.slice(prefix.length) : ''
-}
-
-function Prompt({ path = '~' }: { path?: string }) {
-  return (
-    <>
-      <span className="text-grey-700">visitor@erickk.cloud</span>
-      <span className="text-grey-400">:</span>
-      <span className="text-grey-900">{path}</span>
-      <span className="text-grey-400">$ </span>
-    </>
-  )
-}
+// the longest start every candidate shares, which is what Tab can safely fill
+const commonPrefix = (list: string[]) =>
+  list.reduce((a, b) => { let i = 0; while (i < a.length && i < b.length && a[i].toLowerCase() === b[i].toLowerCase()) i++; return a.slice(0, i) })
 
 export default function TerminalDock() {
-  // The dock owns whether it is open. It used to be lifted into App because
-  // the shell had to reserve 380px of padding for it; that padding is gone —
-  // on a scrolling document, shoving the whole page sideways reflows every
-  // section under the reader — so nothing outside this component needs to
-  // know, and it overlays instead.
+  // The dock owns whether it is open; it overlays the page rather than
+  // pushing it aside, so nothing outside needs to know.
   const [open, setOpen] = useState(false)
 
-  // The handwritten "For Devs" nudge is for someone who has never found this.
-  // It used to fade once the visitor had travelled past one tile, which was
-  // the passport's reading of "started exploring"; scrolling is not evidence
-  // of anything, so it now fades once the dock has actually been opened.
+  // The handwritten "For Devs" nudge is for someone who has never found this;
+  // it fades once the dock has actually been opened.
   const [seen, setSeen] = useState(() => {
     try { return localStorage.getItem('terminal-seen') === '1' } catch { return false }
   })
@@ -269,55 +59,46 @@ export default function TerminalDock() {
     try { localStorage.setItem('terminal-seen', '1') } catch { /* private mode */ }
   }, [open, seen])
   useEffect(() => { if (open) track('terminal-open') }, [open])
-  // The boot trace prints itself the first time the dock is opened, a line at
-  // a time, rather than being there already: a kernel log that has clearly
-  // just run is the whole charm of it. Once per mount, and instant for anyone
-  // who asked for reduced motion.
-  const [lines, setLines] = useState<ReactNode[]>([])
+
+  const [lines, setLines] = useState<Line[]>([])
   const [input, setInput] = useState('')
-  const [history, setHistory] = useState<string[]>([])
-  const [hIdx, setHIdx] = useState(-1)
   const [cwd, setCwd] = useState<string[]>([])
+  const cwdRef = useRef<string[]>([])
+  // history survives a reload: a per-visitor convenience, nothing more
+  const [history, setHistory] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY) ?? '[]') } catch { return [] }
+  })
+  const [hIdx, setHIdx] = useState(-1)
+  const lastKey = useRef('')
   const bodyRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null) // everything inside the drawer
-  const tabRef = useRef<HTMLButtonElement>(null)   // the pull-tab, which is always reachable
+  const tabRef = useRef<HTMLButtonElement>(null) // the pull-tab, always reachable
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
-  const print = (...nodes: ReactNode[]) => setLines((prev) => [...prev, ...nodes])
+  const print = (...more: Line[]) => setLines((prev) => [...prev, ...more])
+  const later = (fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)) }
 
-  const bootedRef = useRef(false)
-  const bootTimers = useRef<ReturnType<typeof setTimeout>[]>([])
-  useEffect(() => () => bootTimers.current.forEach(clearTimeout), [])
+  // The boot trace prints itself the first time the dock is opened, a line at
+  // a time: a kernel log that has clearly just run is the whole charm of it.
+  // Once per mount, and instant under reduced motion.
+  const booted = useRef(false)
   useEffect(() => {
-    if (!open || bootedRef.current) return
-    bootedRef.current = true
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      setLines([...BOOT_LINES, ...SHELL_BANNER])
-      return
-    }
+    if (!open || booted.current) return
+    booted.current = true
     const all = [...BOOT_LINES, ...SHELL_BANNER]
-    let i = 0
-    const tick = () => {
-      // read the line out before the counter moves: React runs the updater
-      // after `tick` has returned, so a closure over `i` saw it already
-      // incremented and the trace printed one line short (the cpu line was
-      // the casualty) with an empty line tacked on the end
-      const line = all[i]
-      setLines((prev) => [...prev, line])
-      i += 1
-      // the kernel lines land at a steady beat; the banner follows quickly
-      if (i < all.length) bootTimers.current.push(setTimeout(tick, i < BOOT_LINES.length ? 105 : 45))
-    }
-    bootTimers.current.push(setTimeout(tick, 140))
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setLines(all); return }
+    all.forEach((line, i) => {
+      const at = i < BOOT_LINES.length ? i * 105 : BOOT_LINES.length * 105 + (i - BOOT_LINES.length) * 45
+      timers.current.push(setTimeout(() => setLines((prev) => [...prev, line]), 140 + at))
+    })
   }, [open])
 
-  // toggle via Ctrl/Cmd + backtick, plus an 'open-terminal' event (navbar / palette)
+  // toggle with Ctrl/Cmd + backtick, or the 'open-terminal' event (menu, palette)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === '`') {
-        e.preventDefault()
-        setOpen((o) => !o)
-      }
+      if ((e.metaKey || e.ctrlKey) && e.key === '`') { e.preventDefault(); setOpen((o) => !o) }
     }
     const onOpen = () => setOpen(true)
     window.addEventListener('keydown', onKey)
@@ -326,245 +107,134 @@ export default function TerminalDock() {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('open-terminal', onOpen)
     }
-  }, [setOpen])
+  }, [])
 
-  // focus the prompt when opened
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 60)
+    if (!open) return
+    const t = setTimeout(() => inputRef.current?.focus(), 60)
+    return () => clearTimeout(t)
   }, [open])
 
-  // A shut drawer is off-screen, not gone: without this its close button and
-  // its prompt were the first two things Tab reached on every page. `inert`
-  // is the one property that removes both at once — tab order and the
-  // accessibility tree — and it is set on the panel rather than the <aside>
-  // so the pull-tab beside it stays operable.
+  // A shut drawer is parked off-screen, not gone: `inert` takes the whole panel
+  // out of the tab order and the accessibility tree while it is shut, and the
+  // pull-tab beside it stays operable.
   useEffect(() => {
     const panel = panelRef.current
     if (!panel) return
     panel.inert = !open
-    // closing while the caret is in the prompt would otherwise strand focus
-    // on an inert node, which drops it to <body> and loses the visitor
     if (!open && panel.contains(document.activeElement)) tabRef.current?.focus()
   }, [open])
 
-  // keep the log pinned to the newest line
+  // keep the newest line in view
   useEffect(() => {
     const el = bodyRef.current
     if (el) el.scrollTop = el.scrollHeight
   }, [lines, open])
 
-  // 'cd <section>' scrolls the page to that section; 'top' / 'cd ~' is the
-  // intro at the head of the document
-  const go = (id: string) => goTo(id === 'top' ? 'home' : id)
-  const downloadCV = (href = './CV_SWE.pdf') => {
-    const a = document.createElement('a')
-    a.href = href
-    a.download = ''
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-  }
+  const ctx = (): Ctx => ({
+    cwd: cwdRef.current,
+    setCwd: (segs) => { cwdRef.current = segs; setCwd(segs) },
+    print,
+    clear: () => setLines([]),
+    close: () => setOpen(false),
+    history,
+    goTo: (anchor) => goTo(anchor),
+    openProject: (slug, what) => window.dispatchEvent(new CustomEvent('project-request', { detail: { slug, what } })),
+    openUrl: (href) => {
+      if (href.startsWith('mailto:')) window.location.href = href
+      else window.open(href, '_blank', 'noopener,noreferrer')
+    },
+    download: (href) => {
+      const a = document.createElement('a')
+      a.href = href
+      a.download = ''
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    },
+    later,
+    small: window.matchMedia?.('(max-width: 639px)').matches ?? false,
+  })
 
-  const err = (c: string, msg: ReactNode) => print(<span><span className="font-semibold text-grey-900">{c}:</span> {msg}</span>)
-
-  const run = (raw: string) => {
-    const trimmed = raw.trim()
-    print(<span><Prompt path={pathLabel(cwd)} />{trimmed}</span>)
-    if (trimmed) setHistory((h) => [...h, trimmed])
+  const runLine = (raw: string) => {
+    const line = raw.trim()
+    print(promptLine(pathLabel(cwdRef.current), line))
+    setInput('')
     setHIdx(-1)
-
-    const [cmd, ...args] = trimmed.split(/\s+/)
-    switch (cmd.toLowerCase()) {
-      case '':
-        break
-      case 'help':
-        print('available commands:')
-        HELP.forEach(([c, d]) =>
-          print(
-            <span className="grid grid-cols-[7rem_1fr] gap-x-2">
-              <span className="text-grey-800">{c}</span>
-              <span className="text-grey-500">{d}</span>
-            </span>
-          )
-        )
-        print(<span className="mt-1 block text-grey-500">tip: try `ls`, then `cd projects`, then `cat winnie-the-bot`.</span>)
-        break
-      case 'pwd':
-        print(pathLabel(cwd))
-        break
-      case 'ls': {
-        // No argument lists where you are, not home — `findDir(cwd, undefined)`
-        // resolves to [] (its "go home" case, correct for bare `cd`), which
-        // made bare `ls` show the root section list from any directory.
-        // With an argument: same forgiving lookup as cd, falling back to the
-        // literal path so `ls somefile` still resolves to the file rather
-        // than a section.
-        const segs = args[0] ? (findDir(cwd, args[0]) ?? resolveSegments(cwd, args[0])) : cwd
-        const node = getNode(segs)
-        if (!node) { err('ls', `no such file or directory: ${args[0]}`); break }
-        // a real `ls` echoes the name it resolved, not the path you typed
-        if (node.type === 'file') { print(segs[segs.length - 1] ?? args[0]); break }
-        const names = Object.keys(node.children || {})
-        if (!names.length) { print(<span className="text-grey-400">(no files - cd here to view it on the page)</span>); break }
-        print(
-          <span className="flex flex-wrap gap-x-4 gap-y-1">
-            {names.map((n) => (
-              <span key={n} className={node.children[n].type === 'dir' ? 'text-grey-800' : 'text-grey-500'}>
-                {n}{node.children[n].type === 'dir' ? '/' : ''}
-              </span>
-            ))}
-          </span>
-        )
-        break
-      }
-      case 'cd': {
-        const segs = findDir(cwd, args[0])
-        if (!segs) {
-          err('cd', `no section called '${args[0]}'. try: ${Object.keys(FS.children).join(', ')}`)
-          break
-        }
-        setCwd(segs)
-        {
-          const target = getNode(segs)
-          go((target?.type === 'dir' ? target.id : undefined) || 'top')
-        }
-        break
-      }
-      case 'cat': {
-        if (!args[0]) { print('usage: cat <file>'); break }
-        const segs = resolveSegments(cwd, args[0])
-        const node = getNode(segs)
-        if (!node) { err('cat', `${args[0]}: no such file`); break }
-        if (node.type === 'dir') { err('cat', `${args[0]}: is a directory`); break }
-        if (node.download) downloadCV(node.download)
-        node.content.forEach((line) => print(line))
-        break
-      }
-      case 'whoami':
-        print("visitor - a curious one. The person you're here for is Dohyun (Eric) Kim.")
-        break
-      case 'cv':
-      case 'resume': {
-        const which = (args[0] || '').toLowerCase()
-        if (which === 'swe' || which === 'software') { print('↓ downloading software CV…'); downloadCV('./CV_SWE.pdf') }
-        else if (which === 'eee' || which === 'hardware' || which === 'electrical') { print('↓ downloading hardware CV…'); downloadCV('./CV_EEE.pdf') }
-        else print('usage: cv <swe | eee>  : software or hardware/electronics CV')
-        break
-      }
-      case 'social':
-      case 'links':
-        print(
-          <span>
-            github:&nbsp;
-            <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline">github.com/EricK-6</a>
-          </span>
-        )
-        print(
-          <span>
-            linkedin:&nbsp;
-            <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline">linkedin.com/in/erick06</a>
-          </span>
-        )
-        break
-      case 'echo':
-        print(args.join(' '))
-        break
-      case 'date':
-        print(new Date().toString())
-        break
-      case 'sudo': {
-        const what = args.join(' ').toLowerCase()
-        if (what === 'hire-me' || what === 'hire me') {
-          print('[sudo] password for visitor: ********')
-          print('access granted. root privileges: emotional only.')
-          print('initiating recruitment protocol…')
-          print(
-            <span>
-              → opening mail client:&nbsp;
-              <a href={`mailto:${EMAIL}?subject=Hello`} className="text-grey-600 underline">{EMAIL}</a>
-            </span>
-          )
-          setTimeout(() => { window.location.href = `mailto:${EMAIL}?subject=Hello` }, 900)
-        } else {
-          print('nice try 😏, but you do not have root here. (unless… `sudo hire-me`)')
-        }
-        break
-      }
-      case 'status': {
-        print('querying live systems…')
-        const okLine = (label: string, value: string, state = 'OK') =>
-          print(
-            <span className="grid grid-cols-[8.5rem_1fr_auto] gap-x-2">
-              <span className="text-grey-800">{label}</span>
-              <span className="min-w-0 truncate text-grey-500">{value}</span>
-              <span className={state === 'OK' ? 'text-emerald-600' : 'text-grey-400'}>[ {state} ]</span>
-            </span>
-          )
-        okLine('sys/website', 'erickk.cloud : you are here')
-        okLine(
-          'sys/local-time',
-          new Date().toLocaleTimeString('en-NZ', { timeZone: 'Pacific/Auckland', hour: '2-digit', minute: '2-digit' }) + ' : Auckland, NZ'
-        )
-        fetch('https://api.github.com/users/EricK-6/events/public?per_page=1')
-          .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-          .then((events) => {
-            const e = events?.[0]
-            if (!e) throw new Error('no events')
-            const action = (e.type || '').replace('Event', '').toLowerCase() || 'activity'
-            okLine('sys/github', `${action} on ${e.repo?.name?.split('/')[1] ?? 'a repo'} · ${relTime(e.created_at)}`)
-          })
-          .catch(() => okLine('sys/github', 'live check unreachable : github.com/EricK-6', '??'))
-        break
-      }
-      case 'fortune':
-        print(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])
-        break
-      case 'exit':
-      case 'close':
-        setOpen(false)
-        break
-      case 'clear':
-        setLines([])
-        break
-      default:
-        print(<span><span className="font-semibold text-grey-900">command not found:</span> {cmd}. type 'help'.</span>)
+    if (!line) return
+    const { out, event } = execute(line, ctx())
+    print(...out)
+    if (event) track(`terminal-cmd-${event}`)
+    if (!line.startsWith('!')) {
+      setHistory((h) => {
+        const next = [...(h.at(-1) === line ? h.slice(0, -1) : h), line].slice(-100)
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(next)) } catch { /* private mode */ }
+        return next
+      })
     }
   }
 
-  // fish-style inline autocomplete: the muted suffix that Tab / → will accept
-  const suggestion = completionFor(input, cwd)
-  const accept = () => suggestion && setInput(input + suggestion)
+  // pressing a name or a suggestion runs it exactly as if it had been typed
+  const press = (command: string) => {
+    runLine(command)
+    inputRef.current?.focus({ preventScroll: true })
+  }
+
+  const options = input ? candidates(input, cwd) : []
+  const word = input.split(/\s+/).at(-1) ?? ''
+  const ghost = options[0]?.startsWith(word) ? options[0].slice(word.length) : ''
+  const replaceWord = (w: string) => setInput(input.slice(0, input.length - word.length) + w)
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      run(input)
-      setInput('')
-    } else if (e.key === 'Tab') {
-      // only trap Tab when there's something to complete, so it can still move
-      // focus (e.g. to the close button) otherwise
-      if (suggestion) { e.preventDefault(); accept() }
-    } else if (e.key === 'ArrowRight') {
-      // accept the suggestion when the caret sits at the very end of the line
-      const target = e.target as HTMLInputElement
-      if (suggestion && target.selectionStart === input.length && target.selectionStart === target.selectionEnd) {
-        e.preventDefault()
-        accept()
-      }
-    } else if (e.key === 'Escape') {
+    const prevKey = lastKey.current
+    lastKey.current = e.key
+    const ctrl = e.ctrlKey && !e.metaKey
+    if (ctrl && e.key.toLowerCase() === 'l') { e.preventDefault(); setLines([]); return }
+    if (ctrl && e.key.toLowerCase() === 'u') { e.preventDefault(); setInput(''); return }
+    // ^C abandons the line, unless there's a selection to copy
+    if (ctrl && e.key.toLowerCase() === 'c' && !window.getSelection()?.toString()) {
       e.preventDefault()
-      setOpen(false)
-    } else if (e.key === 'ArrowUp') {
+      print([...promptLine(pathLabel(cwd), input), { text: '^C', tone: 'dim' }])
+      setInput('')
+      return
+    }
+    if (e.key === 'Enter') { runLine(input); return }
+    if (e.key === 'Tab') {
+      // Tab fills what every option shares; a second Tab lists them, the way
+      // bash does. With nothing to complete it is left alone, so it still
+      // moves focus on to the suggestions.
+      if (!options.length) return
+      e.preventDefault()
+      if (options.length === 1) { replaceWord(options[0] + (options[0].endsWith('/') ? '' : ' ')); return }
+      const shared = commonPrefix(options)
+      if (shared.length > word.length) { replaceWord(shared); return }
+      if (prevKey === 'Tab') {
+        print(promptLine(pathLabel(cwd), input), L(...options.slice(0, 40).flatMap((o, i) => [...(i ? [{ text: '  ' }] : []), { text: o, tone: 'dim' as const }])))
+      }
+      return
+    }
+    if (e.key === 'ArrowRight') {
+      const target = e.target as HTMLInputElement
+      if (ghost && target.selectionStart === input.length && target.selectionStart === target.selectionEnd) {
+        e.preventDefault()
+        setInput(input + ghost)
+      }
+      return
+    }
+    if (e.key === 'Escape') { e.preventDefault(); setOpen(false); return }
+    if (e.key === 'ArrowUp') {
       e.preventDefault()
       if (!history.length) return
       const idx = hIdx === -1 ? history.length - 1 : Math.max(0, hIdx - 1)
       setHIdx(idx)
       setInput(history[idx])
-    } else if (e.key === 'ArrowDown') {
+      return
+    }
+    if (e.key === 'ArrowDown') {
       e.preventDefault()
       if (hIdx === -1) return
       const idx = hIdx + 1
-      if (idx >= history.length) { setHIdx(-1); setInput('') }
-      else { setHIdx(idx); setInput(history[idx]) }
+      if (idx >= history.length) { setHIdx(-1); setInput('') } else { setHIdx(idx); setInput(history[idx]) }
     }
   }
 
@@ -581,79 +251,83 @@ export default function TerminalDock() {
 
       <aside
         aria-label="Interactive terminal"
-        className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,380px)] transform transition-transform duration-300 ease-out print:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,400px)] transform transition-transform duration-300 ease-out print:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="relative h-full border-r border-grey-300 bg-grey-100 shadow-xl">
-          {/* Everything the drawer *is*, kept apart from the pull-tab that
-              opens it: closed, the panel is still on the page, parked off the
-              left edge, and it owned the first two tab stops of every fresh
-              load — a "Close terminal" button at x=-43 and a text input at
-              x=-185. A keyboard visitor's opening Tabs went somewhere they
-              could not see, and anything they typed went into an invisible
-              shell. `inert` takes the whole panel out of the tab order and
-              off the accessibility tree while it is shut; the tab stays. */}
           <div ref={panelRef} className="flex h-full flex-col">
-          {/* title bar */}
-          <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3">
-            <span className="h-3 w-3 rounded-full bg-grey-300" />
-            <span className="h-3 w-3 rounded-full bg-grey-400" />
-            <span className="h-3 w-3 rounded-full bg-grey-500" />
-            <span className="ml-2 flex-1 font-mono text-xs text-grey-500">visitor@erickk.cloud: ~</span>
-            {/* -my-2 keeps the title bar close to its own height while the hit
-                area grows to a fingertip: the glyph alone was a 16px target */}
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Close terminal"
-              className="tap-44 -my-2 -mr-1.5 flex h-8 w-8 flex-none items-center justify-center rounded-lg text-grey-500 hover:text-grey-800"
+            {/* title bar */}
+            <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3">
+              <span className="h-3 w-3 rounded-full bg-grey-300" />
+              <span className="h-3 w-3 rounded-full bg-grey-400" />
+              <span className="h-3 w-3 rounded-full bg-grey-500" />
+              <span className="ml-2 flex-1 truncate font-mono text-xs text-grey-500">visitor@erickk.cloud: {pathLabel(cwd)}</span>
+              {/* -my-2 keeps the title bar close to its own height while the
+                  hit area grows to a fingertip */}
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close terminal"
+                className="tap-44 -my-2 -mr-1.5 flex h-8 w-8 flex-none items-center justify-center rounded-lg text-grey-500 hover:text-grey-800"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+
+            {/* output + prompt. `terminal-log` is the touch hook: on a coarse
+                pointer index.css takes it to 16px so the prompt does not trip
+                iOS's focus zoom. */}
+            <div
+              ref={bodyRef}
+              onClick={(e) => { if (!(e.target as HTMLElement).closest('button, a')) inputRef.current?.focus() }}
+              className="terminal-log flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-[13px] leading-relaxed text-grey-700"
             >
-              <CloseIcon />
-            </button>
-          </div>
-
-          {/* output + prompt */}
-          <div
-            ref={bodyRef}
-            onClick={() => inputRef.current?.focus()}
-            // `terminal-log` is the touch hook: on a coarse pointer index.css
-            // takes the whole log to 16px, so the prompt does not trip iOS's
-            // focus zoom and the ghost suffix stays aligned with it.
-            className="terminal-log flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-[13px] leading-relaxed text-grey-700"
-          >
-            {lines.map((l, i) => (
-              <div key={i} className="whitespace-pre-wrap break-words">
-                {l === '' ? ' ' : l}
+              {/* role=log: output is announced to a screen reader as it
+                  arrives, which is the whole point of typing a command */}
+              <div role="log" aria-label="Terminal output">
+                {lines.map((line, i) => <OutLine key={i} line={line} onRun={press} />)}
               </div>
-            ))}
 
-            <div className="flex items-center">
-              <Prompt path={pathLabel(cwd)} />
-              <div className="relative flex-1">
-                <input
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={onKeyDown}
-                  aria-label="Terminal input"
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  autoComplete="off"
-                  spellCheck="false"
-                  className="relative z-10 w-full border-0 bg-transparent p-0 text-grey-900 caret-grey-700 outline-none"
-                />
-                {/* ghost suffix, aligned under the input via an invisible copy of
-                    what's typed (monospace, so the widths match exactly) */}
-                {suggestion && (
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center whitespace-pre">
-                    <span className="invisible">{input}</span>
-                    <span className="text-grey-400">{suggestion}</span>
-                  </div>
-                )}
+              <div className="flex items-center">
+                <OutLine line={promptLine(pathLabel(cwd), '').slice(0, 4)} onRun={press} inline />
+                <div className="relative flex-1">
+                  <input
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => { setInput(e.target.value); lastKey.current = '' }}
+                    onKeyDown={onKeyDown}
+                    aria-label="Terminal input"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    autoComplete="off"
+                    spellCheck="false"
+                    className="relative z-10 w-full border-0 bg-transparent p-0 text-grey-900 caret-grey-700 outline-none"
+                  />
+                  {/* ghost suffix, aligned under the input via an invisible copy
+                      of what's typed (monospace, so the widths match exactly) */}
+                  {ghost && (
+                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center whitespace-pre">
+                      <span className="invisible">{input}</span>
+                      <span className="text-grey-400">{ghost}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* next steps, for anyone who would rather press than type */}
+              <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Suggested commands">
+                {suggestions(cwd).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => press(s)}
+                    className="rounded-md border border-grey-300 bg-white px-2 py-0.5 text-[11px] text-grey-600 transition-colors hover:border-accent/40 hover:text-accent-deep"
+                  >
+                    {s}
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
-
           </div>
 
           {/* pull-tab handle - rides the right edge of the panel near the top */}
@@ -662,13 +336,9 @@ export default function TerminalDock() {
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Collapse terminal' : 'Open terminal'}
             aria-expanded={open}
-            // Hidden below lg, where it has nowhere safe to sit. The tab rides
-            // the left edge of the viewport, and the document's column only
-            // keeps 24px of padding there — so on a phone it landed on top of
-            // whatever section kicker happened to be at that height ("SKILLS"
-            // rendered as "KILLS"). From lg up the centred column leaves at
-            // least 64px of margin and the tab clears it. Below that, the
-            // menu carries the terminal instead.
+            // Hidden below lg, where it has nowhere safe to sit: it rides the
+            // left edge, and on a phone it landed on the section kickers
+            // ("SKILLS" rendered as "KILLS"). The menu carries it there instead.
             className="absolute left-full top-20 hidden flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 lg:flex"
           >
             <PromptGlyph />
@@ -676,9 +346,8 @@ export default function TerminalDock() {
               terminal
             </span>
           </button>
-          {/* sm and up only: the hint is written in the margin beside the tile,
-              and a phone has no margin — it was landing in teal handwriting on
-              top of whichever card happened to be there */}
+          {/* lg and up only: the hint is written in the margin beside the
+              page, and a phone has no margin */}
           {!open && !seen && (
             <span
               aria-hidden="true"
@@ -695,6 +364,63 @@ export default function TerminalDock() {
       </aside>
     </>
   )
+}
+
+const TONES: Record<NonNullable<Seg['tone']>, string> = {
+  dim: 'text-grey-500',
+  strong: 'font-semibold text-grey-900',
+  accent: 'text-accent-deep',
+  ok: 'text-emerald-700',
+  warn: 'text-award',
+}
+
+function SegView({ seg, onRun }: { seg: Seg; onRun: (command: string) => void }) {
+  const cls = seg.tone ? TONES[seg.tone] : ''
+  if (seg.run) {
+    const command = seg.run
+    return (
+      <button
+        type="button"
+        onClick={() => onRun(command)}
+        title={command}
+        className={`${cls} inline text-left underline decoration-grey-300 underline-offset-2 transition-colors hover:text-accent-deep hover:decoration-accent`}
+      >
+        {seg.text}
+      </button>
+    )
+  }
+  if (seg.href) {
+    return (
+      <a
+        href={seg.href}
+        target={seg.href.startsWith('mailto:') || seg.download ? undefined : '_blank'}
+        rel="noreferrer"
+        download={seg.download ? '' : undefined}
+        className={`${cls} underline decoration-grey-300 underline-offset-2 hover:text-accent-deep hover:decoration-accent`}
+      >
+        {seg.text}
+      </a>
+    )
+  }
+  return <span className={cls} style={seg.color ? { color: seg.color } : undefined}>{seg.text}</span>
+}
+
+function OutLine({ line, onRun, inline = false }: { line: Line; onRun: (command: string) => void; inline?: boolean }) {
+  const segs = (list: Seg[]) => list.map((s, i) => <SegView key={i} seg={s} onRun={onRun} />)
+  if (inline) return <span className="flex-none whitespace-pre">{segs(line)}</span>
+  if (!line.length) return <div aria-hidden="true">&nbsp;</div>
+  const [first, ...rest] = line
+  if (first.gutter) {
+    return (
+      <div className="flex">
+        {/* capped, so a gutter that is too long can never squeeze the text
+            beside it down to a column of single letters */}
+        <span className="max-w-[45%] flex-none overflow-hidden text-ellipsis whitespace-pre"><SegView seg={first} onRun={onRun} /></span>
+        <span className="min-w-0 whitespace-pre-wrap break-words">{segs(rest)}</span>
+      </div>
+    )
+  }
+  return <div className="whitespace-pre-wrap break-words">{segs(line)}</div>
 }
 
 function PromptGlyph() {
