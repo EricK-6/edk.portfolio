@@ -2,6 +2,7 @@ import Section from './Section'
 import Reveal from './Reveal'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { PROFILE } from '../content'
+import { track } from '../analytics'
 
 const EMAIL = PROFILE.email
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mvzdebnb'
@@ -45,6 +46,7 @@ export default function Contact() {
       })
       if (res.ok) {
         setStatus('success')
+        track('contact-form-sent')
         setName(''); setEmail(''); setSubject(''); setMessage('')
       } else {
         setStatus('error')
@@ -64,9 +66,9 @@ export default function Contact() {
     >
       <div>
         <Reveal className="mb-5 flex flex-wrap items-center justify-center gap-3">
-          <IconLink href={`mailto:${EMAIL}`} label={`Email ${EMAIL}`}><MailIcon />{EMAIL}</IconLink>
-          <IconLink href={PROFILE.linkedin.url} label={`LinkedIn profile ${PROFILE.linkedin.handle}`} external><LinkedInIcon />{PROFILE.linkedin.handle}</IconLink>
-          <IconLink href={PROFILE.github.url} label={`GitHub profile ${PROFILE.github.handle}`} external><GitHubIcon />{PROFILE.github.handle}</IconLink>
+          <IconLink href={`mailto:${EMAIL}`} label={`Email ${EMAIL}`} event="link-email"><MailIcon />{EMAIL}</IconLink>
+          <IconLink href={PROFILE.linkedin.url} label={`LinkedIn profile ${PROFILE.linkedin.handle}`} external event="link-linkedin"><LinkedInIcon />{PROFILE.linkedin.handle}</IconLink>
+          <IconLink href={PROFILE.github.url} label={`GitHub profile ${PROFILE.github.handle}`} external event="link-github"><GitHubIcon />{PROFILE.github.handle}</IconLink>
         </Reveal>
 
         <Reveal as="form" delay={120} className="card space-y-4 block" onSubmit={handleSubmit} noValidate>
@@ -145,7 +147,7 @@ export default function Contact() {
             <button type="submit" disabled={status === 'sending'} className="btn-primary disabled:opacity-60">
               {status === 'sending' ? 'Sending…' : 'Send message'}
             </button>
-            <a href={`mailto:${EMAIL}`} className="btn-secondary">Just email me directly</a>
+            <a href={`mailto:${EMAIL}`} className="btn-secondary" data-track="link-email">Just email me directly</a>
           </div>
         </Reveal>
 
@@ -184,7 +186,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 // compact pill links for the direct contact channels: icon + address / id
-function IconLink({ href, label, external, children }: { href: string; label: string; external?: boolean; children: ReactNode }) {
+function IconLink({ href, label, external, event, children }: { href: string; label: string; external?: boolean; event: string; children: ReactNode }) {
   return (
     <a
       href={href}
@@ -192,6 +194,7 @@ function IconLink({ href, label, external, children }: { href: string; label: st
       rel={external ? 'noreferrer' : undefined}
       aria-label={label}
       title={label}
+      data-track={event}
       className="tap-44 inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent"
     >
       {children}

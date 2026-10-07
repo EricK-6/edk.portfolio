@@ -50,6 +50,7 @@ export default function Footer() {
             <li key={label}>
               <a
                 href={href}
+                data-track={`link-${label.toLowerCase()}`}
                 target={href.startsWith('mailto:') ? undefined : '_blank'}
                 rel={href.startsWith('mailto:') ? undefined : 'noreferrer'}
                 className="text-grey-500 transition-colors hover:text-grey-900"

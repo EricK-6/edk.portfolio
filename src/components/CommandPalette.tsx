@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
 import { goTo } from '../router'
 import { PROFILE, RESUMES } from '../content'
+import { track } from '../analytics'
 
 const EMAIL = PROFILE.email
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
@@ -79,6 +80,7 @@ export default function CommandPalette() {
   // straight out into the tile behind the dim.
   useEffect(() => {
     if (!open) return
+    track('palette-open')
     const restoreTo = document.activeElement
     inputRef.current?.focus()
     const prev = document.body.style.overflow
@@ -136,7 +138,11 @@ export default function CommandPalette() {
   const onInputKey = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(a + 1, filtered.length - 1)) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)) }
-    else if (e.key === 'Enter') { e.preventDefault(); filtered[activeIdx]?.run() }
+    else if (e.key === 'Enter') {
+      e.preventDefault()
+      const c = filtered[activeIdx]
+      if (c) { track(`palette-${c.id}`); c.run() }
+    }
     else if (e.key === 'Escape') { e.preventDefault(); close() }
   }
 
@@ -187,7 +193,7 @@ export default function CommandPalette() {
                 ref={(el: HTMLButtonElement | null) => { itemRefs.current[i] = el }}
                 type="button"
                 onMouseEnter={() => setActive(i)}
-                onClick={c.run}
+                onClick={() => { track(`palette-${c.id}`); c.run() }}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
                   i === activeIdx ? 'bg-grey-200' : ''
                 }`}

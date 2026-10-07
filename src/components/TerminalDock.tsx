@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
 import { goTo } from '../router'
+import { track } from '../analytics'
 import { PROFILE, PROJECTS as PROJECT_DATA, SKILL_GROUPS } from '../content'
 
 const EMAIL = PROFILE.email
@@ -267,6 +268,7 @@ export default function TerminalDock() {
     setSeen(true)
     try { localStorage.setItem('terminal-seen', '1') } catch { /* private mode */ }
   }, [open, seen])
+  useEffect(() => { if (open) track('terminal-open') }, [open])
   // The boot trace prints itself the first time the dock is opened, a line at
   // a time, rather than being there already: a kernel log that has clearly
   // just run is the whole charm of it. Once per mount, and instant for anyone

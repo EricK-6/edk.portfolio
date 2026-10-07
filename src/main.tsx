@@ -12,12 +12,14 @@ import '@fontsource-variable/fraunces'
 import '@fontsource/caveat/500.css'
 import App from './App'
 import { upgradeLegacyHash } from './router'
+import { trackClicks } from './analytics'
 import './index.css'
 
 // Bookmarks and shared links from the route-per-section era used '#/about'.
 // Rewrite them to the anchor form before React paints, so an old link still
 // lands on the right section instead of at the top of the page.
 upgradeLegacyHash()
+trackClicks()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

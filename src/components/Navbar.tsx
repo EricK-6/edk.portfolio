@@ -140,7 +140,7 @@ export default function Navbar() {
                 Résumé
               </span>
               {RESUMES.map((r) => (
-                <CvLink key={r.id} href={r.href} kind={r.label} onClick={() => setOpen(false)} />
+                <CvLink key={r.id} id={r.id} href={r.href} kind={r.label} onClick={() => setOpen(false)} />
               ))}
             </li>
           </ul>
@@ -201,9 +201,10 @@ function ResumeMenu() {
           className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-xl border border-grey-200 bg-white p-1 shadow-lg shadow-black/5"
           role="menu"
         >
-          {RESUMES.map(({ label: kind, href }) => (
+          {RESUMES.map(({ id, label: kind, href }) => (
             <a
               key={kind}
+              data-track={`resume-${id}`}
               href={href}
               target="_blank"
               rel="noreferrer"
@@ -224,10 +225,11 @@ function ResumeMenu() {
 
 // The mobile menu's flavour: a real pill, because it sits in a list of plain
 // text links and would otherwise read as one more row.
-function CvLink({ href, kind, onClick }: { href: string; kind: string; onClick: () => void }) {
+function CvLink({ id, href, kind, onClick }: { id: string; href: string; kind: string; onClick: () => void }) {
   return (
     <a
       href={href}
+      data-track={`resume-${id}`}
       target="_blank"
       rel="noreferrer"
       onClick={onClick}

@@ -208,6 +208,7 @@ function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }
         )}
 
         <ProjectLinks
+          slug={project.slug}
           links={links}
           log={log}
           onOpenLog={() => setLogOpen(true)}
@@ -272,6 +273,7 @@ function ProjectCard({ project }: { project: Project }) {
           tabIndex={0}
           aria-expanded={open}
           aria-label={`${title}: show details`}
+          data-track={`details-${project.slug}`}
           onClick={() => setOpen(true)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(true) }
@@ -351,7 +353,7 @@ function ProjectCard({ project }: { project: Project }) {
       {/* the footer both faces share */}
       {(log || links?.length > 0) && (
         <div className="border-t border-grey-200 px-5 py-4">
-          <ProjectLinks links={links} log={log} onOpenLog={() => setLogOpen(true)} />
+          <ProjectLinks slug={project.slug} links={links} log={log} onOpenLog={() => setLogOpen(true)} />
         </div>
       )}
 
@@ -360,7 +362,7 @@ function ProjectCard({ project }: { project: Project }) {
   )
 }
 
-function ProjectLinks({ links, log, onOpenLog, className = '' }: { links?: ProjectLink[]; log?: BuildLogEntry[]; onOpenLog: () => void; className?: string }) {
+function ProjectLinks({ slug, links, log, onOpenLog, className = '' }: { slug: string; links?: ProjectLink[]; log?: BuildLogEntry[]; onOpenLog: () => void; className?: string }) {
   if (!log && !links?.length) return null
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
@@ -368,6 +370,7 @@ function ProjectLinks({ links, log, onOpenLog, className = '' }: { links?: Proje
         <button
           type="button"
           onClick={onOpenLog}
+          data-track={`buildlog-${slug}`}
           className="tap-44 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
         >
           Open the build log →
@@ -382,6 +385,7 @@ function ProjectLinks({ links, log, onOpenLog, className = '' }: { links?: Proje
             href={l.href}
             target="_blank"
             rel="noreferrer"
+            data-track={`${demo ? 'demo' : git ? 'repo' : 'link'}-${slug}`}
             className="tap-44 inline-flex items-center gap-1.5 rounded-lg border border-grey-300 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-grey-400 hover:text-grey-900"
           >
             {demo && <LiveLed />}

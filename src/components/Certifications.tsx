@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
 import { CERTS, CERT_TIERS, type Cert } from '../content'
+import { track } from '../analytics'
 
 // One ink per credential tier, used for the issuer line and nothing else.
 //
@@ -69,7 +70,7 @@ function Badge({ cert }: { cert: Cert }) {
 
   const press = () => {
     if (!open) { setOpen(true); return }
-    if (linked) { window.open(cert.credlyUrl, '_blank', 'noopener,noreferrer'); return }
+    if (linked) { track(`credly-${cert.id}`); window.open(cert.credlyUrl, '_blank', 'noopener,noreferrer'); return }
     setOpen(false)
   }
 
