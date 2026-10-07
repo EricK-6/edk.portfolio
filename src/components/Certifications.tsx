@@ -153,7 +153,7 @@ function ExternalLinkIcon() {
 
 export default function Certifications() {
   return (
-    <Section id="certifications" kicker="Credentials" title="Badges you can verify" className="!py-10 sm:!py-12">
+    <Section id="certifications" kicker="Credentials" title="Certified by AWS and HashiCorp" className="!py-10 sm:!py-12">
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-10">
         {CERT_TIERS.map((tier, gi) => {
           const items = CERTS.filter((c) => c.tier === tier)
