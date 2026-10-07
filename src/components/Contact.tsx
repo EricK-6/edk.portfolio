@@ -1,6 +1,6 @@
 import Section from './Section'
 import Reveal from './Reveal'
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { PROFILE } from '../content'
 import { track } from '../analytics'
 
@@ -66,7 +66,7 @@ export default function Contact() {
     >
       <div>
         <Reveal className="mb-5 flex flex-wrap items-center justify-center gap-3">
-          <IconLink href={`mailto:${EMAIL}`} label={`Email ${EMAIL}`} event="link-email"><MailIcon />{EMAIL}</IconLink>
+          <CopyEmail />
           <IconLink href={PROFILE.linkedin.url} label={`LinkedIn profile ${PROFILE.linkedin.handle}`} external event="link-linkedin"><LinkedInIcon />{PROFILE.linkedin.handle}</IconLink>
           <IconLink href={PROFILE.github.url} label={`GitHub profile ${PROFILE.github.handle}`} external event="link-github"><GitHubIcon />{PROFILE.github.handle}</IconLink>
         </Reveal>
@@ -182,6 +182,66 @@ function Field({ label, error, children }: { label: string; error?: string; chil
       {children}
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </label>
+  )
+}
+
+// The address as a pill that copies itself.
+//
+// What most visitors do with an address is paste it somewhere: into a mail
+// client they actually use, a message, a form. A mailto: link opens whichever
+// app the machine thinks is the default, which on many laptops is one nobody
+// has set up. So pressing it copies, says so, and "Just email me directly"
+// below it is the mail-client route. If the clipboard is blocked, it falls
+// back to mailto: rather than doing nothing.
+//
+// Both labels sit in the same grid cell, so swapping to "Copied" never
+// changes the pill's width and nothing around it moves.
+function CopyEmail() {
+  const [copied, setCopied] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout>>()
+  useEffect(() => () => clearTimeout(timer.current), [])
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL)
+    } catch {
+      window.location.href = `mailto:${EMAIL}`
+      return
+    }
+    setCopied(true)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setCopied(false), 1800)
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={copy}
+        data-track="copy-email"
+        aria-label={`Copy email address ${EMAIL}`}
+        title="Copy email address"
+        className="tap-44 inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent"
+      >
+        <MailIcon />
+        <span className="grid">
+          <span className={`col-start-1 row-start-1 ${copied ? 'invisible' : ''}`}>{EMAIL}</span>
+          <span aria-hidden="true" className={`col-start-1 row-start-1 flex items-center gap-1.5 text-accent-deep ${copied ? '' : 'invisible'}`}>
+            <CheckIcon />
+            Copied to clipboard
+          </span>
+        </span>
+      </button>
+      <span role="status" aria-live="polite" className="sr-only">{copied ? 'Email address copied' : ''}</span>
+    </>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
   )
 }
 
