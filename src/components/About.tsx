@@ -168,16 +168,17 @@ function Bold({ children }: { children: ReactNode }) {
 // placements in Projects, the certificates in Credentials, the count from the
 // Projects list itself.
 //
-// The two roles bookend the list on purpose. The prose names CARES and ciLab
-// in passing, in the middle of a sentence about how he builds; the bullets are
-// where they read as posts held, which is what someone skimming for that is
-// looking for. The volunteering stays out: it is a tile of its own further
-// down, and these six are the ones worth reading twice.
+// Ordered as the grid reads, two to a row: the two placements first, because
+// they are the hardest claims to fake; then the certificates and the project
+// count, which back up the breadth; then the two posts held, which are the
+// context for all of it. The prose names CARES and ciLab in passing, so the
+// bullets are where they read as roles. The volunteering stays out: it is a
+// tile of its own further down.
 const HIGHLIGHTS = [
-  'Research Assistant · CARES robotics lab, UoA',
-  '4 cloud certifications · AWS and HashiCorp',
   'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
   '3rd place · 2025 ECSE Design Competition',
+  '4 cloud certifications · AWS and HashiCorp',
   '8 projects across hardware & software',
+  'Research Assistant · CARES robotics lab, UoA',
   'Robotics Instructor & Competition Coach at ciLab',
 ]
