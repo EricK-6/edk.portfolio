@@ -465,12 +465,12 @@ export const SKILL_GROUPS = [
     // of them appears in a project's tech list further up, which is the whole
     // reason for naming them rather than asking the reader to take "AWS" on
     // faith.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM', 'Docker', 'Terraform', 'GitHub Actions'],
+    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM', 'Docker', 'Terraform', 'Git', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
+    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
   },
   {
     id: 'hardware-eda',
