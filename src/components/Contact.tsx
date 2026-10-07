@@ -58,7 +58,7 @@ export default function Contact() {
       id="contact"
       kicker="Contact"
       title="Let's talk"
-      subtitle="Fill in the form to contact me, I read every email."
+      subtitle="Whether it's a professional opportunity, a collaboration, or just a conversation, I'm always open to hearing from good people. I'm currently open to interesting conversations, side projects, and collaboration opportunities. Don't hesitate to reach out."
       narrow
     >
       <div>
@@ -103,7 +103,7 @@ export default function Contact() {
                 onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: '' })) }}
                 aria-invalid={errors.name ? true : undefined}
                 className={inputClass(errors.name)}
-                placeholder="Jane Recruiter"
+                placeholder="Jane Doe"
               />
             </Field>
             <Field label="Your email" error={errors.email}>
