@@ -23,6 +23,7 @@ import { hrefFor } from '../sitemap'
 // screen should make one offer, not five.
 
 const BUILDS = [
+  'embedded systems',
   'robots that hold your gaze',
   'fraud detection that cites its evidence',
   'serverless pipelines on AWS',
@@ -117,7 +118,7 @@ export default function Hero() {
             />
           </span>
           {/* the phrase is decorative motion; keep the sentence whole for AT */}
-          <span className="sr-only">robots, fraud detection, live dashboards, websites, energy monitors, FPGA games, analytics and Android apps.</span>
+          <span className="sr-only">embedded systems, robots, fraud detection, live dashboards, websites, energy monitors, FPGA games, analytics and Android apps.</span>
         </p>
 
         <p
