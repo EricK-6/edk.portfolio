@@ -75,6 +75,30 @@ export default function Projects() {
           <ProjectCard key={p.title} project={p} />
         ))}
       </div>
+
+      {/* The one line about this site, where the work ends: it is a project
+          too, and it used to sit in the footer where nobody reads. */}
+      <p className="mt-10 font-mono text-[11px] tracking-wide text-grey-400">
+        This site is built with{' '}
+        <a
+          href="https://www.typescriptlang.org/"
+          target="_blank"
+          rel="noreferrer"
+          className="underline decoration-grey-300 underline-offset-2 transition-colors hover:text-grey-700"
+        >
+          TypeScript
+        </a>{' '}
+        and{' '}
+        <a
+          href="https://tailwindcss.com/"
+          target="_blank"
+          rel="noreferrer"
+          className="underline decoration-grey-300 underline-offset-2 transition-colors hover:text-grey-700"
+        >
+          Tailwind CSS
+        </a>
+        .
+      </p>
     </Section>
   )
 }
