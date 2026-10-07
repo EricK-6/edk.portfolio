@@ -75,6 +75,9 @@ function useTypewriter(phrases: readonly string[]) {
 
 export default function Hero() {
   const { text, done } = useTypewriter(HERO_PHRASES)
+  const cut = text.lastIndexOf(' ') + 1
+  const head = text.slice(0, cut)
+  const tail = text.slice(cut)
 
   return (
     <section
@@ -91,20 +94,32 @@ export default function Hero() {
           Eric Kim
         </h1>
 
-        {/* the typing line. min-height reserves the row so the layout never
-            jumps as phrases swap. */}
+        {/* The typing line. Its height is reserved for the longest phrase so
+            nothing around it moves as phrases swap: the block is centred in
+            the frame, so one extra line used to lift the name 12px on a phone,
+            for 40% of the time. Below sm the phrase always takes its own line,
+            and the reservation is what the longest one measures there: two
+            lines from 376px, three below (a 375px phone wraps "fraud detection
+            that cites its evidence" in two). `content-start` stacks lines from
+            the top, so the prefix never drifts inside the reserved space. */}
         <p
-          className="lift-in mt-5 flex min-h-[2rem] flex-wrap items-center justify-center gap-x-2 text-lg text-grey-800 sm:text-xl"
+          className="lift-in mt-5 flex min-h-[5.25rem] flex-wrap content-start items-center justify-center gap-x-2 text-lg text-grey-800 min-[376px]:min-h-[3.5rem] sm:min-h-[2rem] sm:text-xl"
           style={{ animationDelay: '240ms' }}
         >
           <span>Kia ora, I build</span>
-          <span className="font-medium text-accent-deep">
-            {text}
-            <span
-              aria-hidden="true"
-              className={`ml-0.5 inline-block w-[2px] translate-y-[2px] self-stretch bg-accent-deep ${done ? 'animate-caret' : ''}`}
-              style={{ height: '1.05em' }}
-            />
+          <span className="basis-full font-medium text-accent-deep sm:basis-auto">
+            {head}
+            {/* the caret travels with the last word: on its own it was a
+                line break opportunity, and a phrase that just fitted pushed
+                the caret alone onto the next line */}
+            <span className="whitespace-nowrap">
+              {tail}
+              <span
+                aria-hidden="true"
+                className={`ml-0.5 inline-block w-[2px] translate-y-[2px] self-stretch bg-accent-deep ${done ? 'animate-caret' : ''}`}
+                style={{ height: '1.05em' }}
+              />
+            </span>
           </span>
           {/* the phrase is decorative motion; keep the sentence whole for AT */}
           <span className="sr-only">embedded systems, robots, fraud detection, live dashboards, websites, energy monitors, FPGA games, analytics and Android apps.</span>
@@ -158,6 +173,12 @@ function HeroPhoto() {
           browsers with no WebP support (or a tool reading the DOM) still
           get a real image. */}
       <picture>
+        {/* Phones get the 1000px photo whatever their pixel density. With
+            sizes=100vw a 3x phone asked for the 2000px file (246KB against
+            74KB), and under the blur and the haze the two are identical at
+            1:1 device pixels; on a slow connection it was the difference
+            between the photo landing in a few seconds and in nine. */}
+        <source type="image/webp" media="(max-width: 767px), (max-height: 500px)" srcSet="./qt-sm.webp" />
         <source
           type="image/webp"
           srcSet="./qt-sm.webp 1000w, ./qt.webp 2000w"

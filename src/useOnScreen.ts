@@ -8,19 +8,26 @@ import { useEffect, useState, type RefObject } from 'react'
 // document has no such thing as "on stage", so the honest question is whether
 // the video is actually on screen, and the answer keeps doing the same job:
 // a looping clip three screens above the reader is pure battery drain.
-export function useOnScreen(ref: RefObject<Element | null>, rootMargin = '200px') {
+//
+// `once` latches: the first time the element comes within `rootMargin` the
+// answer becomes true and stays true. That is the question for anything that
+// should load late but never unload, like a clip's poster and source.
+export function useOnScreen(ref: RefObject<Element | null>, rootMargin = '200px', once = false) {
   const [onScreen, setOnScreen] = useState(false)
 
   useEffect(() => {
     const node = ref.current
     if (!node) return
     const observer = new IntersectionObserver(
-      ([entry]) => setOnScreen(entry.isIntersecting),
+      ([entry]) => {
+        if (!once) setOnScreen(entry.isIntersecting)
+        else if (entry.isIntersecting) { setOnScreen(true); observer.disconnect() }
+      },
       { rootMargin }
     )
     observer.observe(node)
     return () => observer.disconnect()
-  }, [ref, rootMargin])
+  }, [ref, rootMargin, once])
 
   return onScreen
 }

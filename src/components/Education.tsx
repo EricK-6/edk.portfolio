@@ -18,6 +18,8 @@ export default function Education() {
           <img
             src={DEGREE.logo}
             alt="University of Auckland"
+            loading="lazy"
+            decoding="async"
             className="hidden sm:block h-24 w-auto flex-none rounded-xl object-contain"
           />
           <div className="flex-1 min-w-0">
@@ -48,6 +50,8 @@ export default function Education() {
           <img
             src={SCHOOL.logo}
             alt="Pinehurst School"
+            loading="lazy"
+            decoding="async"
             className="hidden sm:block h-24 w-auto flex-none rounded-xl object-contain"
           />
           <div className="flex-1 min-w-0">

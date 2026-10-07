@@ -72,6 +72,12 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
   const { title, image, video, focus, aspect, year, rank } = project
   const ref = useRef<HTMLVideoElement | HTMLImageElement>(null)
   const onScreen = useOnScreen(ref)
+  // A <video> fetches its poster (and, with preload="metadata", the head of
+  // its file) the moment it is in the DOM, whatever `loading` says, so five
+  // clips far down the page were taking ~270KB of a phone's first seconds
+  // from the intro photograph. They get their poster and source once they
+  // come within a couple of screens instead, and keep them after.
+  const near = useOnScreen(ref, '1200px 0px', true)
 
   useEffect(() => {
     const v = ref.current
@@ -101,8 +107,8 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
       {video ? (
         <video
           ref={ref as RefObject<HTMLVideoElement>}
-          src={video}
-          poster={image}
+          src={near ? video : undefined}
+          poster={near ? image : undefined}
           muted
           loop
           playsInline

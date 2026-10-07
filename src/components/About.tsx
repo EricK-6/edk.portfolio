@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useRef, type ReactNode } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
 import { useOnScreen } from '../useOnScreen'
@@ -72,9 +72,8 @@ export default function About() {
 //
 // Every rule the rest of the page follows still holds. It is an entrance, so
 // it runs once and then holds still; it animates opacity and transform only,
-// never layout; and it is latched, so scrolling back up does not replay it.
-// `useOnScreen` reports both ways, which is what the project clips want and
-// exactly what a one-shot entrance must not have.
+// never layout; and it is latched (`useOnScreen`'s `once`), so scrolling
+// back up does not replay it.
 const MOTTO = ['From', 'silicon', 'to', 'serverless.']
 
 function Motto() {
@@ -83,11 +82,7 @@ function Motto() {
   // lighting as it arrives rather than after a visible pause. Erring early is
   // the safe direction: the worst case is a motto that is simply already
   // there, never an empty heading waiting for a trigger.
-  const onScreen = useOnScreen(ref, '0px 0px -40px 0px')
-  const [lit, setLit] = useState(false)
-  useEffect(() => {
-    if (onScreen) setLit(true)
-  }, [onScreen])
+  const lit = useOnScreen(ref, '0px 0px -40px 0px', true)
 
   return (
     <span ref={ref} className={`motto ${lit ? 'is-lit' : ''}`}>
