@@ -149,11 +149,30 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
   )
 }
 
+// Lets something outside the section open a project: the terminal's
+// `open spottern` dispatches `project-request` with the slug, and the matching
+// row or card opens its build log (or, with no log, turns its card over).
+export type ProjectRequest = { slug: string; what: 'log' | 'details' }
+
+function useProjectRequests(slug: string, setLog: (v: boolean) => void, setDetails?: (v: boolean) => void) {
+  useEffect(() => {
+    const onRequest = (e: Event) => {
+      const req = (e as CustomEvent<ProjectRequest>).detail
+      if (req?.slug !== slug) return
+      if (req.what === 'log') setLog(true)
+      else setDetails?.(true)
+    }
+    window.addEventListener('project-request', onRequest)
+    return () => window.removeEventListener('project-request', onRequest)
+  }, [slug, setLog, setDetails])
+}
+
 // An awarded project, full width: the clip on one side and the case for it on
 // the other. The two alternate sides so the pair does not read as one block.
 function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }) {
   const { title, tag, period, role, awardedBy, hostedBy, org, highlights, tech, links, log } = project
   const [logOpen, setLogOpen] = useState(false)
+  useProjectRequests(project.slug, setLogOpen)
 
   return (
     // Both columns stretch to the same height and both finish on the same
@@ -243,6 +262,7 @@ function ProjectCard({ project }: { project: Project }) {
   const { title, tag, role, highlights, tech, icon, links, log } = project
   const [open, setOpen] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
+  useProjectRequests(project.slug, setLogOpen, setOpen)
   const frontRef = useRef<HTMLDivElement>(null)
   const detailRef = useRef<HTMLDivElement>(null)
   const hasOpened = useRef(false)
@@ -355,7 +375,7 @@ function ProjectCard({ project }: { project: Project }) {
       {/* the footer both faces share */}
       {(log || links?.length > 0) && (
         <div className="border-t border-grey-200 px-5 py-4">
-          <ProjectLinks slug={project.slug} links={links} log={log} onOpenLog={() => setLogOpen(true)} />
+          <ProjectLinks slug={project.slug} links={links} log={log} onOpenLog={() => setLogOpen(true)} stacked />
         </div>
       )}
 
@@ -364,7 +384,9 @@ function ProjectCard({ project }: { project: Project }) {
   )
 }
 
-function ProjectLinks({ slug, links, log, onOpenLog, className = '' }: { slug: string; links?: ProjectLink[]; log?: BuildLogEntry[]; onOpenLog: () => void; className?: string }) {
+// `stacked` (the grid cards) gives the build log a row of its own: a card is
+// too narrow for it and two buttons, and wrapping stranded "Git repo" alone.
+function ProjectLinks({ slug, links, log, onOpenLog, stacked = false, className = '' }: { slug: string; links?: ProjectLink[]; log?: BuildLogEntry[]; onOpenLog: () => void; stacked?: boolean; className?: string }) {
   if (!log && !links?.length) return null
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
@@ -373,7 +395,7 @@ function ProjectLinks({ slug, links, log, onOpenLog, className = '' }: { slug: s
           type="button"
           onClick={onOpenLog}
           data-track={`buildlog-${slug}`}
-          className="tap-44 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+          className={`tap-44 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline ${stacked && links?.length ? 'basis-full justify-start' : ''}`}
         >
           Open the build log →
         </button>
@@ -563,6 +585,26 @@ function GitHubIcon() {
   )
 }
 
+// A pipeline, drawn the way Experience draws a career: a hairline with a dot
+// at each stop. Each stage is numbered, named, and given the one thing it
+// does, so the architecture reads in the order data actually moves through
+// it. Plain markup rather than a diagram: it wraps on a phone, it is the
+// page's own grammar, and a screen reader gets an ordered list.
+function Pipeline({ stages }: { stages: NonNullable<BuildLogEntry['flow']> }) {
+  return (
+    <ol className="mb-1 mt-3 space-y-2 border-l border-grey-200 pl-4">
+      {stages.map((st, i) => (
+        <li key={st.node} className="relative grid grid-cols-[1.6rem_1fr] text-sm sm:grid-cols-[1.6rem_13.5rem_1fr]">
+          <span aria-hidden="true" className="absolute -left-[20.5px] top-[0.55em] h-2 w-2 rounded-full bg-accent ring-2 ring-white" />
+          <span className="pt-[0.2em] font-mono text-[10px] tabular-nums text-grey-400">{String(i + 1).padStart(2, '0')}</span>
+          <span className="font-medium text-grey-900">{st.node}</span>
+          <span className="col-start-2 text-grey-600 sm:col-start-3">{st.does}</span>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
 // Case-study modal styled as a build log, rendered through a portal: a modal
 // belongs at the top of the document, out of reach of any ancestor's
 // overflow or stacking context.
@@ -646,6 +688,7 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
               <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">
                 {entry.code}
               </h4>
+              {entry.flow && <Pipeline stages={entry.flow} />}
               {entry.body.map((para) => (
                 <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700">
                   {para}

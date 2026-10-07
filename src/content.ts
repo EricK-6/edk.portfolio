@@ -48,8 +48,16 @@ export const HERO_PHRASES = [
 
 // --- projects ----------------------------------------------------------------
 
+// A build log is the case study behind a project, opened from its card.
+// Entries read top to bottom: BRIEF, then whatever the story needs, then
+// OUTCOME. `flow` draws a pipeline as a numbered list of stages above the
+// entry's text: what each service is, then the one thing it does there.
+//
+// Copy rule for everything shown on the page: no em or en dashes. Colons,
+// commas and full stops do that job, the same as on the CV.
 export interface BuildLogEntry {
   code: string
+  flow?: { node: string; does: string }[]
   body: string[]
 }
 
@@ -170,6 +178,47 @@ export const PROJECTS: Project[] = [
       { label: 'Deployed DEMO', href: 'https://erick-6.github.io/Spottern/' },
       { label: 'Git repo', href: 'https://github.com/EricK-6/Spottern' },
     ],
+    log: [
+      {
+        code: '01 · BRIEF',
+        body: [
+          'The AWS×BNZ AI Hackathon 2026, AI Innovation challenge. Spottern reads a whole bank statement, sorts the spending into categories, and flags anything unusual with a plain-language reason a customer can act on.',
+        ],
+      },
+      {
+        code: '02 · TEAM',
+        body: [
+          'I was grouped with two people I had never met. I volunteered to lead, and before splitting anything up I met each of them one to one to find out where they were strongest. One had really strong front-end skills, the other had real experience presenting, so I divided the work along those lines and took the AWS pipeline myself. Throughout, I made a point of listening to their ideas rather than just handing out tasks.',
+        ],
+      },
+      {
+        code: '03 · ARCHITECTURE',
+        flow: [
+          { node: 'S3 · API Gateway', does: 'a PDF upload or a CSV post starts a run' },
+          { node: 'Textract', does: 'lifts the transaction table out of a PDF statement' },
+          { node: 'Bedrock · Claude Opus 4.8', does: 'reads the whole statement in one call' },
+          { node: 'DynamoDB', does: 'stores every enriched transaction' },
+          { node: 'SNS · SES', does: 'alerts BNZ fraud-ops and the customer' },
+        ],
+        body: [
+          'The whole statement goes to the model at once, because duplicates and out-of-pattern spending only show up in context: labelling one transaction at a time would miss both.',
+          'The answer is held to a contract. A forced tool call with a JSON schema returns a category from a fixed list, a flag, a 0 to 1 score and a plain-language reason for every transaction, and the merge step still clamps anything out of range, so a bad verdict can never corrupt a stored record. Every stage reads and writes one shared transaction schema.',
+        ],
+      },
+      {
+        code: '04 · SETBACK',
+        body: [
+          "Bedrock was the wall. On the university's AWS account, calling Claude through InvokeModel was blocked by an AWS Marketplace subscription policy that only an org admin could lift. The Converse API was allowed, so I moved the categorize Lambda onto Converse and enforced the structured output with that forced tool call instead. The stack is pinned to Sydney, the only region Bedrock was reachable from on that account, and the au. inference profile keeps a bank statement's data in Australia.",
+          'So the demo could never depend on any of that, the frontend falls back to three sample statements with fraud planted in them: an overseas buy and a duplicate charge, card testing, and a crypto and transfer scam. The hosted demo runs on those.',
+        ],
+      },
+      {
+        code: '05 · OUTCOME',
+        body: [
+          "Top 8 of 20+ teams. We finished before the deadline and were invited to BNZ's office to present to the panel as finalists.",
+        ],
+      },
+    ],
   },
   {
     title: 'Sentiment PULSE',
@@ -191,6 +240,48 @@ export const PROJECTS: Project[] = [
       { label: 'Deployed DEMO', href: 'https://master.d1vwgts5qfrat7.amplifyapp.com/' },
       { label: 'Git repo', href: 'https://github.com/EricK-6/sentiment-dashboard' },
     ],
+    log: [
+      {
+        code: '01 · BRIEF',
+        body: [
+          'A solo project to put certification study into practice: stream text in, classify its sentiment with a managed NLP service, and watch the mood move on a live dashboard, with every piece of it defined as code.',
+        ],
+      },
+      {
+        code: '02 · ARCHITECTURE',
+        flow: [
+          { node: 'Kinesis', does: 'a local producer streams reviews into one shard' },
+          { node: 'Lambda · SentimentProcessor', does: 'reads the stream in batches of ten' },
+          { node: 'Comprehend', does: 'one BatchDetectSentiment call per batch, not per record' },
+          { node: 'DynamoDB', does: "results keyed by the producer's UUID, plus a ByTimestamp index" },
+          { node: 'API Gateway · Lambda', does: 'a bounded query for the latest records' },
+          { node: 'React on Amplify', does: 'polls every five seconds' },
+        ],
+        body: [
+          'The whole stack is one AWS SAM template: the stream, both Lambdas, the table, the API and the dead letter queue.',
+        ],
+      },
+      {
+        code: '03 · FAILURE MODES',
+        body: [
+          "The first version worked end to end and was still wrong twice over. Kinesis delivers at least once, so a retried batch could write the same review twice, and every five-second poll scanned the entire table. Carrying the producer's UUID as the table key made retries idempotent, and the ByTimestamp index turned \"latest N\" into a bounded query instead of a scan.",
+          'Then the stream itself. One bad record used to fail its whole batch. The handler now reports only the records that failed (a partial batch response), so the rest are checkpointed; a batch that keeps failing is split in half, and whatever still fails after two retries lands in an SQS dead letter queue for 14 days instead of disappearing.',
+        ],
+      },
+      {
+        code: '04 · COST',
+        body: [
+          'The Kinesis shard bills about $11 a month whether or not anything flows, and it has no free tier. So the backend is deployed on demand and deleted when idle (one sam delete takes it to $0), and the dashboard switches to a built-in simulation whenever the API is unreachable. The demo linked here runs on that simulation.',
+        ],
+      },
+      {
+        code: '05 · OUTCOME',
+        body: [
+          '21 frontend tests (Vitest) and 8 backend tests (pytest with moto) run on every push through GitHub Actions.',
+          'What I would change at real volume: the ByTimestamp index puts every record in one partition, which is fine for a demo and a hot partition at scale, so I would shard it.',
+        ],
+      },
+    ],
   },
   {
     title: 'KEB Web Design',
@@ -211,6 +302,32 @@ export const PROJECTS: Project[] = [
     links: [
       { label: 'Deployed DEMO', href: 'https://keb-project.vercel.app/' },
       { label: 'Git repo', href: 'https://github.com/Patrick-Sheng/keb-project' },
+    ],
+    log: [
+      {
+        code: '01 · BRIEF',
+        body: [
+          "KEB Project Playground 2025, my first competition at university. Each team was set a mission: build something genuinely useful for the Korean Engineering Body. Ours was the club's first website, with a home page, an events listing with a sign-up form, and an About page for the executive team, built in about a week in React 19 with Vite, React Router and React Bootstrap.",
+        ],
+      },
+      {
+        code: '02 · TEAM',
+        body: [
+          'I was a junior engineering student on a team of senior software students, so the least experienced person in the room. I opened with a team discussion where each of us shared our strengths and weaknesses, and I went first, admitting my front-end gaps, so the others felt safe doing the same. We divided the work on that basis.',
+        ],
+      },
+      {
+        code: '03 · BUILD',
+        body: [
+          "I took on the parts I could realistically catch up on fast, asking the seniors questions and learning as I went. The page I owned was About: the club's executive team as cards built from one reusable component, each with the team's role, the member's photo, and a link to their profile.",
+        ],
+      },
+      {
+        code: '04 · OUTCOME',
+        body: [
+          "We delivered on time, and the site became the club's first website. What it taught me: being upfront about what you don't know is what actually lets a team move fast together.",
+        ],
+      },
     ],
   },
   {
