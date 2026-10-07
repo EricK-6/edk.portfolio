@@ -53,7 +53,10 @@ export default function Projects() {
         <>
           {cap(WORDS[featured.length])} award placements and {WORDS[rest.length]} more builds. The{' '}
           {WORDS[PROJECTS.filter((x) => x.log).length]} I took on outside coursework come with a{' '}
-          <strong className="font-semibold text-grey-900">build log</strong>.
+          {/* nowrap, with the full stop inside it, so the phrase never splits across lines */}
+          <span className="whitespace-nowrap">
+            <strong className="font-semibold text-grey-900">build log</strong>.
+          </span>
         </>
       }
       wide
