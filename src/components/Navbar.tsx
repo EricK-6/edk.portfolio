@@ -210,7 +210,7 @@ function ResumeMenu() {
               rel="noreferrer"
               role="menuitem"
               onClick={() => setOpen(false)}
-              aria-label={`${kind} résumé — PDF, opens in a new tab`}
+              aria-label={`${kind} résumé, PDF, opens in a new tab`}
               className="group flex items-center justify-between rounded-lg px-3 py-2 text-sm text-grey-800 transition hover:bg-grey-100 hover:text-accent-deep"
             >
               {kind}
@@ -233,7 +233,7 @@ function CvLink({ id, href, kind, onClick }: { id: string; href: string; kind: s
       target="_blank"
       rel="noreferrer"
       onClick={onClick}
-      aria-label={`${kind} résumé — PDF, opens in a new tab`}
+      aria-label={`${kind} résumé, PDF, opens in a new tab`}
       className="tap-44 group inline-flex items-center gap-1.5 rounded-lg border border-grey-200 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-accent/40 hover:text-accent-deep"
     >
       {kind}

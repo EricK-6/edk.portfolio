@@ -24,8 +24,8 @@ export const PROFILE = {
 // The two résumés. `aliases` are the words people type for each one, in the
 // terminal and in a guessed URL like /cv/hardware.
 export const RESUMES = [
-  { id: 'software', label: 'Software', href: './CV_SWE.pdf', aliases: ['software', 'swe', 'sw', 'soft'] },
-  { id: 'hardware', label: 'Hardware', href: './CV_EEE.pdf', aliases: ['hardware', 'eee', 'hw', 'electrical', 'electronics'] },
+  { id: 'software', label: 'SW role', href: './CV_SWE.pdf', aliases: ['software', 'swe', 'sw', 'soft'] },
+  { id: 'hardware', label: 'HW role', href: './CV_EEE.pdf', aliases: ['hardware', 'eee', 'hw', 'electrical', 'electronics'] },
 ] as const
 
 export type ResumeId = (typeof RESUMES)[number]['id']

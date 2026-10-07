@@ -425,7 +425,7 @@ const COMMANDS: Command[] = [
       const key = (args[0] ?? '').toLowerCase()
       const r = RESUMES.find((x) => (x.aliases as readonly string[]).includes(key))
       if (!r) { out.push(L(dim('two résumés: '), cmd('software', 'cv software'), dim(' · '), cmd('hardware', 'cv hardware'))); return }
-      out.push(L(dim(`↓ downloading the ${r.label.toLowerCase()} CV…`)))
+      out.push(L(dim(`↓ downloading the ${r.id} CV…`)))
       ctx.download(r.href)
     },
   },
