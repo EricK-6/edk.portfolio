@@ -163,7 +163,9 @@ function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }
     // well takes its height from the row, and the text column is a flex column
     // whose tech and links are pushed to the bottom — so the picture and the
     // case for it share a top edge and a bottom edge.
-    <article className="grid gap-6 md:grid-cols-[1.05fr_1fr] md:gap-10">
+    // the id is the project's anchor: erickk.cloud/#spottern (and /spottern,
+    // via 404.html) lands here
+    <article id={project.slug} className="grid gap-6 md:grid-cols-[1.05fr_1fr] md:gap-10">
       {/* items-center: a clip that keeps its own shape sits level with the
           middle of the text beside it. One that fills the row is already the
           full height, so centring costs it nothing. */}
@@ -264,7 +266,7 @@ function ProjectCard({ project }: { project: Project }) {
   }, [open])
 
   return (
-    <article className="card flex h-full flex-col overflow-hidden !p-0">
+    <article id={project.slug} className="card flex h-full flex-col overflow-hidden !p-0">
       {/* the part that turns over */}
       <div className="relative flex flex-1 flex-col">
         <div

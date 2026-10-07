@@ -107,7 +107,10 @@ export default function Hero() {
           style={{ animationDelay: '240ms' }}
         >
           <span>Kia ora, I build</span>
-          <span className="basis-full font-medium text-accent-deep sm:basis-auto">
+          {/* Hidden from screen readers: read aloud, this was whatever half of
+              a phrase happened to be typed at that instant, followed by the
+              whole list again from the sr-only sentence below. */}
+          <span aria-hidden="true" className="basis-full font-medium text-accent-deep sm:basis-auto">
             {head}
             {/* the caret travels with the last word: on its own it was a
                 line break opportunity, and a phrase that just fitted pushed
@@ -121,7 +124,7 @@ export default function Hero() {
               />
             </span>
           </span>
-          {/* the phrase is decorative motion; keep the sentence whole for AT */}
+          {/* the phrase is decorative motion; this is the sentence AT reads */}
           <span className="sr-only">embedded systems, robots, fraud detection, live dashboards, websites, energy monitors, FPGA games, analytics and Android apps.</span>
         </p>
 
