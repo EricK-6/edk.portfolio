@@ -58,7 +58,7 @@ export default function Contact() {
       id="contact"
       kicker="Contact"
       title="Let's talk"
-      subtitle="Whether it's a professional opportunity, a collaboration, or just a conversation, I'm always open to hearing from good people. I'm currently open to interesting conversations, side projects, and collaboration opportunities. Don't hesitate to reach out."
+      subtitle="A professional opportunity, a collaboration, or just a conversation: I'm always open to hearing from good people."
       narrow
     >
       <div>

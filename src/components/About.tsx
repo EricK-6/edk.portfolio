@@ -25,7 +25,7 @@ export default function About() {
       <div>
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
-            I'm Eric, a penultimate Computer Systems Engineering (Hons) student at the
+            I'm Eric, a penultimate Computer Systems Engineering student at the
             University of Auckland, working across <Bold>AI</Bold>,{' '}
             <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
           </p>
@@ -38,6 +38,10 @@ export default function About() {
             I was a research assistant at <Bold>CARES</Bold>, studying robot soccer and navigation,
             and taught robotics at <Bold>ciLab</Bold>, helping students build and program the
             robots they compete with.
+          </p>
+          <p>
+            I'm open to interesting conversations, side projects and collaborations, so don't
+            hesitate to <a href="#contact" className="font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
           </p>
         </Reveal>
 
