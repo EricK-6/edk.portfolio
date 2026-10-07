@@ -119,7 +119,7 @@ export default function CommandPalette() {
     { id: 'skills', label: 'Skills', hint: 'What I work with', keywords: 'skills tech stack tools', icon: <HashIcon />, run: () => go('skills') },
     { id: 'education', label: 'Education', hint: 'Where I’ve studied', keywords: 'education university degree uoa', icon: <HashIcon />, run: () => go('education') },
     { id: 'certifications', label: 'Credentials', hint: 'Badges you can verify', keywords: 'certifications credentials awards aws credly', icon: <HashIcon />, run: () => go('certifications') },
-    { id: 'leadership', label: 'Leadership', hint: 'Clubs and competitions', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
+    { id: 'leadership', label: 'Leadership', hint: 'Keeping things running', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
     { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
     { id: 'cv-swe', label: 'Download CV : Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV(RESUMES[0].href) },
