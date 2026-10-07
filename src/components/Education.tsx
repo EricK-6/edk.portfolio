@@ -2,20 +2,17 @@ import Section from './Section'
 import Reveal from './Reveal'
 
 // The papers a reader scans for, in one line under the concentration
-// rather than the fourteen-row grid this used to be. Seven names will wrap on
+// rather than the fourteen-row grid this used to be. Six names will wrap on
 // narrower screens, which is fine for a sentence of coursework; the rest of
 // the hardware papers are left out: the degree's own name has already said
 // "Computer Systems".
-// `focus` marks the papers that belong to the two concentrations named above
-// them, so the connection is visible rather than left for the reader to infer.
 const COURSEWORK = [
-  { name: 'Object-Oriented Programming' },
-  { name: 'Software Quality Assurance' },
-  { name: 'Data Structures & Algorithms' },
-  { name: 'Database Systems' },
-  { name: 'Software Architecture', focus: true },
-  { name: 'AI & Machine Learning' },
-  { name: 'Embedded Systems', focus: true },
+  'Object-Oriented Programming',
+  'Software Quality Assurance',
+  'Data Structures & Algorithms',
+  'Database Systems',
+  'Software Architecture',
+  'AI & Machine Learning',
 ]
 
 // The diligence awards were the substance of the "multiple diligence awards"
@@ -57,20 +54,12 @@ export default function Education() {
               Bachelor of Engineering (Honours) · Computer Systems Engineering
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Concentrations: <span className="font-medium text-accent dark:text-accent-dark">Embedded Systems & Software Design</span>
+              <span className="font-medium text-accent dark:text-accent-dark">Concentrations:</span>{' '}
+              Embedded Systems & Software Design
             </div>
             <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Related coursework:{' '}
-              {COURSEWORK.map((c, i) => (
-                <span key={c.name}>
-                  {i > 0 && ' · '}
-                  {'focus' in c ? (
-                    <span className="font-medium text-accent dark:text-accent-dark">{c.name}</span>
-                  ) : (
-                    c.name
-                  )}
-                </span>
-              ))}
+              <span className="font-medium text-accent dark:text-accent-dark">Related coursework:</span>{' '}
+              {COURSEWORK.join(' · ')}
             </div>
           </div>
         </div>
