@@ -15,7 +15,7 @@ import { useEffect, useRef } from 'react'
 // Under `prefers-reduced-motion` the ring stops lagging and simply tracks —
 // the cursor is not decoration and should not vanish, but its trailing is.
 
-const INTERACTIVE = 'a[href], button, [role="button"], [role="tab"], summary, label, select, [tabindex]:not([tabindex="-1"])'
+const INTERACTIVE = 'a[href], button, [role="button"], summary, label, select, [tabindex]:not([tabindex="-1"])'
 const TEXTUAL = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]'
 
 export default function Cursor() {
@@ -54,11 +54,18 @@ export default function Cursor() {
       targetScale = overHit ? 1.55 : 1
     }
 
+    // The loop only runs while there is something to animate: the ring still
+    // catching up with the pointer, or still growing or shrinking. Once it has
+    // settled it stops, and the next movement wakes it — a cursor that sat
+    // still was otherwise repainting both elements sixty times a second.
+    const wake = () => { if (!raf) raf = requestAnimationFrame(frame) }
+
     const onMove = (e: PointerEvent) => {
       x = e.clientX
       y = e.clientY
       if (!seen) { seen = true; rx = x; ry = y; ring.dataset.ready = 'true'; dot.dataset.ready = 'true' }
       setState(e.target instanceof Element ? e.target : null)
+      wake()
     }
     const onDown = () => { ring.dataset.press = 'true' }
     const onUp = () => { ring.dataset.press = 'false' }
@@ -66,23 +73,24 @@ export default function Cursor() {
     const onEnter = () => { ring.dataset.ready = 'true'; dot.dataset.ready = 'true' }
 
     const frame = () => {
-      raf = requestAnimationFrame(frame)
       const k = reduced ? 1 : 0.19
       rx += (x - rx) * k
       ry += (y - ry) * k
       scale += (targetScale - scale) * (reduced ? 1 : 0.16)
+      const settled = Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1 && Math.abs(targetScale - scale) < 0.002
+      if (settled) { rx = x; ry = y; scale = targetScale }
+      raf = settled ? 0 : requestAnimationFrame(frame)
       dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`
       ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`
     }
-    raf = requestAnimationFrame(frame)
+    wake()
 
     window.addEventListener('pointermove', onMove, { passive: true })
     window.addEventListener('pointerdown', onDown, { passive: true })
     window.addEventListener('pointerup', onUp, { passive: true })
     document.addEventListener('pointerleave', onLeave)
     document.addEventListener('pointerenter', onEnter)
-    // the DOM under a still pointer changes on its own — a tile arrives, a
-    // modal opens — and the ring should notice without being moved
+    // switching away from the window hides it until the pointer comes back
     window.addEventListener('blur', onLeave)
 
     return () => {

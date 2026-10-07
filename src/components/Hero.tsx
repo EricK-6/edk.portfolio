@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { hrefFor } from '../sitemap'
+import { HERO_PHRASES } from '../content'
 
 // The intro, and the one place on the site where type sits on a photograph.
 //
@@ -21,18 +22,6 @@ import { hrefFor } from '../sitemap'
 // email/LinkedIn/GitHub row went entirely — every one of those appears in
 // Contact and again in the footer, so the intro was the third copy. An opening
 // screen should make one offer, not five.
-
-const BUILDS = [
-  'embedded systems',
-  'robots that hold your gaze',
-  'fraud detection that cites its evidence',
-  'serverless pipelines on AWS',
-  'a website a whole club runs on',
-  'energy meters on a custom PCB',
-  'a Flappy Bird in pure VHDL',
-  'dashboards that forecast the quarter',
-  'meal planners for Android',
-]
 
 const TYPE_MS = 55
 const ERASE_MS = 28
@@ -85,7 +74,7 @@ function useTypewriter(phrases: readonly string[]) {
 }
 
 export default function Hero() {
-  const { text, done } = useTypewriter(BUILDS)
+  const { text, done } = useTypewriter(HERO_PHRASES)
 
   return (
     <section

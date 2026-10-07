@@ -1,7 +1,9 @@
 import Section from './Section'
 import Reveal from './Reveal'
+import { SKILL_GROUPS } from '../content'
 
-// Four groups, read straight off the two CVs' skills rows.
+// Four groups, read straight off the two CVs' skills rows (the lists
+// themselves live in content.ts).
 //
 // This section used to carry a logo beside every one of the thirty-seven
 // chips, a 4px accent gradient bar over each column, and an accent-tinted icon
@@ -13,42 +15,14 @@ import Reveal from './Reveal'
 // SQL is mush: the word "Python" is more legible than the Python logo. So the
 // marks are gone, and with them thirty-seven image requests. What is left is
 // the thing a reader was scanning for in the first place — the words.
-const GROUPS = [
-  {
-    label: 'Programming Languages',
-    // The SWE CV's own first row, plus VHDL — that one is a language on the
-    // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
-    // & Tools instead, which is where the SWE CV files it.
-    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
-  },
-  {
-    label: 'Cloud & DevOps',
-    // The CV collapses the AWS services to the word "AWS" because a one-page
-    // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
-    // too). The site does have room, so the services stay named — every one
-    // of them appears in a project's tech list further up, which is the whole
-    // reason for naming them rather than asking the reader to take "AWS" on
-    // faith.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM', 'Docker', 'Terraform', 'GitHub Actions'],
-  },
-  {
-    label: 'Frameworks & Tools',
-    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
-  },
-  {
-    label: 'Hardware & EDA Tools',
-    items: ['Altium Designer', 'LTSpice', 'ModelSim', 'Intel Quartus Prime', 'Proteus', 'Atmel AVR', 'AutoCAD'],
-  },
-]
-
 export default function Skills() {
   return (
     <Section id="skills" kicker="Skills" title="What I work with">
-      {/* Two across, not three. The groups hold 11, 11, 11 and 7 items — close
+      {/* Two across, not three. The groups hold 11, 14, 10 and 7 items — close
           enough in length to sit level in a 2x2, where a three-column split
           left one tall column towering over two short ones. */}
       <div className="grid gap-x-10 gap-y-9 sm:grid-cols-2">
-        {GROUPS.map((g, i) => (
+        {SKILL_GROUPS.map((g, i) => (
           <Reveal key={g.label} delay={i * 70}>
             <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
               <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">

@@ -19,7 +19,7 @@ It's one page that scrolls, top to bottom, and I've deliberately kept it that wa
 - [Tailwind CSS](https://tailwindcss.com/)
 - Hosted on **GitHub Pages**, deployed automatically with GitHub Actions
 
-There's no backend — all the content lives right in the components, and the contact form runs through [Formspree](https://formspree.io/).
+There's no backend — all the content lives in one file, `src/content.ts`, and the contact form runs through [Formspree](https://formspree.io/).
 
 ## Running it locally
 
@@ -63,6 +63,7 @@ npm run deploy
 │   └── og-image.png
 ├── src/
 │   ├── App.tsx                    # the document: every section, in reading order
+│   ├── content.ts                 # every word and link the site shows (see below)
 │   ├── main.tsx
 │   ├── router.ts                  # anchors + the scrollspy the contents index uses
 │   ├── sitemap.ts                 # the sections and their labels, in one place
@@ -94,23 +95,17 @@ npm run deploy
 
 ## Editing the content
 
-I kept this dead simple — every section stores its data in a constant at the top of its own file. Open the file, edit the array, save.
+Everything the site says lives in **`src/content.ts`**: profile links, the two résumés, the intro's rotating phrases, projects (with their build logs), experience, skills, education, certifications and leadership. Edit a line there and every place that shows it agrees — the section, the terminal, the command palette, and the counts in About ("4 cloud certifications", "8 projects") are computed from the lists.
 
-- **Projects** → `src/components/Projects.tsx` (`PROJECTS`)
-- **Experience** → `src/components/Experience.tsx`
-- **Skills** → `src/components/Skills.tsx`
-- **Certifications** → `src/components/Certifications.tsx`
-- **Leadership** → `src/components/Leadership.tsx`
-
-For real project screenshots, I drop an image into `public/` and swap the placeholder in `Projects.tsx` for an `<img>`.
+For a project's media, drop the file into `public/` and set `image` (and `video`, if there is a clip) on its entry. Each project's `slug` is its anchor (`erickk.cloud/#spottern`), so don't rename one lightly.
 
 ## Updating my CV
 
-Both CVs (`CV_SWE.pdf` and `CV_EEE.pdf`) live in `public/` and are committed to the repo — the RÉSUMÉ control in the intro links straight to them. To update one, just replace the PDF in `public/` and push.
+Both CVs (`CV_SWE.pdf` and `CV_EEE.pdf`) live in `public/` and are committed to the repo — the Résumé menu in the navbar links straight to them. To update one, just replace the PDF in `public/` and push.
 
 ## A few notes to self
 
-- The palette is locked light — there's no theme toggle. (`dark:` classes are still in the markup, but nothing ever puts `dark` on `<html>`; they were left in so the decision stays reversible.)
+- The palette is locked light — there's no theme toggle, and no `dark:` classes in the markup.
 - Anchor offsets are `scroll-padding-top` on `<html>`, in one place. Don't also add `scroll-mt` to sections — they add up.
-- The contact form posts to Formspree (set by `FORMSPREE_ENDPOINT` in `Contact.jsx`), with a plain `mailto:` fallback underneath it.
+- The contact form posts to Formspree (set by `FORMSPREE_ENDPOINT` in `Contact.tsx`), with a plain `mailto:` fallback underneath it.
 - `public/CV_SWE.pdf` is public once the site is deployed — if I don't want my phone number scraped, I can keep a redacted PDF in `public/` and the full one to myself.

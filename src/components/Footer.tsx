@@ -1,13 +1,13 @@
-const REPO = 'https://github.com/EricK-6/edk.portfolio'
+import { PROFILE } from '../content'
 
 // Name on the left with the date the repo was last touched under it, links on
 // the right. `__LAST_UPDATED__` is the last commit's date, baked in by
-// vite.config.js — the deploy runs on every push to `main`, so it is both the
+// vite.config.ts — the deploy runs on every push to `main`, so it is both the
 // build date and the commit date, with no API call to rate-limit or fail.
 const LINKS = [
-  ['GitHub', 'https://github.com/EricK-6'],
-  ['LinkedIn', 'https://www.linkedin.com/in/erick06/'],
-  ['Email', 'mailto:dohyunkim290106@gmail.com'],
+  ['GitHub', PROFILE.github.url],
+  ['LinkedIn', PROFILE.linkedin.url],
+  ['Email', `mailto:${PROFILE.email}`],
 ]
 
 export default function Footer() {
@@ -28,13 +28,13 @@ export default function Footer() {
       <div className="container-page flex max-w-6xl flex-col gap-4 py-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="font-display text-base font-semibold tracking-tight text-grey-900">
-            Eric Kim
+            {PROFILE.name}
           </div>
           {stamp && (
             <p className="mt-1 font-mono text-[11px] tracking-wide text-grey-400">
               last updated{' '}
               <a
-                href={REPO}
+                href={PROFILE.repo}
                 target="_blank"
                 rel="noreferrer"
                 className="underline decoration-grey-300 underline-offset-2 transition-colors hover:text-grey-700"

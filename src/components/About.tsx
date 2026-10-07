@@ -2,12 +2,13 @@ import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
 import { useOnScreen } from '../useOnScreen'
+import { HIGHLIGHTS } from '../content'
 
 // Short on purpose. The Highlights beside this were listing the certificates,
 // the placements and the roles, and the prose was saying all of it again in
-// sentences: the same tile told you everything twice. The bullets keep the
+// sentences: the same section told you everything twice. The bullets keep the
 // facts, so the paragraphs only have to say who he is and what he is doing
-// now. The toolkit went too, because the Skills tile is a list of exactly
+// now. The toolkit went too, because the Skills section is a list of exactly
 // that and does it better.
 export default function About() {
   return (
@@ -163,22 +164,3 @@ function CloudMark() {
 function Bold({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-grey-900">{children}</strong>
 }
-
-// Every line here is verifiable in another tile: the roles in Experience, the
-// placements in Projects, the certificates in Credentials, the count from the
-// Projects list itself.
-//
-// Ordered as the grid reads, two to a row: the two placements first, because
-// they are the hardest claims to fake; then the certificates and the project
-// count, which back up the breadth; then the two posts held, which are the
-// context for all of it. The prose names CARES and ciLab in passing, so the
-// bullets are where they read as roles. The volunteering stays out: it is a
-// tile of its own further down.
-const HIGHLIGHTS = [
-  'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
-  '3rd place · 2025 ECSE Design Competition',
-  '4 cloud certifications · AWS and HashiCorp',
-  '8 projects across hardware & software',
-  'Research Assistant · CARES robotics lab, UoA',
-  'Robotics Instructor & Competition Coach at ciLab',
-]

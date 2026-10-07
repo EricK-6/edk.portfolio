@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
 import { goTo } from '../router'
+import { PROFILE, RESUMES } from '../content'
 
-const EMAIL = 'dohyunkim290106@gmail.com'
+const EMAIL = PROFILE.email
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
 // Cmd/Ctrl+K command palette. Also opens on a custom 'open-command-palette'
@@ -28,7 +29,7 @@ export default function CommandPalette() {
     goTo(id)
   }
   const openLink = (href: string) => { close(); window.open(href, '_blank', 'noopener,noreferrer') }
-  const downloadCV = (href = './CV_SWE.pdf') => {
+  const downloadCV = (href: string) => {
     close()
     const a = document.createElement('a')
     a.href = href
@@ -97,7 +98,7 @@ export default function CommandPalette() {
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
     }
     // Back/forward (or any hash change the palette didn't cause) moves the page
-    // underneath it; a menu for a tile you have already left should not survive.
+    // underneath it; a menu for a section you have already left should not survive.
     const onHash = () => setOpen(false)
     window.addEventListener('keydown', onKey)
     window.addEventListener('hashchange', onHash)
@@ -119,11 +120,11 @@ export default function CommandPalette() {
     { id: 'leadership', label: 'Leadership', hint: 'Activities', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
     { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
-    { id: 'cv-swe', label: 'Download CV : Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV('./CV_SWE.pdf') },
-    { id: 'cv-eee', label: 'Download CV : Hardware', hint: 'PDF', keywords: 'cv resume pdf download hardware electrical electronics eee', icon: <DownloadIcon />, run: () => downloadCV('./CV_EEE.pdf') },
+    { id: 'cv-swe', label: 'Download CV : Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV(RESUMES[0].href) },
+    { id: 'cv-eee', label: 'Download CV : Hardware', hint: 'PDF', keywords: 'cv resume pdf download hardware electrical electronics eee', icon: <DownloadIcon />, run: () => downloadCV(RESUMES[1].href) },
     { id: 'email', label: 'Copy email', hint: copied ? 'Copied!' : EMAIL, keywords: 'email contact mail copy', icon: <MailIcon />, run: copyEmail },
-    { id: 'github', label: 'GitHub', hint: 'EricK-6', keywords: 'github code repos source', icon: <GitHubIcon />, run: () => openLink('https://github.com/EricK-6') },
-    { id: 'linkedin', label: 'LinkedIn', hint: 'erick06', keywords: 'linkedin profile network', icon: <LinkedInIcon />, run: () => openLink('https://www.linkedin.com/in/erick06/') },
+    { id: 'github', label: 'GitHub', hint: PROFILE.github.handle, keywords: 'github code repos source', icon: <GitHubIcon />, run: () => openLink(PROFILE.github.url) },
+    { id: 'linkedin', label: 'LinkedIn', hint: PROFILE.linkedin.handle, keywords: 'linkedin profile network', icon: <LinkedInIcon />, run: () => openLink(PROFILE.linkedin.url) },
   ]
 
   const q = query.trim().toLowerCase()
@@ -159,9 +160,9 @@ export default function CommandPalette() {
       <div
         ref={panelRef}
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-grey-900"
+        className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-xl"
       >
-        <div className="flex items-center gap-3 border-b border-grey-200 px-4 dark:border-grey-800">
+        <div className="flex items-center gap-3 border-b border-grey-200 px-4">
           <SearchIcon />
           <input
             ref={inputRef}
@@ -169,16 +170,16 @@ export default function CommandPalette() {
             onChange={(e) => { setQuery(e.target.value); setActive(0) }}
             onKeyDown={onInputKey}
             placeholder="Jump to a section, download CV, copy email…"
-            className="h-12 w-full bg-transparent text-sm text-grey-900 placeholder:text-grey-400 focus:outline-none dark:text-grey-100 dark:placeholder:text-grey-500"
+            className="h-12 w-full bg-transparent text-sm text-grey-900 placeholder:text-grey-400 focus:outline-none"
           />
-          <kbd className="hidden sm:inline-flex items-center rounded border border-grey-300 px-1.5 py-0.5 font-mono text-[10px] text-grey-500 dark:border-grey-700 dark:text-grey-400">
+          <kbd className="hidden sm:inline-flex items-center rounded border border-grey-300 px-1.5 py-0.5 font-mono text-[10px] text-grey-500">
             esc
           </kbd>
         </div>
 
         <ul className="max-h-[55vh] overflow-y-auto p-2">
           {filtered.length === 0 && (
-            <li className="px-3 py-6 text-center text-sm text-grey-500 dark:text-grey-500">No matches.</li>
+            <li className="px-3 py-6 text-center text-sm text-grey-500">No matches.</li>
           )}
           {filtered.map((c, i) => (
             <li key={c.id}>
@@ -188,20 +189,20 @@ export default function CommandPalette() {
                 onMouseEnter={() => setActive(i)}
                 onClick={c.run}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                  i === activeIdx ? 'bg-grey-200 dark:bg-grey-800' : ''
+                  i === activeIdx ? 'bg-grey-200' : ''
                 }`}
               >
-                <span className="flex h-7 w-7 flex-none items-center justify-center rounded-md border border-grey-200 text-grey-500 dark:border-grey-700 dark:text-grey-400">
+                <span className="flex h-7 w-7 flex-none items-center justify-center rounded-md border border-grey-200 text-grey-500">
                   {c.icon}
                 </span>
-                <span className="flex-1 text-sm font-medium text-grey-900 dark:text-grey-100">{c.label}</span>
-                <span className="font-mono text-xs text-grey-400 dark:text-grey-500 truncate max-w-[45%] text-right">{c.hint}</span>
+                <span className="flex-1 text-sm font-medium text-grey-900">{c.label}</span>
+                <span className="font-mono text-xs text-grey-400 truncate max-w-[45%] text-right">{c.hint}</span>
               </button>
             </li>
           ))}
         </ul>
 
-        <div className="flex items-center justify-between gap-4 border-t border-grey-200 px-4 py-2 text-[11px] text-grey-500 dark:border-grey-800 dark:text-grey-500">
+        <div className="flex items-center justify-between gap-4 border-t border-grey-200 px-4 py-2 text-[11px] text-grey-500">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1"><Kbd>↑</Kbd><Kbd>↓</Kbd> navigate</span>
             <span className="flex items-center gap-1"><Kbd>↵</Kbd> select</span>
@@ -215,7 +216,7 @@ export default function CommandPalette() {
 
 function Kbd({ children }: { children: ReactNode }) {
   return (
-    <kbd className="inline-flex min-w-[18px] items-center justify-center rounded border border-grey-300 px-1 py-0.5 font-mono text-[10px] leading-none text-grey-500 dark:border-grey-700 dark:text-grey-400">
+    <kbd className="inline-flex min-w-[18px] items-center justify-center rounded border border-grey-300 px-1 py-0.5 font-mono text-[10px] leading-none text-grey-500">
       {children}
     </kbd>
   )

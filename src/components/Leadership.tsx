@@ -1,63 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
-
-// One line a role.
-//
-// These were two CV bullets each, which is right on a PDF and wrong in a
-// timeline card: the cards sit in two interleaved columns, so every extra line
-// pushes the next card further down the curve and the serpentine stretches
-// until you are scrolling past mostly whitespace. A role in a list like this
-// has to earn its space in a sentence — the CV is one click away in the navbar
-// for anyone who wants the full pair.
-const ROLES = [
-  {
-    title: 'Academic Team Executive',
-    detail: 'Founding Member',
-    org: 'Korean Engineering Body (KEB)',
-    period: 'Jul 2024 - Oct 2026',
-    pinned: true,
-    image: './KEB.webp',
-    description:
-      'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
-  },
-  {
-    title: 'Full-time Student Volunteer',
-    org: 'IEEE · NZRO 2025',
-    period: 'Jul 2025',
-    image: './IEEE.webp',
-    description:
-      'Volunteered 40+ hours on operations and logistics, working with organisers to keep the event running.',
-  },
-  {
-    title: 'Logistics Team Member',
-    org: 'The NZPMC Ltd',
-    period: 'Jul 2025',
-    image: './nzpmc.jpeg',
-    description:
-      'Logistics team for the New Zealand Physics and Math Competition.',
-  },
-  {
-    title: 'Competition Staff',
-    org: 'CARES · WRO 2026',
-    period: 'May 2026',
-    image: './cares.jpeg',
-    description:
-      'Volunteered at the World Robot Olympiad 2026 with CARES.',
-  },
-  {
-    title: 'Competition Staff',
-    org: 'IEEE R&A · NZRO 2026',
-    period: 'Jul 2026',
-    image: './ieee_r&a.webp',
-    description:
-      'Selected on prior ciLab experience; led competition operations and resolved technical issues to keep matches running.',
-  },
-]
+import { ROLES } from '../content'
 
 // ongoing or explicitly pinned roles on top (KEB stays first even though its
 // period now has an end date), then most recent first
-const isPinned = (r: (typeof ROLES)[number]) => 'pinned' in r || r.period.includes('Present')
+const isPinned = (r: (typeof ROLES)[number]) => Boolean(r.pinned) || r.period.includes('Present')
 const ITEMS = [
   ...ROLES.filter(isPinned),
   ...ROLES.filter((r) => !isPinned(r)).reverse(),
@@ -125,7 +73,6 @@ export default function Leadership() {
   }, [])
 
   return (
-    // (1360px); in scroll mode the section keeps the page's normal column
     <Section id="leadership" kicker="Leadership" title="Activities & Leadership">
       <div ref={wrapRef} className="relative">
         {/* curved Z connector (desktop) */}
@@ -133,14 +80,14 @@ export default function Leadership() {
           <path
             d={path}
             fill="none"
-            className="stroke-accent/40 dark:stroke-accent-dark/40"
+            className="stroke-accent/40"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
           {/* a pulse travelling the curve bottom-to-top, forever: this used to
               be a paper plane, which went with the retired flight theme */}
           {runnerPath && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
-            <g className="fill-accent dark:fill-accent-dark">
+            <g className="fill-accent">
               <circle r="4" />
               <circle r="8" fillOpacity="0.22" />
               <animateMotion
@@ -154,7 +101,7 @@ export default function Leadership() {
         {/* straight spine (mobile) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-2 bottom-2 left-4 w-px bg-grey-200 dark:bg-grey-800 md:hidden"
+          className="pointer-events-none absolute top-2 bottom-2 left-4 w-px bg-grey-200 md:hidden"
         />
 
         <ol className="relative">
@@ -180,10 +127,10 @@ export default function Leadership() {
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el: HTMLSpanElement | null) => { nodeRefs.current[i] = el }}
-                    className={`absolute top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-grey-300 dark:bg-accent-dark dark:ring-grey-950 md:block ${left ? '-right-1.5' : '-left-1.5'}`}
+                    className={`absolute top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-grey-300 md:block ${left ? '-right-1.5' : '-left-1.5'}`}
                   />
                   {/* node on the spine (mobile) */}
-                  <span className="absolute top-6 -left-8 z-10 h-3 w-3 -translate-x-1/2 rounded-full bg-accent ring-4 ring-grey-300 dark:bg-accent-dark dark:ring-grey-950 md:hidden" />
+                  <span className="absolute top-6 -left-8 z-10 h-3 w-3 -translate-x-1/2 rounded-full bg-accent ring-4 ring-grey-300 md:hidden" />
 
                   <div className="flex gap-4">
                     {r.image && (
@@ -198,10 +145,10 @@ export default function Leadership() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold">{r.title}</h3>
                       {r.detail && (
-                        <div className="text-xs font-medium text-accent dark:text-accent-dark">{r.detail}</div>
+                        <div className="text-xs font-medium text-accent">{r.detail}</div>
                       )}
-                      <div className="text-sm text-grey-500 dark:text-grey-500">{r.org}</div>
-                      <div className="mt-1 text-xs text-grey-500 dark:text-grey-500">{r.period}</div>
+                      <div className="text-sm text-grey-500">{r.org}</div>
+                      <div className="mt-1 text-xs text-grey-500">{r.period}</div>
                     </div>
                   </div>
                   <p className="mt-3 text-sm leading-relaxed text-grey-700">

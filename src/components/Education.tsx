@@ -1,34 +1,12 @@
 import Section from './Section'
 import Reveal from './Reveal'
-
-// The papers a reader scans for, in one line under the concentration
-// rather than the fourteen-row grid this used to be. Six names will wrap on
-// narrower screens, which is fine for a sentence of coursework; the rest of
-// the hardware papers are left out: the degree's own name has already said
-// "Computer Systems".
-const COURSEWORK = [
-  'Object-Oriented Programming',
-  'Software Quality Assurance',
-  'Data Structures & Algorithms',
-  'Database Systems',
-  'Software Architecture',
-  'AI & Machine Learning',
-]
-
-// The diligence awards were the substance of the "multiple diligence awards"
-// line, so they are shown as the awards themselves — one tile per subject,
-// with the syllabus it was sat under.
-const DILIGENCE = [
-  { syllabus: 'NCEA', subject: 'English' },
-  { syllabus: 'IGCSE', subject: 'Computer Science' },
-  { syllabus: 'AS', subject: 'Physics' },
-]
+import { DEGREE, SCHOOL } from '../content'
 
 export default function Education() {
   return (
     <Section id="education" kicker="Education" title="Academic background">
       {/* No cards here. A box is worth drawing when it is a target or has
-          to clip something — the project tiles are both — and these two
+          to clip something — the project cards are both — and these two
           entries are neither. Experience already sets the same kind of
           content (logo, role, org, period, lines) with no box at all, so a
           bordered panel round the degree was the odd one out. A hairline
@@ -38,28 +16,28 @@ export default function Education() {
       <Reveal className="pb-8">
         <div className="flex gap-4">
           <img
-            src="./UoA.jpg"
+            src={DEGREE.logo}
             alt="University of Auckland"
             className="hidden sm:block h-24 w-auto flex-none rounded-xl object-contain"
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="text-lg font-semibold">
-                The University of Auckland ·{' '}
-                <span className="text-grey-600 dark:text-grey-400 font-medium">Auckland, NZ</span>
+                {`${DEGREE.school} ·`}{' '}
+                <span className="text-grey-600 font-medium">{DEGREE.city}</span>
               </h3>
-              <span className="text-sm text-grey-500 dark:text-grey-500">Expected Graduation Nov 2027</span>
+              <span className="text-sm text-grey-500">{DEGREE.period}</span>
             </div>
-            <div className="mt-1 text-grey-700 dark:text-grey-300">
-              Bachelor of Engineering (Honours) · Computer Systems Engineering
+            <div className="mt-1 text-grey-700">
+              {DEGREE.award}
             </div>
-            <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
+            <div className="mt-1 text-sm text-grey-500">
               <span className="font-semibold text-grey-900">Concentrations:</span>{' '}
-              Embedded Systems & Software Design
+              {DEGREE.concentrations}
             </div>
-            <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
+            <div className="mt-1 text-sm text-grey-500">
               <span className="font-semibold text-grey-900">Related coursework:</span>{' '}
-              {COURSEWORK.join(' · ')}
+              {DEGREE.coursework.join(' · ')}
             </div>
           </div>
         </div>
@@ -68,23 +46,23 @@ export default function Education() {
       <Reveal className="pt-8" delay={120}>
         <div className="flex gap-4">
           <img
-            src="./pinehurst.jpeg"
+            src={SCHOOL.logo}
             alt="Pinehurst School"
             className="hidden sm:block h-24 w-auto flex-none rounded-xl object-contain"
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="text-lg font-semibold">
-                Pinehurst School ·{' '}
-                <span className="text-grey-600 dark:text-grey-400 font-medium">Auckland, NZ</span>
+                {`${SCHOOL.school} ·`}{' '}
+                <span className="text-grey-600 font-medium">{SCHOOL.city}</span>
               </h3>
-              <span className="text-sm text-grey-500 dark:text-grey-500">Aug 2018 - Dec 2023</span>
+              <span className="text-sm text-grey-500">{SCHOOL.period}</span>
             </div>
-            <div className="mt-1 text-grey-700 dark:text-grey-300">
-              High School Diploma
+            <div className="mt-1 text-grey-700">
+              {SCHOOL.award}
             </div>
-            <div className="mt-1 text-sm text-grey-500 dark:text-grey-500">
-              Completed CIE IGCSE, AS, and A2 level courses
+            <div className="mt-1 text-sm text-grey-500">
+              {SCHOOL.note}
             </div>
 
             {/* deliberately quieter than the bordered tiles this started as:
@@ -96,10 +74,10 @@ export default function Education() {
                 Diligence awards
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {DILIGENCE.map(({ syllabus, subject }) => (
+                {SCHOOL.diligence.map(({ syllabus, subject }) => (
                   <span
                     key={subject}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-grey-200 py-0.5 pl-1.5 pr-2 text-xs text-grey-700 dark:bg-grey-800 dark:text-grey-300"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-grey-200 py-0.5 pl-1.5 pr-2 text-xs text-grey-700"
                   >
                     <RosetteIcon />
                     <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-award">

@@ -1,50 +1,14 @@
 import Section from './Section'
 import Reveal from './Reveal'
-
-// Bullets are kept to a similar length on purpose: at the section's width
-// each one then sets a single line, so the list reads as an even block
-// instead of one two-line entry sitting above two one-line entries.
-const EXPERIENCE = [
-  {
-    role: 'Research Assistant',
-    org: 'University of Auckland',
-    detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
-    period: 'Jul 2026 - Oct 2026',
-    image: './UoA.jpg',
-    bullets: [
-      "Studied the lab's robot soccer system: camera calibration, vision processing, and decision strategy design.",
-      'Investigated TurtleBot2 navigation, LiDAR integration, and control using ROS and Python.',
-    ],
-  },
-  {
-    role: 'Robotics Instructor',
-    org: 'Creative Imaginary Lab (ciLab)',
-    period: 'Apr 2026 - Oct 2026',
-    image: './ciLab.jpg',
-    bullets: [
-      'Instructed 50+ students in robot hardware assembly and software programming to complete missions.',
-      'Supported student development and coached teams in preparation for nationwide robotics competitions.',
-    ],
-  },
-  {
-    role: 'Front of House',
-    org: 'Twelve Restaurant',
-    period: 'Jul 2024 - Jan 2025',
-    image: './twelve.jpg',
-    bullets: [
-      'Delivered exceptional customer service to keep FoH operations running smoothly during busy periods.',
-      'Efficiently resolved complex customer situations while keeping the guest experience positive.',
-    ],
-  },
-]
+import { EXPERIENCE } from '../content'
 
 export default function Experience() {
   return (
     <Section id="experience" kicker="Experience" title="Where I've worked">
-      <ol className="relative border-l border-grey-200 dark:border-grey-800 pl-6 space-y-10">
+      <ol className="relative border-l border-grey-200 pl-6 space-y-10">
         {EXPERIENCE.map((job, i) => (
           <Reveal key={job.role + job.org} as="li" delay={i * 100} className="relative block">
-            <span className="absolute -left-[29px] top-1.5 h-3 w-3 rounded-full bg-accent ring-4 ring-grey-300 dark:bg-accent-dark dark:ring-grey-950" />
+            <span className="absolute -left-[29px] top-1.5 h-3 w-3 rounded-full bg-accent ring-4 ring-grey-300" />
             <div className="flex gap-4">
               {job.image && (
                 <img
@@ -52,24 +16,24 @@ export default function Experience() {
                   alt={job.org}
                   loading="lazy"
                   decoding="async"
-                  className="hidden sm:block h-16 w-16 flex-none rounded-lg object-cover ring-1 ring-grey-200 dark:ring-grey-800"
+                  className="hidden sm:block h-16 w-16 flex-none rounded-lg object-cover ring-1 ring-grey-200"
                 />
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="text-lg font-semibold">
                     {job.role} ·{' '}
-                    <span className="text-grey-600 dark:text-grey-400 font-medium">{job.org}</span>
+                    <span className="text-grey-600 font-medium">{job.org}</span>
                   </h3>
-                  <span className="text-sm text-grey-500 dark:text-grey-500">{job.period}</span>
+                  <span className="text-sm text-grey-500">{job.period}</span>
                 </div>
                 {job.detail && (
-                  <div className="mt-0.5 text-sm font-medium text-accent dark:text-accent-dark">{job.detail}</div>
+                  <div className="mt-0.5 text-sm font-medium text-accent">{job.detail}</div>
                 )}
-                <ul className="mt-3 space-y-1.5 text-sm text-grey-700 dark:text-grey-300 leading-relaxed">
+                <ul className="mt-3 space-y-1.5 text-sm text-grey-700 leading-relaxed">
                   {job.bullets.map((b) => (
                     <li key={b} className="flex gap-2">
-                      <span className="mt-2 inline-block h-1 w-1 flex-none rounded-full bg-grey-400 dark:bg-grey-600" />
+                      <span className="mt-2 inline-block h-1 w-1 flex-none rounded-full bg-grey-400" />
                       <span>{b}</span>
                     </li>
                   ))}

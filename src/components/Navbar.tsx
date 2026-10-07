@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { LABELS, MENU_IDS, SECTION_IDS, SPY_IDS, anchorOf, hrefFor } from '../sitemap'
 import { useActiveSection } from '../router'
+import { PROFILE, RESUMES } from '../content'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
@@ -72,7 +73,7 @@ export default function Navbar() {
           href={hrefFor('home')}
           className="tap-44 flex-none font-display text-lg font-semibold tracking-tight text-grey-900"
         >
-          Eric Kim<span className="text-accent">.</span>
+          {PROFILE.name}<span className="text-accent">.</span>
         </a>
 
         <ContentsIndex active={active} />
@@ -138,8 +139,9 @@ export default function Navbar() {
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-grey-500">
                 Résumé
               </span>
-              <CvLink href="./CV_SWE.pdf" kind="Software" onClick={() => setOpen(false)} />
-              <CvLink href="./CV_EEE.pdf" kind="Hardware" onClick={() => setOpen(false)} />
+              {RESUMES.map((r) => (
+                <CvLink key={r.id} href={r.href} kind={r.label} onClick={() => setOpen(false)} />
+              ))}
             </li>
           </ul>
         </div>
@@ -199,7 +201,7 @@ function ResumeMenu() {
           className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-xl border border-grey-200 bg-white p-1 shadow-lg shadow-black/5"
           role="menu"
         >
-          {[['Software', './CV_SWE.pdf'], ['Hardware', './CV_EEE.pdf']].map(([kind, href]) => (
+          {RESUMES.map(({ label: kind, href }) => (
             <a
               key={kind}
               href={href}

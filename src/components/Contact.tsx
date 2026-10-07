@@ -1,8 +1,9 @@
 import Section from './Section'
 import Reveal from './Reveal'
 import { useState, type FormEvent, type ReactNode } from 'react'
+import { PROFILE } from '../content'
 
-const EMAIL = 'dohyunkim290106@gmail.com'
+const EMAIL = PROFILE.email
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mvzdebnb'
 
 type FormErrors = Partial<Record<'name' | 'email' | 'message', string>>
@@ -64,18 +65,18 @@ export default function Contact() {
       <div>
         <Reveal className="mb-5 flex flex-wrap items-center justify-center gap-3">
           <IconLink href={`mailto:${EMAIL}`} label={`Email ${EMAIL}`}><MailIcon />{EMAIL}</IconLink>
-          <IconLink href="https://www.linkedin.com/in/erick06/" label="LinkedIn profile erick06" external><LinkedInIcon />erick06</IconLink>
-          <IconLink href="https://github.com/EricK-6" label="GitHub profile EricK-6" external><GitHubIcon />EricK-6</IconLink>
+          <IconLink href={PROFILE.linkedin.url} label={`LinkedIn profile ${PROFILE.linkedin.handle}`} external><LinkedInIcon />{PROFILE.linkedin.handle}</IconLink>
+          <IconLink href={PROFILE.github.url} label={`GitHub profile ${PROFILE.github.handle}`} external><GitHubIcon />{PROFILE.github.handle}</IconLink>
         </Reveal>
 
         <Reveal as="form" delay={120} className="card space-y-4 block" onSubmit={handleSubmit} noValidate>
           {status === 'success' && (
-            <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
+            <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800">
               Message sent! I'll be in touch soon!
             </div>
           )}
           {status === 'error' && (
-            <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
+            <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
               Something went wrong. Try emailing me directly.
             </div>
           )}
@@ -164,20 +165,20 @@ export default function Contact() {
 // type (or iOS zooms the page on focus) and a 44px minimum height.
 const inputClass = (error?: string) =>
   `field w-full rounded-lg border px-3 py-2 text-sm placeholder:text-grey-400 focus:outline-none focus:ring-2 transition
-   bg-grey-50 text-grey-900 dark:bg-grey-900 dark:text-grey-100 dark:placeholder:text-grey-500
+   bg-grey-50 text-grey-900
    ${error
-     ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20 dark:border-red-500 dark:focus:border-red-500 dark:focus:ring-red-500/20'
-     : 'border-grey-300 focus:border-accent focus:ring-accent/20 dark:border-grey-700 dark:focus:border-accent-dark dark:focus:ring-accent-dark/20'
+     ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20'
+     : 'border-grey-300 focus:border-accent focus:ring-accent/20'
    }`
 
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-grey-500 dark:text-grey-400">
+      <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-grey-500">
         {label}
       </span>
       {children}
-      {error && <p className="mt-1 text-xs text-red-500 dark:text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </label>
   )
 }
@@ -191,7 +192,7 @@ function IconLink({ href, label, external, children }: { href: string; label: st
       rel={external ? 'noreferrer' : undefined}
       aria-label={label}
       title={label}
-      className="tap-44 inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent dark:border-grey-800 dark:bg-grey-900/60 dark:text-grey-300 dark:hover:border-accent-dark/60 dark:hover:text-accent-dark"
+      className="tap-44 inline-flex h-10 items-center gap-2 rounded-full border border-grey-300 bg-grey-100 px-4 text-sm font-medium text-grey-700 transition hover:border-accent/60 hover:text-accent"
     >
       {children}
     </a>

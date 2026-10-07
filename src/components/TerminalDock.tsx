@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
 import { goTo } from '../router'
+import { PROFILE, PROJECTS as PROJECT_DATA, SKILL_GROUPS } from '../content'
 
-const EMAIL = 'dohyunkim290106@gmail.com'
+const EMAIL = PROFILE.email
 
 interface FileNode {
   type: 'file'
@@ -17,18 +18,10 @@ interface DirNode {
 
 type FsNode = FileNode | DirNode
 
-const PROJECTS: [string, string][] = [
-  ['winnie-the-bot', 'AI interactive robot · dual ATmega328P · 3rd place ECSE'],
-  ['spottern', 'Statement-level fraud detection on AWS · top 8 AWS×BNZ hackathon'],
-  ['sentiment-pulse', 'Serverless NLP pipeline on AWS + live React dashboard'],
-  ['smart-energy-monitor', 'Dual-channel ATmega328P firmware · 2-layer Altium PCB · ±5% FS'],
-  ['flappy-universe', 'VHDL game on a DE0-CV FPGA · custom VGA sync · LFSR pipe gaps'],
-  ['roastworks-analytics', 'PyQt6 + pandas desktop app · 3 forecasting models'],
-  ['mealhub', 'Android meal planner · Java + Firebase'],
-  ['keb-web-design', "KEB's first ever club website · React 19 + Vite"],
-]
+const PROJECTS: [string, string][] = PROJECT_DATA.map((p) => [p.slug, p.blurb])
 
-const SKILLS = 'Python  Java  C  JavaScript  TypeScript  SQL  R  MATLAB  VHDL  AWS  React.js  Node.js  Express.js  JUnit  Git  GitHub Actions  Android Studio  Figma  Altium Designer'
+// one line per group, straight from the Skills section, so the two can never disagree
+const SKILLS = SKILL_GROUPS.map((g) => `${g.label}: ${g.items.join(", ")}`)
 
 const file = (...content: ReactNode[]): FileNode => ({ type: 'file', content })
 const dir = (id: string, children: Record<string, FsNode> = {}): DirNode => ({ type: 'dir', id, children })
@@ -49,19 +42,19 @@ const FS = dir('top', {
     return acc
   }, {})),
   experience: dir('experience'),
-  skills: dir('skills', { 'skills.txt': file(SKILLS) }),
+  skills: dir('skills', { 'skills.txt': file(...SKILLS) }),
   education: dir('education'),
   certifications: dir('certifications'),
   leadership: dir('leadership'),
   contact: dir('contact', {
     email: file(
-      <a href={`mailto:${EMAIL}`} className="text-grey-600 underline dark:text-grey-200">{EMAIL}</a>
+      <a href={`mailto:${EMAIL}`} className="text-grey-600 underline">{EMAIL}</a>
     ),
     github: file(
-      <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">github.com/EricK-6</a>
+      <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline">github.com/EricK-6</a>
     ),
     linkedin: file(
-      <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
+      <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline">linkedin.com/in/erick06</a>
     ),
     'cv-swe.pdf': { type: 'file', download: './CV_SWE.pdf', content: ['↓ downloading software CV…'] },
     'cv-eee.pdf': { type: 'file', download: './CV_EEE.pdf', content: ['↓ downloading hardware CV…'] },
@@ -246,10 +239,10 @@ function completionFor(input: string, cwd: string[]): string {
 function Prompt({ path = '~' }: { path?: string }) {
   return (
     <>
-      <span className="text-grey-700 dark:text-grey-100">visitor@erickk.cloud</span>
-      <span className="text-grey-400 dark:text-grey-600">:</span>
-      <span className="text-grey-900 dark:text-white">{path}</span>
-      <span className="text-grey-400 dark:text-grey-600">$ </span>
+      <span className="text-grey-700">visitor@erickk.cloud</span>
+      <span className="text-grey-400">:</span>
+      <span className="text-grey-900">{path}</span>
+      <span className="text-grey-400">$ </span>
     </>
   )
 }
@@ -370,7 +363,7 @@ export default function TerminalDock() {
     a.remove()
   }
 
-  const err = (c: string, msg: ReactNode) => print(<span><span className="font-semibold text-grey-900 dark:text-white">{c}:</span> {msg}</span>)
+  const err = (c: string, msg: ReactNode) => print(<span><span className="font-semibold text-grey-900">{c}:</span> {msg}</span>)
 
   const run = (raw: string) => {
     const trimmed = raw.trim()
@@ -387,12 +380,12 @@ export default function TerminalDock() {
         HELP.forEach(([c, d]) =>
           print(
             <span className="grid grid-cols-[7rem_1fr] gap-x-2">
-              <span className="text-grey-800 dark:text-grey-200">{c}</span>
-              <span className="text-grey-500 dark:text-grey-500">{d}</span>
+              <span className="text-grey-800">{c}</span>
+              <span className="text-grey-500">{d}</span>
             </span>
           )
         )
-        print(<span className="mt-1 block text-grey-500 dark:text-grey-500">tip: try `ls`, then `cd projects`, then `cat winnie-the-bot`.</span>)
+        print(<span className="mt-1 block text-grey-500">tip: try `ls`, then `cd projects`, then `cat winnie-the-bot`.</span>)
         break
       case 'pwd':
         print(pathLabel(cwd))
@@ -410,11 +403,11 @@ export default function TerminalDock() {
         // a real `ls` echoes the name it resolved, not the path you typed
         if (node.type === 'file') { print(segs[segs.length - 1] ?? args[0]); break }
         const names = Object.keys(node.children || {})
-        if (!names.length) { print(<span className="text-grey-400 dark:text-grey-600">(no files - cd here to view it on the page)</span>); break }
+        if (!names.length) { print(<span className="text-grey-400">(no files - cd here to view it on the page)</span>); break }
         print(
           <span className="flex flex-wrap gap-x-4 gap-y-1">
             {names.map((n) => (
-              <span key={n} className={node.children[n].type === 'dir' ? 'text-grey-800 dark:text-white' : 'text-grey-500 dark:text-grey-400'}>
+              <span key={n} className={node.children[n].type === 'dir' ? 'text-grey-800' : 'text-grey-500'}>
                 {n}{node.children[n].type === 'dir' ? '/' : ''}
               </span>
             ))}
@@ -461,13 +454,13 @@ export default function TerminalDock() {
         print(
           <span>
             github:&nbsp;
-            <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">github.com/EricK-6</a>
+            <a href="https://github.com/EricK-6" target="_blank" rel="noreferrer" className="text-grey-600 underline">github.com/EricK-6</a>
           </span>
         )
         print(
           <span>
             linkedin:&nbsp;
-            <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline dark:text-grey-200">linkedin.com/in/erick06</a>
+            <a href="https://www.linkedin.com/in/erick06/" target="_blank" rel="noreferrer" className="text-grey-600 underline">linkedin.com/in/erick06</a>
           </span>
         )
         break
@@ -486,7 +479,7 @@ export default function TerminalDock() {
           print(
             <span>
               → opening mail client:&nbsp;
-              <a href={`mailto:${EMAIL}?subject=Hello`} className="text-grey-600 underline dark:text-grey-200">{EMAIL}</a>
+              <a href={`mailto:${EMAIL}?subject=Hello`} className="text-grey-600 underline">{EMAIL}</a>
             </span>
           )
           setTimeout(() => { window.location.href = `mailto:${EMAIL}?subject=Hello` }, 900)
@@ -500,9 +493,9 @@ export default function TerminalDock() {
         const okLine = (label: string, value: string, state = 'OK') =>
           print(
             <span className="grid grid-cols-[8.5rem_1fr_auto] gap-x-2">
-              <span className="text-grey-800 dark:text-grey-200">{label}</span>
-              <span className="min-w-0 truncate text-grey-500 dark:text-grey-400">{value}</span>
-              <span className={state === 'OK' ? 'text-emerald-600 dark:text-emerald-400' : 'text-grey-400 dark:text-grey-600'}>[ {state} ]</span>
+              <span className="text-grey-800">{label}</span>
+              <span className="min-w-0 truncate text-grey-500">{value}</span>
+              <span className={state === 'OK' ? 'text-emerald-600' : 'text-grey-400'}>[ {state} ]</span>
             </span>
           )
         okLine('sys/website', 'erickk.cloud : you are here')
@@ -532,7 +525,7 @@ export default function TerminalDock() {
         setLines([])
         break
       default:
-        print(<span><span className="font-semibold text-grey-900 dark:text-white">command not found:</span> {cmd}. type 'help'.</span>)
+        print(<span><span className="font-semibold text-grey-900">command not found:</span> {cmd}. type 'help'.</span>)
     }
   }
 
@@ -590,7 +583,7 @@ export default function TerminalDock() {
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="relative h-full border-r border-grey-300 bg-grey-100 shadow-xl dark:border-grey-800 dark:bg-black">
+        <div className="relative h-full border-r border-grey-300 bg-grey-100 shadow-xl">
           {/* Everything the drawer *is*, kept apart from the pull-tab that
               opens it: closed, the panel is still on the page, parked off the
               left edge, and it owned the first two tab stops of every fresh
@@ -601,17 +594,17 @@ export default function TerminalDock() {
               off the accessibility tree while it is shut; the tab stays. */}
           <div ref={panelRef} className="flex h-full flex-col">
           {/* title bar */}
-          <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3 dark:border-grey-800 dark:bg-black">
-            <span className="h-3 w-3 rounded-full bg-grey-300 dark:bg-grey-700" />
-            <span className="h-3 w-3 rounded-full bg-grey-400 dark:bg-grey-500" />
-            <span className="h-3 w-3 rounded-full bg-grey-500 dark:bg-grey-300" />
-            <span className="ml-2 flex-1 font-mono text-xs text-grey-500 dark:text-grey-500">visitor@erickk.cloud: ~</span>
+          <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3">
+            <span className="h-3 w-3 rounded-full bg-grey-300" />
+            <span className="h-3 w-3 rounded-full bg-grey-400" />
+            <span className="h-3 w-3 rounded-full bg-grey-500" />
+            <span className="ml-2 flex-1 font-mono text-xs text-grey-500">visitor@erickk.cloud: ~</span>
             {/* -my-2 keeps the title bar close to its own height while the hit
                 area grows to a fingertip: the glyph alone was a 16px target */}
             <button
               onClick={() => setOpen(false)}
               aria-label="Close terminal"
-              className="tap-44 -my-2 -mr-1.5 flex h-8 w-8 flex-none items-center justify-center rounded-lg text-grey-500 hover:text-grey-800 dark:text-grey-500 dark:hover:text-grey-100"
+              className="tap-44 -my-2 -mr-1.5 flex h-8 w-8 flex-none items-center justify-center rounded-lg text-grey-500 hover:text-grey-800"
             >
               <CloseIcon />
             </button>
@@ -624,7 +617,7 @@ export default function TerminalDock() {
             // `terminal-log` is the touch hook: on a coarse pointer index.css
             // takes the whole log to 16px, so the prompt does not trip iOS's
             // focus zoom and the ghost suffix stays aligned with it.
-            className="terminal-log flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-[13px] leading-relaxed text-grey-700 dark:text-grey-300"
+            className="terminal-log flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-[13px] leading-relaxed text-grey-700"
           >
             {lines.map((l, i) => (
               <div key={i} className="whitespace-pre-wrap break-words">
@@ -645,14 +638,14 @@ export default function TerminalDock() {
                   autoCorrect="off"
                   autoComplete="off"
                   spellCheck="false"
-                  className="relative z-10 w-full border-0 bg-transparent p-0 text-grey-900 caret-grey-700 outline-none dark:text-white dark:caret-grey-100"
+                  className="relative z-10 w-full border-0 bg-transparent p-0 text-grey-900 caret-grey-700 outline-none"
                 />
                 {/* ghost suffix, aligned under the input via an invisible copy of
                     what's typed (monospace, so the widths match exactly) */}
                 {suggestion && (
                   <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center whitespace-pre">
                     <span className="invisible">{input}</span>
-                    <span className="text-grey-400 dark:text-grey-600">{suggestion}</span>
+                    <span className="text-grey-400">{suggestion}</span>
                   </div>
                 )}
               </div>
@@ -674,7 +667,7 @@ export default function TerminalDock() {
             // rendered as "KILLS"). From lg up the centred column leaves at
             // least 64px of margin and the tab clears it. Below that, the
             // menu carries the terminal instead.
-            className="absolute left-full top-20 hidden flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 lg:flex dark:border-grey-800 dark:bg-black dark:text-grey-400 dark:hover:text-grey-100"
+            className="absolute left-full top-20 hidden flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 lg:flex"
           >
             <PromptGlyph />
             <span className="font-mono text-[11px] tracking-wider [writing-mode:vertical-rl] rotate-180">
@@ -687,7 +680,7 @@ export default function TerminalDock() {
           {!open && !seen && (
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute left-full top-32 ml-10 hidden items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 lg:flex dark:text-accent-dark/80"
+              className="pointer-events-none absolute left-full top-32 ml-10 hidden items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 lg:flex"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="-rotate-90">
                 <path d="M8 15 C 8 9.5, 6 6, 5 3" />

@@ -2,254 +2,8 @@ import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject }
 import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
+import { PROJECTS, type BuildLogEntry, type Project, type ProjectLink } from '../content'
 
-interface BuildLogEntry {
-  code: string
-  body: string[]
-}
-
-interface ProjectLink {
-  label: string
-  href: string
-}
-
-interface Project {
-  title: string
-  tag?: string
-  year: string
-  period?: string
-  org?: string
-  awardedBy?: string[]
-  hostedBy?: string[]
-  role: string
-  highlights?: string[]
-  tech?: string[]
-  image?: string
-  video?: string
-  aspect?: string
-  focus?: string
-  featured?: boolean
-  rank?: string
-  color?: string
-  initial?: string
-  icon?: string
-  links: ProjectLink[]
-  log?: BuildLogEntry[]
-}
-
-const PROJECTS: Project[] = [
-  {
-    title: 'Winnie the Bot',
-    tag: '3rd Place · ECSE Design Competition 2025',
-    year: '2025',
-    period: 'Sep 2025',
-    // bracketed short form keys the logo, so the ECSE department credit still
-    // flies the University of Auckland mark
-    awardedBy: ['Department of Electrical, Computer and Software Engineering (UoA)'],
-    role: 'Interactive Companion Robot',
-    highlights: [
-      'Designed and built the embedded electrical hardware for an AI powered interviewer robot using **dual ATmega328P NANO** microcontrollers, servos, an AI camera, and audio peripherals to drive simultaneous face tracking, arm movement, and real time voice interaction.',
-      "Prototyped and refined the robot's enclosure through **iterative 3D printing** and multiple design revisions, delivering a compact, durable, and functional physical build that **placed 3rd** in the UoA ECSE Design Competition.",
-    ],
-    tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
-    image: './winnie.webp',
-    video: './winnie.mp4',
-    featured: true,
-    rank: '3rd',
-    color: 'from-amber-500/20 to-rose-500/20',
-    initial: 'W',
-    links: [],
-    // deeper case study shown in the build-log modal
-    log: [
-      {
-        code: '01 · BRIEF',
-        body: [
-          'Build a companion robot for the UoA ECSE Design Competition 2025 that can hold your gaze, wave, and talk back. An embedded system that reads as a character, not a circuit board.',
-        ],
-      },
-      {
-        code: '02 · BUILD',
-        body: [
-          'Dual ATmega328P NANOs share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue, all running simultaneously on hardware with no operating system underneath.',
-          'The enclosure was 3D modelled and printed across multiple design revisions, packing every board, servo, and speaker into a compact, durable, desk-friendly form factor.',
-        ],
-      },
-      {
-        code: '03 · SETBACK',
-        body: [
-          "The enclosure fought back at the CAD stage. Winnie's parts are doll sized, small enough that measuring them by eye was hopeless and their true dimensions were genuinely hard to pin down.",
-          'The fix was proper metrology: vernier calipers and lab grade measurement equipment, one component at a time, recording actual sizes until the numbers could be trusted. Those measurements became the 3D CAD model the final enclosure was built from.',
-        ],
-      },
-      {
-        code: '04 · OUTCOME',
-        body: [
-          '3rd place at the UoA ECSE Design Competition 2025, awarded by the Department of ECSE in September 2025.',
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Spottern!',
-    tag: 'Top 8 Finalist · AWS×BNZ AI Hackathon 2026',
-    year: '2026',
-    period: 'Jul 2026',
-    role: 'Statement-level Fraud Detection Platform',
-    awardedBy: [
-      'Amazon Web Services (AWS)',
-      'Bank of New Zealand (BNZ)',
-    ],
-    highlights: [
-      'Built a serverless fraud pipeline with **AWS (SNS, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock behind a **schema validated JSON contract**, to extract and flag anomalies across an entire bank statement in one call with cited transaction evidence.',
-      'Proposed the approach to **BNZ** by drawing on prior individual project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
-    ],
-    tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
-    image: './spottern.webp', // also the video's poster
-    video: './spottern.mp4',
-    // 2940x1436. A dashboard is the one thing you cannot crop — a slice off
-    // each end takes the readout with it — so this clip keeps its own shape
-    // instead of being fitted to the row, and centres against the text beside
-    // it. Everything else has no `aspect` and fills the row normally.
-    aspect: 'aspect-[2940/1436]',
-    featured: true,
-    rank: 'Top 8',
-    color: 'from-violet-500/20 to-fuchsia-500/20',
-    initial: 'S',
-    links: [
-      { label: 'Deployed DEMO', href: 'https://erick-6.github.io/Spottern/' },
-      { label: 'Git repo', href: 'https://github.com/EricK-6/Spottern' },
-    ],
-  },
-  {
-    title: 'Sentiment PULSE',
-    icon: 'cloud',
-    tag: 'AWS · Individual Project',
-    year: '2026',
-    period: 'May 2026 to Jun 2026',
-    role: 'Real-time Sentiment Dashboard',
-    highlights: [
-      'Built a serverless NLP pipeline with **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using AWS SAM, with a dead letter queue for failed batches, to classify streaming text sentiment in real time.',
-      'Developed a **live React dashboard** on AWS Amplify, applying cloud and AI/ML fundamentals from certification study to a hands on project.',
-    ],
-    tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'GitHub Actions', 'React.js', 'AWS Amplify'],
-    image: './pulse.webp',
-    video: './pulse.mp4',
-    color: 'from-cyan-500/20 to-blue-500/20',
-    initial: 'S',
-    links: [
-      { label: 'Deployed DEMO', href: 'https://master.d1vwgts5qfrat7.amplifyapp.com/' },
-      { label: 'Git repo', href: 'https://github.com/EricK-6/sentiment-dashboard' },
-    ],
-  },
-  {
-    title: 'KEB Web Design',
-    icon: 'globe',
-    tag: 'KEB Project Playground 2025 · Team Competition',
-    year: '2025',
-    period: 'Aug 2025',
-    role: 'Homepage for Club',
-    hostedBy: ['Korean Engineering Body (KEB)'],
-    highlights: [
-      "Delivered the Korean Engineering Body's **first-ever website** using React 19, Vite, and React Bootstrap, giving the club a centralised hub for events and activities.",
-      'Collaborated with senior software students to ship a **production-ready platform** from scratch.',
-    ],
-    tech: ['HTML/CSS', 'JavaScript', 'React.js', 'Node.js'],
-    image: './KEBWebDesign.webp',
-    color: 'from-sky-500/20 to-indigo-500/20',
-    initial: 'K',
-    links: [
-      { label: 'Deployed DEMO', href: 'https://keb-project.vercel.app/' },
-      { label: 'Git repo', href: 'https://github.com/Patrick-Sheng/keb-project' },
-    ],
-  },
-  {
-    title: 'Smart Energy Monitor',
-    icon: 'zap',
-    tag: 'Embedded C · Team Project',
-    year: '2025',
-    org: 'University of Auckland (UoA)',
-    role: 'Embedded Energy Monitoring System',
-    highlights: [
-      'Designed a dual channel energy monitoring system, using **signal conditioned ADC sampling** on an **ATmega328P**, to compute RMS voltage, peak current, and average power in real time.',
-      'Built and validated a **double layer PCB**, using **Altium Designer** and UART based output, to meet a **±5% full scale** accuracy spec across a 2.5 to 7.5 VA load range.',
-    ],
-    tech: ['C', 'ATmega328P', 'Atmel AVR', 'Altium Designer', 'LTspice', 'Proteus'],
-    image: './energy_monitor.webp',
-    video: './smart.mp4',
-    // the media strip is far wider than it is tall, so a centred crop of this
-    // clip lands on bare green PCB; bias it upwards to hold the red
-    // seven-segment readout, which is the part that actually moves
-    focus: '50% 20%',
-    color: 'from-emerald-500/20 to-teal-500/20',
-    initial: 'E',
-    // Coursework repo: it lives in a private university org, so a link here
-    // would 404 for every visitor. The media and the tech list carry the tile.
-    links: [],
-  },
-  {
-    title: 'Flappy Universe',
-    icon: 'cpu',
-    tag: 'VHDL · Team Project',
-    year: '2026',
-    org: 'University of Auckland (UoA)',
-    role: 'FPGA Game Implementation',
-    highlights: [
-      'Implemented a Flappy Bird style game in **VHDL**, using a custom VGA sync generator and PLL based clock division on a **DE0-CV FPGA**, to render real time sprite based gameplay.',
-      'Built a **hardware LFSR** random number generator, using **shift register feedback logic**, to procedurally place pipe gaps and drive collision detection and scoring.',
-    ],
-    tech: ['VHDL', 'DE0-CV FPGA', 'Intel Quartus Prime', 'ModelSim'],
-    image: './flappy_universe.webp',
-    video: './flappy.mp4',
-    color: 'from-lime-500/20 to-green-500/20',
-    initial: 'F',
-    // Coursework repo: it lives in a private university org, so a link here
-    // would 404 for every visitor. The media and the tech list carry the tile.
-    links: [],
-  },
-  {
-    title: 'RoastWorks Analytics',
-    icon: 'chart',
-    tag: 'Python · Team Project',
-    year: '2026',
-    org: 'University of Auckland (UoA)',
-    role: 'Business Analytics Dashboard',
-    highlights: [
-      'Built a PyQt6 desktop analytics app with **pandas and Matplotlib**, automating a manual Excel workflow across **3 business units** and **52,000+ records**, cutting report time from a full day to **under 30 seconds**.',
-      "Implemented three forecasting models across **36 months of data**, combining **scikit-learn** regression with a custom **NumPy** build of Holt's Exponential Smoothing, validated with MAE and RMSE.",
-    ],
-    tech: ['Python', 'PyQt6', 'Pandas', 'Matplotlib', 'NumPy', 'scikit-learn'],
-    image: './roastworks.webp',
-    color: 'from-orange-500/20 to-amber-500/20',
-    initial: 'R',
-    // Coursework repo: it lives in a private university org, so a link here
-    // would 404 for every visitor. The media and the tech list carry the tile.
-    links: [],
-  },
-  {
-    title: 'MealHub',
-    icon: 'phone',
-    tag: 'Java · Team Project',
-    year: '2026',
-    org: 'University of Auckland (UoA)',
-    role: 'Android Meal Planning App',
-    highlights: [
-      'Built an Android recipe and meal planning app in **Java** with **Firebase Firestore**, enabling users to browse cuisines, search food items, and persist personalised meal plans.',
-      'Implemented a **nutrition goal tracking** system using SharedPreferences to set and track daily targets.',
-    ],
-    tech: ['Java', 'Android Studio', 'XML', 'Figma', 'Firebase Firestore'],
-    image: './MealHub.webp',
-    color: 'from-green-500/20 to-emerald-500/20',
-    initial: 'M',
-    // Coursework repo: it lives in a private university org, so a link here
-    // would 404 for every visitor. The media and the tech list carry the tile.
-    links: [],
-  },
-]
-
-// The explorer list is partitioned: the competition wins read as awards, the
-// rest as projects. PROJECTS stays a flat, awards-first array so the tab
-// indices (and the roving tabindex that walks them) need no group arithmetic —
-// a heading is emitted at the top and again where the awards run out.
 // A quiet rule-and-label separating the two shelves of the section.
 function SubLabel({ children, count, className = '' }: { children: ReactNode; count: number; className?: string }) {
   return (
@@ -315,7 +69,7 @@ export default function Projects() {
 // for no benefit, and `useOnScreen` answers the honest question of whether
 // anyone can see it.
 function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { project: Project; rounded?: string; fill?: boolean }) {
-  const { title, image, video, focus, aspect, color, initial, year, rank } = project
+  const { title, image, video, focus, aspect, year, rank } = project
   const ref = useRef<HTMLVideoElement | HTMLImageElement>(null)
   const onScreen = useOnScreen(ref)
 
@@ -340,8 +94,8 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
 
   return (
     <div
-      className={`relative w-full ${box} overflow-hidden ${rounded} ${
-        image || video ? 'bg-grey-100' : `bg-gradient-to-br ${color} flex items-center justify-center`
+      className={`relative w-full ${box} overflow-hidden bg-grey-100 ${rounded} ${
+        image || video ? '' : 'flex items-center justify-center'
       }`}
     >
       {video ? (
@@ -368,7 +122,8 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
           style={focus ? { objectPosition: focus } : undefined}
         />
       ) : (
-        <span className="relative text-6xl font-extrabold text-white/90 drop-shadow-sm">{initial}</span>
+        // a project with nothing to show yet still gets a well, not a hole
+        <span aria-hidden="true" className="font-display text-6xl font-semibold text-grey-300">{title[0]}</span>
       )}
       {/* Both badges live inside the media box, not on the column around it.
           The column is full height so a clip can centre in it — pinning the
@@ -642,14 +397,12 @@ function RankChip({ rank }: { rank: string }) {
   )
 }
 
-// small identifying glyph per project shown in the explorer list (the two
-// competition wins carry a RankChip instead)
-// A hue per project so the list stays scannable at a glance. These sit one
-// stop darker than the originals and at 80% opacity: full-strength 500s were
-// a rainbow competing with the award chips directly above them, and a single
-// flat grey went too far the other way and vanished on the glass.
+// The small glyph before each grid card's title (the two awarded projects
+// carry a RankChip instead). A hue per project so the grid stays scannable at
+// a glance. These sit one stop darker than the originals and at 80% opacity:
+// full-strength 500s were a rainbow competing with the award chips, and a
+// single flat grey went too far the other way and vanished.
 const ICON_STYLES: Record<string, string> = {
-  shield: 'text-violet-600/80',
   cloud: 'text-sky-600/80',
   globe: 'text-indigo-600/80',
   zap: 'text-yellow-600/80',
@@ -659,12 +412,6 @@ const ICON_STYLES: Record<string, string> = {
 }
 
 const ICON_PATHS: Record<string, ReactNode> = {
-  shield: (
-    <>
-      <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" />
-      <path d="m9 12 2 2 4-4" />
-    </>
-  ),
   cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
   globe: (
     <>
@@ -747,7 +494,7 @@ const fullName = (name: string) => name.replace(/\s*\([^)]*\)\s*/g, ' ').trim()
 function Affiliation({ label, names }: { label: string; names: string[] }) {
   return (
     <div className="mt-3">
-      <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400 dark:text-grey-600">
+      <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400">
         {label}
       </div>
       <div className="mt-1.5 flex flex-wrap gap-2">
@@ -757,12 +504,12 @@ function Affiliation({ label, names }: { label: string; names: string[] }) {
           return (
             <span
               key={name}
-              className="inline-flex items-center gap-2 rounded-lg border border-grey-300/80 bg-grey-100 py-1 pl-1.5 pr-2.5 dark:border-grey-800 dark:bg-grey-900/60"
+              className="inline-flex items-center gap-2 rounded-lg border border-grey-300/80 bg-grey-100 py-1 pl-1.5 pr-2.5"
             >
               {logo ? (
                 // one fixed height, width free: the square marks (AWS, BNZ,
-                // UoA, KEB) come out as 24px tiles and CODE's wide wordmark
-                // keeps its 3:1 proportions instead of being squashed square
+                // UoA, KEB) come out as 24px squares, and a wide wordmark would
+                // keep its proportions instead of being squashed square
                 <img
                   src={logo}
                   alt=""
@@ -771,13 +518,13 @@ function Affiliation({ label, names }: { label: string; names: string[] }) {
                   className="h-6 w-auto max-w-[4.5rem] flex-none rounded object-contain"
                 />
               ) : (
-                // fallback badge stays neutral grey — an accent-tinted one
-                // turned emerald in dark mode and read as a status pill
-                <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded bg-grey-200 px-1.5 font-mono text-[10px] font-bold tracking-wider text-grey-600 dark:bg-grey-800 dark:text-grey-400">
+                // an organisation with no logo file gets its initials, in
+                // neutral grey: an accent-tinted badge read as a status pill
+                <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded bg-grey-200 px-1.5 font-mono text-[10px] font-semibold tracking-wider text-grey-600">
                   {key}
                 </span>
               )}
-              <span className="text-xs font-medium text-grey-700 dark:text-grey-300">{fullName(name)}</span>
+              <span className="text-xs font-medium text-grey-700">{fullName(name)}</span>
             </span>
           )
         })}
@@ -786,8 +533,7 @@ function Affiliation({ label, names }: { label: string; names: string[] }) {
   )
 }
 
-// blinking green LED marking a live deployed demo — same light as the hero's
-// "live demo" status
+// blinking green LED marking a deployed demo you can open right now
 function LiveLed() {
   return (
     <span aria-hidden="true" className="relative flex h-2 w-2">
@@ -805,10 +551,10 @@ function GitHubIcon() {
   )
 }
 
-// Case-study modal styled as a build log. Still rendered through a portal:
-// the transformed tile ancestors that used to capture `position: fixed` are
-// gone, but a modal belongs at the top of the document either way, out of
-// reach of any ancestor's overflow or stacking context.
+// Case-study modal styled as a build log, rendered through a portal: a modal
+// belongs at the top of the document, out of reach of any ancestor's
+// overflow or stacking context.
+
 // Everything a Tab is allowed to land on inside the dialog.
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -818,8 +564,7 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
   const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // freeze the page behind the modal; SunriseLayout reads this to pause
-    // its wheel/arrow travel handlers too
+    // freeze the page behind the modal
     const prev = document.body.style.overflow
     const opener = document.activeElement // the control that opened this
     document.body.style.overflow = 'hidden'
@@ -865,9 +610,9 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
         aria-modal="true"
         aria-label={`Build log: ${project.title}`}
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-full w-full max-w-xl overflow-y-auto rounded-2xl border border-grey-300 bg-white shadow-2xl dark:border-grey-800 dark:bg-grey-950"
+        className="relative max-h-full w-full max-w-xl overflow-y-auto rounded-2xl border border-grey-300 bg-white shadow-2xl"
       >
-        <div className="flex items-center justify-between border-b border-grey-200 px-5 py-3.5 dark:border-grey-800">
+        <div className="flex items-center justify-between border-b border-grey-200 px-5 py-3.5">
           <div className="font-mono text-xs font-medium uppercase tracking-[0.25em] text-grey-500">
             Build log · {project.title}
           </div>
@@ -876,7 +621,7 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
             type="button"
             onClick={onClose}
             aria-label="Close build log"
-            className="rounded-lg p-1 text-grey-500 hover:bg-grey-200 hover:text-grey-800 dark:hover:bg-grey-900 dark:hover:text-grey-100"
+            className="rounded-lg p-1 text-grey-500 hover:bg-grey-200 hover:text-grey-800"
           >
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M18 6 6 18M6 6l12 12" />
@@ -886,11 +631,11 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
         <div className="space-y-5 px-5 py-5">
           {project.log?.map((entry) => (
             <section key={entry.code}>
-              <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent dark:text-accent-dark">
+              <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">
                 {entry.code}
               </h4>
               {entry.body.map((para) => (
-                <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700 dark:text-grey-300">
+                <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700">
                   {para}
                 </p>
               ))}

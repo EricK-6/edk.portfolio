@@ -230,10 +230,6 @@
            placeholder:text-grey-400 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20;
   }
 
-  .hero-link {
-    @apply text-grey-700 underline-offset-4 transition hover:text-accent-deep hover:underline;
-  }
-
   /* --- the intro ------------------------------------------------------- */
 
   /* The photograph's wash. The intro is the one place type sits on the
@@ -290,15 +286,14 @@
     }
     .btn-primary,
     .btn-secondary,
-    .field,
-    [role='tab'] {
+    .field {
       min-height: 44px;
     }
   }
 
   /* --- the cursor ------------------------------------------------------ */
 
-  /* Only ever active while `.has-cursor` is on <html>, which Cursor.jsx adds
+  /* Only ever active while `.has-cursor` is on <html>, which Cursor.tsx adds
      after confirming a fine pointer — so the native arrow is hidden only once
      something is definitely there to replace it. `.cursor-text` lifts the
      whole thing back off over a field: a text caret says "you can type here"
@@ -358,7 +353,6 @@
   .has-cursor a,
   .has-cursor button,
   .has-cursor [role='button'],
-  .has-cursor [role='tab'],
   .has-cursor label,
   .has-cursor summary {
     cursor: none;
@@ -412,16 +406,6 @@
   }
 }
 
-@layer utilities {
-  .no-scrollbar {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 /* --- motion ------------------------------------------------------------ */
 
 /* Everything here is an *entrance*. Once a thing has arrived it holds still:
@@ -444,14 +428,6 @@
   100% { transform: translateY(17px); opacity: 0; }
 }
 
-/* the availability dot: a soft radar ping behind a solid centre */
-@keyframes pulse-ring {
-  0%   { transform: scale(1); opacity: 0.55; }
-  70%  { transform: scale(2.4); opacity: 0; }
-  100% { transform: scale(2.4); opacity: 0; }
-}
-.pulse-ring { animation: pulse-ring 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-
 /* the typewriter's caret blinks only while a phrase is resting */
 @keyframes caret {
   0%, 45% { opacity: 1; }
@@ -467,7 +443,6 @@
     transition-duration: 0.01ms !important;
   }
   .lift-in,
-  .pulse-ring,
   .animate-caret,
   .motto-word {
     animation: none !important;

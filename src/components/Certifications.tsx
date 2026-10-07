@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
+import { CERTS, CERT_TIERS, type Cert } from '../content'
 
 // One ink per credential tier, used for the issuer line and nothing else.
 //
@@ -18,60 +19,10 @@ const INK = {
   violet: '#4c1d95', // HashiCorp — sampled off the Terraform hexagon
 }
 
-// The four, grouped by level. Order within a group is oldest-earned first.
-const CERTS = [
-  {
-    name: 'AWS Certified Solutions Architect – Associate',
-    short: 'Solutions Architect',
-    tier: 'Associate',
-    issuer: 'AWS',
-    date: 'Aug 2026',
-    image: './saa.webp',
-    ink: INK.blue,
-    description: 'Designs resilient, secure, cost-optimised architectures on AWS.',
-    credlyUrl:
-      'https://www.credly.com/badges/c24fa5a9-1240-4555-8119-2e1decdf0a25/public_url',
-  },
-  {
-    name: 'HashiCorp Certified: Terraform Associate',
-    short: 'Terraform Associate',
-    tier: 'Associate',
-    issuer: 'HashiCorp',
-    date: 'Sep 2026',
-    image: './terraform.webp',
-    ink: INK.violet,
-    description: 'Provisions and manages infrastructure as code with Terraform.',
-    credlyUrl:
-      'https://www.credly.com/badges/5e4289f2-8f20-4b81-b842-1b34501d85d4/public_url',
-  },
-  {
-    name: 'AWS Certified Cloud Practitioner',
-    short: 'Cloud Practitioner',
-    tier: 'Foundational',
-    issuer: 'AWS',
-    date: 'Apr 2026',
-    image: './cloud.webp',
-    ink: INK.amber,
-    description: 'Covers core AWS concepts, services and best practices.',
-    credlyUrl:
-      'https://www.credly.com/badges/9865f524-64b4-45e4-9f56-8c226ec8308a/public_url',
-  },
-  {
-    name: 'AWS Certified AI Practitioner',
-    short: 'AI Practitioner',
-    tier: 'Foundational',
-    issuer: 'AWS',
-    date: 'May 2026',
-    image: './ai.webp',
-    ink: INK.amber,
-    description: 'Covers AI/ML fundamentals and generative AI on AWS.',
-    credlyUrl:
-      'https://www.credly.com/badges/e924df22-3bc9-48c2-847d-d6077a5551d0/public_url',
-  },
-]
-const TIERS = ['Associate', 'Foundational']
-
-type Cert = (typeof CERTS)[number]
+// The rule rather than a field per badge, so a new certificate lands in the
+// right ink by itself.
+const inkFor = (cert: Cert) =>
+  cert.issuer === 'HashiCorp' ? INK.violet : cert.tier === 'Associate' ? INK.blue : INK.amber
 
 // Two labelled groups, laid out the way the rest of the page lays things out.
 //
@@ -98,14 +49,14 @@ type Cert = (typeof CERTS)[number]
 const CELL = 158 // px — must match sm:w-[158px] on a badge
 const GAP = 24 // px — must match sm:gap-x-6 on the row and the gap between groups
 
-// Same contract as the project tiles: a press turns the badge over for the
+// Same contract as the project cards: a press turns the badge over for the
 // one line a name and a date cannot carry, and nothing moves until asked.
 // Where it differs from a project card is the second press — a badge is a
 // credential with somewhere to be verified, not a piece of work with a
 // separate footer of links, so the second click is the verify step rather
 // than a close. First click: brief and powerful description. Second click:
-// Credly, in a new tab. A badge with no Credly link yet (Terraform) has
-// nowhere to send a second click, so that one closes instead — the only
+// Credly, in a new tab. A badge without a Credly link has nowhere to send
+// a second click, so that one closes instead — the only
 // promise a "Click to close" label can honestly make.
 //
 // The two faces share a CSS grid cell (both `col-start-1 row-start-1`)
@@ -157,7 +108,7 @@ function Badge({ cert }: { cert: Cert }) {
           {cert.short}
         </h3>
         <div className="mt-0.5 font-mono text-[10px] tabular-nums tracking-wide">
-          <span style={{ color: cert.ink }}>{cert.issuer}</span>
+          <span style={{ color: inkFor(cert) }}>{cert.issuer}</span>
           <span className="text-grey-400"> · {cert.date}</span>
         </div>
         <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400">
@@ -203,7 +154,7 @@ export default function Certifications() {
   return (
     <Section id="certifications" kicker="Certifications" title="Credentials" className="!py-10 sm:!py-12">
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-10">
-        {TIERS.map((tier, gi) => {
+        {CERT_TIERS.map((tier, gi) => {
           const items = CERTS.filter((c) => c.tier === tier)
           // each group's rule is drawn to the width of its own two badges, not
           // to the column — a rule cannot measure the flex row beneath it, so
