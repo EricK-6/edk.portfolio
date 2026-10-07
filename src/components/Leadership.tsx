@@ -73,7 +73,7 @@ export default function Leadership() {
   }, [])
 
   return (
-    <Section id="leadership" kicker="Leadership" title="Activities & Leadership">
+    <Section id="leadership" kicker="Leadership" title="Keeping things running">
       <div ref={wrapRef} className="relative">
         {/* curved Z connector (desktop) */}
         <svg className="pointer-events-none absolute inset-0 hidden h-full w-full md:block" aria-hidden="true">

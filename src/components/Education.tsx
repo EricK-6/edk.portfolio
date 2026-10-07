@@ -4,7 +4,7 @@ import { DEGREE, SCHOOL } from '../content'
 
 export default function Education() {
   return (
-    <Section id="education" kicker="Education" title="Academic background">
+    <Section id="education" kicker="Education" title="Where I've studied">
       {/* No cards here. A box is worth drawing when it is a target or has
           to clip something — the project cards are both — and these two
           entries are neither. Experience already sets the same kind of
