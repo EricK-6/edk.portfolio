@@ -22,17 +22,18 @@ const GROUPS = [
     items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
   },
   {
-    label: 'Cloud & AWS',
-    // The CV collapses all of this to the word "AWS" because a one-page PDF has
-    // no room. The site does have room, so the services stay named — every one
+    label: 'Cloud & DevOps',
+    // The CV collapses the AWS services to the word "AWS" because a one-page
+    // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
+    // too). The site does have room, so the services stay named — every one
     // of them appears in a project's tech list further up, which is the whole
     // reason for naming them rather than asking the reader to take "AWS" on
     // faith.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM'],
+    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM', 'Docker', 'Terraform', 'GitHub Actions'],
   },
   {
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'GitHub Actions', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot', 'Docker', 'Terraform'],
+    items: ['React.js', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Git', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
   },
   {
     label: 'Hardware & EDA Tools',
