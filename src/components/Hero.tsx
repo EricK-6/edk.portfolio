@@ -23,15 +23,14 @@ import { hrefFor } from '../sitemap'
 // screen should make one offer, not five.
 
 const BUILDS = [
-  'embedded systems',
   'robots that hold your gaze',
-  'statement level fraud detection',
-  'live sentiment dashboards',
-  'websites a club runs on',
-  'energy monitors, PCB and all',
-  'arcade games on an FPGA',
-  'analytics that forecast',
-  'Android apps for meal plans',
+  'fraud detection that cites its evidence',
+  'serverless pipelines on AWS',
+  'a website a whole club runs on',
+  'energy meters on a custom PCB',
+  'a Flappy Bird in pure VHDL',
+  'dashboards that forecast the quarter',
+  'meal planners for Android',
 ]
 
 const TYPE_MS = 55
