@@ -91,6 +91,12 @@ export const ROOT: DirNode = dir('top', {
     heading(`# ${g.label} (${g.items.length})`),
     L(g.items.join(', ')),
   ])]))),
+  certifications: dir('certifications', Object.fromEntries(CERTS.map((c) => [`${c.id}.cert`, file(() => [
+    heading(`# ${c.name}`),
+    L(dim(`${c.issuer} · ${c.tier} · ${c.date}`)),
+    L(c.description),
+    L(dim('verify  '), link('credly.com ↗', c.credlyUrl)),
+  ])]))),
   education: dir('education', {
     [`${DEGREE.id}.md`]: file(() => [
       heading(`# ${DEGREE.school}`),
@@ -108,12 +114,6 @@ export const ROOT: DirNode = dir('top', {
       L(dim('diligence awards  '), SCHOOL.diligence.map((d) => `${d.syllabus} ${d.subject}`).join(', ')),
     ]),
   }),
-  certifications: dir('certifications', Object.fromEntries(CERTS.map((c) => [`${c.id}.cert`, file(() => [
-    heading(`# ${c.name}`),
-    L(dim(`${c.issuer} · ${c.tier} · ${c.date}`)),
-    L(c.description),
-    L(dim('verify  '), link('credly.com ↗', c.credlyUrl)),
-  ])]))),
   leadership: dir('leadership', Object.fromEntries(ROLES.map((r) => [`${r.id}.md`, file(() => [
     heading(`# ${r.title}${r.detail ? ` (${r.detail})` : ''}`),
     L(dim(`${r.org} · ${r.period}`)),
