@@ -53,7 +53,10 @@ export default function Projects() {
   // Newest first on every shelf, so what I am doing now leads and the oldest
   // work is the last thing read. `filter` hands back a new array, so sorting
   // it in place leaves the authored order alone.
-  const awarded = PROJECTS.filter((p) => p.shelf === 'awarded').sort(byRecent)
+  // The awarded pair keeps the order it is written in rather than sorting by
+  // date: the two rows alternate sides, so their order is a composition and
+  // not a chronology. The other two shelves are newest first.
+  const awarded = PROJECTS.filter((p) => p.shelf === 'awarded')
   const self = PROJECTS.filter((p) => p.shelf === 'self').sort(byRecent)
   const uni = PROJECTS.filter((p) => p.shelf === 'uni').sort(byRecent)
   const logs = PROJECTS.filter((p) => p.log).length
