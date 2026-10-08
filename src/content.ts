@@ -457,7 +457,7 @@ export const PROJECTS: Project[] = [
     shelf: 'uni',
     discipline: 'hardware',
     ongoing: true,
-    tech: ['Embedded C', 'PSoC', 'LTSpice', 'MATLAB', 'Altium Designer'],
+    tech: ['C', 'PSoC', 'LTSpice', 'MATLAB', 'Altium Designer'],
     links: [],
   },
 ]
