@@ -103,12 +103,17 @@ export default function Projects() {
           shelf's own, because they sit under it. */}
       <SubLabel count={uni.length} className="mt-14">Engineered at university</SubLabel>
       <div className="mt-6 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-        {DISCIPLINES.map(({ id, label }) => {
+        {DISCIPLINES.map(({ id, label }, i) => {
           const items = uni.filter((p) => p.discipline === id)
           if (!items.length) return null
           return (
-            <div key={id}>
-              <div className="mb-3 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
+            // The hairline is a pseudo-element parked in the middle of the 20px
+            // column gap, so the partition costs the columns no width and all
+            // three stay exactly as wide as each other. Only from lg, where the
+            // three really are side by side; narrower than that they wrap, and
+            // the rule under each label does the separating on its own.
+            <div key={id} className={`relative ${i > 0 ? 'lg:before:absolute lg:before:-left-[10px] lg:before:top-1 lg:before:h-[calc(100%-0.5rem)] lg:before:w-px lg:before:bg-grey-200 lg:before:content-[""]' : ''}`}>
+              <div className="mb-4 border-b border-grey-200 pb-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
                 {label}
               </div>
               <div className="flex flex-col gap-5">
@@ -183,14 +188,11 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
   // Otherwise a feature row stretches the well to the row's height (`fill`),
   // and a grid card uses a plain 16:10. Both cover, because both are ordinary
   // photographs and stills where a small crop costs nothing.
-  // Something still being built gets a band, not a full well: a 16:10 box
-  // with nothing in it reads as a picture that failed to load, where a band
-  // reads as a status.
   // A badge is a stamp, not a span: a period that runs across months is shown
   // by the one it ended in, so 'May 2026 to Jun 2026' stamps as 'Jun 2026'.
   const stamp = fill ? year : period?.split(/\s+to\s+/).pop() ?? year
 
-  const box = ongoing ? 'aspect-[16/4]' : aspect || (fill ? 'aspect-[16/10] md:aspect-auto md:h-full' : 'aspect-[16/10]')
+  const box = aspect || (fill ? 'aspect-[16/10] md:aspect-auto md:h-full' : 'aspect-[16/10]')
 
   return (
     <div
@@ -240,9 +242,8 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
       )}
       {/* A grid card has no line of its own for the date, so the badge carries
           the month; a feature row already prints the period under its title,
-          so there the badge stays the year and does not say it twice. Nothing
-          unfinished is dated at all: the well already says where it is. */}
-      {stamp && !ongoing && (
+          so there the badge stays the year and does not say it twice. */}
+      {stamp && (
         <span className="absolute right-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-grey-800 backdrop-blur">
           {stamp}
         </span>
