@@ -66,6 +66,17 @@ export interface ProjectLink {
   href: string
 }
 
+// Which shelf a project sits on, which is also how big it is drawn.
+//
+//   awarded  a competition placement: a full-width row, the clip big enough to read
+//   self     taken on outside any course: half-width, because the choosing is the point
+//   uni      built for the degree: a third-width card in its discipline's column
+export type Shelf = 'awarded' | 'self' | 'uni'
+
+// The column a university project sits in. The degree covers all three, and
+// saying which is which is the only thing six cards in a row cannot.
+export type Discipline = 'software' | 'firmware' | 'hardware'
+
 export interface Project {
   title: string
   // the anchor (erickk.cloud/#spottern), the terminal's directory name and
@@ -79,14 +90,19 @@ export interface Project {
   org?: string
   awardedBy?: string[]
   hostedBy?: string[]
-  role: string
+  // the kind of system it is; a project still being built has none yet
+  role?: string
   highlights?: string[]
   tech?: string[]
   image?: string
   video?: string
   aspect?: string
   focus?: string
-  featured?: boolean
+  shelf: Shelf
+  discipline?: Discipline
+  // still being built: no media, no highlights, and it says so rather than
+  // showing an empty well and a card that turns over onto nothing
+  ongoing?: boolean
   rank?: string
   icon?: string
   links: ProjectLink[]
@@ -115,7 +131,7 @@ export const PROJECTS: Project[] = [
     tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.webp',
     video: './winnie.mp4',
-    featured: true,
+    shelf: 'awarded',
     rank: '3rd',
     links: [],
     // deeper case study shown in the build-log modal
@@ -172,7 +188,7 @@ export const PROJECTS: Project[] = [
     // instead of being fitted to the row, and centres against the text beside
     // it. Everything else has no `aspect` and fills the row normally.
     aspect: 'aspect-[2940/1436]',
-    featured: true,
+    shelf: 'awarded',
     rank: 'Top 8',
     links: [
       { label: 'Deployed DEMO', href: 'https://erick-6.github.io/Spottern/' },
@@ -221,6 +237,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Sentiment PULSE',
     slug: 'sentiment-pulse',
+    shelf: 'self',
     blurb: 'Serverless NLP pipeline on AWS + live React dashboard',
     icon: 'cloud',
     tag: 'AWS · Individual Project',
@@ -277,6 +294,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'KEB Web Design',
     slug: 'keb-web-design',
+    shelf: 'self',
     blurb: "KEB's first ever club website · React 19 + Vite",
     icon: 'globe',
     tag: 'KEB Project Playground 2025 · Team Competition',
@@ -324,6 +342,8 @@ export const PROJECTS: Project[] = [
   {
     title: 'Smart Energy Monitor',
     slug: 'smart-energy-monitor',
+    shelf: 'uni',
+    discipline: 'hardware',
     blurb: 'Dual-channel ATmega328P firmware · 2-layer Altium PCB · ±5% FS',
     icon: 'zap',
     tag: 'Embedded C · Team Project',
@@ -348,6 +368,8 @@ export const PROJECTS: Project[] = [
   {
     title: 'Flappy Universe',
     slug: 'flappy-universe',
+    shelf: 'uni',
+    discipline: 'firmware',
     blurb: 'VHDL game on a DE0-CV FPGA · custom VGA sync · LFSR pipe gaps',
     icon: 'cpu',
     tag: 'VHDL · Team Project',
@@ -367,6 +389,8 @@ export const PROJECTS: Project[] = [
   {
     title: 'RoastWorks Analytics',
     slug: 'roastworks-analytics',
+    shelf: 'uni',
+    discipline: 'software',
     blurb: 'PyQt6 + pandas desktop app · 3 forecasting models',
     icon: 'chart',
     tag: 'Python · Team Project',
@@ -385,6 +409,8 @@ export const PROJECTS: Project[] = [
   {
     title: 'MealHub',
     slug: 'mealhub',
+    shelf: 'uni',
+    discipline: 'software',
     blurb: 'Android meal planner · Java + Firebase',
     icon: 'phone',
     tag: 'Java · Team Project',
@@ -398,6 +424,34 @@ export const PROJECTS: Project[] = [
     tech: ['Java', 'Android Studio', 'XML', 'Figma', 'Firebase Firestore'],
     image: './MealHub.webp',
     // Coursework repo, private university org: see Smart Energy Monitor.
+    links: [],
+  },
+  {
+    title: 'Embedded Vision Bot',
+    slug: 'embedded-vision-bot',
+    blurb: 'In progress: vision on a Raspberry Pi, OpenCV on embedded Linux',
+    icon: 'bot',
+    tag: 'Python · Raspberry Pi',
+    year: '2026',
+    org: 'University of Auckland (UoA)',
+    shelf: 'uni',
+    discipline: 'firmware',
+    ongoing: true,
+    tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Raspberry Pi', 'Embedded Linux'],
+    links: [],
+  },
+  {
+    title: 'Autonomous Pathfinding Bot',
+    slug: 'autonomous-pathfinding-bot',
+    blurb: 'In progress: pathfinding robot on a PSoC, with its own board',
+    icon: 'bot',
+    tag: 'C · PSoC',
+    year: '2026',
+    org: 'University of Auckland (UoA)',
+    shelf: 'uni',
+    discipline: 'hardware',
+    ongoing: true,
+    tech: ['C', 'PSoC', 'LTSpice', 'MATLAB', 'Altium Designer'],
     links: [],
   },
 ]

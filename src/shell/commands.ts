@@ -393,7 +393,7 @@ const COMMANDS: Command[] = [
     name: 'neofetch', aliases: ['fastfetch'], group: 'extras', hidden: true, usage: 'neofetch', summary: 'the system specs, so to speak',
     run(_, { out }) {
       const skills = SKILL_GROUPS.reduce((n, g) => n + g.items.length, 0)
-      const awarded = PROJECTS.filter((p) => p.featured).length
+      const awarded = PROJECTS.filter((p) => p.shelf === 'awarded').length
       const byIssuer = [...new Set(CERTS.map((c) => c.issuer))].map((i) => `${i} ×${CERTS.filter((c) => c.issuer === i).length}`).join(', ')
       const row = (k: string, v: string | Seg) => L(accent(k.padEnd(11)), v)
       out.push(

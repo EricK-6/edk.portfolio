@@ -37,9 +37,10 @@ function projectDir(p: Project): DirNode {
   const children: Record<string, Node> = {
     'README.md': file(() => [
       heading(`# ${p.title}`),
-      L(dim(p.role)),
+      ...(p.role ? [L(dim(p.role))] : []),
       L(dim([p.tag, p.period ?? p.year].filter(Boolean).join(' · '))),
       blank,
+      ...(p.ongoing ? [L(dim('Still on the bench. No write-up until it works.'))] : []),
       ...(p.highlights ?? []).map((h) => bullet(...rich(h))),
       ...(p.links.length ? [blank, ...p.links.map((l) => L(dim(`${/demo/i.test(l.label) ? 'demo' : 'repo'}  `), link(l.href.replace(/^https?:\/\//, '').replace(/\/$/, ''), l.href)))] : []),
       ...(p.log ? [blank, L(dim('the full story: '), { text: 'cat build.log', run: `cat ~/projects/${p.slug}/build.log` })] : []),

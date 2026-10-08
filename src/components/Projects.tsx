@@ -1,8 +1,16 @@
-import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
+import { Fragment, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
 import { PROJECTS, type BuildLogEntry, type Project, type ProjectLink } from '../content'
+
+// The three columns the university shelf is read in. The degree covers all
+// three, and which is which is the one thing six cards in a row cannot say.
+const DISCIPLINES = [
+  { id: 'software', label: 'Software' },
+  { id: 'firmware', label: 'Firmware' },
+  { id: 'hardware', label: 'Hardware' },
+] as const
 
 // A quiet rule-and-label separating the two shelves of the section.
 function SubLabel({ children, count, className = '' }: { children: ReactNode; count: number; className?: string }) {
@@ -33,13 +41,19 @@ export default function Projects() {
   // which is the most persuasive thing on the site. A recruiter skimming saw a
   // list of eight words.
   //
-  // A scrolling document has no such constraint, so the section is now two
-  // shelves. The two competition placements get a full-width row each, big
-  // enough for the clip to read. The other six sit in a grid, all visible, all
-  // showing their media. Depth did not go anywhere: the build log is still one
-  // click away on the projects that have one.
-  const featured = PROJECTS.filter((p) => p.featured)
-  const rest = PROJECTS.filter((p) => !p.featured)
+  // A scrolling document has no such constraint, so the section is three
+  // shelves, and the shelf a project sits on is also how big it is drawn:
+  //
+  //   awarded  a full-width row each, big enough for the clip to read
+  //   self     half-width: taken on outside any course, which is the point
+  //   uni      a third-width card, in its discipline's column
+  //
+  // Depth did not go anywhere: the build log is still one click away on the
+  // four that have one.
+  const awarded = PROJECTS.filter((p) => p.shelf === 'awarded')
+  const self = PROJECTS.filter((p) => p.shelf === 'self')
+  const uni = PROJECTS.filter((p) => p.shelf === 'uni')
+  const logs = PROJECTS.filter((p) => p.log).length
 
   return (
     <Section
@@ -47,13 +61,13 @@ export default function Projects() {
       kicker="Projects"
       title="Things I've built"
       // The counts are read off the list, so the sentence stays true as it
-      // grows. The logs exist for the projects taken on outside coursework,
-      // which is what makes them worth pointing at.
+      // grows. The logs exist for the ones taken on outside any course, which
+      // is what makes them worth pointing at.
       subtitleOneLine
       subtitle={
         <>
-          {cap(WORDS[featured.length])} award placements and {WORDS[rest.length]} more builds. The{' '}
-          {WORDS[PROJECTS.filter((x) => x.log).length]} I took on outside coursework come with a{' '}
+          {cap(WORDS[awarded.length])} awarded, {WORDS[self.length]} I took on myself, {WORDS[uni.length]} from my
+          degree. The {WORDS[logs]} I chose come with a{' '}
           {/* nowrap, with the full stop inside it, so the phrase never splits across lines */}
           <span className="whitespace-nowrap">
             <strong className="font-semibold text-grey-900">build log</strong>.
@@ -62,18 +76,43 @@ export default function Projects() {
       }
       wide
     >
-      <SubLabel count={featured.length}>Awarded projects</SubLabel>
+      <SubLabel count={awarded.length}>Awarded projects</SubLabel>
       <div className="mt-6 space-y-8 sm:space-y-12">
-        {featured.map((p, i) => (
+        {awarded.map((p, i) => (
           <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} />
         ))}
       </div>
 
-      <SubLabel count={rest.length} className="mt-14">Selected projects</SubLabel>
-      <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {rest.map((p) => (
+      {/* Half-width, so these two sit between the awarded rows and the degree
+          work: nobody set them, which is the whole reason they are here. */}
+      <SubLabel count={self.length} className="mt-14">Self-initiated</SubLabel>
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">
+        {self.map((p) => (
           <ProjectCard key={p.title} project={p} />
         ))}
+      </div>
+
+      {/* One column a discipline, so the degree's range reads at a glance
+          rather than as six cards in a row. The labels are lighter than the
+          shelf's own, because they sit under it. */}
+      <SubLabel count={uni.length} className="mt-14">Engineered at university</SubLabel>
+      <div className="mt-6 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+        {DISCIPLINES.map(({ id, label }) => {
+          const items = uni.filter((p) => p.discipline === id)
+          if (!items.length) return null
+          return (
+            <div key={id}>
+              <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
+                {label}
+              </div>
+              <div className="flex flex-col gap-5">
+                {items.map((p) => (
+                  <ProjectCard key={p.title} project={p} />
+                ))}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       {/* A postscript, centred, the way a letter ends: the one line about this
@@ -111,7 +150,7 @@ export default function Projects() {
 // for no benefit, and `useOnScreen` answers the honest question of whether
 // anyone can see it.
 function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { project: Project; rounded?: string; fill?: boolean }) {
-  const { title, image, video, focus, aspect, year, rank } = project
+  const { title, image, video, focus, aspect, year, rank, ongoing } = project
   const ref = useRef<HTMLVideoElement | HTMLImageElement>(null)
   const onScreen = useOnScreen(ref)
   // A <video> fetches its poster (and, with preload="metadata", the head of
@@ -138,7 +177,10 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
   // Otherwise a feature row stretches the well to the row's height (`fill`),
   // and a grid card uses a plain 16:10. Both cover, because both are ordinary
   // photographs and stills where a small crop costs nothing.
-  const box = aspect || (fill ? 'aspect-[16/10] md:aspect-auto md:h-full' : 'aspect-[16/10]')
+  // Something still being built gets a band, not a full well: a 16:10 box
+  // with nothing in it reads as a picture that failed to load, where a band
+  // reads as a status.
+  const box = ongoing ? 'aspect-[16/4]' : aspect || (fill ? 'aspect-[16/10] md:aspect-auto md:h-full' : 'aspect-[16/10]')
 
   return (
     <div
@@ -170,8 +212,12 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
           style={focus ? { objectPosition: focus } : undefined}
         />
       ) : (
-        // a project with nothing to show yet still gets a well, not a hole
-        <span aria-hidden="true" className="font-display text-6xl font-semibold text-grey-300">{title[0]}</span>
+        // Nothing to show yet. The well says so rather than standing empty or
+        // filling with a letter that means nothing: there is no screenshot of
+        // a robot that is still on the bench.
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-grey-400">
+          {ongoing ? 'In progress' : title[0]}
+        </span>
       )}
       {/* Both badges live inside the media box, not on the column around it.
           The column is full height so a clip can centre in it — pinning the
@@ -182,7 +228,8 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
           <RankChip rank={rank} />
         </span>
       )}
-      {year && (
+      {/* no year on something unfinished: the well already says where it is */}
+      {year && !ongoing && (
         <span className="absolute right-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-grey-800 backdrop-blur">
           {year}
         </span>
@@ -287,7 +334,7 @@ function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }
 // One of the six, in the grid.
 //
 // The card shows what the work is; a press turns it over for why it matters —
-// the same two highlights the featured rows carry, plus the full tech list.
+// the same two highlights the awarded rows carry, plus the full tech list.
 // Same contract as the certificate medallions: nothing moves until you ask,
 // and the next press puts it back.
 //
@@ -304,7 +351,11 @@ function ProjectCard({ project }: { project: Project }) {
   const { title, tag, role, highlights, tech, icon, links, log } = project
   const [open, setOpen] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
-  useProjectRequests(project.slug, setLogOpen, setOpen)
+  // A card only turns over if there is something on the other side. One still
+  // being built has no highlights yet, so it is a plain card: no cursor, no
+  // tab stop, and no "Click for details" promising a face that never arrives.
+  const flips = Boolean(highlights?.length)
+  useProjectRequests(project.slug, setLogOpen, flips ? setOpen : undefined)
   const frontRef = useRef<HTMLDivElement>(null)
   const detailRef = useRef<HTMLDivElement>(null)
   const hasOpened = useRef(false)
@@ -333,18 +384,22 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="relative flex flex-1 flex-col">
         <div
           ref={frontRef}
-          role="button"
-          tabIndex={0}
-          aria-expanded={open}
-          aria-label={`${title}: show details`}
-          data-track={`details-${project.slug}`}
-          onClick={() => setOpen(true)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(true) }
-          }}
-          className={`flex flex-1 cursor-pointer flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent ${
-            open ? 'invisible' : ''
-          }`}
+          {...(flips
+            ? {
+                role: 'button',
+                tabIndex: 0,
+                'aria-expanded': open,
+                'aria-label': `${title}: show details`,
+                'data-track': `details-${project.slug}`,
+                onClick: () => setOpen(true),
+                onKeyDown: (e: ReactKeyboardEvent<HTMLDivElement>) => {
+                  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(true) }
+                },
+              }
+            : {})}
+          className={`flex flex-1 flex-col ${
+            flips ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent' : ''
+          } ${open ? 'invisible' : ''}`}
         >
           <ProjectMedia project={project} rounded="rounded-none" />
 
@@ -354,7 +409,7 @@ function ProjectCard({ project }: { project: Project }) {
               {title}
             </h4>
             <div className="mt-0.5 text-xs text-grey-500">{tag}</div>
-            <div className="mt-2 text-sm text-grey-700">{role}</div>
+            {role && <div className="mt-2 text-sm text-grey-700">{role}</div>}
 
             {tech && tech.length > 0 && (
               // capped at four on the front; the detail face carries the lot
@@ -366,9 +421,11 @@ function ProjectCard({ project }: { project: Project }) {
               </div>
             )}
 
-            <div className="mt-auto pt-5 font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400">
-              Click for details
-            </div>
+            {flips && (
+              <div className="mt-auto pt-5 font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400">
+                Click for details
+              </div>
+            )}
           </div>
         </div>
 
@@ -479,6 +536,7 @@ function RankChip({ rank }: { rank: string }) {
 // full-strength 500s were a rainbow competing with the award chips, and a
 // single flat grey went too far the other way and vanished.
 const ICON_STYLES: Record<string, string> = {
+  bot: 'text-stone-600/80',
   cloud: 'text-sky-600/80',
   globe: 'text-indigo-600/80',
   zap: 'text-yellow-600/80',
@@ -488,6 +546,16 @@ const ICON_STYLES: Record<string, string> = {
 }
 
 const ICON_PATHS: Record<string, ReactNode> = {
+  // a head, two eyes and an antenna: the two bots, rather than borrowing the
+  // chip and the lightning bolt that already mean something else here
+  bot: (
+    <>
+      <rect x="4" y="8" width="16" height="12" rx="3" />
+      <path d="M12 3v5" />
+      <circle cx="12" cy="3" r="1" />
+      <path d="M9 13h.01M15 13h.01" />
+    </>
+  ),
   cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
   globe: (
     <>
