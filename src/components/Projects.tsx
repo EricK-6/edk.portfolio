@@ -85,7 +85,7 @@ export default function Projects() {
       <SubLabel count={awarded.length}>Awarded in competition</SubLabel>
       <div className="mt-6 space-y-8 sm:space-y-12">
         {awarded.map((p, i) => (
-          <FeatureRow key={p.title} project={p} reverse={i % 2 === 0} />
+          <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} />
         ))}
       </div>
 
