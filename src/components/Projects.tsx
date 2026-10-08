@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState, type KeyboardEvent as ReactKeybo
 import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
-import { PROJECTS, type BuildLogEntry, type Project, type ProjectLink } from '../content'
+import { byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectLink } from '../content'
 
 // The three columns the university shelf is read in. The degree covers all
 // three, and which is which is the one thing six cards in a row cannot say.
@@ -50,9 +50,12 @@ export default function Projects() {
   //
   // Depth did not go anywhere: the build log is still one click away on the
   // four that have one.
-  const awarded = PROJECTS.filter((p) => p.shelf === 'awarded')
-  const self = PROJECTS.filter((p) => p.shelf === 'self')
-  const uni = PROJECTS.filter((p) => p.shelf === 'uni')
+  // Newest first on every shelf, so what I am doing now leads and the oldest
+  // work is the last thing read. `filter` hands back a new array, so sorting
+  // it in place leaves the authored order alone.
+  const awarded = PROJECTS.filter((p) => p.shelf === 'awarded').sort(byRecent)
+  const self = PROJECTS.filter((p) => p.shelf === 'self').sort(byRecent)
+  const uni = PROJECTS.filter((p) => p.shelf === 'uni').sort(byRecent)
   const logs = PROJECTS.filter((p) => p.log).length
 
   return (
@@ -76,7 +79,7 @@ export default function Projects() {
       }
       wide
     >
-      <SubLabel count={awarded.length}>Awarded projects</SubLabel>
+      <SubLabel count={awarded.length}>Awarded in competition</SubLabel>
       <div className="mt-6 space-y-8 sm:space-y-12">
         {awarded.map((p, i) => (
           <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} />
@@ -537,6 +540,7 @@ function RankChip({ rank }: { rank: string }) {
 // single flat grey went too far the other way and vanished.
 const ICON_STYLES: Record<string, string> = {
   bot: 'text-stone-600/80',
+  car: 'text-rose-600/80',
   cloud: 'text-sky-600/80',
   globe: 'text-indigo-600/80',
   zap: 'text-yellow-600/80',
@@ -554,6 +558,14 @@ const ICON_PATHS: Record<string, ReactNode> = {
       <path d="M12 3v5" />
       <circle cx="12" cy="3" r="1" />
       <path d="M9 13h.01M15 13h.01" />
+    </>
+  ),
+  car: (
+    <>
+      <path d="M5 12l1.6-4A2 2 0 0 1 8.5 6.7h7a2 2 0 0 1 1.9 1.3L19 12" />
+      <rect x="3" y="12" width="18" height="4.5" rx="1.5" />
+      <circle cx="7.5" cy="17.5" r="1.8" />
+      <circle cx="16.5" cy="17.5" r="1.8" />
     </>
   ),
   cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,

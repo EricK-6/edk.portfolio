@@ -431,7 +431,7 @@ export const PROJECTS: Project[] = [
     slug: 'embedded-vision-bot',
     blurb: 'In progress: vision on a Raspberry Pi, OpenCV on embedded Linux',
     icon: 'bot',
-    tag: 'Python · Raspberry Pi',
+    tag: 'Python · Team Project',
     year: '2026',
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
@@ -444,8 +444,8 @@ export const PROJECTS: Project[] = [
     title: 'Autonomous Pathfinding Bot',
     slug: 'autonomous-pathfinding-bot',
     blurb: 'In progress: pathfinding robot on a PSoC, with its own board',
-    icon: 'bot',
-    tag: 'C · PSoC',
+    icon: 'car',
+    tag: 'C · Team Project',
     year: '2026',
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
@@ -455,6 +455,23 @@ export const PROJECTS: Project[] = [
     links: [],
   },
 ]
+
+// Newest first.
+//
+// Something still being built is the most recent thing there is, so it leads.
+// Otherwise a period names the month it ended ("May 2026 to Jun 2026" ends in
+// June); a project with only a year sorts below anything dated inside that
+// year, and two projects that tie keep the order they are written in.
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+
+export function recency(p: Project): number {
+  if (p.ongoing) return Infinity
+  const ended = (p.period ?? '').split(/\s+to\s+/).pop() ?? ''
+  const m = ended.match(/([a-z]{3})[a-z]*\s+(\d{4})/i)
+  return m ? Number(m[2]) * 12 + MONTHS.indexOf(m[1].toLowerCase()) : Number(p.year) * 12
+}
+
+export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 
 // --- experience --------------------------------------------------------------
 
