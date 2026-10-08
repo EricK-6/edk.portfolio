@@ -228,7 +228,7 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
         // filling with a letter that means nothing: there is no screenshot of
         // a robot that is still on the bench.
         <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-grey-400">
-          {ongoing ? 'In progress' : title[0]}
+          {ongoing ? 'Coming soon' : title[0]}
         </span>
       )}
       {/* Both badges live inside the media box, not on the column around it.

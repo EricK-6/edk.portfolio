@@ -433,7 +433,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Embedded Vision Bot',
     slug: 'embedded-vision-bot',
-    blurb: 'In progress: vision on a Raspberry Pi, OpenCV on embedded Linux',
+    blurb: 'Coming soon: vision on a Raspberry Pi, OpenCV on embedded Linux',
     icon: 'bot',
     tag: 'Python · Team Project',
     year: '2026',
@@ -448,16 +448,16 @@ export const PROJECTS: Project[] = [
   {
     title: 'Autonomous Pathfinding Bot',
     slug: 'autonomous-pathfinding-bot',
-    blurb: 'In progress: pathfinding robot on a PSoC, with its own board',
+    blurb: 'Coming soon: pathfinding robot on a PSoC, with its own board',
     icon: 'car',
-    tag: 'C · Team Project',
+    tag: 'Embedded C · Team Project',
     year: '2026',
     period: 'Oct 2026',
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
     discipline: 'hardware',
     ongoing: true,
-    tech: ['C', 'PSoC', 'LTSpice', 'MATLAB', 'Altium Designer'],
+    tech: ['Embedded C', 'PSoC', 'LTSpice', 'MATLAB', 'Altium Designer'],
     links: [],
   },
 ]
