@@ -82,7 +82,7 @@ export default function Projects() {
       <SubLabel count={awarded.length}>Awarded in competition</SubLabel>
       <div className="mt-6 space-y-8 sm:space-y-12">
         {awarded.map((p, i) => (
-          <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} />
+          <FeatureRow key={p.title} project={p} reverse={i % 2 === 0} />
         ))}
       </div>
 
@@ -105,7 +105,7 @@ export default function Projects() {
           if (!items.length) return null
           return (
             <div key={id}>
-              <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
+              <div className="mb-3 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
                 {label}
               </div>
               <div className="flex flex-col gap-5">
@@ -153,7 +153,7 @@ export default function Projects() {
 // for no benefit, and `useOnScreen` answers the honest question of whether
 // anyone can see it.
 function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { project: Project; rounded?: string; fill?: boolean }) {
-  const { title, image, video, focus, aspect, year, rank, ongoing } = project
+  const { title, image, video, focus, aspect, year, period, rank, ongoing } = project
   const ref = useRef<HTMLVideoElement | HTMLImageElement>(null)
   const onScreen = useOnScreen(ref)
   // A <video> fetches its poster (and, with preload="metadata", the head of
@@ -183,6 +183,10 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
   // Something still being built gets a band, not a full well: a 16:10 box
   // with nothing in it reads as a picture that failed to load, where a band
   // reads as a status.
+  // A badge is a stamp, not a span: a period that runs across months is shown
+  // by the one it ended in, so 'May 2026 to Jun 2026' stamps as 'Jun 2026'.
+  const stamp = fill ? year : period?.split(/\s+to\s+/).pop() ?? year
+
   const box = ongoing ? 'aspect-[16/4]' : aspect || (fill ? 'aspect-[16/10] md:aspect-auto md:h-full' : 'aspect-[16/10]')
 
   return (
@@ -231,10 +235,13 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
           <RankChip rank={rank} />
         </span>
       )}
-      {/* no year on something unfinished: the well already says where it is */}
-      {year && !ongoing && (
+      {/* A grid card has no line of its own for the date, so the badge carries
+          the month; a feature row already prints the period under its title,
+          so there the badge stays the year and does not say it twice. Nothing
+          unfinished is dated at all: the well already says where it is. */}
+      {stamp && !ongoing && (
         <span className="absolute right-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-grey-800 backdrop-blur">
-          {year}
+          {stamp}
         </span>
       )}
     </div>
@@ -539,7 +546,7 @@ function RankChip({ rank }: { rank: string }) {
 // full-strength 500s were a rainbow competing with the award chips, and a
 // single flat grey went too far the other way and vanished.
 const ICON_STYLES: Record<string, string> = {
-  bot: 'text-stone-600/80',
+  bot: 'text-violet-600/80',
   car: 'text-rose-600/80',
   cloud: 'text-sky-600/80',
   globe: 'text-indigo-600/80',

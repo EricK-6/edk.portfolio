@@ -348,6 +348,7 @@ export const PROJECTS: Project[] = [
     icon: 'zap',
     tag: 'Embedded C · Team Project',
     year: '2025',
+    period: 'Oct 2025',
     org: 'University of Auckland (UoA)',
     role: 'Embedded Energy Monitoring System',
     highlights: [
@@ -374,6 +375,7 @@ export const PROJECTS: Project[] = [
     icon: 'cpu',
     tag: 'VHDL · Team Project',
     year: '2026',
+    period: 'Jun 2026',
     org: 'University of Auckland (UoA)',
     role: 'FPGA Game Implementation',
     highlights: [
@@ -395,6 +397,7 @@ export const PROJECTS: Project[] = [
     icon: 'chart',
     tag: 'Python · Team Project',
     year: '2026',
+    period: 'May 2026',
     org: 'University of Auckland (UoA)',
     role: 'Business Analytics Dashboard',
     highlights: [
@@ -415,6 +418,7 @@ export const PROJECTS: Project[] = [
     icon: 'phone',
     tag: 'Java · Team Project',
     year: '2026',
+    period: 'Jun 2026',
     org: 'University of Auckland (UoA)',
     role: 'Android Meal Planning App',
     highlights: [
@@ -433,6 +437,7 @@ export const PROJECTS: Project[] = [
     icon: 'bot',
     tag: 'Python · Team Project',
     year: '2026',
+    period: 'Oct 2026',
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
     discipline: 'firmware',
@@ -447,6 +452,7 @@ export const PROJECTS: Project[] = [
     icon: 'car',
     tag: 'C · Team Project',
     year: '2026',
+    period: 'Oct 2026',
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
     discipline: 'hardware',
