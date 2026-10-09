@@ -442,7 +442,7 @@ export const PROJECTS: Project[] = [
     shelf: 'uni',
     discipline: 'firmware',
     ongoing: true,
-    tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Raspberry Pi', 'Embedded Linux'],
+    tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Embedded Linux'],
     links: [],
   },
   {
