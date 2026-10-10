@@ -431,7 +431,7 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'Embedded Vision JetBot',
+    title: 'Eyed JetBot',
     slug: 'embedded-vision-jetbot',
     blurb: 'Coming soon: vision on a Raspberry Pi, OpenCV on embedded Linux',
     icon: 'bot',
