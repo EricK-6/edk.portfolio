@@ -538,11 +538,9 @@ export const SKILL_GROUPS = [
     label: 'Cloud & DevOps',
     // The CV collapses the AWS services to the word "AWS" because a one-page
     // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
-    // too). The site does have room, so the services stay named — every one
-    // of them appears in a project's tech list further up, which is the whole
-    // reason for naming them rather than asking the reader to take "AWS" on
-    // faith.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'SNS', 'Amplify', 'SAM', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
+    // too). The site names the services the CV's project bullets lean on, and
+    // leaves out the plumbing (SNS, SAM, Amplify) so the row stays readable.
+    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
