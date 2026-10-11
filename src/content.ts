@@ -177,7 +177,7 @@ export const PROJECTS: Project[] = [
       'Bank of New Zealand (BNZ)',
     ],
     highlights: [
-      'Built a serverless fraud pipeline with **AWS (SNS, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock behind a **schema validated JSON contract**, to extract and flag anomalies across an entire bank statement in one call with cited transaction evidence.',
+      'Built a serverless fraud pipeline with **AWS (S3, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock behind a **schema validated JSON contract**, to extract and flag anomalies across an entire bank statement in one call with cited transaction evidence.',
       'Proposed the approach to **BNZ** by drawing on prior individual project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
