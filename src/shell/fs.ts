@@ -11,7 +11,7 @@ import {
   CERTS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS,
   type Project,
 } from '../content'
-import { accent, bullet, dim, L, link, rich, strong, type Line } from './lines'
+import { accent, bullet, dim, L, rich, strong, type Line } from './lines'
 
 export interface FileNode { type: 'file'; body: () => Line[] }
 export interface LinkNode { type: 'link'; href: string; label?: string }
@@ -42,8 +42,8 @@ function projectDir(p: Project): DirNode {
       blank,
       ...(p.ongoing ? [L(dim('Still on the bench. No write-up until it works.'))] : []),
       ...(p.highlights ?? []).map((h) => bullet(...rich(h))),
-      ...(p.links.length ? [blank, ...p.links.map((l) => L(dim(`${/demo/i.test(l.label) ? 'demo' : 'repo'}  `), link(l.href.replace(/^https?:\/\//, '').replace(/\/$/, ''), l.href)))] : []),
-      ...(p.log ? [blank, L(dim('the full story: '), { text: 'cat build.log', run: `cat ~/projects/${p.slug}/build.log` })] : []),
+      ...(p.links.length ? [blank, ...p.links.map((l) => L(dim(`${/demo/i.test(l.label) ? 'demo' : 'repo'}  `), l.href.replace(/^https?:\/\//, '').replace(/\/$/, '')))] : []),
+      ...(p.log ? [blank, L(dim('the full story: '), 'cat build.log')] : []),
     ]),
     'stack.txt': file(() => [L((p.tech ?? []).join(', '))]),
   }
@@ -65,8 +65,7 @@ export const ROOT: DirNode = dir('top', {
     heading(`# ${PROFILE.fullName}`),
     L('This is the page you are on, as a filesystem. Every section is a directory; `cd` into one and the page scrolls there.'),
     blank,
-    L(dim('start with  '), { text: 'ls', run: 'ls' }, dim('  ·  '), { text: 'cat about/bio.md', run: 'cat about/bio.md' }, dim('  ·  '), { text: 'help', run: 'help' }),
-    L(dim('or ask      '), { text: 'ask what have you built on aws?', run: 'ask what have you built on aws?' }),
+    L(dim('start with  ls, cat about/bio.md, help')),
   ]),
   about: dir('about', {
     'bio.md': file(() => [
@@ -75,7 +74,7 @@ export const ROOT: DirNode = dir('top', {
       L('Most of what I build ends up on AWS. Studying for the Solutions Architect certification changed how I get it there: I design for the failure modes now, rather than just wiring services together.'),
       L('Formerly a research assistant at CARES (robot soccer and navigation) and a robotics instructor at ciLab.'),
       blank,
-      L(dim('based in '), PROFILE.city, dim(' · '), { text: 'cd ~/contact', run: 'cd ~/contact' }),
+      L(dim('based in '), PROFILE.city, dim(' · '), 'cd ~/contact'),
     ]),
     'highlights.txt': file(() => HIGHLIGHTS.map((h) => bullet(h))),
   }),
@@ -95,7 +94,7 @@ export const ROOT: DirNode = dir('top', {
     heading(`# ${c.name}`),
     L(dim(`${c.issuer} · ${c.tier} · ${c.date}`)),
     L(c.description),
-    L(dim('verify  '), link('credly.com ↗', c.credlyUrl)),
+    L(dim('verify  '), c.credlyUrl),
   ])]))),
   education: dir('education', {
     [`${DEGREE.id}.md`]: file(() => [
@@ -208,7 +207,7 @@ export function findProject(raw: string): Project | null {
   return hits?.[0] ?? null
 }
 
-// Every file, flattened with its path: what grep and ask search.
+// Every file, flattened with its path: what grep searches.
 export function allFiles(node: Node = ROOT, path: string[] = []): { path: string[]; node: FileNode }[] {
   if (node.type === 'file') return [{ path, node }]
   if (node.type !== 'dir') return []

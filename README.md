@@ -8,7 +8,7 @@ It's one page that scrolls, top to bottom, and I've deliberately kept it that wa
 
 - **A full-bleed intro** — one photograph from Queenstown, my name on it, and the line about what I build. It's the only place on the site type sits on a picture.
 - **Everything below is paper** — a flat off-white document, a narrow reading measure, hairline rules between sections, and a numbered contents index in the header that tracks where you are.
-- **Command palette** (`Cmd`/`Ctrl + K`) and a **terminal** (`Ctrl + \``) that browses the page as a filesystem: `ls`, `cd` (the page scrolls with you), `cat`, `grep`, pipes, `open spottern` (opens its build log), `./spottern` (a replay of the pipeline), and `ask` for plain questions. Every name it prints is clickable, so you don't need to know a single command.
+- **Command palette** (`Cmd`/`Ctrl + K`) and a **terminal** (`Ctrl + \``) that browses the page as a filesystem: `ls`, `cd` (the page scrolls with you), `cat`, `grep`, pipes, `open spottern` (opens its build log), `./spottern` (a replay of the pipeline). It works like a normal shell: you type, it prints, and `help` lists the commands.
 - **The page never fights the scroll.** There's no wheel hijacking, no snap, nothing that moves once it's arrived — the animation is all entrance. That's on purpose: an earlier version made each section its own route and reinterpreted the wheel as travel between them, which cost the scrollbar, `Cmd+F`, and a sane Back button.
 
 ---

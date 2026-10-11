@@ -9,7 +9,7 @@
 // them. A few seconds of output a visitor can watch, then a link to the real
 // thing.
 
-import { accent, dim, L, link, strong, t, type Line } from './lines'
+import { accent, dim, L, strong, t, type Line } from './lines'
 
 type Print = (...lines: Line[]) => void
 type Schedule = (fn: () => void, ms: number) => void
@@ -53,7 +53,7 @@ export function runSpottern(print: Print, later: Schedule) {
   later(() => print(
     [],
     L(dim('→ sns        '), 'BNZ fraud-ops alerted · ', dim('ses  '), 'customer emailed'),
-    L(dim('replay of the bundled sample. try your own: '), link('the demo ↗', 'https://erick-6.github.io/Spottern/')),
+    L(dim('replay of the bundled sample. try your own: '), 'https://erick-6.github.io/Spottern/'),
   ), 2300 + FLAGGED.length * 450 + 300)
 }
 
@@ -89,7 +89,7 @@ export function runPulse(print: Print, later: Schedule) {
     print(
       [],
       L(dim('mood  '), accent(bar), dim(`  net ${mood >= 0 ? '+' : ''}${mood} over ${REVIEWS.length} reviews`)),
-      L(dim('simulated, like the hosted dashboard while the backend is torn down: '), link('open it ↗', 'https://master.d1vwgts5qfrat7.amplifyapp.com/')),
+      L(dim('simulated, like the hosted dashboard while the backend is torn down: '), 'https://master.d1vwgts5qfrat7.amplifyapp.com/'),
     )
   }, 250 + REVIEWS.length * 380 + 200)
 }

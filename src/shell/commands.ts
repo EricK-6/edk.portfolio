@@ -1,17 +1,11 @@
-// The shell: commands, pipes, and what happens when someone types something
-// that isn't a command at all.
-//
-// Two kinds of visitor open this. Developers will try `ls -l`, `grep aws`,
-// `git log` and `fortune | kiwisay`, and those should work the way their
-// fingers expect. Everyone else will type `projects`, `hire` or "what have you
-// built on aws?", and the shell should meet them there too: a typo gets a
-// correction, a section or project name gets opened, and a question gets
-// answered from the site's own content. Nothing here is a canned script, so
-// it can never claim something the page doesn't.
+// The shell: commands, pipes, and a plain "command not found" for anything
+// else, like any terminal. Developers get the things their fingers expect
+// (`ls -l`, `grep aws`, `git log`, `fortune | kiwisay`); nothing here is
+// clickable and nothing guesses what you meant.
 
 import { CERTS, PROFILE, PROJECTS, RESUMES, SKILL_GROUPS } from '../content'
 import { allFiles, EXECUTABLE, findDir, findProject, getNode, pathLabel, resolve, ROOT, type DirNode, type Node } from './fs'
-import { accent, bullet, cmd, dim, L, link, plain, strong, t, type Line, type Seg } from './lines'
+import { accent, cmd, dim, L, plain, strong, t, type Line, type Seg } from './lines'
 import { runPulse, runSpottern } from './replays'
 
 export interface Ctx {
@@ -57,16 +51,15 @@ const nOf = (args: string[], fallback = 10) => {
   return Number.isFinite(n) && n > 0 ? n : fallback
 }
 
-// --- names as buttons --------------------------------------------------------
+// --- listing -----------------------------------------------------------------
 
-// how a filesystem entry prints, and what pressing it does
-function entry(name: string, node: Node, at: string[]): Seg {
-  const p = pathLabel([...at, name])
+// how a filesystem entry prints, ls -F style
+function entry(name: string, node: Node): Seg {
   switch (node.type) {
-    case 'dir': return { text: `${name}/`, tone: 'strong', run: `cd ${p}` }
-    case 'exec': return { text: `${name}*`, tone: 'ok', run: `./${node.slug}` }
-    case 'link': return { text: `${name}@`, run: `open ${p}` }
-    default: return { text: name, run: `cat ${p}` }
+    case 'dir': return { text: `${name}/`, tone: 'strong' }
+    case 'exec': return { text: `${name}*`, tone: 'ok' }
+    case 'link': return { text: `${name}@` }
+    default: return { text: name }
   }
 }
 
@@ -76,108 +69,6 @@ function highlight(text: string, re: RegExp): Seg[] {
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-// --- search ------------------------------------------------------------------
-
-const STOP = new Set('a an and any are as at be been by can could did do does eric for from have has how i in is it its me my of on or so tell that the their there this to us was what which who why with you your yours about ever here experience experiences built build made done worked work working stuff things thing anything some'.split(' '))
-const SYNONYMS: Record<string, string[]> = {
-  cloud: ['aws', 'lambda', 'serverless', 'dynamodb', 'bedrock', 'kinesis', 'terraform'],
-  aws: ['lambda', 'bedrock', 'dynamodb', 'kinesis', 'comprehend', 'textract', 'amplify'],
-  hardware: ['embedded', 'pcb', 'fpga', 'atmega328p', 'vhdl', 'altium', 'servos'],
-  embedded: ['atmega328p', 'firmware', 'pcb', 'microcontrollers'],
-  ai: ['bedrock', 'claude', 'comprehend', 'machine', 'nlp', 'camera'],
-  ml: ['machine', 'learning', 'comprehend', 'forecasting', 'scikit-learn'],
-  web: ['react', 'website', 'javascript', 'typescript', 'vite'],
-  frontend: ['react', 'website', 'javascript', 'html/css'],
-  robot: ['robotics', 'ros', 'turtlebot2', 'winnie', 'servos'],
-  robots: ['robotics', 'ros', 'turtlebot2', 'winnie'],
-  robotics: ['robot', 'ros', 'turtlebot2', 'winnie', 'servos', 'olympiad'],
-  fraud: ['spottern', 'anomalies'],
-  data: ['pandas', 'analytics', 'dynamodb', 'sql'],
-  lead: ['leadership', 'executive', 'volunteered', 'led'],
-  led: ['leadership', 'executive', 'lead', 'founding'],
-  leadership: ['executive', 'founding', 'led', 'team'],
-  award: ['place', 'finalist', 'awarded', 'diligence'],
-  awards: ['place', 'finalist', 'awarded'],
-  teach: ['instructor', 'tutorial', 'students'],
-  game: ['flappy', 'fpga'],
-  android: ['mealhub', 'java'],
-}
-
-function terms(q: string) {
-  const words = q.toLowerCase().replace(/[^a-z0-9+#./ -]/g, ' ').split(/\s+/).filter((w) => w && !STOP.has(w))
-  return words.map((w) => w.replace(/'s$/, '')).filter(Boolean)
-}
-
-interface Hit { path: string[]; score: number; best: string }
-
-function search(q: string, limit = 3): Hit[] {
-  const ws = terms(q)
-  if (!ws.length) return []
-  const weighted = ws.flatMap((w) => [[w, 3], ...(SYNONYMS[w] ?? []).map((s) => [s, 1] as const)] as [string, number][])
-  return allFiles()
-    .map(({ path, node }) => {
-      const lines = node.body().map(plain)
-      const title = (path.join(' ') + ' ' + (lines[0] ?? '')).toLowerCase()
-      const text = lines.join(' ').toLowerCase()
-      let score = 0
-      for (const [w, weight] of weighted) {
-        const singular = w.length > 3 ? w.replace(/s$/, '') : w
-        if (title.includes(singular)) score += 2 * weight
-        if (text.includes(singular)) score += weight
-      }
-      const best = lines.slice(1).find((l) => weighted.some(([w]) => l.toLowerCase().includes(w))) ?? lines[0] ?? ''
-      return { path, score, best }
-    })
-    .filter((h) => h.score > 0)
-    .sort((a, b) => b.score - a.score)
-    // a weak third match is noise next to two strong ones
-    .filter((h, _, all) => h.score >= all[0].score * 0.4)
-    // A project is several files (README, stack, build log); a person asking
-    // "what have you built on aws?" wants projects, not three stack.txt files.
-    // So hits inside a project count once, as the project, at its best score.
-    .filter((h, i, all) => h.path[0] !== 'projects' || all.findIndex((o) => o.path[0] === 'projects' && o.path[1] === h.path[1]) === i)
-    .slice(0, limit)
-}
-
-function hitLines(hits: Hit[]): Line[] {
-  return hits.flatMap((h) => {
-    const project = h.path[0] === 'projects' ? PROJECTS.find((x) => x.slug === h.path[1]) : undefined
-    if (project) {
-      return [L(cmd(project.title, `open ${project.slug}`), dim(`  ${project.blurb}`)), L(dim('  '), cmd('README', `cat ~/projects/${project.slug}/README.md`), ...(project.log ? [dim(' · '), cmd('build.log', `cat ~/projects/${project.slug}/build.log`)] : []))]
-    }
-    const p = pathLabel(h.path)
-    const snippet = h.best.replace(/^#\s*/, '')
-    return [L(cmd(p, `cat ${p}`)), L(dim('  '), dim(snippet.length > 120 ? snippet.slice(0, 117) + '…' : snippet))]
-  })
-}
-
-// Questions with one right answer go straight to it; everything else is a
-// search of the files.
-function answer(q: string, ctx: Ctx): Line[] {
-  const s = q.toLowerCase()
-  if (/\b(hire|hiring|available|availability|intern(ship)?s?|job|jobs|opportunit|open to|work with|collaborat)/.test(s)) {
-    return [
-      L("I'm open to interesting conversations, side projects and collaborations, so don't hesitate to reach out."),
-      L(dim('email  '), link(PROFILE.email, `mailto:${PROFILE.email}`), dim('  ·  '), cmd('cv', 'cv'), dim('  ·  '), cmd('sudo hire-me')),
-    ]
-  }
-  if (/\b(cv|resume|résumé)\b/.test(s)) return run1('cv', ctx)
-  if (/\b(contact|email|reach|message|linkedin)\b/.test(s)) return run1('social', ctx)
-  if (/\b(where|located|location|based|live|timezone|time is it)\b/.test(s)) {
-    return [L(`${PROFILE.city}. It's `, strong(nzTime()), ' there now.')]
-  }
-  if (/\b(who are you|about you|yourself|introduce)\b/.test(s)) return run1('cat ~/about/bio.md', ctx)
-  if (/\b(degree|study|studying|graduat|university|uni)\b/.test(s)) return run1('cat ~/education/uoa.md', ctx)
-  if (/\b(certif|certs?\b|credential|qualified)/.test(s)) {
-    return CERTS.map((c) => bullet(strong(c.name), dim(` · ${c.date} · `), link('verify ↗', c.credlyUrl)))
-  }
-  if (/\b(skills?|stack|languages?|tools|technologies|tech you)\b/.test(s)) {
-    return SKILL_GROUPS.map((g) => [{ text: `${g.label}: `, tone: 'dim' as const }, t(g.items.join(', '))])
-  }
-  const hits = search(q)
-  if (!hits.length) return [L(dim("nothing on the page matches that. try "), cmd('ls'), dim(', '), cmd('help'), dim(' or a single word, like '), cmd('grep aws'))]
-  return [L(dim(`${hits.length === 1 ? 'the best match' : `the ${hits.length} best matches`} on the page:`)), ...hitLines(hits)]
-}
 
 const nzTime = () => {
   try { return new Intl.DateTimeFormat('en-NZ', { timeZone: PROFILE.timeZone, hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date()) }
@@ -223,12 +114,12 @@ const COMMANDS: Command[] = [
       const segs = rest[0] ? (findDir(ctx.cwd, rest[0]) ?? resolve(ctx.cwd, rest[0])) : ctx.cwd
       const node = getNode(segs)
       if (!node) { out.push(err('ls', `no such file or directory: ${rest[0]}`)); return }
-      if (node.type !== 'dir') { out.push(L(entry(segs.at(-1) ?? '', node, segs.slice(0, -1)))); return }
+      if (node.type !== 'dir') { out.push(L(entry(segs.at(-1) ?? '', node))); return }
       const names = Object.keys(node.children)
       // one per line into a pipe, the way a real ls does, so grep can pick
-      if (piped && !set.has('l')) { out.push(...names.map((n) => L(entry(n, node.children[n], segs)))); return }
+      if (piped && !set.has('l')) { out.push(...names.map((n) => L(entry(n, node.children[n])))); return }
       if (!set.has('l')) {
-        out.push(names.flatMap((n, i) => [...(i ? [t('  ')] : []), entry(n, node.children[n], segs)]))
+        out.push(names.flatMap((n, i) => [...(i ? [t('  ')] : []), entry(n, node.children[n])]))
         return
       }
       const inProjects = segs.length === 1 && segs[0] === 'projects'
@@ -240,7 +131,7 @@ const COMMANDS: Command[] = [
           : child.type === 'pdf' ? 'pdf, downloads'
           : child.type === 'exec' ? 'runnable: a replay of the project'
           : `${child.body().length} lines`
-        out.push([{ text: child.type === 'dir' ? 'd ' : child.type === 'link' ? 'l ' : child.type === 'exec' ? 'x ' : '- ', tone: 'dim', gutter: true }, entry(n, child, segs), dim(`  ${meta}`)])
+        out.push([{ text: child.type === 'dir' ? 'd ' : child.type === 'link' ? 'l ' : child.type === 'exec' ? 'x ' : '- ', tone: 'dim', gutter: true }, entry(n, child), dim(`  ${meta}`)])
       }
     },
   },
@@ -249,7 +140,7 @@ const COMMANDS: Command[] = [
     run(args, { ctx, out }) {
       const segs = findDir(ctx.cwd, args[0])
       if (!segs) {
-        out.push(err('cd', `no section called '${args[0]}'. try: `, ...Object.keys(ROOT.children).filter((n) => ROOT.children[n].type === 'dir').flatMap((n, i) => [...(i ? [dim(', ')] : []), cmd(n, `cd ${n}`)])))
+        out.push(err('cd', `no section called '${args[0]}'. try: `, ...Object.keys(ROOT.children).filter((n) => ROOT.children[n].type === 'dir').flatMap((n, i) => [...(i ? [dim(', ')] : []), cmd(n)])))
         return
       }
       ctx.setCwd(segs)
@@ -269,7 +160,7 @@ const COMMANDS: Command[] = [
         names.forEach((n, i) => {
           const last = i === names.length - 1
           const child = d.children[n]
-          out.push(L(dim(prefix + (last ? '└── ' : '├── ')), entry(n, child, at)))
+          out.push(L(dim(prefix + (last ? '└── ' : '├── ')), entry(n, child)))
           if (child.type === 'dir') { dirs++; walk(child, [...at, n], prefix + (last ? '    ' : '│   ')) } else files++
         })
       }
@@ -327,7 +218,7 @@ const COMMANDS: Command[] = [
         if (node?.type === 'dir' && node.children['README.md']) { segs = [...segs, 'README.md']; node = getNode(segs) }
         if (!node) { out.push(err('cat', `${arg}: no such file. `, cmd('ls'), dim(' shows what is here'))); continue }
         if (node.type === 'dir') { out.push(err('cat', `${arg}: is a directory. try `, cmd(`ls ${arg}`))); continue }
-        if (node.type === 'link') { out.push(L(link(node.label ?? node.href.replace(/^https?:\/\//, ''), node.href))); continue }
+        if (node.type === 'link') { out.push(L(node.label ?? node.href.replace(/^https?:\/\//, ''))); continue }
         if (node.type === 'pdf') { out.push(...run1(`cv ${node.resume}`, ctx)); continue }
         if (node.type === 'exec') { out.push(err('cat', `${arg}: binary file. run it: `, cmd(`./${node.slug}`))); continue }
         out.push(...node.body())
@@ -356,13 +247,13 @@ const COMMANDS: Command[] = [
         if (!lines.length) continue
         const p = pathLabel(f.path)
         count += lines.length
-        if (set.has('l')) { out.push(L(cmd(p, `cat ${p}`))); continue }
-        if (set.has('c')) { out.push(L(cmd(p, `cat ${p}`), dim(`: ${lines.length}`))); continue }
+        if (set.has('l')) { out.push(L(cmd(p))); continue }
+        if (set.has('c')) { out.push(L(cmd(p), dim(`: ${lines.length}`))); continue }
         // the path inline, not as a gutter: a long path would leave a phone
         // nothing to wrap the match into
-        for (const line of lines.slice(0, 4)) out.push([{ text: `${p.replace(/^~\//, '')}: `, run: `cat ${p}`, tone: 'dim' }, ...highlight(line.replace(/^#\s*/, ''), re)])
+        for (const line of lines.slice(0, 4)) out.push([{ text: `${p.replace(/^~\//, '')}: `, tone: 'dim' }, ...highlight(line.replace(/^#\s*/, ''), re)])
       }
-      if (!count) out.push(L(dim(`no matches for '${pattern}'. `), cmd(`ask ${pattern}`), dim(' looks a little wider')))
+      if (!count) out.push(L(dim(`no matches for '${pattern}'`)))
     },
   },
   { name: 'head', group: 'extras', hidden: true, usage: 'head [-n N]', summary: 'first lines of a pipe', filter: true, run(args, { stdin, out }) { out.push(...(stdin ?? []).slice(0, nOf(args))) } },
@@ -380,13 +271,6 @@ const COMMANDS: Command[] = [
     run(args, { stdin, out }) {
       const sorted = [...(stdin ?? [])].sort((a, b) => plain(a).localeCompare(plain(b)))
       out.push(...(flags(args).set.has('r') ? sorted.reverse() : sorted))
-    },
-  },
-  {
-    name: 'ask', group: 'read', usage: 'ask <anything>', summary: 'a question in plain words, answered from the page',
-    run(args, { ctx, out }) {
-      if (!args.length) { out.push(L(dim('ask me something, e.g. '), cmd('ask what have you built on aws?'))); return }
-      out.push(...answer(args.join(' '), ctx))
     },
   },
   {
@@ -424,7 +308,7 @@ const COMMANDS: Command[] = [
     run(args, { ctx, out }) {
       const key = (args[0] ?? '').toLowerCase()
       const r = RESUMES.find((x) => (x.aliases as readonly string[]).includes(key))
-      if (!r) { out.push(L(dim('two résumés: '), cmd('software', 'cv software'), dim(' · '), cmd('hardware', 'cv hardware'))); return }
+      if (!r) { out.push(L(dim('two résumés: '), cmd('cv software'), dim(' · '), cmd('cv hardware'))); return }
       out.push(L(dim(`↓ downloading the ${r.id} CV…`)))
       ctx.download(r.href)
     },
@@ -433,9 +317,9 @@ const COMMANDS: Command[] = [
     name: 'social', aliases: ['links', 'contact'], group: 'extras', hidden: true, usage: 'social', summary: 'where else to find me',
     run(_, { out }) {
       out.push(
-        L(dim('email     '), link(PROFILE.email, `mailto:${PROFILE.email}`)),
-        L(dim('github    '), link(`github.com/${PROFILE.github.handle}`, PROFILE.github.url)),
-        L(dim('linkedin  '), link(`linkedin.com/in/${PROFILE.linkedin.handle}`, PROFILE.linkedin.url)),
+        L(dim('email     '), PROFILE.email),
+        L(dim('github    '), `github.com/${PROFILE.github.handle}`),
+        L(dim('linkedin  '), `linkedin.com/in/${PROFILE.linkedin.handle}`),
       )
     },
   },
@@ -450,7 +334,7 @@ const COMMANDS: Command[] = [
         .then((commits: { sha: string; html_url: string; commit: { message: string; author: { date: string } } }[]) => {
           ctx.print(...commits.map((c) => [{ text: c.sha.slice(0, 7), href: c.html_url, tone: 'warn' as const, gutter: true }, dim(` ${relTime(c.commit.author.date).padEnd(8)}`), t(c.commit.message.split('\n')[0])]))
         })
-        .catch(() => ctx.print(L(dim('github is not answering right now (rate limits are 60 an hour). the history is at '), link('the repo ↗', `${PROFILE.repo}/commits/main`))))
+        .catch(() => ctx.print(L(dim('github is not answering right now (rate limits are 60 an hour). the history is at '), `${PROFILE.repo}/commits/main`)))
     },
   },
   {
@@ -497,7 +381,7 @@ const COMMANDS: Command[] = [
         L(dim('[sudo] password for visitor: ********')),
         L('access granted. root privileges: emotional only.'),
         L('initiating recruitment protocol…'),
-        L(dim('→ opening mail: '), link(PROFILE.email, `mailto:${PROFILE.email}?subject=Hello`)),
+        L(dim('→ opening mail: '), PROFILE.email),
       )
       ctx.later(() => ctx.openUrl(`mailto:${PROFILE.email}?subject=Hello`), 900)
     },
@@ -523,9 +407,8 @@ const COMMANDS: Command[] = [
             ? [...EXECUTABLE].map((slug) => ({ label: `./${slug}`, run: `./${slug}` }))
             : [{ label: c.name, run: `help ${c.name}` }],
         )
-        out.push([{ text: g.padEnd(12), tone: 'dim', gutter: true }, ...items.flatMap((it, i) => [...(i ? [t('  ')] : []), cmd(it.label, it.run)])])
+        out.push([{ text: g.padEnd(12), tone: 'dim', gutter: true }, ...items.flatMap((it, i) => [...(i ? [t('  ')] : []), cmd(it.label)])])
       }
-      out.push([], L(dim('or skip all that and just ask: '), cmd('ask are you open to work?')))
     },
   },
 ]
@@ -561,15 +444,6 @@ function stages(s: string): string[] {
   return parts.map((p) => p.trim())
 }
 
-function distance(a: string, b: string) {
-  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)])
-  for (let j = 1; j <= b.length; j++) d[0][j] = j
-  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
-    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1))
-  }
-  return d[a.length][b.length]
-}
-
 // --- running a line ----------------------------------------------------------
 
 export interface Result {
@@ -599,10 +473,10 @@ export function execute(raw: string, ctx: Ctx): Result {
     const [name, ...args] = tokenize(parts[i])
     const c = name ? find(name) : undefined
     if (!c) {
-      if (parts.length === 1) return { out: [...out, ...fallback(line, ctx)], event: 'unknown' }
+      if (parts.length === 1) return { out: [...out, ...fallback(line)], event: 'unknown' }
       return { out: [...out, err('erickk-sh', `command not found: ${name ?? '(empty)'}`)], event: 'unknown' }
     }
-    if (i > 0 && !c.filter) return { out: [...out, err(c.name, "doesn't read from a pipe. these do: ", ...COMMANDS.filter((x) => x.filter).flatMap((x, n) => [...(n ? [dim(', ')] : []), cmd(x.name, `help ${x.name}`)]))], event: c.name }
+    if (i > 0 && !c.filter) return { out: [...out, err(c.name, "doesn't read from a pipe. these do: ", ...COMMANDS.filter((x) => x.filter).flatMap((x, n) => [...(n ? [dim(', ')] : []), cmd(x.name)]))], event: c.name }
     if (i < parts.length - 1 && c.live) return { out: [...out, err(c.name, "its output arrives live, so it can't be piped")], event: c.name }
     const stageOut: Line[] = []
     c.run(args, { ctx, stdin, out: stageOut, piped: i < parts.length - 1 })
@@ -613,32 +487,13 @@ export function execute(raw: string, ctx: Ctx): Result {
   return { out, event: first?.name ?? 'unknown' }
 }
 
-// Not a command. In order: a typo of one, the name of a section or project,
-// a question, a word that appears on the page.
-function fallback(line: string, ctx: Ctx): Line[] {
-  const [word, ...rest] = tokenize(line)
-  const w = word.toLowerCase()
-  const near = COMMAND_NAMES
-    .map((n) => ({ n, d: distance(w, n) }))
-    .filter(({ n, d }) => d <= (n.length > 4 ? 2 : 1))
-    .sort((a, b) => a.d - b.d)[0]
-  if (/^(hire|hiring|available|internships?|jobs?|cv|resume|contact|email)$/.test(w)) return answer(line, ctx)
-  if (near && !rest.length && !findProject(w) && !findDir([], w)) {
-    return [L(strong('command not found: '), word, dim('. did you mean '), cmd(near.n, [near.n, ...rest].join(' ')), dim('?'))]
-  }
-  if (near && rest.length) {
-    return [L(strong('command not found: '), word, dim('. did you mean '), cmd([near.n, ...rest].join(' ')), dim('?'))]
-  }
-  if (!rest.length && (findProject(w) || findDir([], w))) {
-    return [L(dim(`'${word}' isn't a command, but it's here: `), cmd(`open ${word}`), dim(' · '), cmd(findProject(w) ? `cat ${word}` : `cd ${word}`))]
-  }
-  if (rest.length || /\?$/.test(line)) return answer(line, ctx)
-  const hits = search(word)
-  if (hits.length) return [L(dim(`'${word}' isn't a command, but it is on the page:`)), ...hitLines(hits)]
-  return [L(strong('command not found: '), word, dim('. type '), cmd('help'), dim(', or just ask a question.'))]
+// Not a command: say so, the way a shell does.
+function fallback(line: string): Line[] {
+  const [word] = tokenize(line)
+  return [L(`erickk-sh: command not found: ${word}`), L(dim('type help for the list of commands'))]
 }
 
-// --- completion and suggestions ----------------------------------------------
+// --- completion ----------------------------------------------
 
 function pathCandidates(cwd: string[], token: string, only?: 'dir' | 'file'): string[] {
   const slash = token.lastIndexOf('/')
@@ -671,26 +526,4 @@ export function candidates(input: string, cwd: string[]): string[] {
   if (c === 'git') return startsWith(['log'])
   if (c === 'sudo') return startsWith(['hire-me'])
   return []
-}
-
-// The row of next steps under the prompt, for anyone who would rather press
-// than type. They follow where you are.
-export function suggestions(cwd: string[]): string[] {
-  const here = getNode(cwd)
-  if (cwd[0] === 'projects' && cwd[1]) {
-    const p = PROJECTS.find((x) => x.slug === cwd[1])
-    return [
-      'cat README.md',
-      ...(p?.log ? ['cat build.log'] : []),
-      ...(EXECUTABLE.has(cwd[1]) ? [`./${cwd[1]}`] : []),
-      `open ${cwd[1]}`,
-      'cd ..',
-    ].slice(0, 4)
-  }
-  if (cwd[0] === 'projects') return ['ls -l', 'open spottern', './sentiment-pulse', 'cd ~']
-  if (cwd.length && here?.type === 'dir') {
-    const first = Object.keys(here.children)[0]
-    return ['ls', ...(first ? [`cat ${first}`] : []), `grep ${cwd[0] === 'skills' ? 'aws' : 'auckland'}`, 'cd ~']
-  }
-  return ['help', 'neofetch', 'ls ~/projects', 'ask what have you built on aws?']
 }

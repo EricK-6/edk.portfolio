@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { goTo } from '../router'
 import { track } from '../analytics'
-import { candidates, execute, suggestions, type Ctx } from '../shell/commands'
+import { candidates, execute, type Ctx } from '../shell/commands'
 import { pathLabel } from '../shell/fs'
 import { dim, L, type Line, type Seg } from '../shell/lines'
 
@@ -9,10 +9,8 @@ import { dim, L, type Line, type Seg } from '../shell/lines'
 //
 // What it runs lives in src/shell (a filesystem generated from content.ts,
 // the commands, the replays); this file is the drawer, the prompt and the
-// keyboard. Output is data, not markup, so every name the shell prints is a
-// button — a visitor who has never used a terminal can click their way
-// around it, and the row of suggestions under the prompt follows where they
-// are.
+// keyboard. It behaves like any terminal: you type, it prints, nothing in the
+// output is clickable.
 
 const BOOT_LINES = [
   '[ 0.000000 ] erickk.cloud bootloader v2.0',
@@ -24,7 +22,7 @@ const BOOT_LINES = [
 
 const SHELL_BANNER: Line[] = [
   [],
-  L(dim("type help, press a suggestion below, or just ask a question.")),
+  L(dim('type help for a list of commands.')),
   [],
 ]
 
@@ -173,12 +171,6 @@ export default function TerminalDock() {
     }
   }
 
-  // pressing a name or a suggestion runs it exactly as if it had been typed
-  const press = (command: string) => {
-    runLine(command)
-    inputRef.current?.focus({ preventScroll: true })
-  }
-
   const options = input ? candidates(input, cwd) : []
   const word = input.split(/\s+/).at(-1) ?? ''
   const ghost = options[0]?.startsWith(word) ? options[0].slice(word.length) : ''
@@ -201,7 +193,7 @@ export default function TerminalDock() {
     if (e.key === 'Tab') {
       // Tab fills what every option shares; a second Tab lists them, the way
       // bash does. With nothing to complete it is left alone, so it still
-      // moves focus on to the suggestions.
+      // moves focus on.
       if (!options.length) return
       e.preventDefault()
       if (options.length === 1) { replaceWord(options[0] + (options[0].endsWith('/') ? '' : ' ')); return }
@@ -278,17 +270,17 @@ export default function TerminalDock() {
                 iOS's focus zoom. */}
             <div
               ref={bodyRef}
-              onClick={(e) => { if (!(e.target as HTMLElement).closest('button, a')) inputRef.current?.focus() }}
+              onClick={() => { if (!window.getSelection()?.toString()) inputRef.current?.focus() }}
               className="terminal-log flex-1 overflow-y-auto overscroll-contain p-4 font-mono text-[13px] leading-relaxed text-grey-700"
             >
               {/* role=log: output is announced to a screen reader as it
                   arrives, which is the whole point of typing a command */}
               <div role="log" aria-label="Terminal output">
-                {lines.map((line, i) => <OutLine key={i} line={line} onRun={press} />)}
+                {lines.map((line, i) => <OutLine key={i} line={line} />)}
               </div>
 
               <div className="flex items-center">
-                <OutLine line={promptLine(pathLabel(cwd), '').slice(0, 4)} onRun={press} inline />
+                <OutLine line={promptLine(pathLabel(cwd), '').slice(0, 4)} inline />
                 <div className="relative flex-1">
                   <input
                     ref={inputRef}
@@ -311,20 +303,6 @@ export default function TerminalDock() {
                     </div>
                   )}
                 </div>
-              </div>
-
-              {/* next steps, for anyone who would rather press than type */}
-              <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Suggested commands">
-                {suggestions(cwd).map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => press(s)}
-                    className="rounded-md border border-grey-300 bg-white px-2 py-0.5 text-[11px] text-grey-600 transition-colors hover:border-accent/40 hover:text-accent-deep"
-                  >
-                    {s}
-                  </button>
-                ))}
               </div>
             </div>
           </div>
@@ -373,39 +351,12 @@ const TONES: Record<NonNullable<Seg['tone']>, string> = {
   warn: 'text-award',
 }
 
-function SegView({ seg, onRun }: { seg: Seg; onRun: (command: string) => void }) {
-  const cls = seg.tone ? TONES[seg.tone] : ''
-  if (seg.run) {
-    const command = seg.run
-    return (
-      <button
-        type="button"
-        onClick={() => onRun(command)}
-        title={command}
-        className={`${cls} inline text-left underline decoration-grey-300 underline-offset-2 transition-colors hover:text-accent-deep hover:decoration-accent`}
-      >
-        {seg.text}
-      </button>
-    )
-  }
-  if (seg.href) {
-    return (
-      <a
-        href={seg.href}
-        target={seg.href.startsWith('mailto:') || seg.download ? undefined : '_blank'}
-        rel="noreferrer"
-        download={seg.download ? '' : undefined}
-        className={`${cls} underline decoration-grey-300 underline-offset-2 hover:text-accent-deep hover:decoration-accent`}
-      >
-        {seg.text}
-      </a>
-    )
-  }
-  return <span className={cls} style={seg.color ? { color: seg.color } : undefined}>{seg.text}</span>
+function SegView({ seg }: { seg: Seg }) {
+  return <span className={seg.tone ? TONES[seg.tone] : ''} style={seg.color ? { color: seg.color } : undefined}>{seg.text}</span>
 }
 
-function OutLine({ line, onRun, inline = false }: { line: Line; onRun: (command: string) => void; inline?: boolean }) {
-  const segs = (list: Seg[]) => list.map((s, i) => <SegView key={i} seg={s} onRun={onRun} />)
+function OutLine({ line, inline = false }: { line: Line; inline?: boolean }) {
+  const segs = (list: Seg[]) => list.map((s, i) => <SegView key={i} seg={s} />)
   if (inline) return <span className="flex-none whitespace-pre">{segs(line)}</span>
   if (!line.length) return <div aria-hidden="true">&nbsp;</div>
   const [first, ...rest] = line
@@ -414,7 +365,7 @@ function OutLine({ line, onRun, inline = false }: { line: Line; onRun: (command:
       <div className="flex">
         {/* capped, so a gutter that is too long can never squeeze the text
             beside it down to a column of single letters */}
-        <span className="max-w-[45%] flex-none overflow-hidden text-ellipsis whitespace-pre"><SegView seg={first} onRun={onRun} /></span>
+        <span className="max-w-[45%] flex-none overflow-hidden text-ellipsis whitespace-pre"><SegView seg={first} /></span>
         <span className="min-w-0 whitespace-pre-wrap break-words">{segs(rest)}</span>
       </div>
     )
