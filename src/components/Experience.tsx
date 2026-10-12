@@ -28,7 +28,7 @@ function Clip({ src, poster, label, aspect }: { src: string; poster: string; lab
         preload="none"
         aria-label={label}
         style={{ aspectRatio: aspect }}
-        className="h-36 w-auto rounded-lg object-cover ring-1 ring-grey-200 sm:h-44"
+        className="h-28 w-auto rounded-lg object-cover ring-1 ring-grey-200 sm:h-32"
       />
       <figcaption className="mt-1 text-xs text-grey-500">{label}</figcaption>
     </figure>
