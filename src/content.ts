@@ -487,7 +487,7 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 export const EXPERIENCE = [
   {
     id: 'cares',
-    role: 'Research Assistant',
+    role: 'Research Assistant Trainee',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Oct 2026',
@@ -527,11 +527,11 @@ export const EXPERIENCE = [
 export const SKILL_GROUPS = [
   {
     id: 'languages',
-    label: 'Programming Languages',
-    // The SWE CV's own first row, plus VHDL — that one is a language on the
-    // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
-    // & Tools instead, which is where the SWE CV files it.
-    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
+    label: 'Languages & Tools',
+    // The SWE CV's own first row (Git and Linux now sit here, not under
+    // Cloud), plus the EEE CV's VHDL, MATLAB and MIPS Assembly, which have
+    // nowhere else to sit here.
+    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly', 'Git', 'Linux'],
   },
   {
     id: 'cloud-devops',
@@ -540,12 +540,12 @@ export const SKILL_GROUPS = [
     // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
     // too). The site names the services the CV's project bullets lean on, and
     // leaves out the plumbing (SNS, SAM, Amplify) so the row stays readable.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
+    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'Docker', 'Terraform', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
+    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Scikit-Learn', 'OpenCV', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
   },
   {
     id: 'hardware-eda',
@@ -737,6 +737,6 @@ export const HIGHLIGHTS = [
   '3rd place · 2025 ECSE Design Competition',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across hardware & software`,
-  'Research Assistant · CARES robotics lab, UoA',
+  'Research Assistant Trainee · CARES robotics lab, UoA',
   'Robotics Instructor & Competition Coach at ciLab',
 ]
