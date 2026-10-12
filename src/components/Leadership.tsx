@@ -112,7 +112,7 @@ export default function Leadership() {
                 as="li"
                 key={`${r.title}-${r.org}`}
                 delay={i * 70}
-                className={`relative block pl-12 md:pl-0 first:mt-0 md:first:mt-0 mt-4 md:-mt-20`}
+                className={`pointer-events-none relative block pl-12 md:pl-0 first:mt-0 md:first:mt-0 mt-4 md:-mt-20`}
               >
                 {/* Boxed, unlike Education just above it, and the overlap is
                     why. `md:-mt-20` pulls every entry up over the one before
@@ -123,7 +123,7 @@ export default function Leadership() {
                     sequence, nothing said where one stopped. A hairline under
                     each was not enough either, so the outline is back: here it
                     is the thing doing the separating, not decoration. */}
-                <div className={`card relative md:w-[calc(50%-3rem)] ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                <div className={`card pointer-events-auto relative md:w-[calc(50%-3rem)] ${left ? 'md:mr-auto' : 'md:ml-auto'}`}>
                   {/* node sitting on the curve (desktop, inner edge) */}
                   <span
                     ref={(el: HTMLSpanElement | null) => { nodeRefs.current[i] = el }}

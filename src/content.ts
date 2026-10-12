@@ -683,7 +683,7 @@ export const ROLES: {
     period: 'Jul 2024 - Oct 2026',
     pinned: true,
     image: './KEB.webp',
-    link: { label: 'Instagram', href: 'https://www.instagram.com/uoa.keb' },
+    link: { label: '@uoa.keb', href: 'https://www.instagram.com/uoa.keb' },
     description:
       'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
   },
