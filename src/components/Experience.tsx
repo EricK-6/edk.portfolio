@@ -1,6 +1,39 @@
 import Section from './Section'
 import Reveal from './Reveal'
+import { useEffect, useRef } from 'react'
 import { EXPERIENCE } from '../content'
+
+// plays only while on screen, so three clips don't decode off-screen
+function Clip({ src, poster, label, aspect }: { src: string; poster: string; label: string; aspect: string }) {
+  const ref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const v = ref.current
+    if (!v) return
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) v.play().catch(() => { /* autoplay blocked: poster stays */ })
+      else v.pause()
+    })
+    io.observe(v)
+    return () => io.disconnect()
+  }, [])
+  return (
+    <figure className="flex-none">
+      <video
+        ref={ref}
+        src={src}
+        poster={poster}
+        muted
+        loop
+        playsInline
+        preload="none"
+        aria-label={label}
+        style={{ aspectRatio: aspect }}
+        className="h-36 w-auto rounded-lg object-cover ring-1 ring-grey-200 sm:h-44"
+      />
+      <figcaption className="mt-1 text-xs text-grey-500">{label}</figcaption>
+    </figure>
+  )
+}
 
 export default function Experience() {
   return (
@@ -38,6 +71,11 @@ export default function Experience() {
                     </li>
                   ))}
                 </ul>
+                {job.clips && (
+                  <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
+                    {job.clips.map((c) => <Clip key={c.src} {...c} />)}
+                  </div>
+                )}
               </div>
             </div>
           </Reveal>

@@ -492,6 +492,11 @@ export const EXPERIENCE = [
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Oct 2026',
     image: './UoA.jpg',
+    clips: [
+      { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: first run' },
+      { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Robot soccer: defence' },
+      { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2 navigation' },
+    ],
     bullets: [
       'Analysed the CARES Lab robot soccer system: camera calibration, vision processing and strategy design.',
       'Investigated TurtleBot2 navigation and implemented LiDAR integration and control with ROS and Python.',
@@ -668,6 +673,7 @@ export const ROLES: {
   pinned?: boolean
   image: string
   description: string
+  link?: { label: string; href: string }
 }[] = [
   {
     id: 'keb',
@@ -677,6 +683,7 @@ export const ROLES: {
     period: 'Jul 2024 - Oct 2026',
     pinned: true,
     image: './KEB.webp',
+    link: { label: 'Instagram', href: 'https://www.instagram.com/uoa.keb' },
     description:
       'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
   },

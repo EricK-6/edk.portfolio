@@ -154,6 +154,17 @@ export default function Leadership() {
                   <p className="mt-3 text-sm leading-relaxed text-grey-700">
                     {r.description}
                   </p>
+                  {r.link && (
+                    <a
+                      href={r.link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-track={`leadership-${r.id}-link`}
+                      className="mt-2 inline-block text-sm font-semibold text-accent underline underline-offset-2"
+                    >
+                      {r.link.label} ↗
+                    </a>
+                  )}
                 </div>
               </Reveal>
             )
