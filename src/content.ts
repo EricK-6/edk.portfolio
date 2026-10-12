@@ -493,8 +493,8 @@ export const EXPERIENCE = [
     period: 'Jul 2026 - Oct 2026',
     image: './UoA.jpg',
     bullets: [
-      "Studied the lab's robot soccer system: camera calibration, vision processing, and decision strategy design.",
-      'Investigated TurtleBot2 navigation, LiDAR integration, and control using ROS and Python.',
+      "Analysed the robot soccer system at UoA's CARES Lab, covering camera calibration, vision processing and decision strategy design, to support its planned migration to a modern framework.",
+      'Investigated TurtleBot2 navigation algorithms and implemented LiDAR integration and control using ROS and Python, building hands-on experience in autonomous systems.',
     ],
   },
   {
