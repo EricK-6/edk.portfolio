@@ -493,9 +493,9 @@ export const EXPERIENCE = [
     period: 'Jul 2026 - Oct 2026',
     image: './UoA.jpg',
     clips: [
-      { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: first run' },
-      { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Robot soccer: defence' },
-      { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2 navigation' },
+      { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: vision tracking' },
+      { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Robot soccer: defence strategy' },
+      { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2: LiDAR navigation' },
     ],
     bullets: [
       'Analysed the CARES Lab robot soccer system: camera calibration, vision processing and strategy design.',
