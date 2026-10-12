@@ -527,11 +527,11 @@ export const EXPERIENCE = [
 export const SKILL_GROUPS = [
   {
     id: 'languages',
-    label: 'Languages & Tools',
-    // The SWE CV's own first row (Git and Linux now sit here, not under
-    // Cloud), plus the EEE CV's VHDL, MATLAB and MIPS Assembly, which have
-    // nowhere else to sit here.
-    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly', 'Git', 'Linux'],
+    label: 'Programming Languages',
+    // The SWE CV's own first row, plus VHDL — that one is a language on the
+    // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
+    // & Tools instead, which is where the SWE CV files it.
+    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
   },
   {
     id: 'cloud-devops',
@@ -540,7 +540,7 @@ export const SKILL_GROUPS = [
     // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
     // too). The site names the services the CV's project bullets lean on, and
     // leaves out the plumbing (SNS, SAM, Amplify) so the row stays readable.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'Docker', 'Terraform', 'GitHub Actions'],
+    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
