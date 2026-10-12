@@ -101,7 +101,7 @@ export default function Hero() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
           </span>
           <span>
-            <span className="font-semibold">Status:</span> Open to chat and collaborations
+            <span className="font-semibold">Status:</span> Open to chats and collaborations
           </span>
         </p>
 
