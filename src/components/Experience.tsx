@@ -1,7 +1,7 @@
 import Section from './Section'
 import Reveal from './Reveal'
 import { useEffect, useRef } from 'react'
-import { EXPERIENCE } from '../content'
+import { EXPERIENCE, PROFILE } from '../content'
 
 // plays only while on screen, so three clips don't decode off-screen
 function Clip({ src, poster, label, aspect }: { src: string; poster: string; label: string; aspect: string }) {
@@ -37,7 +37,22 @@ function Clip({ src, poster, label, aspect }: { src: string; poster: string; lab
 
 export default function Experience() {
   return (
-    <Section id="experience" kicker="Experience" title="Where I've worked">
+    <Section
+      id="experience"
+      kicker="Experience"
+      title="Where I've worked"
+      aside={
+        <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-grey-500">
+          <span className="relative flex h-5 w-4 items-start justify-center" aria-hidden="true">
+            <span className="absolute bottom-0 h-1.5 w-3 rounded-full bg-accent/40 motion-safe:animate-ping" />
+            <svg viewBox="0 0 24 24" className="relative h-4 w-4 fill-accent motion-safe:animate-pulse">
+              <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
+            </svg>
+          </span>
+          {PROFILE.city}
+        </span>
+      }
+    >
       <ol className="relative border-l border-grey-200 pl-6 space-y-10">
         {EXPERIENCE.map((job, i) => (
           <Reveal key={job.role + job.org} as="li" delay={i * 100} className="relative block">
