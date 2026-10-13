@@ -493,8 +493,8 @@ export const EXPERIENCE = [
     period: 'Jul 2026 - Oct 2026',
     image: './UoA.jpg',
     clips: [
-      { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Soccer: vision' },
-      { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Soccer: defence' },
+      { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: vision tracking' },
+      { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Robot soccer: defence strategy' },
       { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2' },
     ],
     bullets: [
