@@ -30,7 +30,7 @@ function Clip({ src, poster, label, aspect }: { src: string; poster: string; lab
         style={{ aspectRatio: aspect }}
         className="h-28 w-auto rounded-lg object-cover ring-1 ring-grey-200 sm:h-32"
       />
-      <figcaption className="mt-1 w-0 min-w-full text-xs leading-snug text-grey-500">{label}</figcaption>
+      <figcaption className="mt-1 w-0 min-w-full whitespace-nowrap text-xs leading-snug text-grey-500">{label}</figcaption>
     </figure>
   )
 }
