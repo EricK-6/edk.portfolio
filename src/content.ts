@@ -495,7 +495,7 @@ export const EXPERIENCE = [
     clips: [
       { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: vision tracking' },
       { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Robot soccer: defence strategy' },
-      { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2: LiDAR navigation' },
+      { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2' },
     ],
     bullets: [
       'Trainee researcher on the CARES Lab robot soccer system: camera calibration, vision and strategy design.',
