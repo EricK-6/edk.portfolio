@@ -355,7 +355,7 @@ export const PROJECTS: Project[] = [
       'Designed a dual channel energy monitoring system, using **signal conditioned ADC sampling** on an **ATmega328P**, to compute RMS voltage, peak current, and average power in real time.',
       'Built and validated a **double layer PCB**, using **Altium Designer** and UART based output, to meet a **±5% full scale** accuracy spec across a 2.5 to 7.5 VA load range.',
     ],
-    tech: ['C', 'ATmega328P', 'Atmel AVR', 'Altium Designer', 'LTspice', 'Proteus'],
+    tech: ['C', 'ATmega328P', 'LTspice', 'Atmel AVR', 'Proteus', 'Altium Designer'],
     image: './energy_monitor.webp',
     video: './smart.mp4',
     // the media strip is far wider than it is tall, so a centred crop of this
@@ -404,7 +404,7 @@ export const PROJECTS: Project[] = [
       'Built a PyQt6 desktop analytics app with **pandas and Matplotlib**, automating a manual Excel workflow across **3 business units** and **52,000+ records**, cutting report time from a full day to **under 30 seconds**.',
       "Implemented three forecasting models across **36 months of data**, combining **scikit-learn** regression with a custom **NumPy** build of Holt's Exponential Smoothing, validated with MAE and RMSE.",
     ],
-    tech: ['Python', 'PyQt6', 'Pandas', 'Matplotlib', 'NumPy', 'scikit-learn'],
+    tech: ['Python', 'PyQt6', 'Pandas', 'Matplotlib', 'scikit-learn', 'NumPy'],
     image: './roastworks.webp',
     // Coursework repo, private university org: see Smart Energy Monitor.
     links: [],
@@ -457,7 +457,7 @@ export const PROJECTS: Project[] = [
     shelf: 'uni',
     discipline: 'hardware',
     ongoing: true,
-    tech: ['C', 'PSoC', 'LTSpice', 'MATLAB', 'Altium Designer'],
+    tech: ['C', 'LTSpice', 'PSoC', 'MATLAB', 'Altium Designer'],
     links: [],
   },
 ]
