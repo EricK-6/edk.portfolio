@@ -487,7 +487,7 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 export const EXPERIENCE = [
   {
     id: 'cares',
-    role: 'Research Assistant Trainee',
+    role: 'Research Assistant',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Oct 2026',
@@ -498,7 +498,7 @@ export const EXPERIENCE = [
       { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2: LiDAR navigation' },
     ],
     bullets: [
-      'Analysed the CARES Lab robot soccer system: camera calibration, vision processing and strategy design.',
+      'Trainee researcher on the CARES Lab robot soccer system: camera calibration, vision and strategy design.',
       'Investigated TurtleBot2 navigation and implemented LiDAR integration and control with ROS and Python.',
     ],
   },
@@ -744,6 +744,6 @@ export const HIGHLIGHTS = [
   '3rd place · 2025 ECSE Design Competition',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across hardware & software`,
-  'Research Assistant Trainee · CARES robotics lab, UoA',
+  'Research Assistant · CARES robotics lab, UoA',
   'Robotics Instructor & Competition Coach at ciLab',
 ]
