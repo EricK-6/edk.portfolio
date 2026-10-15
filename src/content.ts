@@ -47,7 +47,7 @@ export const HERO_PHRASES = [
   'dashboards that forecast the quarter',
   'a robot that reads the road',
   'a Flappy Bird in pure VHDL',
-  'A* pathfinding on a PSoC',
+  'robots that find their own way',
   'energy meters on a custom PCB',
 ]
 
