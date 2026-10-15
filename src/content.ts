@@ -446,7 +446,7 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'Auto-Pathfinding Bot',
+    title: 'A* PathFinder',
     slug: 'autonomous-pathfinding-bot',
     blurb: 'Coming soon: pathfinding robot on a PSoC, with its own board',
     icon: 'car',
