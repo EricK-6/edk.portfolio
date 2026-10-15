@@ -53,7 +53,7 @@ export default function Footer() {
           )}
         </div>
 
-        <ul className="flex items-center gap-4">
+        <ul className="-mx-2.5 flex items-center">
           {LINKS.map(([label, href]) => (
             <li key={label}>
               <a
@@ -63,7 +63,7 @@ export default function Footer() {
                 rel={href.startsWith('mailto:') ? undefined : 'noreferrer'}
                 aria-label={label}
                 title={label}
-                className="block text-grey-500 transition-colors hover:text-grey-900"
+                className="block p-2.5 text-grey-500 transition-colors hover:text-grey-900"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
                   <path fillRule="evenodd" d={ICONS[label]} />

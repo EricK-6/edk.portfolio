@@ -563,7 +563,7 @@ export const SKILL_GROUPS = [
 
 export const DEGREE = {
   id: 'uoa',
-  school: 'The University of Auckland',
+  school: 'University of Auckland',
   city: 'Auckland, NZ',
   period: 'Expected Graduation Nov 2027',
   award: 'Bachelor of Engineering (Honours) · Computer Systems Engineering',
@@ -590,7 +590,7 @@ export const SCHOOL = {
   city: 'Auckland, NZ',
   period: 'Aug 2018 - Dec 2023',
   award: 'High School Diploma',
-  note: 'Completed CIE IGCSE, AS, and A2 level courses',
+  note: 'Cambridge International Education (CIE) IGCSE, AS, and A2 levels',
   // The diligence awards were the substance of the "multiple diligence awards"
   // line, so they are shown as the awards themselves — one chip per subject,
   // with the syllabus it was sat under.
