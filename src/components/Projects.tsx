@@ -118,7 +118,7 @@ export default function Projects() {
               </div>
               <div className="flex flex-col gap-5">
                 {items.map((p) => (
-                  <ProjectCard key={p.title} project={p} />
+                  <ProjectCard key={p.title} project={p} equal />
                 ))}
               </div>
             </div>
@@ -361,7 +361,11 @@ function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }
 // The detail is an overlay pinned to the flip region rather than an expansion,
 // so opening one never changes the height of its grid row and never pushes the
 // five cards around it.
-function ProjectCard({ project }: { project: Project }) {
+//
+// `equal` pins the height, so the degree shelf's six cards are one size
+// whatever they hold: the front already stretches (flex-1) and the footer sits
+// on the bottom edge, so a card with less to say just has more air in it.
+function ProjectCard({ project, equal = false }: { project: Project; equal?: boolean }) {
   const { title, tag, role, highlights, tech, icon, links, log } = project
   const [open, setOpen] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
@@ -393,7 +397,7 @@ function ProjectCard({ project }: { project: Project }) {
   }, [open])
 
   return (
-    <article id={project.slug} className="card flex h-full flex-col overflow-hidden !p-0">
+    <article id={project.slug} className={`card flex flex-col overflow-hidden !p-0 ${equal ? 'h-[27rem]' : 'h-full'}`}>
       {/* the part that turns over */}
       <div className="relative flex flex-1 flex-col">
         <div
