@@ -33,22 +33,24 @@ export type ResumeId = (typeof RESUMES)[number]['id']
 // --- intro -------------------------------------------------------------------
 
 // The rotating end of "Kia ora, I build …". Each one is a project further down
-// the page, said the way you would say it out loud.
+// the page, said the way you would say it out loud. The "a" lives in Hero.tsx,
+// so every phrase here must start with a consonant sound.
 export const HERO_PHRASES = [
-  'embedded systems',
+  'thing that quietly helps people',
   // the four I lead with, in the order I would tell them: Winnie, Spottern,
   // PULSE, KEB. Then the degree work by discipline, as the cards are laid out:
   // software, firmware, hardware, newest first within each.
-  'robots that hold your gaze',
-  'fraud detection that cites its evidence',
-  'serverless pipelines on AWS',
-  'a website a whole club runs on',
-  'meal planners for Android',
-  'dashboards that forecast the quarter',
-  'a robot that reads the road',
-  'a Flappy Bird in pure VHDL',
-  'robots that find their own way',
-  'energy meters on a custom PCB',
+  // Plain words on purpose: the card blurbs carry the jargon, these should not.
+  'robot that looks you in the eye',
+  'tool that spots fraud and shows why',
+  'mood tracker for what people post',
+  'website a whole club runs on',
+  'phone app that plans your meals',
+  'forecasting app for the quarter ahead',
+  'tiny car that sees the road',
+  'Flappy Bird on a chip',
+  'rover that plans its own route',
+  'meter that tracks your power use',
 ]
 
 // --- projects ----------------------------------------------------------------

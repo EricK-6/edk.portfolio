@@ -124,7 +124,9 @@ export default function Hero() {
           className="lift-in mt-5 flex min-h-[5.25rem] flex-wrap content-start items-center justify-center gap-x-2 text-lg text-grey-800 min-[376px]:min-h-[3.5rem] sm:min-h-[2rem] sm:text-xl"
           style={{ animationDelay: '240ms' }}
         >
-          <span>Kia ora, I build</span>
+          <span>
+            Kia ora, I build<span aria-hidden="true"> a</span>
+          </span>
           {/* Hidden from screen readers: read aloud, this was whatever half of
               a phrase happened to be typed at that instant, followed by the
               whole list again from the sr-only sentence below. */}
