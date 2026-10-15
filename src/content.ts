@@ -436,7 +436,7 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'Eyed JetBot',
+    title: 'Traffic Eye',
     slug: 'embedded-vision-jetbot',
     blurb: 'Coming soon: vision on a Raspberry Pi, OpenCV on embedded Linux',
     icon: 'bot',
@@ -452,7 +452,7 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'A* PhotonTracker',
+    title: 'Maze Runner',
     slug: 'autonomous-pathfinding-bot',
     blurb: 'Coming soon: pathfinding robot on a PSoC, with its own board',
     icon: 'car',
