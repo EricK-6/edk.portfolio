@@ -458,6 +458,11 @@ export const PROJECTS: Project[] = [
     discipline: 'hardware',
     ongoing: true,
     tech: ['C', 'LTSpice', 'PSoC', 'MATLAB', 'Altium Designer'],
+    image: './photontracker.webp', // also the video's poster
+    video: './photontracker.mp4',
+    // portrait clip in a wide strip: bias the crop down and right to hold the
+    // robot rather than bare floor
+    focus: '70% 75%',
     links: [],
   },
 ]
