@@ -45,9 +45,9 @@ export const HERO_PHRASES = [
   'a website a whole club runs on',
   'meal planners for Android',
   'dashboards that forecast the quarter',
-  'vision-based traffic robots',
+  'a robot that reads the road',
   'a Flappy Bird in pure VHDL',
-  'robots that find their own path',
+  'a robot that finds its own way',
   'energy meters on a custom PCB',
 ]
 
@@ -436,7 +436,7 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'Traffic Eye',
+    title: 'Eyed JetBot',
     slug: 'embedded-vision-jetbot',
     blurb: 'Coming soon: vision on a Raspberry Pi, OpenCV on embedded Linux',
     icon: 'bot',
@@ -452,7 +452,7 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'Maze Runner',
+    title: 'A* PhotonTracker',
     slug: 'autonomous-pathfinding-bot',
     blurb: 'Coming soon: pathfinding robot on a PSoC, with its own board',
     icon: 'car',
