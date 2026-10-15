@@ -37,16 +37,17 @@ export type ResumeId = (typeof RESUMES)[number]['id']
 export const HERO_PHRASES = [
   'embedded systems',
   // the four I lead with, in the order I would tell them: Winnie, Spottern,
-  // PULSE, KEB. Then everything else, newest first.
+  // PULSE, KEB. Then the degree work by discipline, as the cards are laid out:
+  // software, firmware, hardware, newest first within each.
   'robots that hold your gaze',
   'fraud detection that cites its evidence',
   'serverless pipelines on AWS',
   'a website a whole club runs on',
-  'robots that find their own path',
-  'vision-based traffic robots',
-  'a Flappy Bird in pure VHDL',
   'meal planners for Android',
   'dashboards that forecast the quarter',
+  'vision-based traffic robots',
+  'a Flappy Bird in pure VHDL',
+  'robots that find their own path',
   'energy meters on a custom PCB',
 ]
 
