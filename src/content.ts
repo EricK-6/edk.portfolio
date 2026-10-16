@@ -554,7 +554,7 @@ export const SKILL_GROUPS = [
     // The SWE CV's own first row, plus VHDL — that one is a language on the
     // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
     // & Tools instead, which is where the SWE CV files it.
-    items: ['Python', 'Java', 'C/C++', 'HTML/CSS', 'JavaScript', 'TypeScript', 'R', 'MATLAB', 'SQL', 'VHDL', 'MIPS Assembly'],
+    items: ['Python', 'C/C++', 'Java', 'JavaScript', 'TypeScript', 'HTML/CSS', 'SQL', 'R', 'MATLAB', 'VHDL', 'MIPS Assembly'],
   },
   {
     id: 'cloud-devops',
@@ -563,12 +563,12 @@ export const SKILL_GROUPS = [
     // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
     // too). The site names the services the CV's project bullets lean on, and
     // leaves out the plumbing (SNS, SAM, Amplify) so the row stays readable.
-    items: ['AWS', 'Lambda', 'S3', 'DynamoDB', 'Bedrock', 'Textract', 'Comprehend', 'Kinesis', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
+    items: ['AWS', 'Lambda', 'DynamoDB', 'S3', 'Kinesis', 'Bedrock', 'Textract', 'Comprehend', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'Scikit-Learn', 'OpenCV', 'Android Studio', 'Figma', 'REST APIs', 'Spring Boot'],
+    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'Scikit-Learn', 'OpenCV', 'Android Studio', 'Figma'],
   },
   {
     id: 'hardware-eda',
@@ -613,9 +613,9 @@ export const SCHOOL = {
   // line, so they are shown as the awards themselves — one chip per subject,
   // with the syllabus it was sat under.
   diligence: [
-    { syllabus: 'NCEA', subject: 'English' },
-    { syllabus: 'IGCSE', subject: 'Computer Science' },
     { syllabus: 'AS', subject: 'Physics' },
+    { syllabus: 'IGCSE', subject: 'Computer Science' },
+    { syllabus: 'NCEA', subject: 'English' },
   ],
   logo: './pinehurst.jpeg',
 }
