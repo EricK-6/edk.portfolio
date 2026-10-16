@@ -106,7 +106,7 @@ export default function Contact() {
                 onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: '' })) }}
                 aria-invalid={errors.name ? true : undefined}
                 className={inputClass(errors.name)}
-                placeholder="Jane Doe"
+                placeholder="Jane Streeter"
               />
             </Field>
             <Field label="Your email" error={errors.email}>
@@ -129,7 +129,7 @@ export default function Contact() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className={inputClass()}
-              placeholder="Hello"
+              placeholder="I'm here for ..."
             />
           </Field>
           <Field label="Message" error={errors.message}>
