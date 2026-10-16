@@ -36,7 +36,7 @@ export type ResumeId = (typeof RESUMES)[number]['id']
 // the page, said the way you would say it out loud. The "a" lives in Hero.tsx,
 // so every phrase here must start with a consonant sound.
 export const HERO_PHRASES = [
-  'thing that quietly helps people',
+  'solution that quietly helps people',
   // the four I lead with, in the order I would tell them: Winnie, Spottern,
   // PULSE, KEB. Then the degree work by discipline, as the cards are laid out:
   // software, firmware, hardware, newest first within each.
@@ -533,7 +533,7 @@ export const EXPERIENCE = [
   },
   {
     id: 'twelve',
-    role: 'Front of House',
+    role: 'Front of House (FoH)',
     org: 'Twelve Restaurant',
     period: 'Jul 2024 - Jan 2025',
     image: './twelve.jpg',
@@ -758,10 +758,10 @@ const issuers = [...new Set(CERTS.map((c) => c.issuer))]
 // context for all of it. The volunteering stays out: it is a section of its
 // own further down.
 export const HIGHLIGHTS = [
-  'Top 8 finalist · 2026 AWS×BNZ AI Hackathon',
-  '3rd place · 2025 ECSE Design Competition',
+  'Top 8 finalist · AWS×BNZ AI Hackathon 2026',
+  '3rd place · ECSE Design Competition 2025',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
-  `${PROJECTS.length} projects across hardware & software`,
-  'Research Assistant Trainee · CARES robotics lab, UoA',
-  'Robotics Instructor & Competition Coach at ciLab',
+  `${PROJECTS.length} projects across cloud and robotics`,
+  'Research Assistant Trainee · CARES lab @ UoA',
+  'Robotics Instructor & Competition Coach @ ciLab',
 ]
