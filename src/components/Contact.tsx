@@ -140,7 +140,7 @@ export default function Contact() {
               rows={5}
               aria-invalid={errors.message ? true : undefined}
               className={`${inputClass(errors.message)} resize-y min-h-[120px]`}
-              placeholder="Hi Eric, …"
+              placeholder="Hi Eric, This is ..."
             />
           </Field>
           <div className="flex flex-wrap items-center gap-3">
