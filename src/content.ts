@@ -762,6 +762,6 @@ export const HIGHLIGHTS = [
   '3rd place · 2025 ECSE Design Competition',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across hardware & software`,
-  'Research Assistant · CARES robotics lab, UoA',
+  'Research Assistant Trainee · CARES robotics lab, UoA',
   'Robotics Instructor & Competition Coach at ciLab',
 ]
