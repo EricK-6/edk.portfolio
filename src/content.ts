@@ -505,7 +505,7 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 export const EXPERIENCE = [
   {
     id: 'cares',
-    role: 'Research Assistant',
+    role: 'Research Assistant Trainee',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Oct 2026',
