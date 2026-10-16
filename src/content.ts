@@ -451,6 +451,10 @@ export const PROJECTS: Project[] = [
     discipline: 'firmware',
     ongoing: true,
     tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Embedded Linux'],
+    image: './jetbot.webp', // also the video's poster
+    video: './jetbot.mp4',
+    // landscape clip: the robot sits just left of centre, low in the frame
+    focus: '45% 60%',
     links: [],
   },
   {
