@@ -22,31 +22,34 @@ export default function About() {
           side by side, which left a column of empty glass whenever the text
           was short. Stacked, the paragraphs can each be two lines without
           stranding anything, so each one carries a single idea: who he is,
-          how he builds, where he is now, what he is after. */}
+          how he builds, where he has been, (where he is now), who he is off
+          the clock, and the invitation. */}
       <div>
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
-            I'm Eric, a penultimate Computer Systems Engineering student at the
+            I'm Eric, a penultimate-year Computer Systems Engineering student at the
             University of Auckland, working across <Bold>AI</Bold>,{' '}
             <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
           </p>
           <p>
-            Most of what I build ends up on <Bold>AWS</Bold>. Studying for the{' '}
-            <Bold>Solutions Architect - Associate</Bold> certification changed how I get it there:
-            I design for the failure modes now, rather than just wiring services together.
+            Most of what I build ends up on <Bold>AWS</Bold>. Earning the{' '}
+            <Bold>Solutions Architect Associate</Bold> certification changed how I get it there:
+            I design for the failure modes first, rather than just wiring services together.
           </p>
           <p>
-            I was a research assistant trainee at <Bold>CARES</Bold>, studying robot soccer and navigation,
-            and taught robotics at <Bold>ciLab</Bold>, helping students build and program the
-            robots they compete with.
+            At <Bold>CARES</Bold> I trained as a research assistant on robot soccer vision and
+            TurtleBot navigation, and at <Bold>ciLab</Bold> I taught robotics, coaching student
+            teams for national competitions.
+          </p>
+          {/* "I'm currently ..." goes here: the paragraph above is past tense
+              on purpose, so the present tense is left for this one. */}
+          <p>
+            When I'm not building, I play <Bold>ukulele</Bold> on my own and{' '}
+            <Bold>drums</Bold> with others, and train at the <Bold>gym</Bold>.
           </p>
           <p>
-            Outside engineering, I play the <Bold>ukulele</Bold> on my own and{' '}
-            <Bold>drums</Bold> with other people, and I train at the <Bold>gym</Bold>.
-          </p>
-          <p>
-            I'm open to interesting conversations, side projects and collaborations, so don't
-            hesitate to <a href="#contact" className="font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
+            I'm always open to a good conversation, a side project or a collaboration, so feel
+            free to <a href="#contact" className="font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
           </p>
         </Reveal>
 
