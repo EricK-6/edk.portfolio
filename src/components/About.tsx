@@ -27,7 +27,7 @@ export default function About() {
       <div>
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
-            I'm Eric, a penultimate-year Computer Systems Engineering student at the
+            I'm Eric, a penultimate Computer Systems Engineering student at the
             University of Auckland, working across <Bold>AI</Bold>,{' '}
             <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
           </p>
@@ -44,8 +44,8 @@ export default function About() {
           {/* "I'm currently ..." goes here: the paragraph above is past tense
               on purpose, so the present tense is left for this one. */}
           <p>
-            When I'm not building, I play <Bold>ukulele</Bold> on my own and{' '}
-            <Bold>drums</Bold> with others, and train at the <Bold>gym</Bold>.
+            When I'm not building, I play ukulele on my own and drums with others,
+            and train at the gym.
           </p>
           <p>
             I'm always open to a good conversation, a side project or a collaboration, so feel
