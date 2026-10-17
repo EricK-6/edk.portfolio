@@ -28,8 +28,8 @@ export default function About() {
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
             I'm Eric, a penultimate Computer Systems Engineering student at the
-            University of Auckland. I work where hardware meets the cloud:{' '}
-            <Bold>AI</Bold>, <Bold>robotics</Bold> and <Bold>AWS</Bold>.
+            University of Auckland. My work spans <Bold>AI</Bold>, <Bold>robotics</Bold> and{' '}
+            <Bold>AWS</Bold>.
           </p>
           <p>
             Earning the <Bold>AWS Solutions Architect Associate</Bold> certification changed how
