@@ -29,7 +29,7 @@ export default function About() {
           <p>
             I'm Eric, a penultimate Computer Systems Engineering student at the
             University of Auckland. My work spans <Bold>AI</Bold>, <Bold>robotics</Bold> and{' '}
-            <Bold>AWS</Bold>.
+            <Bold>the cloud</Bold>.
           </p>
           <p>
             Earning the <Bold>AWS Solutions Architect Associate</Bold> certification changed how
@@ -40,8 +40,9 @@ export default function About() {
             and TurtleBot navigation, and taught robotics at <Bold>ciLab</Bold>, coaching student
             teams for national competitions.
           </p>
-          {/* "I'm currently ..." goes here: the paragraph above is past tense
-              on purpose, so the present tense is left for this one. */}
+          {/* "I'm currently ..." (the internship) goes here: the paragraph
+              above is past tense on purpose, so the present tense is left for
+              this one. */}
           <p>
             When I'm not building, I drum with others and train at the gym. One taught me to
             listen, the other to stay consistent.
