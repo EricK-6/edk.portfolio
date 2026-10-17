@@ -534,7 +534,7 @@ export const EXPERIENCE = [
   },
   {
     id: 'twelve',
-    role: 'Front of House (FoH)',
+    role: 'Front of House',
     org: 'Twelve Restaurant',
     period: 'Jul 2024 - Jan 2025',
     image: './twelve.jpg',
