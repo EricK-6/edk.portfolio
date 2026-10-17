@@ -28,17 +28,16 @@ export default function About() {
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
             I'm Eric, a penultimate Computer Systems Engineering student at the
-            University of Auckland, working across <Bold>AI</Bold>,{' '}
-            <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
+            University of Auckland. I work where hardware meets the cloud:{' '}
+            <Bold>AI</Bold>, <Bold>robotics</Bold> and <Bold>AWS</Bold>.
           </p>
           <p>
-            Most of what I build ends up on <Bold>AWS</Bold>. Earning the{' '}
-            <Bold>Solutions Architect Associate</Bold> certification changed how I get it there:
-            I design for the failure modes first, rather than just wiring services together.
+            Earning the <Bold>AWS Solutions Architect Associate</Bold> certification changed how
+            I build. I design for the failure modes first, rather than just wiring services together.
           </p>
           <p>
-            At <Bold>CARES</Bold> I trained as a research assistant on robot soccer vision and
-            TurtleBot navigation, and at <Bold>ciLab</Bold> I taught robotics, coaching student
+            I trained as a research assistant at <Bold>CARES</Bold>, working on robot soccer vision
+            and TurtleBot navigation, and taught robotics at <Bold>ciLab</Bold>, coaching student
             teams for national competitions.
           </p>
           {/* "I'm currently ..." goes here: the paragraph above is past tense
@@ -47,8 +46,8 @@ export default function About() {
             When I'm not building, I play drums with others and train at the gym.
           </p>
           <p>
-            I'm always open to a good conversation, a side project or a collaboration, so feel
-            free to <a href="#contact" className="font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
+            Whether it's a conversation, a side project or a collaboration, feel free
+            to <a href="#contact" className="whitespace-nowrap font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
           </p>
         </Reveal>
 
