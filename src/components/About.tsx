@@ -28,7 +28,7 @@ export default function About() {
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
             I'm Eric, a penultimate Computer Systems Engineering student at the
-            University of Auckland. My work spans <Bold>AI</Bold>, <Bold>Robotics</Bold> and{' '}
+            University of Auckland. I work across <Bold>AI</Bold>, <Bold>Robotics</Bold> and{' '}
             <Bold>Cloud Computing</Bold>.
           </p>
           <p>
