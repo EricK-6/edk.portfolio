@@ -48,7 +48,7 @@ export default function About() {
             Nintendo game, always with music on.
           </p>
           <p>
-            Whether it's a conversation, a side project or a collaboration, feel free
+            If any of this sounds interesting, feel free
             to <a href="#contact" className="whitespace-nowrap font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
           </p>
         </Reveal>
