@@ -41,7 +41,8 @@ export default function About() {
             robots they compete with.
           </p>
           <p>
-            Off the clock, I play ukulele on my own, drums with others, and go to the gym.
+            Outside engineering, I play the <Bold>ukulele</Bold> on my own and{' '}
+            <Bold>drums</Bold> with other people, and I train at the <Bold>gym</Bold>.
           </p>
           <p>
             I'm open to interesting conversations, side projects and collaborations, so don't
