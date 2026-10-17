@@ -29,7 +29,7 @@ export default function About() {
           <p>
             I'm Eric, a penultimate Computer Systems Engineering student at the
             University of Auckland. My work spans <Bold>AI</Bold>, <Bold>robotics</Bold> and{' '}
-            <Bold>the cloud</Bold>.
+            <Bold>cloud computing</Bold>.
           </p>
           <p>
             Earning the <Bold>AWS Solutions Architect Associate</Bold> certification changed how
