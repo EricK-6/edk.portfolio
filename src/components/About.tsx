@@ -43,7 +43,7 @@ export default function About() {
           {/* "I'm currently ..." goes here: the paragraph above is past tense
               on purpose, so the present tense is left for this one. */}
           <p>
-            When I'm not building, I drum with others and train at the gym: one taught me to
+            When I'm not building, I drum with others and train at the gym. One taught me to
             listen, the other to stay consistent.
           </p>
           <p>
