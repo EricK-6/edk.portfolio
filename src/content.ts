@@ -19,10 +19,7 @@ export const PROFILE = {
   linkedin: { handle: 'erick06', url: 'https://www.linkedin.com/in/erick06/' },
   // the source of this site, which the footer's "last updated" links to
   repo: 'https://github.com/EricK-6/edk.portfolio',
-  city: 'Auckland, NZ',
-  // the one personal line, set quietly in the footer
-  offClock: 'Off the clock: ukulele on my own, drums with others, and the gym.',
-  timeZone: 'Pacific/Auckland',
+  city: 'Auckland, NZ',  timeZone: 'Pacific/Auckland',
 }
 
 // The two résumés. `aliases` are the words people type for each one, in the
