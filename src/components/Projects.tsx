@@ -665,7 +665,7 @@ const fullName = (name: string) => name.replace(/\s*\([^)]*\)\s*/g, ' ').trim()
 function Affiliation({ label, names }: { label: string; names: string[] }) {
   return (
     <div className="mt-3">
-      <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-grey-400">
+      <div className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-grey-400">
         {label}
       </div>
       <div className="mt-1.5 flex flex-wrap gap-2">

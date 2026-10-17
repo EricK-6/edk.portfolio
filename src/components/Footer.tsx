@@ -38,6 +38,7 @@ export default function Footer() {
           <div className="font-display text-base font-semibold tracking-tight text-grey-900">
             {PROFILE.name}
           </div>
+          <p className="mt-1 text-[13px] text-grey-500">{PROFILE.offClock}</p>
           {stamp && (
             <p className="mt-1 font-mono text-[11px] tracking-wide text-grey-400">
               last updated{' '}

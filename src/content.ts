@@ -20,6 +20,8 @@ export const PROFILE = {
   // the source of this site, which the footer's "last updated" links to
   repo: 'https://github.com/EricK-6/edk.portfolio',
   city: 'Auckland, NZ',
+  // the one personal line, set quietly in the footer
+  offClock: 'Off the clock: ukulele on my own, drums with others, and the gym.',
   timeZone: 'Pacific/Auckland',
 }
 

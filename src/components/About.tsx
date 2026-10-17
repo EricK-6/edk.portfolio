@@ -47,7 +47,7 @@ export default function About() {
         </Reveal>
 
         <Reveal as="aside" delay={120} className="mt-8 block border-t border-grey-200 pt-6">
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-grey-500">Highlights</div>
+          <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">Highlights</h3>
           <ul className="mt-3 grid gap-x-6 gap-y-2.5 text-sm text-grey-700 sm:grid-cols-2">
             {HIGHLIGHTS.map((h) => (
               <li key={h} className="flex gap-2.5">
