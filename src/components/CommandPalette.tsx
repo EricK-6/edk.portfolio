@@ -120,7 +120,7 @@ export default function CommandPalette() {
     { id: 'certifications', label: 'Credentials', hint: 'What I’m certified in', keywords: 'certifications credentials awards aws credly', icon: <HashIcon />, run: () => go('certifications') },
     { id: 'education', label: 'Education', hint: 'Where I’ve studied', keywords: 'education university degree uoa', icon: <HashIcon />, run: () => go('education') },
     { id: 'leadership', label: 'Leadership', hint: 'Keeping things running', keywords: 'leadership activities clubs volunteering', icon: <HashIcon />, run: () => go('leadership') },
-    { id: 'terminal', label: 'Open terminal', hint: 'Ctrl ` ', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
+    { id: 'terminal', label: 'Open terminal', hint: isMac ? '⌘ `' : 'Ctrl `', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
     { id: 'cv-swe', label: 'Download CV : Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV(RESUMES[0].href) },
     { id: 'cv-eee', label: 'Download CV : Hardware', hint: 'PDF', keywords: 'cv resume pdf download hardware electrical electronics eee', icon: <DownloadIcon />, run: () => downloadCV(RESUMES[1].href) },

@@ -28,16 +28,16 @@ export default function About() {
           <p>
             I'm Eric, a penultimate Computer Systems Engineering student at the
             University of Auckland, working across <Bold>AI</Bold>,{' '}
-            <Bold>cloud computing</Bold> and <Bold>robotics</Bold>.
+            <Bold>cloud computing</Bold> and <Bold href="#winnie-the-bot">robotics</Bold>.
           </p>
           <p>
-            Most of what I build ends up on <Bold>AWS</Bold>. Studying for the{' '}
-            <Bold>Solutions Architect - Associate</Bold> certification changed how I get it there:
+            Most of what I build ends up on <Bold href="#spottern">AWS</Bold>. Studying for the{' '}
+            <Bold href="#certifications">Solutions Architect - Associate</Bold> certification changed how I get it there:
             I design for the failure modes now, rather than just wiring services together.
           </p>
           <p>
-            I was a research assistant trainee at <Bold>CARES</Bold>, studying robot soccer and navigation,
-            and taught robotics at <Bold>ciLab</Bold>, helping students build and program the
+            I was a research assistant trainee at <Bold href="#experience">CARES</Bold>, studying robot soccer and navigation,
+            and taught robotics at <Bold href="#experience">ciLab</Bold>, helping students build and program the
             robots they compete with.
           </p>
           <p>
@@ -156,6 +156,19 @@ function CloudMark() {
   )
 }
 
-function Bold({ children }: { children: ReactNode }) {
-  return <strong className="font-semibold text-grey-900">{children}</strong>
+// With an `href`, the claim links to its evidence further down the page: the
+// prose doubles as the contents. The underline is faint at rest so a
+// paragraph of links still reads as a paragraph, and only warms on hover.
+function Bold({ children, href }: { children: ReactNode; href?: string }) {
+  const strong = <strong className="font-semibold text-grey-900">{children}</strong>
+  if (!href) return strong
+  return (
+    <a
+      href={href}
+      data-track={`about-link-${href.slice(1)}`}
+      className="underline decoration-grey-300 decoration-1 underline-offset-[5px] transition-colors hover:decoration-accent"
+    >
+      {strong}
+    </a>
+  )
 }

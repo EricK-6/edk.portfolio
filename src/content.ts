@@ -12,7 +12,9 @@
 export const PROFILE = {
   name: 'Eric Kim',
   fullName: 'Dohyun (Eric) Kim',
-  email: 'dohyunkim290106@gmail.com',
+  // assembled at runtime so the address never sits whole in the bundle,
+  // which is the text most harvesters grep
+  email: ['dohyunkim290106', 'gmail.com'].join('@'),
   github: { handle: 'EricK-6', url: 'https://github.com/EricK-6' },
   linkedin: { handle: 'erick06', url: 'https://www.linkedin.com/in/erick06/' },
   // the source of this site, which the footer's "last updated" links to
