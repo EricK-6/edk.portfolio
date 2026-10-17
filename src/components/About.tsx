@@ -44,8 +44,8 @@ export default function About() {
               above is past tense on purpose, so the present tense is left for
               this one. */}
           <p>
-            When I'm not building, I drum with others and train at the gym. One taught me to
-            listen, the other to stay consistent.
+            When I'm not building, I drum with others, train at the gym or play through a
+            Nintendo game, always with music on.
           </p>
           <p>
             Whether it's a conversation, a side project or a collaboration, feel free
