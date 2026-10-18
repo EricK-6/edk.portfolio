@@ -555,7 +555,7 @@ export const SKILL_GROUPS = [
     // The SWE CV's own first row, plus VHDL — that one is a language on the
     // EEE CV and has nowhere else to sit here. React.js lives under Frameworks
     // & Tools instead, which is where the SWE CV files it.
-    items: ['Python', 'C/C++', 'Java', 'JavaScript', 'TypeScript', 'HTML/CSS', 'SQL', 'R', 'MATLAB', 'VHDL', 'MIPS Assembly'],
+    items: ['Python', 'C/C++', 'Java', 'JavaScript', 'TypeScript', 'HTML/CSS', 'SQL', 'R', 'VHDL', 'MIPS Assembly', 'MATLAB'],
   },
   {
     id: 'cloud-devops',
@@ -564,17 +564,17 @@ export const SKILL_GROUPS = [
     // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
     // too). The site names the services the CV's project bullets lean on, and
     // leaves out the plumbing (SNS, SAM, Amplify) so the row stays readable.
-    items: ['AWS', 'Lambda', 'DynamoDB', 'S3', 'Kinesis', 'Bedrock', 'Textract', 'Comprehend', 'Docker', 'Terraform', 'Linux', 'Git', 'GitHub Actions'],
+    items: ['AWS', 'Lambda', 'DynamoDB', 'S3', 'Bedrock', 'Kinesis', 'Textract', 'Comprehend', 'Docker', 'Terraform', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'Scikit-Learn', 'OpenCV', 'Android Studio', 'Figma'],
+    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'Git', 'Linux', 'Android Studio', 'Figma'],
   },
   {
     id: 'hardware-eda',
     label: 'Hardware & EDA Tools',
-    items: ['Altium Designer', 'LTSpice', 'ModelSim', 'Intel Quartus Prime', 'Proteus', 'Atmel AVR', 'Cypress PSoC', 'AutoCAD'],
+    items: ['Altium Designer', 'LTSpice', 'Intel Quartus Prime', 'ModelSim', 'Cypress PSoC', 'Atmel AVR', 'Proteus', 'AutoCAD'],
   },
 ]
 
