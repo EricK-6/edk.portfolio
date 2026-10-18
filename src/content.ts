@@ -569,7 +569,7 @@ export const SKILL_GROUPS = [
   {
     id: 'frameworks-tools',
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'Git', 'Linux', 'Android Studio', 'Figma'],
+    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'Scikit-Learn', 'OpenCV', 'Git', 'Linux', 'Android Studio', 'Figma'],
   },
   {
     id: 'hardware-eda',
