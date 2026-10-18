@@ -573,8 +573,8 @@ export const SKILL_GROUPS = [
   },
   {
     id: 'hardware-eda',
-    label: 'Hardware & EDA Tools',
-    items: ['Altium Designer', 'LTSpice', 'Intel Quartus Prime', 'ModelSim', 'Cypress PSoC', 'Atmel AVR', 'Proteus', 'AutoCAD'],
+    label: 'Hardware Tools',
+    items: ['Altium Designer', 'LTSpice', 'Intel Quartus Prime', 'ModelSim', 'PSoC', 'Atmel AVR', 'Proteus', 'AutoCAD'],
   },
 ]
 
