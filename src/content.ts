@@ -133,8 +133,8 @@ export const PROJECTS: Project[] = [
     awardedBy: ['Department of Electrical, Computer and Software Engineering (UoA)'],
     role: 'Interactive Companion Robot',
     highlights: [
-      'Designed and built the embedded electrical hardware for an AI powered interviewer robot using **dual ATmega328P NANO** microcontrollers, servos, an AI camera, and audio peripherals to drive simultaneous face tracking, arm movement, and real time voice interaction.',
-      "Prototyped and refined the robot's enclosure through **iterative 3D printing** and multiple design revisions, delivering a compact, durable, and functional physical build that **placed 3rd** in the UoA ECSE Design Competition.",
+      'Contributed to an **AI powered interviewer robot**, using dual ATmega328P Nano microcontrollers to drive **face tracking, arm movement, and real time voice interaction.**',
+      "Prototyped and refined the robot's enclosure, using **iterative 3D printing and multiple design revisions**, to deliver a compact, durable, and functional physical build.",
     ],
     tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.webp',
@@ -185,7 +185,7 @@ export const PROJECTS: Project[] = [
       'Bank of New Zealand (BNZ)',
     ],
     highlights: [
-      'Built a serverless fraud pipeline with **AWS (S3, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock behind a **schema validated JSON contract**, to extract and flag anomalies across an entire bank statement in one call with cited transaction evidence.',
+      'Built a serverless fraud pipeline with **AWS (S3, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock **to extract and flag anomalies from bank statements** with cited transaction evidence.',
       'Proposed the approach to **BNZ** by drawing on prior individual project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
@@ -253,8 +253,9 @@ export const PROJECTS: Project[] = [
     period: 'May 2026 to Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
-      'Built a serverless NLP pipeline with **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using AWS SAM, with a dead letter queue for failed batches, to classify streaming text sentiment in real time.',
-      'Developed a **live React dashboard** on AWS Amplify, applying cloud and AI/ML fundamentals from certification study to a hands on project.',
+      'Built a serverless NLP pipeline with **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using AWS SAM, with idempotent writes, partial batch response retries, and a dead letter queue **to classify streaming text sentiment in real time without data loss.**',
+      'Designed a **bounded DynamoDB GSI query pattern** instead of full table scans to keep read latency low, and batched Comprehend calls per Lambda invocation to cut API overhead.',
+      'Developed a live React dashboard on AWS Amplify with **CI via GitHub Actions (21 frontend, 8 backend tests)** and a client side simulation fallback, applying cloud and AI/ML fundamentals **from certification study to a hands on project.**',
     ],
     tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'GitHub Actions', 'React.js', 'AWS Amplify'],
     image: './pulse.webp',
@@ -311,8 +312,8 @@ export const PROJECTS: Project[] = [
     role: 'Homepage for Club',
     hostedBy: ['Korean Engineering Body (KEB)'],
     highlights: [
-      "Delivered the Korean Engineering Body's **first-ever website** using React 19, Vite, and React Bootstrap, giving the club a centralised hub for events and activities.",
-      'Collaborated with senior software students to ship a **production-ready platform** from scratch.',
+      "Delivered the Korean Engineering Body's **first website** with **React 19, Vite, and React Bootstrap**, giving the club a centralised hub for events, registration links, and updates.",
+      'Collaborated with **senior software students** through the KEB Project Playground competition, shipping a **production ready platform** from scratch.',
     ],
     tech: ['HTML/CSS', 'JavaScript', 'React.js', 'Node.js'],
     image: './KEBWebDesign.webp',
