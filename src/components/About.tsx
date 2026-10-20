@@ -44,8 +44,8 @@ export default function About() {
               above is past tense on purpose, so the present tense is left for
               this one. */}
           <p>
-            When I'm not building, I drum with others, train at the gym or play through a
-            Nintendo game, always with music on.
+            When I'm not building, I drum with others, train at the gym, always with
+            music on. Oh, and I love vertical mouse.
           </p>
           <p>
             If any of this sounds interesting, feel free
