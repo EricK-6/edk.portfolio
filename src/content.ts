@@ -431,8 +431,8 @@ export const PROJECTS: Project[] = [
     org: 'University of Auckland (UoA)',
     role: 'Android Meal Planning App',
     highlights: [
-      'Built an Android recipe and meal planning app in **Java** with **Firebase Firestore**, enabling users to browse cuisines, search food items, and persist personalised meal plans.',
-      'Implemented a **nutrition goal tracking** system using SharedPreferences to set and track daily targets.',
+      'Built the **DetailsActivity screen** with **Firebase Firestore** data binding and an image slider, displaying recipe steps, ingredients, and nutrition metrics for each food item.',
+      'Implemented meal plan persistence through **SharedPreferences** backed food ID storage grouped by meal type, ensuring items added from the details screen appear under the correct meal plan header.',
     ],
     tech: ['Java', 'Android Studio', 'XML', 'Figma', 'Firebase Firestore'],
     image: './MealHub.webp',
