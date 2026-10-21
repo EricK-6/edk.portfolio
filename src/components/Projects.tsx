@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState, type KeyboardEvent as ReactKeybo
 import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
-import { byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectLink } from '../content'
+import { byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectDocument, type ProjectLink } from '../content'
 
 // The three columns the university shelf is read in. The degree covers all
 // three, and which is which is the one thing six cards in a row cannot say.
@@ -273,7 +273,7 @@ function useProjectRequests(slug: string, setLog: (v: boolean) => void, setDetai
 // An awarded project, full width: the clip on one side and the case for it on
 // the other. The two alternate sides so the pair does not read as one block.
 function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }) {
-  const { title, tag, period, role, awardedBy, hostedBy, org, highlights, tech, links, log } = project
+  const { title, tag, period, role, awardedBy, hostedBy, org, highlights, tech, links, documents, log } = project
   const [logOpen, setLogOpen] = useState(false)
   useProjectRequests(project.slug, setLogOpen)
 
@@ -334,6 +334,7 @@ function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }
         <ProjectLinks
           slug={project.slug}
           links={links}
+          documents={documents}
           log={log}
           onOpenLog={() => setLogOpen(true)}
           className={tech && tech.length > 0 ? 'mt-5' : 'mt-auto pt-5'}
@@ -366,7 +367,7 @@ function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }
 // whatever they hold: the front already stretches (flex-1) and the footer sits
 // on the bottom edge, so a card with less to say just has more air in it.
 function ProjectCard({ project, equal = false }: { project: Project; equal?: boolean }) {
-  const { title, tag, role, highlights, tech, icon, links, log } = project
+  const { title, tag, role, highlights, tech, icon, links, documents, log } = project
   const [open, setOpen] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
   // A card only turns over if there is something on the other side. One still
@@ -490,9 +491,9 @@ function ProjectCard({ project, equal = false }: { project: Project; equal?: boo
       </div>
 
       {/* the footer both faces share */}
-      {(log || links?.length > 0) && (
+      {(log || links?.length > 0 || documents?.length) && (
         <div className="border-t border-grey-200 px-5 py-4">
-          <ProjectLinks slug={project.slug} links={links} log={log} onOpenLog={() => setLogOpen(true)} stacked />
+          <ProjectLinks slug={project.slug} links={links} documents={documents} log={log} onOpenLog={() => setLogOpen(true)} stacked />
         </div>
       )}
 
@@ -503,8 +504,10 @@ function ProjectCard({ project, equal = false }: { project: Project; equal?: boo
 
 // `stacked` (the grid cards) gives the build log a row of its own: a card is
 // too narrow for it and two buttons, and wrapping stranded "Git repo" alone.
-function ProjectLinks({ slug, links, log, onOpenLog, stacked = false, className = '' }: { slug: string; links?: ProjectLink[]; log?: BuildLogEntry[]; onOpenLog: () => void; stacked?: boolean; className?: string }) {
-  if (!log && !links?.length) return null
+function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false, className = '' }: { slug: string; links?: ProjectLink[]; documents?: ProjectDocument[]; log?: BuildLogEntry[]; onOpenLog: () => void; stacked?: boolean; className?: string }) {
+  const [viewing, setViewing] = useState<ProjectDocument | null>(null)
+  if (!log && !links?.length && !documents?.length) return null
+  const docClass = 'tap-44 inline-flex items-center gap-1.5 rounded-lg border border-grey-300 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-grey-400 hover:text-grey-900'
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
       {log && (
@@ -536,6 +539,26 @@ function ProjectLinks({ slug, links, log, onOpenLog, stacked = false, className 
           </a>
         )
       })}
+      {documents?.map((d) =>
+        d.images ? (
+          <button key={d.label} type="button" onClick={() => setViewing(d)} data-track={`doc-${slug}`} className={docClass}>
+            {d.label} →
+          </button>
+        ) : (
+          <a key={d.label} href={d.href} target="_blank" rel="noreferrer" data-track={`doc-${slug}`} className={docClass}>
+            {d.label} →
+          </a>
+        )
+      )}
+      {viewing?.images && (
+        <Modal label={viewing.label} heading={viewing.label} onClose={() => setViewing(null)} wide>
+          <div className="grid grid-cols-2 gap-3 p-4 sm:gap-4 sm:p-5">
+            {viewing.images.map((src) => (
+              <img key={src} src={src} alt="" className="w-full rounded-lg border border-grey-200" />
+            ))}
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }
@@ -750,7 +773,7 @@ function Pipeline({ stages }: { stages: NonNullable<BuildLogEntry['flow']> }) {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-function BuildLogModal({ project, onClose }: { project: Project; onClose: () => void }) {
+function Modal({ label, heading, onClose, wide = false, children }: { label: string; heading: string; onClose: () => void; wide?: boolean; children: ReactNode }) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -799,19 +822,19 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={`Build log: ${project.title}`}
+        aria-label={label}
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-full w-full max-w-xl overflow-y-auto rounded-2xl border border-grey-300 bg-white shadow-2xl"
+        className={`relative max-h-full w-full ${wide ? 'max-w-3xl' : 'max-w-xl'} overflow-y-auto rounded-2xl border border-grey-300 bg-white shadow-2xl`}
       >
         <div className="flex items-center justify-between border-b border-grey-200 px-5 py-3.5">
           <div className="font-mono text-xs font-medium uppercase tracking-[0.25em] text-grey-500">
-            Build log · {project.title}
+            {heading}
           </div>
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Close build log"
+            aria-label="Close"
             className="rounded-lg p-1 text-grey-500 hover:bg-grey-200 hover:text-grey-800"
           >
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -819,23 +842,31 @@ function BuildLogModal({ project, onClose }: { project: Project; onClose: () => 
             </svg>
           </button>
         </div>
-        <div className="space-y-5 px-5 py-5">
-          {project.log?.map((entry) => (
-            <section key={entry.code}>
-              <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">
-                {entry.code}
-              </h4>
-              {entry.flow && <Pipeline stages={entry.flow} />}
-              {entry.body.map((para) => (
-                <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700">
-                  {para}
-                </p>
-              ))}
-            </section>
-          ))}
-        </div>
+        {children}
       </div>
     </div>,
     document.body
+  )
+}
+
+function BuildLogModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  return (
+    <Modal label={`Build log: ${project.title}`} heading={`Build log · ${project.title}`} onClose={onClose}>
+      <div className="space-y-5 px-5 py-5">
+        {project.log?.map((entry) => (
+          <section key={entry.code}>
+            <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">
+              {entry.code}
+            </h4>
+            {entry.flow && <Pipeline stages={entry.flow} />}
+            {entry.body.map((para) => (
+              <p key={para} className="mt-1.5 text-sm leading-relaxed text-grey-700">
+                {para}
+              </p>
+            ))}
+          </section>
+        ))}
+      </div>
+    </Modal>
   )
 }

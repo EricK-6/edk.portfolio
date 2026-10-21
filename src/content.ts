@@ -74,6 +74,14 @@ export interface ProjectLink {
   href: string
 }
 
+// A file that backs a project up. A PDF opens in a new tab from `href`; a set
+// of `images` opens together in one viewer on the page instead.
+export interface ProjectDocument {
+  label: string
+  href?: string
+  images?: string[]
+}
+
 // Which shelf a project sits on, which is also how big it is drawn.
 //
 //   awarded  a competition placement: a full-width row, the clip big enough to read
@@ -114,6 +122,7 @@ export interface Project {
   rank?: string
   icon?: string
   links: ProjectLink[]
+  documents?: ProjectDocument[]
   log?: BuildLogEntry[]
 }
 
@@ -142,6 +151,7 @@ export const PROJECTS: Project[] = [
     shelf: 'awarded',
     rank: '3rd',
     links: [],
+    documents: [{ label: 'Robot photos', images: ['./winniefront.jpeg', './winnieback.jpeg'] }],
     // deeper case study shown in the build-log modal
     log: [
       {
@@ -396,6 +406,7 @@ export const PROJECTS: Project[] = [
     video: './flappy.mp4',
     // Coursework repo, private university org: see Smart Energy Monitor.
     links: [],
+    documents: [{ label: 'IEEE report', href: './FlappyUniversir_IEEEReport.pdf' }],
   },
   {
     title: 'RoastWorks Analytics',
@@ -476,7 +487,7 @@ export const PROJECTS: Project[] = [
     discipline: 'hardware',
     highlights: [
       'Designed and built a **six sensor light board** that detects a projected line by its 60 Hz flicker, using LTspice, PCB design and a PSoC 5 sampling at 4 kHz, with a 3.1 Hz high pass filter to block ambient light.',
-      'Programmed shortest path planning and motor speed control in embedded C, comparing A* and BFS on 46 routes with a MATLAB model and choosing **BFS** for its lower memory use on the PSoC.',
+      'Programmed **BFS shortest path planning** and motor speed control in embedded C, using a MATLAB model to verify paths on 46 routes, so the robot could navigate a projected maze.',
     ],
     tech: ['C', 'LTSpice', 'PSoC', 'MATLAB', 'Altium Designer'],
     image: './photontracker.webp', // also the video's poster
@@ -485,6 +496,7 @@ export const PROJECTS: Project[] = [
     // robot rather than bare floor
     focus: '70% 75%',
     links: [],
+    documents: [{ label: 'IEEE report', href: './BFSPhotonTracker_IEEEReport.pdf' }],
   },
 ]
 
