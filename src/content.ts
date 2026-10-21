@@ -733,7 +733,7 @@ export const ROLES: {
     period: 'Jul 2025',
     image: './IEEE.webp',
     description:
-      'Volunteered 40+ hours supporting operations and logistics at NZRO 2025, an IEEE robotics competition, collaborating with organisers to ensure a smooth event experience for participants.',
+      'Volunteered 40+ hours on operations and logistics at NZRO 2025, working with organisers for a smooth event.',
   },
   {
     id: 'nzpmc',
@@ -760,7 +760,7 @@ export const ROLES: {
     period: 'Jul 2026',
     image: './ieee_r&a.webp',
     description:
-      'Selected as official Competition Staff based on prior volunteering and robotics instructor experience at ciLab, leading competition operations and resolving technical issues to ensure smooth running matches for all teams.',
+      'Selected as official staff for prior ciLab experience; led competition operations and resolved technical issues.',
   },
 ]
 

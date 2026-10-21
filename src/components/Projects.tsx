@@ -537,17 +537,21 @@ function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false,
             target="_blank"
             rel="noreferrer"
             data-track={`${demo ? 'demo' : git ? 'repo' : 'link'}-${slug}`}
+            // the mark alone for a repo: the label stays for screen readers
+            aria-label={git ? l.label : undefined}
+            title={git ? l.label : undefined}
             className="tap-44 inline-flex items-center gap-1.5 rounded-lg border border-grey-300 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-grey-400 hover:text-grey-900"
           >
             {demo && <LiveLed />}
             {git && <GitHubIcon />}
-            {l.label}
+            {!git && l.label}
           </a>
         )
       })}
       {documents?.map((d) =>
         d.images ? (
           <button key={d.label} type="button" onClick={() => setViewing(d)} data-track={`doc-${slug}`} className={docClass}>
+            <PosterIcon />
             {d.label}
           </button>
         ) : (
@@ -740,6 +744,16 @@ function LiveLed() {
       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
       <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
     </span>
+  )
+}
+
+function PosterIcon() {
+  return (
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <circle cx="9" cy="9" r="1.5" />
+      <path d="m20 16-5-5-8 8" />
+    </svg>
   )
 }
 
