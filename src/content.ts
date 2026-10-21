@@ -442,16 +442,19 @@ export const PROJECTS: Project[] = [
   {
     title: 'Eyed JetBot',
     slug: 'embedded-vision-jetbot',
-    blurb: 'Coming soon: vision on a Raspberry Pi, OpenCV on embedded Linux',
+    blurb: 'Traffic sign robot · SVM + OpenCV on a Raspberry Pi 5',
     icon: 'bot',
     tag: 'Python · Team Project',
-    role: 'Vision-Based Traffic Robot',
+    role: 'Vision-based Traffic Robot',
     year: '2026',
     period: 'Oct 2026',
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
     discipline: 'firmware',
-    ongoing: true,
+    highlights: [
+      'Trained an **SVM traffic sign classifier** on 625 self collected robot images, using scikit learn, NumPy and GridSearchCV, reaching **99.6% cross validation accuracy** and 97.0% on unseen recordings.',
+      'Deployed it for real time autonomous control on a **Raspberry Pi 5** robot over SSH on Linux, using OpenCV and 5 frame voting, so every sign was handled correctly on full laps of both test tracks.',
+    ],
     tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Embedded Linux'],
     image: './jetbot.webp', // also the video's poster
     video: './jetbot.mp4',
@@ -460,9 +463,9 @@ export const PROJECTS: Project[] = [
     links: [],
   },
   {
-    title: 'A* PhotonTracker',
+    title: 'BFS PhotonTracker',
     slug: 'autonomous-pathfinding-bot',
-    blurb: 'Coming soon: pathfinding robot on a PSoC, with its own board',
+    blurb: 'Line following robot · 60 Hz light board + BFS on a PSoC 5',
     icon: 'car',
     tag: 'Embedded C · Team Project',
     role: 'Autonomous Pathfinding Robot',
@@ -471,7 +474,10 @@ export const PROJECTS: Project[] = [
     org: 'University of Auckland (UoA)',
     shelf: 'uni',
     discipline: 'hardware',
-    ongoing: true,
+    highlights: [
+      'Designed and built a **six sensor light board** that detects a projected line by its 60 Hz flicker, using LTspice, PCB design and a PSoC 5 sampling at 4 kHz, with a 3.1 Hz high pass filter to block ambient light.',
+      'Programmed shortest path planning and motor speed control in embedded C, comparing A* and BFS on 46 routes with a MATLAB model and choosing **BFS** for its lower memory use on the PSoC.',
+    ],
     tech: ['C', 'LTSpice', 'PSoC', 'MATLAB', 'Altium Designer'],
     image: './photontracker.webp', // also the video's poster
     video: './photontracker.mp4',
