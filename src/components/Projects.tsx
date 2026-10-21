@@ -549,11 +549,11 @@ function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false,
       {documents?.map((d) =>
         d.images ? (
           <button key={d.label} type="button" onClick={() => setViewing(d)} data-track={`doc-${slug}`} className={docClass}>
-            {d.label} →
+            {d.label}
           </button>
         ) : (
           <a key={d.label} href={d.href} target="_blank" rel="noreferrer" data-track={`doc-${slug}`} className={docClass}>
-            {d.label} →
+            {d.label}
           </a>
         )
       )}
