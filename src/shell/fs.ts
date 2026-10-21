@@ -56,6 +56,8 @@ function projectDir(p: Project): DirNode {
     ]))
   }
   for (const l of p.links) children[/demo/i.test(l.label) ? 'demo' : 'repo'] = { type: 'link', href: l.href }
+  const report = p.documents?.find((d) => d.href)
+  if (report?.href) children.report = { type: 'link', href: report.href }
   if (EXECUTABLE.has(p.slug)) children[p.slug] = { type: 'exec', slug: p.slug }
   return dir(p.slug, children)
 }

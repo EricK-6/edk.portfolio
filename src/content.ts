@@ -128,7 +128,8 @@ export interface Project {
 
 // Awards first: the two placements are the feature rows, the rest the grid.
 // `**bold**` in a highlight is the same emphasis About uses, mirroring what
-// the CV bolds — at most two short runs a bullet.
+// the CV bolds, run for run. A project the CV leaves out follows the same
+// pattern: the stack and the outcome.
 export const PROJECTS: Project[] = [
   {
     title: 'Winnie the Bot',
@@ -406,7 +407,7 @@ export const PROJECTS: Project[] = [
     video: './flappy.mp4',
     // Coursework repo, private university org: see Smart Energy Monitor.
     links: [],
-    documents: [{ label: 'IEEE report', href: './FlappyUniversir_IEEEReport.pdf' }],
+    documents: [{ label: 'IEEE report', href: './FlappyUniverse_IEEEReport.pdf' }],
   },
   {
     title: 'RoastWorks Analytics',
@@ -723,7 +724,7 @@ export const ROLES: {
     image: './KEB.webp',
     link: { label: '@uoa.keb', href: 'https://www.instagram.com/uoa.keb' },
     description:
-      'Co-founded a 170+ member engineering community and served on its 17-member executive team, delivering tutorial sessions and supporting academic events.',
+      'Co-founded an engineering community of 170+ members and contributed to a 17-member executive team, delivering tutorial sessions for junior engineering students and supporting academic event planning.',
   },
   {
     id: 'ieee-nzro-2025',
@@ -732,7 +733,7 @@ export const ROLES: {
     period: 'Jul 2025',
     image: './IEEE.webp',
     description:
-      'Volunteered 40+ hours on operations and logistics, working with organisers to keep the event running.',
+      'Volunteered 40+ hours supporting operations and logistics at NZRO 2025, an IEEE robotics competition, collaborating with organisers to ensure a smooth event experience for participants.',
   },
   {
     id: 'nzpmc',
@@ -759,7 +760,7 @@ export const ROLES: {
     period: 'Jul 2026',
     image: './ieee_r&a.webp',
     description:
-      'Selected on prior ciLab experience; led competition operations and resolved technical issues to keep matches running.',
+      'Selected as official Competition Staff based on prior volunteering and robotics instructor experience at ciLab, leading competition operations and resolving technical issues to ensure smooth running matches for all teams.',
   },
 ]
 

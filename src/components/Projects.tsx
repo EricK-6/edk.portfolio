@@ -524,7 +524,7 @@ function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false,
           data-track={`buildlog-${slug}`}
           className={`tap-44 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline ${stacked && links?.length ? 'basis-full justify-start' : ''}`}
         >
-          Open the build log →
+          Open the build log
         </button>
       )}
       {links?.map((l) => {
@@ -542,7 +542,6 @@ function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false,
             {demo && <LiveLed />}
             {git && <GitHubIcon />}
             {l.label}
-            {!demo && !git && ' →'}
           </a>
         )
       })}
