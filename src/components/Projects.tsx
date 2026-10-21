@@ -398,7 +398,7 @@ function ProjectCard({ project, equal = false }: { project: Project; equal?: boo
   }, [open])
 
   return (
-    <article id={project.slug} className={`card flex flex-col overflow-hidden !p-0 ${equal ? 'h-[27rem]' : 'h-full'}`}>
+    <article id={project.slug} className={`card relative flex flex-col overflow-hidden !p-0 ${equal ? 'h-[27rem]' : 'h-full'}`}>
       {/* the part that turns over */}
       <div className="relative flex flex-1 flex-col">
         <div
@@ -491,10 +491,17 @@ function ProjectCard({ project, equal = false }: { project: Project; equal?: boo
       </div>
 
       {/* the footer both faces share */}
-      {(log || links?.length > 0 || documents?.length) && (
+      {(log || links?.length > 0) && (
         <div className="border-t border-grey-200 px-5 py-4">
-          <ProjectLinks slug={project.slug} links={links} documents={documents} log={log} onOpenLog={() => setLogOpen(true)} stacked />
+          <ProjectLinks slug={project.slug} links={links} log={log} onOpenLog={() => setLogOpen(true)} stacked />
         </div>
+      )}
+
+      {/* A document is not a footer: the card is a fixed height, and a footer
+          row for one button pushed it out past the edge. It floats in the
+          bottom right corner instead, over either face. */}
+      {documents && documents.length > 0 && (
+        <ProjectLinks slug={project.slug} documents={documents} onOpenLog={() => {}} className="absolute bottom-2 right-3 z-20" />
       )}
 
       {logOpen && <BuildLogModal project={project} onClose={() => setLogOpen(false)} />}

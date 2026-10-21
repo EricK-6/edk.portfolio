@@ -142,8 +142,8 @@ export const PROJECTS: Project[] = [
     awardedBy: ['Department of Electrical, Computer and Software Engineering (UoA)'],
     role: 'Interactive Companion Robot',
     highlights: [
-      'Contributed to an **AI powered interviewer robot**, using dual ATmega328P Nano microcontrollers to drive **face tracking, arm movement, and real time voice interaction.**',
-      "Prototyped and refined the robot's enclosure, using **iterative 3D printing and multiple design revisions**, to deliver a compact, durable, and functional physical build.",
+      'Contributed to an AI powered interviewer robot, using **dual ATmega328P Nano** microcontrollers **to drive face tracking, arm movement, and real time voice interaction.**',
+      "**Prototyped and refined the robot's enclosure**, using iterative 3D printing and multiple design revisions, to deliver a compact, durable, and functional physical build.",
     ],
     tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.webp',
@@ -151,7 +151,7 @@ export const PROJECTS: Project[] = [
     shelf: 'awarded',
     rank: '3rd',
     links: [],
-    documents: [{ label: 'Robot photos', images: ['./winniefront.jpeg', './winnieback.jpeg'] }],
+    documents: [{ label: 'Exhibition poster', images: ['./winniefront.jpeg', './winnieback.jpeg'] }],
     // deeper case study shown in the build-log modal
     log: [
       {
@@ -196,7 +196,7 @@ export const PROJECTS: Project[] = [
     ],
     highlights: [
       'Built a serverless fraud pipeline with **AWS (S3, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock **to extract and flag anomalies from bank statements** with cited transaction evidence.',
-      'Proposed the approach to **BNZ** by drawing on prior individual project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
+      '**Proposed the approach to BNZ** by drawing on prior individual project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
     image: './spottern.webp', // also the video's poster
@@ -263,7 +263,7 @@ export const PROJECTS: Project[] = [
     period: 'May 2026 to Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
-      'Built a serverless NLP pipeline with **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using AWS SAM, with idempotent writes, partial batch response retries, and a dead letter queue **to classify streaming text sentiment in real time without data loss.**',
+      'Built a serverless NLP pipeline with **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using AWS SAM, with idempotent writes, partial batch response retries, and a dead letter queue **to classify streaming text sentiment in real time** without data loss.',
       'Designed a **bounded DynamoDB GSI query pattern** instead of full table scans to keep read latency low, and batched Comprehend calls per Lambda invocation to cut API overhead.',
       'Developed a live React dashboard on AWS Amplify with **CI via GitHub Actions (21 frontend, 8 backend tests)** and a client side simulation fallback, applying cloud and AI/ML fundamentals **from certification study to a hands on project.**',
     ],
@@ -371,8 +371,8 @@ export const PROJECTS: Project[] = [
     org: 'University of Auckland (UoA)',
     role: 'Embedded Energy Monitoring System',
     highlights: [
-      'Designed a dual channel energy monitoring system, using **signal conditioned ADC sampling** on an **ATmega328P**, to compute RMS voltage, peak current, and average power in real time.',
-      'Built and validated a **double layer PCB**, using **Altium Designer** and UART based output, to meet a **±5% full scale** accuracy spec across a 2.5 to 7.5 VA load range.',
+      'Designed a dual channel energy monitoring system, using **signal conditioned ADC sampling on an ATmega328P**, to compute RMS voltage, peak current, and average power in real time.',
+      'Built and validated a double layer PCB, using **Altium Designer** and UART based output, **to meet a ±5% full scale accuracy spec** across a 2.5 to 7.5 VA load range.',
     ],
     tech: ['C', 'ATmega328P', 'LTspice', 'Atmel AVR', 'Proteus', 'Altium Designer'],
     image: './energy_monitor.webp',
@@ -464,7 +464,7 @@ export const PROJECTS: Project[] = [
     discipline: 'firmware',
     highlights: [
       'Trained an **SVM traffic sign classifier** on 625 self collected robot images, using scikit learn, NumPy and GridSearchCV, reaching **99.6% cross validation accuracy** and 97.0% on unseen recordings.',
-      'Deployed it for real time autonomous control on a **Raspberry Pi 5** robot over SSH on Linux, using OpenCV and 5 frame voting, so every sign was handled correctly on full laps of both test tracks.',
+      'Deployed it for real time autonomous control on a **Raspberry Pi 5** robot over SSH on Linux, using **OpenCV and 5 frame voting**, so every sign was handled correctly on full laps of both test tracks.',
     ],
     tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Embedded Linux'],
     image: './jetbot.webp', // also the video's poster
@@ -486,8 +486,8 @@ export const PROJECTS: Project[] = [
     shelf: 'uni',
     discipline: 'hardware',
     highlights: [
-      'Designed and built a **six sensor light board** that detects a projected line by its 60 Hz flicker, using LTspice, PCB design and a PSoC 5 sampling at 4 kHz, with a 3.1 Hz high pass filter to block ambient light.',
-      'Programmed **BFS shortest path planning** and motor speed control in embedded C, using a MATLAB model to verify paths on 46 routes, so the robot could navigate a projected maze.',
+      'Designed and built a **six sensor light board** that detects a projected line by its 60 Hz flicker, using **LTspice, PCB design and a PSoC 5** sampling at 4 kHz, with a 3.1 Hz high pass filter to block ambient light.',
+      'Programmed **BFS shortest path planning** and motor speed control in **embedded C**, using a **MATLAB** model to verify paths on 46 routes, so the robot could **navigate a projected maze.**',
     ],
     tech: ['C', 'LTSpice', 'PSoC', 'MATLAB', 'Altium Designer'],
     image: './photontracker.webp', // also the video's poster
