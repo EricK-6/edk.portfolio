@@ -41,15 +41,15 @@ export default function Experience() {
       id="experience"
       kicker="Experience"
       title="Where I've worked"
-      // every role so far has been in the same city, so it is said once,
-      // in the corner, rather than repeated on each entry
-      aside={
-        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-grey-500">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="flex-none text-accent">
+      subtitle={
+        // every role so far has been in the same city, so it is said once
+        // here rather than repeated on each entry
+        <span className="inline-flex items-center gap-1.5">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="flex-none text-accent">
             <path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z" />
             <circle cx="12" cy="9.5" r="2.5" />
           </svg>
-          Auckland, NZ
+          All based in Auckland, NZ
         </span>
       }
     >

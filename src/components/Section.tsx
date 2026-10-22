@@ -11,8 +11,6 @@ interface SectionProps {
   // let the subtitle run on one line wherever the column is wide enough to
   // hold it (lg and up); narrower than that it wraps as normal
   subtitleOneLine?: boolean
-  // pinned to the heading's top right corner, level with the kicker
-  aside?: ReactNode
   wide?: boolean
   narrow?: boolean
   children: ReactNode
@@ -31,7 +29,7 @@ interface SectionProps {
 // uppercase kicker in muted grey doing the labelling, and the sentence
 // underneath carrying the weight. A section name is a signpost, not a
 // headline, and it should not shout louder than the work it introduces.
-export default function Section({ id, kicker, title, subtitle, subtitleOneLine = false, aside, wide = false, narrow = false, children, className = '' }: SectionProps) {
+export default function Section({ id, kicker, title, subtitle, subtitleOneLine = false, wide = false, narrow = false, children, className = '' }: SectionProps) {
   return (
     // No `scroll-mt` here: the header offset for every anchor on the site is
     // `scroll-padding-top` on <html> (index.css), in one place. Setting both
@@ -44,14 +42,11 @@ export default function Section({ id, kicker, title, subtitle, subtitleOneLine =
           sprawling layouts (the leadership serpentine) past the default. */}
       <div className={`container-page ${wide ? 'max-w-6xl' : ''} ${narrow ? '!max-w-2xl' : ''}`}>
         {(kicker || title) && (
-          <div className="relative">
-            <Reveal className={`mb-10 sm:mb-12 ${subtitleOneLine ? '' : 'max-w-3xl'}`}>
-              {kicker && <p className="section-kicker">{kicker}</p>}
-              {title && <h2 className="section-title">{title}</h2>}
-              {subtitle && <p className={`section-subtitle ${subtitleOneLine ? 'lg:whitespace-nowrap' : ''}`}>{subtitle}</p>}
-            </Reveal>
-            {aside && <div className="absolute right-0 top-0">{aside}</div>}
-          </div>
+          <Reveal className={`mb-10 sm:mb-12 ${subtitleOneLine ? '' : 'max-w-3xl'}`}>
+            {kicker && <p className="section-kicker">{kicker}</p>}
+            {title && <h2 className="section-title">{title}</h2>}
+            {subtitle && <p className={`section-subtitle ${subtitleOneLine ? 'lg:whitespace-nowrap' : ''}`}>{subtitle}</p>}
+          </Reveal>
         )}
         {children}
       </div>
