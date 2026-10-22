@@ -264,9 +264,9 @@ export const PROJECTS: Project[] = [
     period: 'May 2026 to Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
-      'Built a serverless NLP pipeline with **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using AWS SAM, with idempotent writes, partial batch response retries, and a dead letter queue **to classify streaming text sentiment in real time** without data loss.',
-      'Designed a **bounded DynamoDB GSI query pattern** instead of full table scans to keep read latency low, and batched Comprehend calls per Lambda invocation to cut API overhead.',
-      'Developed a live React dashboard on AWS Amplify with **CI via GitHub Actions (21 frontend, 8 backend tests)** and a client side simulation fallback, applying cloud and AI/ML fundamentals **from certification study to a hands on project.**',
+      'Built a **serverless streaming sentiment pipeline on AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using SAM, with idempotent writes, partial batch retries and a DLQ to prevent data loss.',
+      'Replaced full table scans with a **bounded DynamoDB GSI query** to keep read latency low, and batched Comprehend calls per Lambda invocation to cut API overhead.',
+      'Built a live React dashboard on AWS Amplify with a client-side simulation fallback and **GitHub Actions CI (21 frontend, 8 backend tests)**, applying AWS certification fundamentals hands-on.',
     ],
     tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'GitHub Actions', 'React.js', 'AWS Amplify'],
     image: './pulse.webp',
