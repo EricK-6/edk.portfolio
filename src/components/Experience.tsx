@@ -37,7 +37,22 @@ function Clip({ src, poster, label, aspect }: { src: string; poster: string; lab
 
 export default function Experience() {
   return (
-    <Section id="experience" kicker="Experience" title="Where I've worked">
+    <Section
+      id="experience"
+      kicker="Experience"
+      title="Where I've worked"
+      subtitle={
+        // every role so far has been in the same city, so it is said once
+        // here rather than repeated on each entry
+        <span className="inline-flex items-center gap-1.5">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="flex-none text-accent">
+            <path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z" />
+            <circle cx="12" cy="9.5" r="2.5" />
+          </svg>
+          All based in Auckland, NZ
+        </span>
+      }
+    >
       <ol className="relative border-l border-grey-200 pl-6 space-y-10">
         {EXPERIENCE.map((job, i) => (
           <Reveal key={job.role + job.org} as="li" delay={i * 100} className="relative block">
