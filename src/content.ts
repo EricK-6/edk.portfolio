@@ -261,7 +261,7 @@ export const PROJECTS: Project[] = [
     icon: 'cloud',
     tag: 'AWS · Individual Project',
     year: '2026',
-    period: 'May 2026 to Jun 2026',
+    period: 'Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
       'Built a **serverless streaming sentiment pipeline on AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using SAM, with idempotent writes, partial batch retries and a DLQ to prevent data loss.',
@@ -649,7 +649,7 @@ export const SCHOOL = {
 export const CERTS = [
   {
     id: 'solutions-architect',
-    name: 'AWS Certified Solutions Architect – Associate',
+    name: 'AWS Certified Solutions Architect - Associate',
     short: 'Solutions Architect',
     tier: 'Associate',
     issuer: 'AWS',
