@@ -89,7 +89,7 @@ export function runPulse(print: Print, later: Schedule) {
     print(
       [],
       L(dim('mood  '), accent(bar), dim(`  net ${mood >= 0 ? '+' : ''}${mood} over ${REVIEWS.length} reviews`)),
-      L(dim('simulated, like the hosted dashboard while the backend is torn down: '), 'https://master.d1vwgts5qfrat7.amplifyapp.com/'),
+      L(dim('simulated, like the hosted dashboard while the backend is torn down: '), 'https://master.d3t61ak2oiedfz.amplifyapp.com/'),
     )
   }, 250 + REVIEWS.length * 380 + 200)
 }

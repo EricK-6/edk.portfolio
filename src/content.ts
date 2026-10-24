@@ -146,7 +146,7 @@ export const PROJECTS: Project[] = [
       'Contributed to an AI powered interviewer robot, using **dual ATmega328P Nano** microcontrollers **to drive face tracking, arm movement, and real time voice interaction.**',
       "**Prototyped and refined the robot's enclosure**, using iterative 3D printing and multiple design revisions, to deliver a compact, durable, and functional physical build.",
     ],
-    tech: ['Embedded C', 'ATmega328P NANO', 'Servos', 'AI Camera', 'AutoCAD'],
+    tech: ['Embedded C', 'ATmega328P Nano', 'Servos', 'AI Camera', 'AutoCAD'],
     image: './winnie.webp',
     video: './winnie.mp4',
     shelf: 'awarded',
@@ -164,7 +164,7 @@ export const PROJECTS: Project[] = [
       {
         code: '02 · BUILD',
         body: [
-          'Dual ATmega328P NANOs share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue, all running simultaneously on hardware with no operating system underneath.',
+          'Dual ATmega328P Nanos share the workload across servos for head and arm motion, an AI camera for face tracking, and audio peripherals for voice dialogue, all running simultaneously on hardware with no operating system underneath.',
           'The enclosure was 3D modelled and printed across multiple design revisions, packing every board, servo, and speaker into a compact, durable, desk-friendly form factor.',
         ],
       },
@@ -272,7 +272,7 @@ export const PROJECTS: Project[] = [
     image: './pulse.webp',
     video: './pulse.mp4',
     links: [
-      { label: 'Deployed DEMO', href: 'https://master.d1vwgts5qfrat7.amplifyapp.com/' },
+      { label: 'Deployed DEMO', href: 'https://master.d3t61ak2oiedfz.amplifyapp.com/' },
       { label: 'Git repo', href: 'https://github.com/EricK-6/sentiment-dashboard' },
     ],
     log: [
@@ -375,7 +375,7 @@ export const PROJECTS: Project[] = [
       'Designed a dual channel energy monitoring system, using **signal conditioned ADC sampling on an ATmega328P**, to compute RMS voltage, peak current, and average power in real time.',
       'Built and validated a double layer PCB, using **Altium Designer** and UART based output, **to meet a ±5% full scale accuracy spec** across a 2.5 to 7.5 VA load range.',
     ],
-    tech: ['C', 'ATmega328P', 'LTspice', 'Atmel AVR', 'Proteus', 'Altium Designer'],
+    tech: ['C', 'ATmega328P', 'LTSpice', 'Atmel AVR', 'Proteus', 'Altium Designer'],
     image: './energy_monitor.webp',
     video: './smart.mp4',
     // the media strip is far wider than it is tall, so a centred crop of this
@@ -464,7 +464,7 @@ export const PROJECTS: Project[] = [
     shelf: 'uni',
     discipline: 'firmware',
     highlights: [
-      'Trained an **SVM traffic sign classifier** on 625 self collected robot images, using scikit learn, NumPy and GridSearchCV, reaching **99.6% cross validation accuracy** and 97.0% on unseen recordings.',
+      'Trained an **SVM traffic sign classifier** on 625 self collected robot images, using scikit-learn, NumPy and GridSearchCV, reaching **99.6% cross validation accuracy** and 97.0% on unseen recordings.',
       'Deployed it for real time autonomous control on a **Raspberry Pi 5** robot over SSH on Linux, using **OpenCV and 5 frame voting**, so every sign was handled correctly on full laps of both test tracks.',
     ],
     tech: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Embedded Linux'],
@@ -487,7 +487,7 @@ export const PROJECTS: Project[] = [
     shelf: 'uni',
     discipline: 'hardware',
     highlights: [
-      'Designed and built a **six sensor light board** that detects a projected line by its 60 Hz flicker, using **LTspice, PCB design and a PSoC 5** sampling at 4 kHz, with a 3.1 Hz high pass filter to block ambient light.',
+      'Designed and built a **six sensor light board** that detects a projected line by its 60 Hz flicker, using **LTSpice, PCB design and a PSoC 5** sampling at 4 kHz, with a 3.1 Hz high pass filter to block ambient light.',
       'Programmed **BFS shortest path planning** and motor speed control in **embedded C**, using a **MATLAB** model to verify paths on 46 routes, so the robot could **navigate a projected maze.**',
     ],
     tech: ['C', 'LTSpice', 'PSoC', 'MATLAB', 'Altium Designer'],
@@ -537,8 +537,8 @@ export const EXPERIENCE = [
       { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2' },
     ],
     bullets: [
-      'Trainee researcher on the CARES Lab robot soccer system: camera calibration, vision and strategy design.',
-      'Investigated TurtleBot2 navigation and implemented LiDAR integration and control with ROS and Python.',
+      'Trainee researcher analysing the **robot soccer system** at UoA’s CARES Lab, covering camera calibration, **vision processing and decision strategy design**, to support its planned migration to a modern framework.',
+      'Investigated **TurtleBot2** navigation algorithms and implemented LiDAR integration and control using **ROS and Python**, building hands-on experience in autonomous systems.',
     ],
   },
   {
@@ -548,8 +548,8 @@ export const EXPERIENCE = [
     period: 'Apr 2026 - Oct 2026',
     image: './ciLab.jpg',
     bullets: [
-      'Instructed 50+ students in robot hardware assembly and software programming to complete missions.',
-      'Supported student development and coached teams in preparation for nationwide robotics competitions.',
+      'Instructed **50+ students** in robot **hardware assembly and software programming** to complete missions.',
+      'Supported student development and coached teams in preparation for **nationwide robotics competitions**.',
     ],
   },
   {
@@ -559,8 +559,8 @@ export const EXPERIENCE = [
     period: 'Jul 2024 - Jan 2025',
     image: './twelve.jpg',
     bullets: [
-      'Delivered exceptional customer service to keep FoH operations running smoothly during busy periods.',
-      'Efficiently resolved complex customer situations while keeping the guest experience positive.',
+      'Delivered exceptional customer service to ensure a positive dining experience for all guests.',
+      'Collaborated with team to ensure smooth service and resolve complex customer issues efficiently.',
     ],
   },
 ]

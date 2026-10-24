@@ -2,6 +2,7 @@ import Section from './Section'
 import Reveal from './Reveal'
 import { useEffect, useRef } from 'react'
 import { EXPERIENCE } from '../content'
+import { emphasise } from './emphasise'
 
 // plays only while on screen, so three clips don't decode off-screen
 function Clip({ src, poster, label, aspect }: { src: string; poster: string; label: string; aspect: string }) {
@@ -67,7 +68,7 @@ export default function Experience() {
                   {job.bullets.map((b) => (
                     <li key={b} className="flex gap-2">
                       <span className="mt-2 inline-block h-1 w-1 flex-none rounded-full bg-grey-400" />
-                      <span>{b}</span>
+                      <span>{emphasise(b)}</span>
                     </li>
                   ))}
                 </ul>

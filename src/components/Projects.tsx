@@ -1,7 +1,8 @@
-import { Fragment, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
+import { emphasise } from './emphasise'
 import { byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectDocument, type ProjectLink } from '../content'
 
 // The three columns the university shelf is read in. The degree covers all
@@ -663,20 +664,6 @@ function ProjectIcon({ type }: { type?: string }) {
     >
       {ICON_PATHS[type]}
     </svg>
-  )
-}
-
-// `**like this**` in a highlight becomes the same emphasis About uses for the
-// phrases that matter. Two full sentences of flat grey give the eye nothing to
-// land on, and these bullets are the densest text on the page; the bolded runs
-// are the ones the CV itself bolds, so the site and the PDF stress the same
-// things. Kept as markers in the data rather than JSX so the strings stay
-// readable straight against the CV.
-function emphasise(text: string) {
-  return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
-    i % 2 === 1
-      ? <strong key={i} className="font-semibold text-grey-900">{part}</strong>
-      : <Fragment key={i}>{part}</Fragment>
   )
 }
 

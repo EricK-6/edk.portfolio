@@ -73,7 +73,7 @@ export const ROOT: DirNode = dir('top', {
     'bio.md': file(() => [
       heading(`# ${PROFILE.fullName}`),
       L(`Penultimate-year ${DEGREE.award.split(' · ')[1]} student at ${DEGREE.school.replace(/^The /, 'the ')}, working across AI, cloud computing and robotics.`),
-      L('Most of what I build ends up on AWS. Studying for the Solutions Architect certification changed how I get it there: I design for the failure modes now, rather than just wiring services together.'),
+      L('Most of what I build ends up on AWS. Earning the AWS Solutions Architect Associate certification changed how I get it there: I design for the failure modes now, rather than just wiring services together.'),
       L('Formerly a research assistant at CARES (robot soccer and navigation) and a robotics instructor at ciLab.'),
       blank,
       L(dim('based in '), PROFILE.city, dim(' · '), 'cd ~/contact'),
@@ -86,7 +86,7 @@ export const ROOT: DirNode = dir('top', {
     L(dim(j.period)),
     ...(j.detail ? [L(accent(j.detail))] : []),
     blank,
-    ...j.bullets.map((b) => bullet(b)),
+    ...j.bullets.map((b) => bullet(...rich(b))),
   ])]))),
   skills: dir('skills', Object.fromEntries(SKILL_GROUPS.map((g) => [`${g.id}.txt`, file(() => [
     heading(`# ${g.label} (${g.items.length})`),
