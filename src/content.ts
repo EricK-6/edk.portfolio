@@ -263,7 +263,7 @@ export const PROJECTS: Project[] = [
     discipline: 'backend',
     blurb: 'Lab equipment booking API · Postgres refuses double bookings',
     icon: 'database',
-    tag: 'PostgreSQL · Individual Project',
+    tag: 'SQL · Individual Project',
     year: '2026',
     period: 'Oct 2026',
     role: 'Lab Equipment Booking System',
@@ -272,7 +272,7 @@ export const PROJECTS: Project[] = [
       'Wrote **24 integration tests** against a real Postgres, including a **20 request concurrency test** that exposed a deadlock, fixed with row level locking **to cut failures from 5 in 10 runs to 0 in 20.**',
       'Containerised the API with a **non root Docker image**, defined its **AWS infrastructure in Terraform**, and automated checks with **GitHub Actions**.',
     ],
-    tech: ['PostgreSQL', 'SQL', 'Express.js', 'Docker', 'Terraform', 'REST APIs', 'GitHub Actions'],
+    tech: ['SQL', 'PostgreSQL', 'Express.js', 'Docker', 'Terraform', 'REST APIs', 'GitHub Actions'],
     image: './slotly.webp',
     letterbox: '#181820', // a terminal screenshot: shown whole on its own dark, not cropped to 16:10
     links: [
