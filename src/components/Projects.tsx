@@ -42,11 +42,11 @@ function Columns({
           // three stay exactly as wide as each other. Only from lg, where the
           // three really are side by side; narrower than that they wrap, and
           // the rule under each label does the separating on its own.
-          <div key={id} className={`relative ${i > 0 ? 'lg:before:absolute lg:before:-left-[10px] lg:before:top-1 lg:before:h-[calc(100%-0.5rem)] lg:before:w-px lg:before:bg-grey-200 lg:before:content-[""]' : ''}`}>
+          <div key={id} className={`relative flex flex-col ${i > 0 ? 'lg:before:absolute lg:before:-left-[10px] lg:before:top-1 lg:before:h-[calc(100%-0.5rem)] lg:before:w-px lg:before:bg-grey-200 lg:before:content-[""]' : ''}`}>
             <div className="mb-4 border-b border-grey-200 pb-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
               {label}
             </div>
-            <div className="flex flex-col gap-5">
+            <div className={`flex flex-1 flex-col gap-5 ${equal ? '' : '[&>article]:flex-1'}`}>
               {group.map((p) => (
                 <ProjectCard key={p.title} project={p} equal={equal} />
               ))}
@@ -561,7 +561,7 @@ function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false,
             // the mark alone for a repo: the label stays for screen readers
             aria-label={git ? l.label : undefined}
             title={git ? l.label : undefined}
-            className="tap-44 inline-flex items-center gap-1.5 rounded-lg border border-grey-300 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-grey-400 hover:text-grey-900"
+            className="tap-44 inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-grey-300 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-grey-400 hover:text-grey-900"
           >
             {demo && <LiveLed />}
             {git && <GitHubIcon />}

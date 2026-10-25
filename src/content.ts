@@ -282,7 +282,7 @@ export const PROJECTS: Project[] = [
       {
         code: '01 · BRIEF',
         body: [
-          'A booking API for university lab equipment: FPGA boards, oscilloscopes and Raspberry Pis. The one rule that matters is that two students can never hold the same device at the same time, even if they press Book in the same instant.',
+          "Inspired by a lab session this semester in the ECSE lab, where the equipment was overbooked. So I built a booking API for university lab equipment: FPGA boards, oscilloscopes and Raspberry Pis. The one rule that matters is that two students can never hold the same device at the same time, even if they press Book in the same instant.",
         ],
       },
       {
