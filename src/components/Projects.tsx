@@ -13,6 +13,51 @@ const DISCIPLINES = [
   { id: 'hardware', label: 'Hardware' },
 ] as const
 
+// The same idea for the self-initiated shelf: what kind of system each one is.
+const KINDS = [
+  { id: 'fullstack', label: 'Full-stack' },
+  { id: 'frontend', label: 'Frontend' },
+  { id: 'backend', label: 'Backend' },
+] as const
+
+// One column a kind of work, each under its own label, so the range reads at a
+// glance rather than as a row of cards. `equal` pins the card height.
+function Columns({
+  columns,
+  items,
+  equal = false,
+}: {
+  columns: readonly { id: string; label: string }[]
+  items: Project[]
+  equal?: boolean
+}) {
+  return (
+    <div className="mt-6 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+      {columns.map(({ id, label }, i) => {
+        const group = items.filter((p) => p.discipline === id)
+        if (!group.length) return null
+        return (
+          // The hairline is a pseudo-element parked in the middle of the 20px
+          // column gap, so the partition costs the columns no width and all
+          // three stay exactly as wide as each other. Only from lg, where the
+          // three really are side by side; narrower than that they wrap, and
+          // the rule under each label does the separating on its own.
+          <div key={id} className={`relative ${i > 0 ? 'lg:before:absolute lg:before:-left-[10px] lg:before:top-1 lg:before:h-[calc(100%-0.5rem)] lg:before:w-px lg:before:bg-grey-200 lg:before:content-[""]' : ''}`}>
+            <div className="mb-4 border-b border-grey-200 pb-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
+              {label}
+            </div>
+            <div className="flex flex-col gap-5">
+              {group.map((p) => (
+                <ProjectCard key={p.title} project={p} equal={equal} />
+              ))}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // A quiet rule-and-label separating the two shelves of the section.
 function SubLabel({ children, count, className = '' }: { children: ReactNode; count: number; className?: string }) {
   return (
@@ -93,39 +138,13 @@ export default function Projects() {
       {/* Half-width, so these two sit between the awarded rows and the degree
           work: nobody set them, which is the whole reason they are here. */}
       <SubLabel count={self.length} className="mt-14">Self-initiated</SubLabel>
-      <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        {self.map((p) => (
-          <ProjectCard key={p.title} project={p} />
-        ))}
-      </div>
+      <Columns columns={KINDS} items={self} />
 
       {/* One column a discipline, so the degree's range reads at a glance
           rather than as six cards in a row. The labels are lighter than the
           shelf's own, because they sit under it. */}
       <SubLabel count={uni.length} className="mt-14">Engineered at university</SubLabel>
-      <div className="mt-6 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-        {DISCIPLINES.map(({ id, label }, i) => {
-          const items = uni.filter((p) => p.discipline === id)
-          if (!items.length) return null
-          return (
-            // The hairline is a pseudo-element parked in the middle of the 20px
-            // column gap, so the partition costs the columns no width and all
-            // three stay exactly as wide as each other. Only from lg, where the
-            // three really are side by side; narrower than that they wrap, and
-            // the rule under each label does the separating on its own.
-            <div key={id} className={`relative ${i > 0 ? 'lg:before:absolute lg:before:-left-[10px] lg:before:top-1 lg:before:h-[calc(100%-0.5rem)] lg:before:w-px lg:before:bg-grey-200 lg:before:content-[""]' : ''}`}>
-              <div className="mb-4 border-b border-grey-200 pb-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-grey-400">
-                {label}
-              </div>
-              <div className="flex flex-col gap-5">
-                {items.map((p) => (
-                  <ProjectCard key={p.title} project={p} equal />
-                ))}
-              </div>
-            </div>
-          )
-        })}
-      </div>
+      <Columns columns={DISCIPLINES} items={uni} equal />
 
       {/* A postscript, centred, the way a letter ends: the one line about this
           site, where the work ends. It used to sit in the footer where nobody
@@ -162,7 +181,7 @@ export default function Projects() {
 // for no benefit, and `useOnScreen` answers the honest question of whether
 // anyone can see it.
 function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { project: Project; rounded?: string; fill?: boolean }) {
-  const { title, image, video, focus, aspect, year, period, rank, ongoing } = project
+  const { title, image, video, focus, aspect, letterbox, year, period, rank, ongoing } = project
   const ref = useRef<HTMLVideoElement | HTMLImageElement>(null)
   const onScreen = useOnScreen(ref)
   // A <video> fetches its poster (and, with preload="metadata", the head of
@@ -200,6 +219,7 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
       className={`relative w-full ${box} overflow-hidden bg-grey-100 ${rounded} ${
         image || video ? '' : 'flex items-center justify-center'
       }`}
+      style={letterbox ? { background: letterbox } : undefined}
     >
       {video ? (
         <video
@@ -221,7 +241,7 @@ function ProjectMedia({ project, rounded = 'rounded-xl', fill = false }: { proje
           alt={title}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover"
+          className={`h-full w-full ${letterbox ? 'object-contain' : 'object-cover'}`}
           style={focus ? { objectPosition: focus } : undefined}
         />
       ) : (
@@ -596,6 +616,7 @@ const ICON_STYLES: Record<string, string> = {
   cpu: 'text-lime-700/80',
   chart: 'text-orange-600/80',
   phone: 'text-emerald-600/80',
+  database: 'text-teal-600/80',
 }
 
 const ICON_PATHS: Record<string, ReactNode> = {
@@ -623,6 +644,13 @@ const ICON_PATHS: Record<string, ReactNode> = {
       <circle cx="12" cy="12" r="10" />
       <path d="M2 12h20" />
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </>
+  ),
+  database: (
+    <>
+      <ellipse cx="12" cy="5" rx="8" ry="3" />
+      <path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5" />
+      <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
     </>
   ),
   zap: <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />,

@@ -38,14 +38,15 @@ export type ResumeId = (typeof RESUMES)[number]['id']
 // so every phrase here must start with a consonant sound.
 export const HERO_PHRASES = [
   'solution that quietly helps people',
-  // the four I lead with, in the order I would tell them: Winnie, Spottern,
-  // PULSE, KEB. Then the degree work by discipline, as the cards are laid out:
+  // the five I lead with, in the order I would tell them: Winnie, Spottern,
+  // PULSE, KEB, Slotly. Then the degree work by discipline, as the cards are laid out:
   // software, firmware, hardware, newest first within each.
   // Plain words on purpose: the card blurbs carry the jargon, these should not.
   'robot that looks you in the eye',
   'tool that spots fraud and shows why',
   'mood tracker for what people post',
   'website a whole club runs on',
+  'lab booking tool that refuses clashes',
   'phone app that plans your meals',
   'forecasting app for the quarter ahead',
   'tiny car that sees the road',
@@ -91,7 +92,7 @@ export type Shelf = 'awarded' | 'self' | 'uni'
 
 // The column a university project sits in. The degree covers all three, and
 // saying which is which is the only thing six cards in a row cannot.
-export type Discipline = 'software' | 'firmware' | 'hardware'
+export type Discipline = 'software' | 'firmware' | 'hardware' | 'backend' | 'fullstack' | 'frontend'
 
 export interface Project {
   title: string
@@ -114,6 +115,8 @@ export interface Project {
   video?: string
   aspect?: string
   focus?: string
+  // show the image whole on this background instead of cropping it to the box
+  letterbox?: string
   shelf: Shelf
   discipline?: Discipline
   // still being built: no media, no highlights, and it says so rather than
@@ -254,9 +257,67 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    title: 'Slotly',
+    slug: 'slotly',
+    shelf: 'self',
+    discipline: 'backend',
+    blurb: 'Lab equipment booking API · Postgres refuses double bookings',
+    icon: 'database',
+    tag: 'PostgreSQL · Individual Project',
+    year: '2026',
+    period: 'Oct 2026',
+    role: 'Lab Equipment Booking System',
+    highlights: [
+      'Built a lab equipment booking REST API with **Express.js and PostgreSQL**, using an **exclusion constraint (btree_gist, tstzrange)** **to make double booking impossible at the database level.**',
+      'Wrote **24 integration tests** against a real Postgres, including a **20 request concurrency test** that exposed a deadlock, fixed with row level locking **to cut failures from 5 in 10 runs to 0 in 20.**',
+      'Containerised the API with a **non root Docker image**, defined its **AWS infrastructure in Terraform**, and automated checks with **GitHub Actions**.',
+    ],
+    tech: ['PostgreSQL', 'SQL', 'Express.js', 'Docker', 'Terraform', 'REST APIs', 'GitHub Actions'],
+    image: './slotly.webp',
+    letterbox: '#181820', // a terminal screenshot: shown whole on its own dark, not cropped to 16:10
+    links: [
+      { label: 'Git repo', href: 'https://github.com/EricK-6/slotly' },
+    ],
+    log: [
+      {
+        code: '01 · BRIEF',
+        body: [
+          'A booking API for university lab equipment: FPGA boards, oscilloscopes and Raspberry Pis. The one rule that matters is that two students can never hold the same device at the same time, even if they press Book in the same instant.',
+        ],
+      },
+      {
+        code: '02 · ARCHITECTURE',
+        flow: [
+          { node: 'Client', does: 'posts a booking with a start and end time' },
+          { node: 'Express', does: 'validates the request and opens a transaction' },
+          { node: 'Row lock', does: 'makes requests for the same device queue up one at a time' },
+          { node: 'PostgreSQL', does: 'an exclusion constraint rejects any overlapping time range' },
+          { node: 'Response', does: '201 for the winner, a clean 409 for everyone else' },
+        ],
+        body: [
+          'Most booking code checks "is this slot free?" and then inserts, which races: two requests can both see a free slot. Slotly skips the check and lets the database decide. Time ranges are half open, so a booking ending at 10:00 and one starting at 10:00 do not clash, and cancelled bookings are excluded so their slot is free again.',
+        ],
+      },
+      {
+        code: '03 · SETBACK',
+        body: [
+          'My first concurrency test passed, so I made it harder: 20 simultaneous requests for the same slot, repeated for 10 rounds. Then it failed, about once in every two runs. Postgres was aborting some requests with "deadlock detected", so users would have seen a 500 error instead of a 409.',
+          'The cause was two exclusion checks waiting on each other. The fix was to lock the device row at the start of the transaction, so requests for the same device queue up while different devices never wait on each other. After that, 20 runs in a row passed with zero failures.',
+        ],
+      },
+      {
+        code: '04 · OUTCOME',
+        body: [
+          '24 tests run against a real Postgres on every push, along with a Docker build and smoke test and Terraform format and validate checks. Removing the constraint makes all 20 concurrent requests succeed, which proves the tests catch the bug they exist for. The Terraform is validated but not applied, so it costs nothing to leave in the repo.',
+        ],
+      },
+    ],
+  },
+  {
     title: 'Sentiment PULSE',
     slug: 'sentiment-pulse',
     shelf: 'self',
+    discipline: 'fullstack',
     blurb: 'Serverless NLP pipeline on AWS + live React dashboard',
     icon: 'cloud',
     tag: 'AWS · Individual Project',
@@ -315,6 +376,7 @@ export const PROJECTS: Project[] = [
     title: 'KEB Web Design',
     slug: 'keb-web-design',
     shelf: 'self',
+    discipline: 'frontend',
     blurb: "KEB's first ever club website · React 19 + Vite",
     icon: 'globe',
     tag: 'KEB Project Playground 2025 · Team Competition',
