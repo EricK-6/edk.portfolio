@@ -320,7 +320,7 @@ export const PROJECTS: Project[] = [
     discipline: 'fullstack',
     blurb: 'Serverless NLP pipeline on AWS + live React dashboard',
     icon: 'cloud',
-    tag: 'AWS · Individual Project',
+    tag: 'AWS · Personal Project',
     year: '2026',
     period: 'Jun 2026',
     role: 'Real-time Sentiment Dashboard',
