@@ -38,7 +38,7 @@ export default function Education() {
               {DEGREE.concentrations}
             </div>
             <div className="mt-1 text-sm text-grey-500">
-              <span className="font-semibold text-grey-900">Related courseworks:</span>{' '}
+              <span className="font-semibold text-grey-900">Related coursework:</span>{' '}
               {DEGREE.coursework.join(' · ')}
             </div>
           </div>

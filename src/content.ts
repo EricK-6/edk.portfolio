@@ -39,7 +39,7 @@ export type ResumeId = (typeof RESUMES)[number]['id']
 export const HERO_PHRASES = [
   'solution that quietly helps people',
   // the five I lead with, in the order I would tell them: Winnie, Spottern,
-  // PULSE, KEB, Slotly. Then the degree work by discipline, as the cards are laid out:
+  // PULSE, KEB, SLOTLY. Then the degree work by discipline, as the cards are laid out:
   // software, firmware, hardware, newest first within each.
   // Plain words on purpose: the card blurbs carry the jargon, these should not.
   'robot that looks you in the eye',
@@ -200,7 +200,7 @@ export const PROJECTS: Project[] = [
     ],
     highlights: [
       'Built a serverless fraud pipeline with **AWS (S3, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock **to extract and flag anomalies from bank statements** with cited transaction evidence.',
-      '**Proposed the approach to BNZ** by drawing on prior individual project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
+      '**Proposed the approach to BNZ** by drawing on prior personal project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
     image: './spottern.webp', // also the video's poster
@@ -269,8 +269,8 @@ export const PROJECTS: Project[] = [
     role: 'Lab Equipment Booking System',
     highlights: [
       'Built a lab equipment booking REST API with **Express.js and PostgreSQL**, using an **exclusion constraint (btree_gist, tstzrange)** **to make double booking impossible at the database level.**',
-      'Wrote **24 integration tests** against a real Postgres, including a **20 request concurrency test** that exposed a deadlock, fixed with row level locking **to cut failures from 5 in 10 runs to 0 in 20.**',
-      'Containerised the API with a **non root Docker image**, defined its **AWS infrastructure in Terraform**, and automated checks with **GitHub Actions**.',
+      'Wrote **24 integration tests** against a real Postgres, using a **20 request concurrency test** to expose a deadlock and **row level locking** to fix it, **cutting failures from 5 in 10 runs to 0 in 20.**',
+      'Defined the API\'s **AWS infrastructure (VPC, RDS, EC2) in Terraform**, applying my **Terraform Associate certification**, and packaged it as a **non root Docker image** with **GitHub Actions CI.**',
     ],
     tech: ['SQL', 'PostgreSQL', 'Express.js', 'Docker', 'Terraform', 'REST APIs', 'GitHub Actions'],
     image: './slotly.webp',
@@ -295,7 +295,7 @@ export const PROJECTS: Project[] = [
           { node: 'Response', does: '201 for the winner, a clean 409 for everyone else' },
         ],
         body: [
-          'Most booking code checks "is this slot free?" and then inserts, which races: two requests can both see a free slot. Slotly skips the check and lets the database decide. Time ranges are half open, so a booking ending at 10:00 and one starting at 10:00 do not clash, and cancelled bookings are excluded so their slot is free again.',
+          'Most booking code checks "is this slot free?" and then inserts, which races: two requests can both see a free slot. SLOTLY skips the check and lets the database decide. Time ranges are half open, so a booking ending at 10:00 and one starting at 10:00 do not clash, and cancelled bookings are excluded so their slot is free again.',
         ],
       },
       {
