@@ -200,7 +200,7 @@ export const PROJECTS: Project[] = [
     ],
     highlights: [
       'Built a serverless fraud pipeline with **AWS (S3, Lambda, Textract, Bedrock, DynamoDB)**, using Claude Opus 4.8 on Bedrock **to extract and flag anomalies from bank statements** with cited transaction evidence.',
-      '**Proposed the approach to BNZ** by drawing on prior personal project experience with serverless AWS pipelines, placing **top 8 out of 20+ teams**.',
+      'Led a team of three new collaborators, **proposing the solution to BNZ** from prior experience with serverless AWS pipelines and coordinating development through **Agile practices**, placing **top 8 among 20+ teams**.',
     ],
     tech: ['AWS Lambda', 'Amazon Textract', 'Amazon Bedrock', 'Claude Opus 4.8', 'DynamoDB', 'Amazon S3', 'Amazon SNS', 'AWS SAM', 'React.js'],
     image: './spottern.webp', // also the video's poster
