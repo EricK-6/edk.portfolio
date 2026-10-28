@@ -2,7 +2,7 @@ import { Fragment, useRef, type ReactNode } from 'react'
 import Section from './Section'
 import Reveal from './Reveal'
 import { useOnScreen } from '../useOnScreen'
-import { HIGHLIGHTS } from '../content'
+import { CERTS, HIGHLIGHTS } from '../content'
 
 // Short on purpose. The Highlights beside this were listing the certificates,
 // the placements and the roles, and the prose was saying all of it again in
@@ -27,27 +27,23 @@ export default function About() {
       <div>
         <Reveal className="space-y-4 leading-relaxed text-grey-700">
           <p>
-            I'm Eric, a penultimate Computer Systems Engineering student at the
-            University of Auckland. I work across <Bold>AI</Bold>, <Bold>Robotics</Bold> and{' '}
-            <Bold>Cloud Computing</Bold>.
-          </p>
-          <p>
-            Earning the <Bold>AWS Solutions Architect Associate</Bold> certification changed how
-            I build. I design for the failure modes first, rather than just wiring services together.
+            Hey, I'm Eric. I study Computer Systems Engineering at the University of Auckland,
+            and I work across <Bold>AI</Bold>, <Bold>Robotics</Bold> and <Bold>Cloud Computing</Bold>,
+            with <Bold>{CERTS.length} certs</Bold> to back it up.
           </p>
           <p>
             I trained as a research assistant at <Bold>CARES</Bold>, working on robot soccer vision
-            and TurtleBot navigation, and taught robotics at <Bold>ciLab</Bold>, coaching student
+            and TurtleBot navigation. I also taught robotics at <Bold>ciLab</Bold>, coaching student
             teams for national competitions.
           </p>
           <p>
-            I'm currently interning as a Data Platform Engineer at <Bold>Mercury NZ</Bold>, working
-            with <Bold>Databricks</Bold> on <Bold>AWS</Bold>. Outside of work, I drum with friends and train at the
+            I'm currently interning as a <Bold>Data Platform Engineer</Bold> at <Bold>Mercury NZ</Bold>, working
+            with Databricks on <Bold>AWS</Bold>. Outside of work, I drum with friends and train at the
             gym. Oh, and I love my vertical mouse.
           </p>
           <p>
             If any of this sounds interesting, feel free
-            to <a href="#contact" className="whitespace-nowrap font-semibold text-grey-900 underline underline-offset-2">reach out</a>.
+            to <a href="#contact" className="whitespace-nowrap font-semibold text-grey-900 underline underline-offset-2">say hi</a>.
           </p>
         </Reveal>
 
