@@ -587,11 +587,23 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 // instead of one two-line entry sitting above two one-line entries.
 export const EXPERIENCE = [
   {
+    id: 'mercury',
+    role: 'Data Platform Engineer Intern',
+    org: 'Mercury NZ',
+    detail: 'Data & Analytics Enablement Team',
+    period: 'Nov 2026 - Present',
+    image: './mercury.jpg',
+    bullets: [
+      'Collaborating with the data platform squad to engineer and harden parts of the **Databricks platform on AWS**, including access and jobs, and contributing to a **semantic layer** for tools like Databricks Genie.',
+      'Applying **SQL, Python and PySpark** to model raw data into clean, reusable, well-governed tables using **Unity Catalog and Workflows**, alongside data and platform engineers to support self-serve analytics.',
+    ],
+  },
+  {
     id: 'cares',
     role: 'Research Assistant Trainee',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
-    period: 'Jul 2026 - Oct 2026',
+    period: 'Jul 2026 - Nov 2026',
     image: './UoA.jpg',
     clips: [
       { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: vision tracking' },
@@ -607,7 +619,7 @@ export const EXPERIENCE = [
     id: 'cilab',
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
-    period: 'Apr 2026 - Oct 2026',
+    period: 'Apr 2026 - Nov 2026',
     image: './ciLab.jpg',
     bullets: [
       'Instructed **50+ students** in robot **hardware assembly and software programming** to complete missions.',
@@ -646,12 +658,12 @@ export const SKILL_GROUPS = [
     // PDF has no room (Docker, Terraform and GitHub Actions sit here on the CV
     // too). The site names the services the CV's project bullets lean on, and
     // leaves out the plumbing (SNS, SAM, Amplify) so the row stays readable.
-    items: ['AWS', 'Lambda', 'DynamoDB', 'S3', 'Bedrock', 'Kinesis', 'Textract', 'Comprehend', 'Docker', 'Terraform', 'GitHub Actions'],
+    items: ['AWS', 'Lambda', 'DynamoDB', 'S3', 'Bedrock', 'Kinesis', 'Textract', 'Comprehend', 'Docker', 'Terraform', 'Databricks', 'GitHub Actions'],
   },
   {
     id: 'frameworks-tools',
     label: 'Frameworks & Tools',
-    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'PostgreSQL', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'Git', 'Android Studio', 'Figma', 'Embedded Linux'],
+    items: ['React.js', 'Tailwind CSS', 'Node.js', 'Express.js', 'PostgreSQL', 'JUnit', 'ROS', 'REST APIs', 'Spring Boot', 'PySpark', 'Git', 'Android Studio', 'Figma', 'Embedded Linux'],
   },
   {
     id: 'hardware-eda',
@@ -845,6 +857,6 @@ export const HIGHLIGHTS = [
   '3rd place · ECSE Design Competition 2025',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across cloud and robotics`,
+  'Data Platform Engineer Intern @ Mercury NZ',
   'Research Assistant Trainee · CARES lab @ UoA',
-  'Robotics Instructor & Competition Coach @ ciLab',
 ]

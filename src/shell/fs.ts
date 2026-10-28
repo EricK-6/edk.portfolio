@@ -75,6 +75,7 @@ export const ROOT: DirNode = dir('top', {
       L(`Penultimate-year ${DEGREE.award.split(' · ')[1]} student at the ${DEGREE.school}, working across AI, cloud computing and robotics.`),
       L('Most of what I build ends up on AWS. Earning the AWS Solutions Architect Associate certification changed how I get it there: I design for the failure modes now, rather than just wiring services together.'),
       L('Formerly a research assistant at CARES (robot soccer and navigation) and a robotics instructor at ciLab.'),
+      L('Currently interning as a Data Platform Engineer at Mercury NZ, working on the Databricks platform on AWS.'),
       blank,
       L(dim('based in '), PROFILE.city, dim(' · '), 'cd ~/contact'),
     ]),

@@ -808,7 +808,7 @@ function Pipeline({ stages }: { stages: NonNullable<BuildLogEntry['flow']> }) {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-function Modal({ label, heading, onClose, wide = false, children }: { label: string; heading: string; onClose: () => void; wide?: boolean; children: ReactNode }) {
+export function Modal({ label, heading, onClose, wide = false, children }: { label: string; heading: string; onClose: () => void; wide?: boolean; children: ReactNode }) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 

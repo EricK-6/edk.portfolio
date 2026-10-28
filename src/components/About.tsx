@@ -40,12 +40,10 @@ export default function About() {
             and TurtleBot navigation, and taught robotics at <Bold>ciLab</Bold>, coaching student
             teams for national competitions.
           </p>
-          {/* "I'm currently ..." (the internship) goes here: the paragraph
-              above is past tense on purpose, so the present tense is left for
-              this one. */}
           <p>
-            When I'm not building, I drum with others, train at the gym, always with
-            music on. Oh, and I love vertical mouse.
+            I'm currently interning as a Data Platform Engineer at <Bold>Mercury NZ</Bold>, working
+            with <Bold>Databricks</Bold> on <Bold>AWS</Bold>. Outside of work, I drum with friends and train at the
+            gym. Oh, and I love my vertical mouse.
           </p>
           <p>
             If any of this sounds interesting, feel free
