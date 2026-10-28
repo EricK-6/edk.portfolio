@@ -1,16 +1,9 @@
-import { useState } from 'react'
 import Section from './Section'
-import { Modal } from './Projects'
 import Reveal from './Reveal'
 import { EXPERIENCE } from '../content'
 import { emphasise } from './emphasise'
 
-type Clip = { src: string; poster: string; aspect: string; label: string }
-
-const clipClass = 'tap-44 inline-flex items-center gap-1.5 rounded-lg border border-grey-300 bg-white px-3 py-1.5 text-sm font-medium text-grey-800 transition hover:border-grey-400 hover:text-grey-900'
-
 export default function Experience() {
-  const [playing, setPlaying] = useState<Clip | null>(null)
   return (
     <Section id="experience" kicker="Experience" title="Where I've worked">
       <ol className="relative border-l border-grey-200 pl-6 space-y-10">
@@ -46,47 +39,11 @@ export default function Experience() {
                     </li>
                   ))}
                 </ul>
-                {job.clips && (
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    {job.clips.map((c) => (
-                      <button key={c.src} type="button" onClick={() => setPlaying(c)} data-track={`clip-${job.id}`} className={clipClass}>
-                        <PlayIcon />
-                        {c.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           </Reveal>
         ))}
       </ol>
-      {playing && (
-        <Modal label={playing.label} heading={playing.label} onClose={() => setPlaying(null)} wide>
-          <div className="flex justify-center bg-black p-2">
-            <video
-              src={playing.src}
-              poster={playing.poster}
-              controls
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{ aspectRatio: playing.aspect }}
-              className="max-h-[70vh] w-auto max-w-full"
-            />
-          </div>
-        </Modal>
-      )}
     </Section>
-  )
-}
-
-function PlayIcon() {
-  return (
-    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d="m10 9 5 3-5 3z" />
-    </svg>
   )
 }

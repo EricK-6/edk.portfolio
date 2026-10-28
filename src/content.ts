@@ -605,11 +605,6 @@ export const EXPERIENCE = [
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Nov 2026',
     image: './UoA.jpg',
-    clips: [
-      { src: './soccer-vision.mp4', poster: './soccer-vision.webp', aspect: '4 / 3', label: 'Robot soccer: vision tracking' },
-      { src: './soccer-defence.mp4', poster: './soccer-defence.webp', aspect: '4 / 3', label: 'Robot soccer: defence strategy' },
-      { src: './turtlebot2.mp4', poster: './turtlebot2.webp', aspect: '9 / 16', label: 'TurtleBot2' },
-    ],
     bullets: [
       'Trainee researcher analysing the **robot soccer system** at UoA’s CARES Lab, covering camera calibration, **vision processing and decision strategy design**, to support its planned migration to a modern framework.',
       'Investigated **TurtleBot2** navigation algorithms and implemented LiDAR integration and control using **ROS and Python**, building hands-on experience in autonomous systems.',
