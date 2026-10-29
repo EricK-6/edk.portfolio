@@ -588,7 +588,7 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 export const EXPERIENCE = [
   {
     id: 'mercury',
-    role: 'Data Platform Engineer Intern',
+    role: 'Data Platform Intern',
     org: 'Mercury NZ',
     detail: 'Data & Analytics Enablement Team',
     period: 'Nov 2026 - Present',
@@ -600,7 +600,7 @@ export const EXPERIENCE = [
   },
   {
     id: 'cares',
-    role: 'Research Assistant Trainee',
+    role: 'Research Assistant',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Nov 2026',
@@ -852,6 +852,6 @@ export const HIGHLIGHTS = [
   '3rd place · ECSE Design Competition 2025',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across cloud and robotics`,
-  'Data Platform Engineer Intern @ Mercury NZ',
-  'Research Assistant Trainee · CARES lab @ UoA',
+  'Data Platform Intern @ Mercury NZ',
+  'Research Assistant · CARES lab @ UoA',
 ]
