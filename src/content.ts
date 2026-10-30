@@ -629,7 +629,7 @@ export const EXPERIENCE = [
     period: 'Jul 2024 - Oct 2026',
     image: './KEB.webp',
     bullets: [
-      'Co-founded an engineering community of **170+ members** and contributed to a **17-member executive team**.',
+      'Co-founded an engineering community of **170+ members**; contributed to a **17-member executive team**.',
       'Delivered **tutorial sessions** for junior engineering students and supported academic event planning.',
     ],
   },
