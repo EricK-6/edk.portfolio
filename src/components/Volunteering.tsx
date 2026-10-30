@@ -84,7 +84,10 @@ export default function Volunteering() {
         </span>
         {ITEMS.map((r, i) => (
           <Reveal key={`${r.title}-${r.org}`} as="li" delay={i * 80} className="relative block md:pr-5 md:pt-5">
-            <span className="absolute -left-[29px] top-1.5 h-3 w-3 rounded-full bg-accent ring-4 ring-grey-300 md:-left-1.5 md:-top-1.5 md:z-10" />
+            {/* On a phone the dot sits on the list's left border (24.5px out, so
+                30.5px to its own left edge) and level with the middle of the logo:
+                the date line (16px) + its gap (12px) + half the 40px logo. */}
+            <span className="absolute -left-[30.5px] top-12 h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-page md:-left-1.5 md:-top-1.5 md:z-10 md:translate-y-0" />
             <div className="text-xs text-grey-500 md:absolute md:-top-7 md:left-0">{r.period}</div>
             {r.image && (
               <img
