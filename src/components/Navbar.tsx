@@ -6,8 +6,8 @@ import { PROFILE, RESUMES } from '../content'
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
 
 // The bar is the contents page of a printed journal: a masthead, then the
-// sections listed in reading order and numbered, with a rule under the one
-// you are reading.
+// sections listed in reading order, with a rule under the one you are
+// reading.
 //
 // Two things changed with the move to a scrolling document. The links are
 // plain anchors now — no router, no click handler, just `href="#about"` and
@@ -68,18 +68,25 @@ export default function Navbar() {
           : 'border-transparent bg-transparent'
       }`}
     >
-      <nav className="relative mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-6 px-6 sm:px-8">
+      {/* Three columns, the outer two equal: the index sits on the centre
+          line of the page — the same axis as the intro's name under it —
+          and the name and the controls sit the same distance in from their
+          edges. It was a flex row with space between, which centred the
+          index between the two ends rather than on the page; the controls
+          are twice the width of the name, so it sat ~40px left of centre.
+          Every child names its column, so below xl, where the index is
+          hidden, the controls still go to the right rather than the middle. */}
+      <nav className="relative mx-auto grid h-16 w-full max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-6 px-6 sm:px-8">
         <a
           href={hrefFor('home')}
-          className="tap-44 flex-none font-display text-lg font-semibold tracking-tight text-grey-900"
+          className="tap-44 col-start-1 justify-self-start font-display text-lg font-semibold tracking-tight text-grey-900"
         >
           {PROFILE.name}<span className="text-accent">.</span>
         </a>
 
         <ContentsIndex active={active} />
 
-        <div className="flex flex-none items-center gap-2.5">
-          <LocalTime />
+        <div className="col-start-3 flex items-center gap-2.5 justify-self-end">
           <ResumeMenu />
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
@@ -103,7 +110,7 @@ export default function Navbar() {
       {open && (
         <div className="border-t border-grey-200 bg-page/95 backdrop-blur-xl xl:hidden">
           <ul className="mx-auto flex w-full max-w-6xl flex-col gap-0.5 px-6 py-3 sm:px-8">
-            {MENU_IDS.map((id, i) => (
+            {MENU_IDS.map((id) => (
               <li key={id}>
                 <a
                   href={hrefFor(id)}
@@ -113,9 +120,6 @@ export default function Navbar() {
                     active === anchorOf(id) ? 'text-accent-deep' : 'text-grey-700'
                   }`}
                 >
-                  <span className="font-mono text-[10px] tabular-nums text-grey-400">
-                    {String(i).padStart(2, '0')}
-                  </span>
                   {LABELS[id]}
                 </a>
               </li>
@@ -127,8 +131,10 @@ export default function Navbar() {
                 onClick={() => { setOpen(false); window.dispatchEvent(new CustomEvent('open-terminal')) }}
                 className="flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-grey-700 transition hover:bg-grey-100"
               >
-                <span className="font-mono text-[10px] text-grey-400">{'>_'}</span>
+                {/* the mark after the label, so "Terminal" starts on the same
+                    edge as the section links above it */}
                 Terminal
+                <span className="font-mono text-[10px] text-grey-400">{'>_'}</span>
               </button>
             </li>
 
@@ -266,30 +272,22 @@ function ChevronIcon({ open }: { open: boolean }) {
   )
 }
 
-// Home is the cover, so it is not numbered; the eight sections run 01 to 08.
-// The numbers are the payload — they say both where you are and how much is
-// left, which is worth more in a long document than it ever was when each
-// section was its own screen.
+// Home is the cover, reached by the name on the left, so it is not listed.
+// Plain labels: the rule under the section you are reading says where you
+// are, and the numbers that used to sit in front of each label were noise
+// beside it.
 function ContentsIndex({ active }: { active: string }) {
   return (
-    <ul className="hidden items-baseline gap-4 xl:flex">
-      {SECTION_IDS.map((id, i) => {
+    <ul className="col-start-2 hidden items-baseline gap-5 xl:flex">
+      {SECTION_IDS.map((id) => {
         const on = active === id
         return (
           <li key={id}>
             <a
               href={hrefFor(id)}
               aria-current={on ? 'true' : undefined}
-              className="group relative flex items-baseline gap-1.5 py-1"
+              className="group relative flex items-baseline py-1"
             >
-              <span
-                aria-hidden="true"
-                className={`font-mono text-[10px] tabular-nums transition-colors ${
-                  on ? 'text-accent-deep' : 'text-grey-400 group-hover:text-grey-600'
-                }`}
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
               <span
                 className={`text-[13px] transition-colors ${
                   on ? 'font-medium text-grey-900' : 'text-grey-600 group-hover:text-grey-900'
@@ -310,33 +308,6 @@ function ContentsIndex({ active }: { active: string }) {
         )
       })}
     </ul>
-  )
-}
-
-// Where he actually is, in his own time. Not a departure board: just the human
-// detail that this is a person in Auckland.
-function LocalTime() {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 30000)
-    return () => clearInterval(t)
-  }, [])
-
-  let time = null
-  try {
-    time = new Intl.DateTimeFormat('en-NZ', {
-      timeZone: 'Pacific/Auckland',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).format(now)
-  } catch { /* no ICU data: the readout is simply omitted */ }
-  if (!time) return null
-
-  return (
-    <span className="hidden font-mono text-[10px] tabular-nums tracking-wider text-grey-400 2xl:inline">
-      Auckland {time}
-    </span>
   )
 }
 

@@ -80,7 +80,6 @@ export const ROOT: DirNode = dir('top', {
     ]),
     'highlights.txt': file(() => HIGHLIGHTS.map((h) => bullet(h))),
   }),
-  projects: dir('projects', Object.fromEntries(PROJECTS.map((p) => [p.slug, projectDir(p)]))),
   experience: dir('experience', Object.fromEntries(EXPERIENCE.map((j) => [`${j.id}.md`, file(() => [
     heading(`# ${j.role} · ${j.org}`),
     L(dim(j.period)),
@@ -88,6 +87,7 @@ export const ROOT: DirNode = dir('top', {
     blank,
     ...j.bullets.map((b) => bullet(...rich(b))),
   ])]))),
+  projects: dir('projects', Object.fromEntries(PROJECTS.map((p) => [p.slug, projectDir(p)]))),
   skills: dir('skills', Object.fromEntries(SKILL_GROUPS.map((g) => [`${g.id}.txt`, file(() => [
     heading(`# ${g.label} (${g.items.length})`),
     L(g.items.join(', ')),

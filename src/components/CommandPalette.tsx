@@ -114,8 +114,8 @@ export default function CommandPalette() {
 
   const commands = [
     { id: 'about', label: 'About', hint: 'Profile', keywords: 'about profile bio me', icon: <HashIcon />, run: () => go('about') },
-    { id: 'projects', label: 'Projects', hint: 'Things I’ve built', keywords: 'projects work portfolio builds', icon: <HashIcon />, run: () => go('projects') },
     { id: 'experience', label: 'Experience', hint: 'Where I’ve worked', keywords: 'experience work jobs roles', icon: <HashIcon />, run: () => go('experience') },
+    { id: 'projects', label: 'Projects', hint: 'Things I’ve built', keywords: 'projects work portfolio builds', icon: <HashIcon />, run: () => go('projects') },
     { id: 'skills', label: 'Skills', hint: 'What I work with', keywords: 'skills tech stack tools', icon: <HashIcon />, run: () => go('skills') },
     { id: 'certifications', label: 'Certifications', hint: 'What I’m certified in', keywords: 'certifications credentials awards aws credly', icon: <HashIcon />, run: () => go('certifications') },
     { id: 'education', label: 'Education', hint: 'Where I’ve studied', keywords: 'education university degree uoa', icon: <HashIcon />, run: () => go('education') },

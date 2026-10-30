@@ -59,6 +59,25 @@ export default function Contact() {
   return (
     <Section
       id="contact"
+      // The status, moved here from the intro and set above the heading:
+      // the first thing in the section says the door is open, then how to
+      // knock. A pale green pill, the colour of the dot, so it reads as a
+      // live status rather than one more line of copy — kept faint, with the
+      // body's grey for the words, so it does not outshine the heading. Centred on its own, over
+      // the left-set heading, on the same line as the links row below.
+      above={
+        <p className="flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/50 px-3.5 py-1.5 text-sm text-grey-700">
+            <span aria-hidden="true" className="relative flex h-2 w-2 flex-none">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-40" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
+            </span>
+            <span>
+              <span className="font-medium text-emerald-800">Status:</span> Open to chats and collaborations
+            </span>
+          </span>
+        </p>
+      }
       kicker="Contact"
       title="Let's talk"
       subtitle="A professional opportunity, a collaboration or just a conversation: I'm always open to hearing from good people."

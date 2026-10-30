@@ -87,24 +87,8 @@ export default function Hero() {
       <HeroPhoto />
 
       <div className="on-photo relative z-10 mx-auto max-w-2xl text-center">
-        {/* One quiet line of status above the name, in place of the internship
-            message that used to be here. It says what the About and Contact
-            sections say (open to conversations and collaborations) without
-            promising a role. grey-800, not 700: it sits on the photograph,
-            where the local luminance moves with the crop. */}
-        <p
-          className="lift-in mb-5 inline-flex items-center justify-center gap-2 text-sm text-grey-800"
-          style={{ animationDelay: '60ms' }}
-        >
-          <span aria-hidden="true" className="relative flex h-2 w-2 flex-none">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
-          </span>
-          <span>
-            <span className="font-semibold">Status:</span> Open to chats and collaborations
-          </span>
-        </p>
-
+        {/* The status line that sat above the name moved to Contact, where
+            "open to chats" is next to the ways to start one. */}
         <h1
           className="lift-in font-display text-[3.25rem] font-semibold leading-[0.95] text-grey-900 sm:text-7xl"
           style={{ animationDelay: '160ms', letterSpacing: '-0.035em' }}

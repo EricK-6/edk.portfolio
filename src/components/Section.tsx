@@ -3,6 +3,8 @@ import Reveal from './Reveal'
 
 interface SectionProps {
   id: string
+  // a line set above the kicker, part of the heading (Contact's status)
+  above?: ReactNode
   kicker?: string
   // ReactNode rather than string: About's motto animates itself word by word,
   // so it arrives as markup. Every other section still passes a plain string.
@@ -29,7 +31,7 @@ interface SectionProps {
 // uppercase kicker in muted grey doing the labelling, and the sentence
 // underneath carrying the weight. A section name is a signpost, not a
 // headline, and it should not shout louder than the work it introduces.
-export default function Section({ id, kicker, title, subtitle, subtitleOneLine = false, wide = false, narrow = false, children, className = '' }: SectionProps) {
+export default function Section({ id, above, kicker, title, subtitle, subtitleOneLine = false, wide = false, narrow = false, children, className = '' }: SectionProps) {
   return (
     // No `scroll-mt` here: the header offset for every anchor on the site is
     // `scroll-padding-top` on <html> (index.css), in one place. Setting both
@@ -41,8 +43,9 @@ export default function Section({ id, kicker, title, subtitle, subtitleOneLine =
           introduced. `narrow` sets a reading measure for prose; `wide` lets
           sprawling layouts past the default. */}
       <div className={`container-page ${wide ? 'max-w-6xl' : ''} ${narrow ? '!max-w-2xl' : ''}`}>
-        {(kicker || title) && (
+        {(above || kicker || title) && (
           <Reveal className={`mb-10 sm:mb-12 ${subtitleOneLine ? '' : 'max-w-3xl'}`}>
+            {above && <div className="mb-5">{above}</div>}
             {kicker && <p className="section-kicker">{kicker}</p>}
             {title && <h2 className="section-title">{title}</h2>}
             {subtitle && <p className={`section-subtitle ${subtitleOneLine ? 'lg:whitespace-nowrap' : ''}`}>{subtitle}</p>}

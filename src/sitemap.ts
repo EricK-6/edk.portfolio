@@ -16,7 +16,12 @@ export const LABELS: Record<SectionId, string> = {
 // Reading order, home first: the navbar's contents index, the mobile menu and
 // the command palette all walk this.
 export const MENU_IDS = [
-  'home', 'about', 'projects', 'experience', 'skills',
+  // Experience before Projects: collapsed, it is a screen and a half of
+  // where I've worked, and Projects is the longest section on the page. The
+  // short one that earns trust goes first, so a reader skimming from the top
+  // meets the roles before the long scroll rather than after it — and Skills
+  // then follows straight on from the projects it summarises.
+  'home', 'about', 'experience', 'projects', 'skills',
   // Certifications before Education: Skills says what I can use and Certifications
   // proves it, so Education sitting between them split a pair. The degree is
   // already named in the intro and again in About by the time anyone gets here.
