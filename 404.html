@@ -49,7 +49,7 @@
         }
         var go = function (to) { document.documentElement.style.visibility = 'hidden'; location.replace(to) }
 
-        // /about, /credentials, /home
+        // /about, /certifications, /home
         if (SECTIONS[path]) return go('/#' + SECTIONS[path])
         // /spottern, /projects/spottern, /pulse
         var slug = path.replace(/^projects?\//, '')
