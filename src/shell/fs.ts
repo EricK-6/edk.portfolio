@@ -112,7 +112,7 @@ export const ROOT: DirNode = dir('top', {
       L(SCHOOL.award),
       L(dim(`${SCHOOL.city} · ${SCHOOL.period}`)),
       L(SCHOOL.note),
-      L(dim('diligence awards  '), SCHOOL.diligence.map((d) => `${d.syllabus} ${d.subject}`).join(', ')),
+      L(dim('Diligence Awards  '), SCHOOL.diligence.map((d) => `${d.syllabus} ${d.subject}`).join(', ')),
     ]),
   }),
   volunteering: dir('volunteering', Object.fromEntries(ROLES.map((r) => [`${r.id}.md`, file(() => [

@@ -74,8 +74,8 @@ export default function Education() {
                 degree above it. Same information, chip-sized — the rosette and
                 the amber syllabus carry it without a box each. */}
             <div className="mt-4">
-              <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
-                Diligence awards
+              <div className="mb-2 font-mono text-[11px] font-medium tracking-[0.16em] text-grey-500">
+                Diligence Awards
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {SCHOOL.diligence.map(({ syllabus, subject }) => (
