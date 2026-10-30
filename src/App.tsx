@@ -7,7 +7,7 @@ import Experience from './components/Experience'
 import Skills from './components/Skills'
 import Education from './components/Education'
 import Certifications from './components/Certifications'
-import Leadership from './components/Leadership'
+import Volunteering from './components/Volunteering'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Divider from './components/Divider'
@@ -34,7 +34,7 @@ const SECTIONS: Record<Exclude<SectionId, 'home'>, ComponentType> = {
   skills: Skills,
   education: Education,
   certifications: Certifications,
-  leadership: Leadership,
+  volunteering: Volunteering,
   contact: Contact,
 }
 

@@ -622,6 +622,18 @@ export const EXPERIENCE = [
     ],
   },
   {
+    id: 'keb',
+    role: 'Academic Team Executive',
+    org: 'Korean Engineering Body (KEB)',
+    detail: 'Founding Member',
+    period: 'Jul 2024 - Oct 2026',
+    image: './KEB.webp',
+    bullets: [
+      'Co-founded an engineering community of **170+ members** and contributed to a **17-member executive team**.',
+      'Delivered **tutorial sessions** for junior engineering students and supported academic event planning.',
+    ],
+  },
+  {
     id: 'twelve',
     role: 'Front of House',
     org: 'Twelve Restaurant',
@@ -766,11 +778,10 @@ export const CERT_TIERS = ['Associate', 'Foundational']
 
 export type Cert = (typeof CERTS)[number]
 
-// --- leadership --------------------------------------------------------------
+// --- volunteering ------------------------------------------------------------
 
 // One line a role. These were two CV bullets each, which is right on a PDF
-// and wrong in a timeline card: the cards sit in two interleaved columns, so
-// every extra line pushes the next card further down the curve. The CV is one
+// and wrong in a timeline step: every extra line stretches the step. The CV is one
 // click away in the navbar for anyone who wants the full pair.
 export const ROLES: {
   id: string
@@ -778,23 +789,10 @@ export const ROLES: {
   detail?: string
   org: string
   period: string
-  pinned?: boolean
   image: string
   description: string
   link?: { label: string; href: string }
 }[] = [
-  {
-    id: 'keb',
-    title: 'Academic Team Executive',
-    detail: 'Founding Member',
-    org: 'Korean Engineering Body (KEB)',
-    period: 'Jul 2024 - Oct 2026',
-    pinned: true,
-    image: './KEB.webp',
-    link: { label: '@uoa.keb', href: 'https://www.instagram.com/uoa.keb' },
-    description:
-      'Co-founded an engineering community of 170+ members and contributed to a 17-member executive team, delivering tutorial sessions for junior engineering students and supporting academic event planning.',
-  },
   {
     id: 'ieee-nzro-2025',
     title: 'Full-time Student Volunteer',
@@ -802,16 +800,16 @@ export const ROLES: {
     period: 'Jul 2025',
     image: './IEEE.webp',
     description:
-      'Volunteered 40+ hours on operations and logistics at NZRO 2025, working with organisers for a smooth event.',
+      '40+ hours on operations and logistics at the New Zealand Robot Olympiad 2025.',
   },
   {
     id: 'nzpmc',
     title: 'Logistics Team Member',
-    org: 'The NZPMC Ltd',
+    org: 'The NZPMC Ltd · NZPMC 2025',
     period: 'Jul 2025',
     image: './nzpmc.jpeg',
     description:
-      'Logistics team for the New Zealand Physics and Math Competition.',
+      'Logistics team for the New Zealand Physics and Math Competition 2025.',
   },
   {
     id: 'cares-wro-2026',
@@ -820,7 +818,7 @@ export const ROLES: {
     period: 'May 2026',
     image: './cares.jpeg',
     description:
-      'Volunteered at the World Robot Olympiad 2026 with CARES.',
+      'Volunteered with CARES at the World Robot Olympiad 2026.',
   },
   {
     id: 'ieee-nzro-2026',
@@ -829,7 +827,7 @@ export const ROLES: {
     period: 'Jul 2026',
     image: './ieee_r&a.webp',
     description:
-      'Selected as official staff for prior ciLab experience; led competition operations and resolved technical issues.',
+      'Official staff at the New Zealand Robot Olympiad 2026, leading operations.',
   },
 ]
 
@@ -838,7 +836,7 @@ export const ROLES: {
 const issuers = [...new Set(CERTS.map((c) => c.issuer))]
 
 // Every line here is verifiable further down the page: the roles in
-// Experience, the placements in Projects, the certificates in Credentials, the
+// Experience, the placements in Projects, the certificates in Certifications, the
 // counts from those lists themselves — which is why the counts are computed
 // rather than typed.
 //

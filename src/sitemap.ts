@@ -8,8 +8,8 @@ export const LABELS: Record<SectionId, string> = {
   education: 'Education',
   projects: 'Projects',
   skills: 'Skills',
-  leadership: 'Leadership',
-  certifications: 'Credentials',
+  volunteering: 'Volunteering',
+  certifications: 'Certifications',
   contact: 'Contact',
 }
 
@@ -17,10 +17,10 @@ export const LABELS: Record<SectionId, string> = {
 // the command palette all walk this.
 export const MENU_IDS = [
   'home', 'about', 'projects', 'experience', 'skills',
-  // Credentials before Education: Skills says what I can use and Credentials
+  // Certifications before Education: Skills says what I can use and Certifications
   // proves it, so Education sitting between them split a pair. The degree is
   // already named in the intro and again in About by the time anyone gets here.
-  'certifications', 'education', 'leadership', 'contact',
+  'certifications', 'education', 'volunteering', 'contact',
 ] as const
 
 export type SectionId = (typeof MENU_IDS)[number]

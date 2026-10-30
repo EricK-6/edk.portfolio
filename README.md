@@ -82,7 +82,7 @@ npm run deploy
 │       ├── Skills.tsx
 │       ├── Education.tsx
 │       ├── Certifications.tsx     # cert cards that link out to Credly
-│       ├── Leadership.tsx
+│       ├── Volunteering.tsx
 │       ├── Contact.tsx            # Formspree contact form
 │       ├── Footer.tsx
 │       ├── CommandPalette.tsx     # Cmd/Ctrl + K
@@ -98,7 +98,7 @@ npm run deploy
 
 ## Editing the content
 
-Everything the site says lives in **`src/content.ts`**: profile links, the two résumés, the intro's rotating phrases, projects (with their build logs), experience, skills, education, certifications and leadership. Edit a line there and every place that shows it agrees — the section, the terminal, the command palette, and the counts in About ("4 cloud certifications", "8 projects") are computed from the lists.
+Everything the site says lives in **`src/content.ts`**: profile links, the two résumés, the intro's rotating phrases, projects (with their build logs), experience, skills, education, certifications and volunteering. Edit a line there and every place that shows it agrees — the section, the terminal, the command palette, and the counts in About ("4 cloud certifications", "8 projects") are computed from the lists.
 
 For a project's media, drop the file into `public/` and set `image` (and `video`, if there is a clip) on its entry. Each project's `slug` is its anchor (`erickk.cloud/#spottern`), so don't rename one lightly.
 

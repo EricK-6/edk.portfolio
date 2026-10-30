@@ -39,7 +39,7 @@ export default function Section({ id, kicker, title, subtitle, subtitleOneLine =
           separate — a `container-page` heading over a `mx-auto max-w-3xl`
           body — so the kicker started 44px to the left of the paragraph it
           introduced. `narrow` sets a reading measure for prose; `wide` lets
-          sprawling layouts (the leadership serpentine) past the default. */}
+          sprawling layouts past the default. */}
       <div className={`container-page ${wide ? 'max-w-6xl' : ''} ${narrow ? '!max-w-2xl' : ''}`}>
         {(kicker || title) && (
           <Reveal className={`mb-10 sm:mb-12 ${subtitleOneLine ? '' : 'max-w-3xl'}`}>

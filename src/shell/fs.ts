@@ -1,6 +1,6 @@
 // The site as a filesystem, generated from content.ts.
 //
-// Every section is a directory and every project, role, credential and skill
+// Every section is a directory and every project, role, certification and skill
 // group is a file (each project is a directory of its own: README.md,
 // stack.txt, build.log when it has one, and its demo and repo as links).
 // Because it is built from the same data the page renders, `cat` can never
@@ -115,7 +115,7 @@ export const ROOT: DirNode = dir('top', {
       L(dim('diligence awards  '), SCHOOL.diligence.map((d) => `${d.syllabus} ${d.subject}`).join(', ')),
     ]),
   }),
-  leadership: dir('leadership', Object.fromEntries(ROLES.map((r) => [`${r.id}.md`, file(() => [
+  volunteering: dir('volunteering', Object.fromEntries(ROLES.map((r) => [`${r.id}.md`, file(() => [
     heading(`# ${r.title}${r.detail ? ` (${r.detail})` : ''}`),
     L(dim(`${r.org} · ${r.period}`)),
     L(r.description),
@@ -165,7 +165,7 @@ const ALIASES: Record<string, string[]> = {
   school: ['education'], uni: ['education'], study: ['education'],
   me: ['about'], bio: ['about'], profile: ['about'],
   stack: ['skills'], tech: ['skills'],
-  volunteering: ['leadership'], activities: ['leadership'],
+  leadership: ['volunteering'], activities: ['volunteering'], volunteer: ['volunteering'],
   email: ['contact'], hire: ['contact'],
 }
 

@@ -8,8 +8,15 @@ export default function Experience() {
     <Section id="experience" kicker="Experience" title="Where I've worked">
       <ol className="relative border-l border-grey-200 pl-6 space-y-10">
         {EXPERIENCE.map((job, i) => (
-          <Reveal key={job.role + job.org} as="li" delay={i * 100} className="relative block">
-            <span className="absolute -left-[29px] top-1.5 h-3 w-3 rounded-full bg-accent ring-4 ring-grey-300" />
+          <Reveal key={job.role + job.org} as="li" delay={i * 100} className="group relative block">
+            {/* A dot on the line, level with the middle of the logo. The line is
+                the list's 1px left border, so its centre is 24.5px left of the
+                entry (24px of padding plus half the border). The dot's ring is
+                the page colour, so the line does not show through it. Below
+                `sm` the logo is hidden, and the first line of the heading
+                (1.75rem tall) is what the dot lines up with. Hovering an entry
+                swells its dot. */}
+            <span className="absolute -left-[30.5px] top-3.5 h-3 w-3 -translate-y-1/2 rounded-full bg-accent ring-4 ring-page transition-transform duration-200 ease-out group-hover:scale-125 sm:top-8" />
             <div className="flex gap-4">
               {job.image && (
                 <img
