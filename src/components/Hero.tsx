@@ -136,9 +136,11 @@ export default function Hero() {
           className="lift-in mt-4 text-[15px] text-grey-700"
           style={{ animationDelay: '320ms' }}
         >
-          BE(Hons) Computer Systems Engineering
-          <span className="text-grey-500"> · </span>
-          University of Auckland
+          {/* one line each on a phone: left to wrap, the separator was
+              stranded at the end of the first line */}
+          <span className="block sm:inline">BE(Hons) Computer Systems Engineering</span>
+          <span aria-hidden="true" className="hidden text-grey-500 sm:inline"> · </span>
+          <span className="block sm:inline">University of Auckland</span>
         </p>
       </div>
 

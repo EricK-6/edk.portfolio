@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react'
+import { PROFILE, PROJECTS } from './content'
+import { pageOfAnchor, type Page, type PageId } from './sitemap'
 
-// The site is one scrolling document. Every section is an <section id="...">
-// in reading order, so navigation is nothing but anchors.
-//
-// This replaces a hash router that gave each section its own route and moved
-// between them by hijacking the wheel. That is what made the site feel
-// unstable: a trackpad flick emits momentum events for a second or more, and
-// a gesture that was meant to read the end of a section instead teleported
-// past it. A document has none of those failure modes, and it gets the
-// scrollbar, Cmd+F, Back, and deep links back for free.
+// The site is four pages, each a scrolling document of its own sections.
+// Navigation is still nothing but anchors: '#skills' names a section, and the
+// page that holds it is the one that renders. Pages scroll normally; the wheel
+// is never reinterpreted as travel between them (an earlier router did that,
+// and a trackpad's momentum events teleported readers past what they were
+// reading).
 //
 // Smooth scrolling and the header offset are pure CSS (`scroll-behavior` and
-// `scroll-padding-top` in index.css), so a plain <a href="#about"> is the
-// whole navigation implementation. No click handler, nothing to keep in sync.
+// `scroll-padding-top` in index.css), so a link within a page is a plain
+// <a href="#skills">.
 
 // Old links and bookmarks used the '#/about' route form. Rewrite them to the
 // anchor form once on boot, before React paints, so an existing bookmark
@@ -33,105 +32,67 @@ export function goTo(id: string) {
   window.location.hash = id === 'home' ? 'top' : id
 }
 
-// Landing on a deep link.
-//
-// The browser scrolls to a fragment while parsing the document — which, in a
-// client-rendered app, is before any of the sections exist. So arriving at
-// `erickk.cloud/#projects` found no `#projects` to scroll to and silently left
-// the reader at the top of the page. Every deep link on the site, and every
-// link anyone has already shared, was landing on the intro.
-//
-// So the landing is redone once React has painted. `instant` on purpose: the
-// CSS smooth-scroll is for clicks made on the page, and animating a 7,000px
-// journey the moment a page opens is motion nobody asked for.
-export function useHashLanding() {
-  useEffect(() => {
-    const id = decodeURIComponent((window.location.hash || '').slice(1))
-    if (!id) return
+// A project's slug is an anchor inside Projects, so the terminal can deep-link
+// to one.
+const EXTRA: Record<string, PageId> = Object.fromEntries(PROJECTS.map((p) => [p.slug, 'work' as PageId]))
 
-    let cancelled = false
-    // Late media (four videos and eight stills) changes the height of the
-    // document after first paint, so the first landing can drift. It is
-    // retried — but never once the reader has taken over, or the page would
-    // yank itself back under them.
+const anchorNow = () => decodeURIComponent((window.location.hash || '').slice(1))
+
+// The page the URL points at, kept in step with the address bar. On every
+// change of page the reader lands where the link points: the top of the page
+// for a page's opening section, otherwise the section itself. A move within
+// a page is left to the browser's own anchor scroll.
+//
+// `instant` on purpose: the CSS smooth-scroll is for clicks on the page, and
+// animating a long journey across a page swap is motion nobody asked for.
+export function usePage(): Page {
+  const [anchor, setAnchor] = useState(anchorNow)
+  useEffect(() => {
+    const onChange = () => setAnchor(anchorNow())
+    window.addEventListener('hashchange', onChange)
+    return () => window.removeEventListener('hashchange', onChange)
+  }, [])
+
+  const page = pageOfAnchor(anchor, EXTRA)
+
+  useEffect(() => {
+    document.title = page.id === 'home' ? PROFILE.name : `${page.label} · ${PROFILE.name}`
+
+    const target = anchor && anchor !== 'top' ? anchor : null
+    const land = () => {
+      const el = target ? document.getElementById(target) : null
+      if (el && !(page.sections[0] === target)) el.scrollIntoView({ behavior: 'instant', block: 'start' })
+      else window.scrollTo({ top: 0, behavior: 'instant' })
+    }
+
+    // Late media changes the height of the page after first paint, so the
+    // landing is retried — but never once the reader has taken over, or the
+    // page would yank itself back under them.
     let taken = false
     const takeOver = () => { taken = true }
-
-    const land = () => {
-      if (cancelled || taken) return
-      document.getElementById(id)?.scrollIntoView({ behavior: 'instant', block: 'start' })
-    }
-
-    // a hash naming nothing should not stay in the address bar for the
-    // visitor to copy or bookmark
-    const tidy = () => {
-      if (cancelled || document.getElementById(id)) return
-      history.replaceState(null, '', window.location.pathname + window.location.search)
-    }
-
     for (const ev of ['wheel', 'touchstart', 'keydown']) {
       window.addEventListener(ev, takeOver, { passive: true, once: true })
     }
     const frame = requestAnimationFrame(land)
-    const timer = setTimeout(() => { land(); tidy() }, 300)
-    window.addEventListener('load', land)
+    const timer = setTimeout(() => {
+      if (!taken) land()
+      // a hash naming nothing should not stay in the address bar for the
+      // visitor to copy or bookmark
+      if (target && !document.getElementById(target)) {
+        history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
+    }, 300)
 
     return () => {
-      cancelled = true
       cancelAnimationFrame(frame)
       clearTimeout(timer)
-      window.removeEventListener('load', land)
       for (const ev of ['wheel', 'touchstart', 'keydown']) {
         window.removeEventListener(ev, takeOver)
       }
     }
-  }, [])
-}
+    // keyed on the page: a hash change within a page is the browser's job
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page.id])
 
-// Which section the reader is currently in, for the navbar's contents index.
-//
-// One rAF-throttled scroll listener that measures every section and picks the
-// last one to have passed under the header. Deriving the answer from all the
-// rects at once — rather than from whichever element happened to fire an
-// event — is what keeps it from flickering between two neighbours mid-scroll.
-//
-// `ids` must be a stable reference (a module-level constant); an array built
-// inline in render would retrigger this effect on every render.
-export function useActiveSection(ids: readonly string[], offset = 96) {
-  const [active, setActive] = useState(ids[0])
-
-  useEffect(() => {
-    let frame = 0
-    const measure = () => {
-      frame = 0
-      const nodes = ids.map((id) => document.getElementById(id)).filter((n): n is HTMLElement => n !== null)
-      if (!nodes.length) return
-
-      let current = nodes[0]
-      for (const node of nodes) {
-        if (node.getBoundingClientRect().top <= offset) current = node
-      }
-      // The last section is often too short to ever reach the band, so it
-      // would never light up. Hitting the bottom of the document counts as
-      // being in it.
-      const atEnd =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
-      setActive(atEnd ? nodes[nodes.length - 1].id : current.id)
-    }
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(measure)
-    }
-
-    window.addEventListener('scroll', schedule, { passive: true })
-    window.addEventListener('resize', schedule)
-    measure()
-
-    return () => {
-      window.removeEventListener('scroll', schedule)
-      window.removeEventListener('resize', schedule)
-      if (frame) cancelAnimationFrame(frame)
-    }
-  }, [ids, offset])
-
-  return active
+  return page
 }

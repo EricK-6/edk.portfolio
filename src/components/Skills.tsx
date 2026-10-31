@@ -17,7 +17,7 @@ import { SKILL_GROUPS } from '../content'
 // the thing a reader was scanning for in the first place — the words.
 export default function Skills() {
   return (
-    <Section id="skills" kicker="Skills" title="What I work with">
+    <Section id="skills" kicker="Skills" title="What I work with" wide>
       {/* Two across, not three. The groups hold 11, 14, 10 and 7 items — close
           enough in length to sit level in a 2x2, where a three-column split
           left one tall column towering over two short ones. */}

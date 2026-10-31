@@ -19,7 +19,7 @@ export interface PdfNode { type: 'pdf'; href: string; resume: string }
 export interface ExecNode { type: 'exec'; slug: string }
 export interface DirNode {
   type: 'dir'
-  // the page anchor `cd` scrolls to ('top' for ~)
+  // the anchor `cd` goes to ('top' for ~)
   anchor: string
   children: Record<string, Node>
 }
@@ -65,7 +65,7 @@ function projectDir(p: Project): DirNode {
 export const ROOT: DirNode = dir('top', {
   'README.md': file(() => [
     heading(`# ${PROFILE.fullName}`),
-    L('This is the page you are on, as a filesystem. Every section is a directory; `cd` into one and the page scrolls there.'),
+    L('This is the site, as a filesystem. Every section is a directory; `cd` into one and it takes you there.'),
     blank,
     L(dim('start with  ls, cat about/bio.md, help')),
   ]),

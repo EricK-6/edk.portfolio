@@ -168,6 +168,8 @@ export default function Contact() {
             </button>
             <a href={`mailto:${EMAIL}`} className="btn-secondary" data-track="link-email">Just email me directly</a>
           </div>
+
+          <DeliveryTrace status={status} />
         </Reveal>
 
         {/* always-mounted live region (out of the form's space-y flow) so
@@ -179,6 +181,56 @@ export default function Contact() {
         </p>
       </div>
     </Section>
+  )
+}
+
+// The message's journey, drawn: from a chip (you) to a cloud (my inbox), the
+// same two ends as the motto in About. Idle it is a quiet wire; while the
+// message is on its way a packet runs along it; once delivered the wire fills
+// in the accent and the cloud lights; if it fails the wire breaks. Decorative
+// only: the live region below the form is what a screen reader hears.
+const TRACE_CAPTION: Record<Status, string> = {
+  idle: 'ready when you are',
+  sending: 'sending…',
+  success: 'delivered · 200 OK',
+  error: "didn't get through",
+}
+
+function DeliveryTrace({ status }: { status: Status }) {
+  const done = status === 'success'
+  const failed = status === 'error'
+  return (
+    <div aria-hidden="true" className="border-t border-grey-200 pt-4">
+      <div className="flex items-center gap-3 text-grey-400">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="flex-none">
+          <rect x="5" y="5" width="14" height="14" rx="2" />
+          <rect x="9.5" y="9.5" width="5" height="5" />
+          <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
+        </svg>
+
+        <span className="relative h-4 flex-1">
+          {/* the wire: dashed and grey until delivered, broken when it fails */}
+          <span
+            className={`absolute inset-x-0 top-1/2 h-px -translate-y-1/2 transition-colors duration-500 ${
+              done ? 'bg-accent' : failed ? 'border-t border-dashed border-red-300 bg-transparent' : 'bg-grey-300'
+            }`}
+          />
+          {status === 'sending' && (
+            <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 animate-[packet_1.1s_ease-in-out_infinite] rounded-full bg-accent motion-reduce:left-1/2 motion-reduce:animate-none" />
+          )}
+        </span>
+
+        <svg
+          width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"
+          className={`flex-none transition-colors duration-500 ${done ? 'text-accent' : ''}`}
+        >
+          <path d="M17.5 18.5H8.5a5.5 5.5 0 1 1 5.28-7h3.72a3.5 3.5 0 1 1 0 7Z" />
+        </svg>
+      </div>
+      <p className={`mt-2 text-center font-mono text-[10px] uppercase tracking-[0.14em] transition-colors ${done ? 'text-accent-deep' : failed ? 'text-red-500' : 'text-grey-400'}`}>
+        {TRACE_CAPTION[status]}
+      </p>
+    </div>
   )
 }
 

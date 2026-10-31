@@ -15,6 +15,9 @@ interface SectionProps {
   subtitleOneLine?: boolean
   wide?: boolean
   narrow?: boolean
+  // set the heading on the About measure while the content below keeps the
+  // section's own width (Experience: a wide timeline under a narrow title)
+  narrowHeading?: boolean
   children: ReactNode
   className?: string
 }
@@ -31,7 +34,7 @@ interface SectionProps {
 // uppercase kicker in muted grey doing the labelling, and the sentence
 // underneath carrying the weight. A section name is a signpost, not a
 // headline, and it should not shout louder than the work it introduces.
-export default function Section({ id, above, kicker, title, subtitle, subtitleOneLine = false, wide = false, narrow = false, children, className = '' }: SectionProps) {
+export default function Section({ id, above, kicker, title, subtitle, subtitleOneLine = false, wide = false, narrow = false, narrowHeading = false, children, className = '' }: SectionProps) {
   return (
     // No `scroll-mt` here: the header offset for every anchor on the site is
     // `scroll-padding-top` on <html> (index.css), in one place. Setting both
@@ -44,7 +47,7 @@ export default function Section({ id, above, kicker, title, subtitle, subtitleOn
           sprawling layouts past the default. */}
       <div className={`container-page ${wide ? 'max-w-6xl' : ''} ${narrow ? '!max-w-2xl' : ''}`}>
         {(above || kicker || title) && (
-          <Reveal className={`mb-10 sm:mb-12 ${subtitleOneLine ? '' : 'max-w-3xl'}`}>
+          <Reveal className={`mb-10 sm:mb-12 ${narrowHeading ? 'mx-auto max-w-[38rem]' : subtitleOneLine ? '' : 'max-w-3xl'}`}>
             {above && <div className="mb-5">{above}</div>}
             {kicker && <p className="section-kicker">{kicker}</p>}
             {title && <h2 className="section-title">{title}</h2>}

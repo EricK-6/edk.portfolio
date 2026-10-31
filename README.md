@@ -4,12 +4,14 @@ Hey, I'm **Dohyun (Eric) Kim**, a Computer Systems Engineering (Hons) student at
 
 🔗 **Live at [erickk.cloud](https://erickk.cloud/)**
 
-It's one page that scrolls, top to bottom, and I've deliberately kept it that way:
+It's four pages, each one a normal scrolling document, and I've deliberately kept it that way:
+
+- **Home** (intro, About, Experience), **Projects** (projects and skills), **Background** (education, certifications, volunteering) and **Contact**. Every section keeps its own anchor, so `#skills` opens the Projects page and scrolls to Skills.
 
 - **A full-bleed intro** — one photograph from Queenstown, my name on it, and the line about what I build. It's the only place on the site type sits on a picture.
-- **Everything below is paper** — a flat off-white document, a narrow reading measure, hairline rules between sections, and a contents index in the header that tracks where you are.
-- **Command palette** (`Cmd`/`Ctrl + K`) and a **terminal** (`Ctrl + \``) that browses the page as a filesystem: `ls`, `cd` (the page scrolls with you), `cat`, `grep`, pipes, `open spottern` (opens its build log), `./spottern` (a replay of the pipeline). It works like a normal shell: you type, it prints, and `help` lists the commands.
-- **The page never fights the scroll.** There's no wheel hijacking, no snap, nothing that moves once it's arrived — the animation is all entrance. That's on purpose: an earlier version made each section its own route and reinterpreted the wheel as travel between them, which cost the scrollbar, `Cmd+F`, and a sane Back button.
+- **Everything below is paper** — a flat off-white document, a narrow reading measure, hairline rules between sections, and a header that lists the four pages and underlines the one you're on.
+- **Command palette** (`Cmd`/`Ctrl + K`) and a **terminal** (`Ctrl + \``) that browses the page as a filesystem: `ls`, `cd` (it opens the right page and scrolls there), `cat`, `grep`, pipes, `open spottern` (opens its build log), `./spottern` (a replay of the pipeline). It works like a normal shell: you type, it prints, and `help` lists the commands.
+- **The page never fights the scroll.** There's no wheel hijacking, no snap, nothing that moves once it's arrived — the animation is all entrance. Pages change only when you click a link; an earlier version reinterpreted the wheel as travel between sections, which cost the scrollbar, `Cmd+F`, and a sane Back button.
 
 ---
 
@@ -63,13 +65,13 @@ npm run deploy
 │   ├── qt.jpg / qt.webp           # the intro photograph, WebP with a JPEG fallback (+ qt-sm.* for small screens)
 │   └── og-image.jpg
 ├── src/
-│   ├── App.tsx                    # the document: every section, in reading order
+│   ├── App.tsx                    # the four pages, and which sections each holds
 │   ├── content.ts                 # every word and link the site shows (see below)
 │   ├── analytics.ts               # GoatCounter click events (data-track="…")
 │   ├── shell/                     # the terminal's brain: a filesystem built from content.ts, commands, replays
 │   ├── main.tsx
-│   ├── router.ts                  # anchors + the scrollspy the contents index uses
-│   ├── sitemap.ts                 # the sections and their labels, in one place
+│   ├── router.ts                  # picks the page from the URL hash and lands on the section
+│   ├── sitemap.ts                 # the pages, their sections and their labels, in one place
 │   ├── useOnScreen.ts             # pauses the project demo clips when off screen
 │   ├── index.css                  # Tailwind + my shared component classes
 │   └── components/

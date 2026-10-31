@@ -47,8 +47,6 @@ const inkFor = (cert: Cert) =>
 // four badges into two rows of two now breaks two groups into two labelled
 // blocks instead, which if anything reads more clearly than an unlabelled
 // wrap did.
-const CELL = 158 // px — must match sm:w-[158px] on a badge
-const GAP = 24 // px — must match sm:gap-x-6 on the row and the gap between groups
 
 // Same contract as the project cards: a press turns the badge over for the
 // one line a name and a date cannot carry, and nothing moves until asked.
@@ -154,16 +152,14 @@ function ExternalLinkIcon() {
 export default function Certifications() {
   return (
     <Section id="certifications" kicker="Certifications" title="What I'm certified in">
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-10">
+      {/* One half of the column each, so the rules run the full width of the
+          page's column like everything above and below this section. On a
+          phone the groups stack. */}
+      <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2">
         {CERT_TIERS.map((tier, gi) => {
           const items = CERTS.filter((c) => c.tier === tier)
-          // each group's rule is drawn to the width of its own two badges, not
-          // to the column — a rule cannot measure the flex row beneath it, so
-          // the width has to be computed. `max-w-full` hands it back to the
-          // column on a screen too narrow to hold even one group unwrapped.
-          const width = items.length * CELL + (items.length - 1) * GAP
           return (
-            <div key={tier} className="max-w-full" style={{ width }}>
+            <div key={tier}>
               <div className="flex items-baseline gap-3 border-b border-grey-200 pb-2.5">
                 <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-grey-500">
                   {tier}
@@ -172,7 +168,7 @@ export default function Certifications() {
                   {String(items.length).padStart(2, '0')}
                 </span>
               </div>
-              <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-6">
+              <div className="mt-6 flex flex-wrap justify-evenly gap-x-4 gap-y-9">
                 {items.map((c, i) => (
                   <Reveal key={c.name} delay={(gi * 2 + i) * 60}>
                     <Badge cert={c} />

@@ -136,7 +136,7 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'cd', group: 'look around', usage: 'cd <section|project>', summary: 'go there (the page scrolls with you)',
+    name: 'cd', group: 'look around', usage: 'cd <section|project>', summary: 'go there (opens the right page)',
     run(args, { ctx, out }) {
       const segs = findDir(ctx.cwd, args[0])
       if (!segs) {

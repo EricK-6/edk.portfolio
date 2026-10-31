@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { LABELS, MENU_IDS, SECTION_IDS, SPY_IDS, anchorOf, hrefFor } from '../sitemap'
-import { useActiveSection } from '../router'
+import { NAV_PAGES, hrefFor, pageHref, type Page } from '../sitemap'
 import { PROFILE, RESUMES } from '../content'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '')
@@ -9,26 +8,18 @@ const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigat
 // sections listed in reading order, with a rule under the one you are
 // reading.
 //
-// Two things changed with the move to a scrolling document. The links are
-// plain anchors now — no router, no click handler, just `href="#about"` and
-// the CSS `scroll-behavior`/`scroll-padding-top` in index.css — and the
-// active entry is derived from scroll position rather than from a route, so
-// it tracks continuously as you read instead of only changing on a jump.
+// The entries are pages, not sections: each link is a plain anchor to the
+// page's first section, and the active entry is the page the router (see
+// usePage) has open.
 //
 // The bar is also transparent until you leave the intro. It used to be frosted
 // at all times, because the document never scrolled and a scroll-triggered
 // background would never have fired. Over the photograph a permanent white
 // bar was a lid on the picture; now it only appears once there is text
 // underneath it that needs separating.
-export default function Navbar() {
+export default function Navbar({ page }: { page: Page }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  // Spied over the whole document, intro included, but only the eight
-  // sections are drawn. While the reader is still on the photograph the
-  // answer is 'top', which matches no entry — so nothing is underlined until
-  // there is genuinely a section to be in. Spying on the eight alone lit up
-  // 'About' before the reader had left the intro.
-  const active = useActiveSection(SPY_IDS)
 
   useEffect(() => {
     let frame = 0
@@ -84,10 +75,19 @@ export default function Navbar() {
           {PROFILE.name}<span className="text-accent">.</span>
         </a>
 
-        <ContentsIndex active={active} />
+        <ContentsIndex active={page.id} />
 
         <div className="col-start-3 flex items-center gap-2.5 justify-self-end">
           <ResumeMenu />
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('toggle-terminal'))}
+            data-terminal-toggle
+            aria-label="Toggle terminal"
+            title="Terminal"
+            className="tap-44 hidden h-9 w-9 items-center justify-center rounded-lg border border-grey-200 bg-white/70 text-grey-600 transition hover:border-grey-300 hover:text-grey-900 sm:inline-flex"
+          >
+            <TerminalIcon />
+          </button>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
             aria-label="Open command menu"
@@ -110,22 +110,22 @@ export default function Navbar() {
       {open && (
         <div className="border-t border-grey-200 bg-page/95 backdrop-blur-xl xl:hidden">
           <ul className="mx-auto flex w-full max-w-6xl flex-col gap-0.5 px-6 py-3 sm:px-8">
-            {MENU_IDS.map((id) => (
-              <li key={id}>
+            {NAV_PAGES.map((p) => (
+              <li key={p.id}>
                 <a
-                  href={hrefFor(id)}
+                  href={pageHref(p)}
                   onClick={() => setOpen(false)}
-                  aria-current={active === anchorOf(id) ? 'true' : undefined}
+                  aria-current={page.id === p.id ? 'page' : undefined}
                   className={`flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-grey-100 ${
-                    active === anchorOf(id) ? 'text-accent-deep' : 'text-grey-700'
+                    page.id === p.id ? 'text-accent-deep' : 'text-grey-700'
                   }`}
                 >
-                  {LABELS[id]}
+                  {p.label}
                 </a>
               </li>
             ))}
-            {/* The terminal's pull-tab is hidden below lg (it collided with
-                the section kickers), so the menu is how a phone reaches it. */}
+            {/* The navbar's terminal button is hidden on a phone, so the menu is
+                how a phone reaches it. */}
             <li>
               <button
                 onClick={() => { setOpen(false); window.dispatchEvent(new CustomEvent('open-terminal')) }}
@@ -272,20 +272,18 @@ function ChevronIcon({ open }: { open: boolean }) {
   )
 }
 
-// Home is the cover, reached by the name on the left, so it is not listed.
-// Plain labels: the rule under the section you are reading says where you
-// are, and the numbers that used to sit in front of each label were noise
-// beside it.
+// The pages after the intro, in reading order. Home is the name on the left.
+// Plain labels: the rule under the page you are on says where you are.
 function ContentsIndex({ active }: { active: string }) {
   return (
     <ul className="col-start-2 hidden items-baseline gap-5 xl:flex">
-      {SECTION_IDS.map((id) => {
-        const on = active === id
+      {NAV_PAGES.map((p) => {
+        const on = active === p.id
         return (
-          <li key={id}>
+          <li key={p.id}>
             <a
-              href={hrefFor(id)}
-              aria-current={on ? 'true' : undefined}
+              href={pageHref(p)}
+              aria-current={on ? 'page' : undefined}
               className="group relative flex items-baseline py-1"
             >
               <span
@@ -293,7 +291,7 @@ function ContentsIndex({ active }: { active: string }) {
                   on ? 'font-medium text-grey-900' : 'text-grey-600 group-hover:text-grey-900'
                 }`}
               >
-                {LABELS[id]}
+                {p.label}
               </span>
               {/* the rule marks the entry you are reading; on the others it
                   grows in from the left on hover */}
@@ -308,6 +306,14 @@ function ContentsIndex({ active }: { active: string }) {
         )
       })}
     </ul>
+  )
+}
+
+function TerminalIcon() {
+  return (
+    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
+    </svg>
   )
 }
 

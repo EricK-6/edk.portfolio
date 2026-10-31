@@ -1,49 +1,50 @@
-// The site's sections, in reading order. One scrolling document, so these are
-// anchors on the page rather than routes — 'home' is the intro at the top.
+// The site is four pages. Each section keeps its own anchor id, and the URL
+// hash is still that id ('#skills'), so every old link and bookmark lands on
+// the right page and scrolls to the right place: the page is whichever one
+// holds the section.
 
-export const LABELS: Record<SectionId, string> = {
-  home: 'Home',
-  about: 'About',
-  experience: 'Experience',
-  education: 'Education',
-  projects: 'Projects',
-  skills: 'Skills',
-  volunteering: 'Volunteering',
-  certifications: 'Certifications',
-  contact: 'Contact',
+export type SectionId =
+  | 'home' | 'about' | 'experience'
+  | 'projects' | 'skills'
+  | 'education' | 'certifications' | 'volunteering'
+  | 'contact'
+
+export type PageId = 'home' | 'work' | 'background' | 'contact'
+
+export interface Page {
+  id: PageId
+  label: string
+  // in reading order; the first is where the page opens
+  sections: readonly SectionId[]
 }
 
-// Reading order, home first: the navbar's contents index, the mobile menu and
-// the command palette all walk this.
-export const MENU_IDS = [
-  // Experience before Projects: collapsed, it is a screen and a half of
-  // where I've worked, and Projects is the longest section on the page. The
-  // short one that earns trust goes first, so a reader skimming from the top
-  // meets the roles before the long scroll rather than after it — and Skills
-  // then follows straight on from the projects it summarises.
-  'home', 'about', 'experience', 'projects', 'skills',
-  // Certifications before Education: Skills says what I can use and Certifications
-  // proves it, so Education sitting between them split a pair. The degree is
-  // already named in the intro and again in About by the time anyone gets here.
-  'certifications', 'education', 'volunteering', 'contact',
-] as const
+export const PAGES: readonly Page[] = [
+  { id: 'home', label: 'Home', sections: ['home', 'about', 'experience'] },
+  { id: 'work', label: 'Projects', sections: ['projects', 'skills'] },
+  { id: 'background', label: 'Background', sections: ['education', 'certifications', 'volunteering'] },
+  { id: 'contact', label: 'Contact', sections: ['contact'] },
+]
 
-export type SectionId = (typeof MENU_IDS)[number]
 
-// Home is the cover, so it is not numbered; the eight sections run 01 to 08.
-// Module-level and frozen because `useActiveSection` keys an effect on it.
-export const SECTION_IDS = MENU_IDS.filter((id) => id !== 'home')
+// The pages listed in the nav. Home is left out: the name in the corner is
+// the way back to it.
+export const NAV_PAGES = PAGES.filter((p) => p.id !== 'home')
 
 // The intro's anchor. 'home' is the id the rest of the app uses for it; 'top'
 // is what it is called in the document, so the URL reads '#top'.
 export const anchorOf = (id: SectionId) => (id === 'home' ? 'top' : id)
 
-// Every link on the site is a plain anchor into the same document.
+// Every link on the site is a plain anchor; the router decides which page
+// holds it.
 export const hrefFor = (id: SectionId) => `#${anchorOf(id)}`
 
-// What the scrollspy watches: the anchor ids as they actually appear in the
-// document, intro included. It has to be the anchors, not MENU_IDS — the
-// intro's element is <section id="top">, so looking up 'home' found nothing,
-// the intro dropped out of the list, and 'About' was reported as the current
-// section while the reader was still looking at the photograph.
-export const SPY_IDS = MENU_IDS.map(anchorOf)
+export const pageHref = (page: Page) => hrefFor(page.sections[0])
+
+// A project's slug is an anchor inside Projects, so the terminal can deep-link
+// to one; anything else that names no section is the intro.
+export function pageOfAnchor(anchor: string, extra: Record<string, PageId> = {}): Page {
+  const direct = PAGES.find((p) => p.sections.some((s) => anchorOf(s) === anchor))
+  if (direct) return direct
+  const id = extra[anchor]
+  return PAGES.find((p) => p.id === id) ?? PAGES[0]
+}

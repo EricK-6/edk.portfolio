@@ -5,7 +5,9 @@ import { candidates, execute, type Ctx } from '../shell/commands'
 import { pathLabel } from '../shell/fs'
 import { dim, L, type Line, type Seg } from '../shell/lines'
 
-// The terminal drawer: the page, browsable as a filesystem.
+// The terminal: the page, browsable as a filesystem, in a sheet that slides up
+// from the bottom of the screen. The navbar's >_ button, Ctrl/Cmd + ` and the
+// command palette open it.
 //
 // What it runs lives in src/shell (a filesystem generated from content.ts,
 // the commands, the replays); this file is the drawer, the prompt and the
@@ -45,16 +47,6 @@ export default function TerminalDock() {
   // pushing it aside, so nothing outside needs to know.
   const [open, setOpen] = useState(false)
 
-  // The handwritten "For Devs" nudge is for someone who has never found this;
-  // it fades once the dock has actually been opened.
-  const [seen, setSeen] = useState(() => {
-    try { return localStorage.getItem('terminal-seen') === '1' } catch { return false }
-  })
-  useEffect(() => {
-    if (!open || seen) return
-    setSeen(true)
-    try { localStorage.setItem('terminal-seen', '1') } catch { /* private mode */ }
-  }, [open, seen])
   useEffect(() => { if (open) track('terminal-open') }, [open])
 
   const [lines, setLines] = useState<Line[]>([])
@@ -70,7 +62,6 @@ export default function TerminalDock() {
   const bodyRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null) // everything inside the drawer
-  const tabRef = useRef<HTMLButtonElement>(null) // the pull-tab, always reachable
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
@@ -92,17 +83,21 @@ export default function TerminalDock() {
     })
   }, [open])
 
-  // toggle with Ctrl/Cmd + backtick, or the 'open-terminal' event (menu, palette)
+  // toggle with Ctrl/Cmd + backtick or the navbar button ('toggle-terminal'), or
+  // open with the 'open-terminal' event (menu, palette)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === '`') { e.preventDefault(); setOpen((o) => !o) }
     }
     const onOpen = () => setOpen(true)
+    const onToggle = () => setOpen((o) => !o)
     window.addEventListener('keydown', onKey)
     window.addEventListener('open-terminal', onOpen)
+    window.addEventListener('toggle-terminal', onToggle)
     return () => {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('open-terminal', onOpen)
+      window.removeEventListener('toggle-terminal', onToggle)
     }
   }, [])
 
@@ -112,14 +107,14 @@ export default function TerminalDock() {
     return () => clearTimeout(t)
   }, [open])
 
-  // A shut drawer is parked off-screen, not gone: `inert` takes the whole panel
+  // A shut sheet is parked off-screen, not gone: `inert` takes the whole panel
   // out of the tab order and the accessibility tree while it is shut, and the
-  // pull-tab beside it stays operable.
+  // navbar button that opens it stays operable.
   useEffect(() => {
     const panel = panelRef.current
     if (!panel) return
     panel.inert = !open
-    if (!open && panel.contains(document.activeElement)) tabRef.current?.focus()
+    if (!open && panel.contains(document.activeElement)) document.querySelector<HTMLElement>('[data-terminal-toggle]')?.focus()
   }, [open])
 
   // keep the newest line in view
@@ -231,7 +226,7 @@ export default function TerminalDock() {
 
   return (
     <>
-      {/* dims the page behind the dock on small screens only */}
+      {/* dims the page behind the sheet on small screens only */}
       <div
         onClick={() => setOpen(false)}
         className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity sm:hidden ${
@@ -242,14 +237,14 @@ export default function TerminalDock() {
 
       <aside
         aria-label="Interactive terminal"
-        className={`fixed inset-y-0 left-0 z-50 w-[min(92vw,400px)] transform transition-transform duration-300 ease-out print:hidden ${
-          open ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-x-0 bottom-0 z-50 mx-auto h-[min(60vh,440px)] w-full max-w-3xl transform transition-transform duration-300 ease-out print:hidden ${
+          open ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
-        <div className="relative h-full border-r border-grey-300 bg-grey-100 shadow-xl">
+        <div className="relative h-full rounded-t-xl border border-b-0 border-grey-300 bg-grey-100 shadow-2xl">
           <div ref={panelRef} className="flex h-full flex-col">
             {/* title bar */}
-            <div className="flex items-center gap-2 border-b border-grey-300 bg-grey-200/60 px-4 py-3">
+            <div className="flex items-center gap-2 rounded-t-xl border-b border-grey-300 bg-grey-200/60 px-4 py-3">
               <span className="h-3 w-3 rounded-full bg-grey-300" />
               <span className="h-3 w-3 rounded-full bg-grey-400" />
               <span className="h-3 w-3 rounded-full bg-grey-500" />
@@ -307,36 +302,6 @@ export default function TerminalDock() {
             </div>
           </div>
 
-          {/* pull-tab handle - rides the right edge of the panel near the top */}
-          <button
-            ref={tabRef}
-            onClick={() => setOpen((o) => !o)}
-            aria-label={open ? 'Collapse terminal' : 'Open terminal'}
-            aria-expanded={open}
-            // Hidden below lg, where it has nowhere safe to sit: it rides the
-            // left edge, and on a phone it landed on the section kickers
-            // ("SKILLS" rendered as "KILLS"). The menu carries it there instead.
-            className="absolute left-full top-20 hidden flex-col items-center gap-2 rounded-r-lg border border-l-0 border-grey-300 bg-grey-100 px-1.5 py-3 text-grey-500 shadow-lg hover:text-grey-800 lg:flex"
-          >
-            <PromptGlyph />
-            <span className="font-mono text-[11px] tracking-wider [writing-mode:vertical-rl] rotate-180">
-              terminal
-            </span>
-          </button>
-          {/* lg and up only: the hint is written in the margin beside the
-              page, and a phone has no margin */}
-          {!open && !seen && (
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute left-full top-32 ml-10 hidden items-center gap-1.5 font-sketch text-[15px] leading-none text-accent/80 lg:flex"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="-rotate-90">
-                <path d="M8 15 C 8 9.5, 6 6, 5 3" />
-                <path d="M5 3 L 2.5 5.5 M5 3 L 7.5 5" />
-              </svg>
-              <span className="rotate-2 whitespace-nowrap">For Devs</span>
-            </span>
-          )}
         </div>
       </aside>
     </>
@@ -373,13 +338,6 @@ function OutLine({ line, inline = false }: { line: Line; inline?: boolean }) {
   return <div className="whitespace-pre-wrap break-words">{segs(line)}</div>
 }
 
-function PromptGlyph() {
-  return (
-    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
-    </svg>
-  )
-}
 function CloseIcon() {
   return (
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
