@@ -73,7 +73,7 @@ const html = `<!doctype html><meta charset="utf-8">
   <div class="copy">
     <div class="status"><span class="dot"></span><span><b>Status:</b> Open to chats and collaborations</span></div>
     <h1>Eric Kim</h1>
-    <div class="builds">Kia ora, I build <b>embedded systems</b></div>
+    <div class="builds">Kia ora, I build a <b>solution that quietly helps people</b></div>
     <div class="role">BE(Hons) Computer Systems Engineering · University of Auckland</div>
   </div>
   <div class="foot">erickk.cloud</div>
