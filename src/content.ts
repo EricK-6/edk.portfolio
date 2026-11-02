@@ -268,9 +268,9 @@ export const PROJECTS: Project[] = [
     period: 'Oct 2026',
     role: 'Lab Equipment Booking System',
     highlights: [
-      'Built a lab equipment booking REST API with **Express.js and PostgreSQL**, using an **exclusion constraint (btree_gist, tstzrange)** **to make double booking impossible at the database level.**',
-      'Wrote **24 integration tests** against a real Postgres, using a **20 request concurrency test** to expose a deadlock and **row level locking** to fix it, **cutting failures from 5 in 10 runs to 0 in 20.**',
-      'Defined the API\'s **AWS infrastructure (VPC, RDS, EC2) in Terraform**, applying my **Terraform Associate certification**, and packaged it as a **non root Docker image** with **GitHub Actions CI.**',
+      'Built a lab equipment booking REST API with **Express.js and PostgreSQL**, using an exclusion constraint (btree_gist, tstzrange) to make double booking impossible at the database level.',
+      'Wrote **24 integration tests** against a real Postgres, using a 20 request concurrency test to expose a deadlock and row level locking to fix it, cutting failures from 5 in 10 runs to 0 in 20.',
+      'Defined the API\'s **AWS infrastructure (VPC, RDS, EC2) in Terraform**, applying my Terraform Associate certification, and packaged it as a **non root Docker** image with GitHub Actions CI.',
     ],
     tech: ['SQL', 'PostgreSQL', 'Express.js', 'Docker', 'Terraform', 'REST APIs', 'GitHub Actions'],
     image: './slotly.webp',
@@ -325,9 +325,9 @@ export const PROJECTS: Project[] = [
     period: 'Jun 2026',
     role: 'Real-time Sentiment Dashboard',
     highlights: [
-      'Built a **serverless streaming sentiment pipeline on AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using SAM, with idempotent writes, partial batch retries and a DLQ to prevent data loss.',
-      'Replaced full table scans with a **bounded DynamoDB GSI query** to keep read latency low, and batched Comprehend calls per Lambda invocation to cut API overhead.',
-      'Built a live React dashboard on AWS Amplify with a client-side simulation fallback and **GitHub Actions CI (21 frontend, 8 backend tests)**, applying AWS certification fundamentals hands-on.',
+      'Built a serverless **streaming sentiment pipeline** on **AWS (Kinesis, Lambda, Comprehend, DynamoDB)** using SAM, with idempotent writes, partial batch retries and a DLQ to prevent data loss.',
+      'Replaced full table scans with a **bounded DynamoDB GSI query** to keep read latency low, and batched **Comprehend calls per Lambda invocation** to cut API overhead.',
+      'Built a live React dashboard on AWS Amplify with a client-side simulation fallback and **GitHub Actions CI (21 frontend, 8 backend tests)**, applying **AWS certification fundamentals** hands-on.',
     ],
     tech: ['Amazon Kinesis', 'AWS Lambda', 'Amazon Comprehend', 'DynamoDB', 'AWS SAM', 'GitHub Actions', 'React.js', 'AWS Amplify'],
     image: './pulse.webp',
@@ -462,7 +462,7 @@ export const PROJECTS: Project[] = [
     role: 'FPGA Game Implementation',
     highlights: [
       'Implemented a Flappy Bird style game in **VHDL**, using a custom VGA sync generator and PLL based clock division on a **DE0-CV FPGA**, to render real time sprite based gameplay.',
-      'Built a **hardware LFSR** random number generator, using **shift register feedback logic**, to procedurally place pipe gaps and drive collision detection and scoring.',
+      'Built a **hardware LFSR random number generator**, using **shift register feedback logic**, to procedurally place pipe gaps and drive collision detection and scoring.',
     ],
     tech: ['VHDL', 'DE0-CV FPGA', 'Intel Quartus Prime', 'ModelSim'],
     image: './flappy_universe.webp',
@@ -594,8 +594,8 @@ export const EXPERIENCE = [
     period: 'Nov 2026 - Present',
     image: './mercury.jpg',
     bullets: [
-      'Collaborating with the data platform squad to engineer and harden parts of the **Databricks platform on AWS**, including access and jobs, and contributing to a **semantic layer** for tools like Databricks Genie.',
-      'Applying **SQL, Python and PySpark** to model raw data into clean, reusable, well-governed tables using **Unity Catalog and Workflows**, alongside data and platform engineers to support self-serve analytics.',
+      'Collaborating with the data platform squad **to engineer and harden** parts of the **Databricks platform on AWS**, including access and jobs, and contributing to a semantic layer for tools like Databricks Genie.',
+      'Applying **SQL, Python and PySpark** to model raw data into clean, reusable, well-governed tables using Unity Catalog and Workflows, alongside data and platform engineers **to support self-serve analytics**.',
     ],
   },
   {
