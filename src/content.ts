@@ -599,14 +599,24 @@ export const EXPERIENCE = [
     ],
   },
   {
+    id: 'web3',
+    role: 'Technical Executive',
+    org: 'WEB3UOA',
+    detail: 'Technical Executive in Events Team',
+    period: 'Nov 2026 - Present',
+    image: './web3.jpg',
+    // No details yet, so the entry is not expandable.
+    bullets: [] as string[],
+  },
+  {
     id: 'cares',
-    role: 'Research Assistant',
+    role: 'Research Assistant Trainee',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
     period: 'Jul 2026 - Nov 2026',
     image: './UoA.jpg',
     bullets: [
-      'Trainee researcher analysing the **robot soccer system** at UoA’s CARES Lab, covering camera calibration, **vision processing and decision strategy design**, to support its planned migration to a modern framework.',
+      'Analysed and maintained the **robot soccer system** at UoA’s CARES Lab, covering camera calibration, **vision processing and decision strategy design**, to support its planned migration to a modern framework.',
       'Investigated **TurtleBot2** navigation algorithms and implemented LiDAR integration and control using **ROS and Python**, building hands-on experience in autonomous systems.',
     ],
   },
@@ -851,5 +861,5 @@ export const HIGHLIGHTS = [
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across cloud and robotics`,
   'Data Platform Intern @ Mercury NZ',
-  'Research Assistant · CARES lab @ UoA',
+  'Research Assistant Trainee @ UoA',
 ]

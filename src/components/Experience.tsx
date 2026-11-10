@@ -31,7 +31,8 @@ export default function Experience() {
         />
         {EXPERIENCE.map((job, i) => {
           const right = i % 2 === 0
-          const open = openIds.has(job.id)
+          const expandable = job.bullets.length > 0
+          const open = expandable && openIds.has(job.id)
           return (
             <Reveal
               key={job.id}
@@ -68,27 +69,38 @@ export default function Experience() {
                 }`}
               >
                 <h3 className="m-0">
-                  <button
-                    type="button"
-                    aria-expanded={open}
-                    aria-controls={`exp-${job.id}`}
-                    data-track={`experience-${job.id}`}
-                    onClick={() => toggle(job.id)}
-                    className="group block w-full rounded-lg py-1"
-                    style={{ textAlign: 'inherit' }}
-                  >
-                    <span className="block text-xs text-grey-500 md:hidden">{job.period}</span>
-                    <span className="mt-1 block text-lg font-semibold md:mt-0 text-grey-900 transition-colors group-hover:text-accent-deep">
-                      {job.role}
-                    </span>
-                    <span className="block text-sm font-medium text-grey-600">{job.org}</span>
-                    {job.detail && (
-                      <span className={`mt-0.5 block max-w-[21rem] text-balance text-sm font-medium text-accent ${right ? '' : 'md:ml-auto'}`}>{job.detail}</span>
-                    )}
-                    <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400">
-                      {open ? 'Click again to close' : 'Click for details'}
-                    </span>
-                  </button>
+                  {(() => {
+                    const heading = (
+                      <>
+                        <span className="block text-xs text-grey-500 md:hidden">{job.period}</span>
+                        <span className={`mt-1 block text-lg font-semibold md:mt-0 text-grey-900 ${expandable ? 'transition-colors group-hover:text-accent-deep' : ''}`}>
+                          {job.role}
+                        </span>
+                        <span className="block text-sm font-medium text-grey-600">{job.org}</span>
+                        {job.detail && (
+                          <span className={`mt-0.5 block max-w-[21rem] text-balance text-sm font-medium text-accent ${right ? '' : 'md:ml-auto'}`}>{job.detail}</span>
+                        )}
+                      </>
+                    )
+                    return expandable ? (
+                      <button
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={`exp-${job.id}`}
+                        data-track={`experience-${job.id}`}
+                        onClick={() => toggle(job.id)}
+                        className="group block w-full rounded-lg py-1"
+                        style={{ textAlign: 'inherit' }}
+                      >
+                        {heading}
+                        <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.14em] text-grey-400">
+                          {open ? 'Click again to close' : 'Click for details'}
+                        </span>
+                      </button>
+                    ) : (
+                      <div className="py-1">{heading}</div>
+                    )
+                  })()}
                 </h3>
               </div>
 

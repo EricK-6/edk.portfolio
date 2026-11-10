@@ -73,7 +73,7 @@ export const ROOT: DirNode = dir('top', {
     'bio.md': file(() => [
       heading(`# ${PROFILE.fullName}`),
       L(`Penultimate-year ${DEGREE.award.split(' · ')[1]} student at the ${DEGREE.school}, working across AI, robotics and cloud computing. Founding member of KEB.`),
-      L('Formerly a research assistant at CARES (robot soccer and navigation) and a robotics instructor at ciLab.'),
+      L('Formerly a research assistant trainee at CARES (robot soccer and navigation) and a robotics instructor at ciLab.'),
       L('Currently interning as a Data Platform Engineer at Mercury NZ, working on the Databricks platform on AWS.'),
       blank,
       L(dim('based in '), PROFILE.city, dim(' · '), 'cd ~/contact'),
@@ -84,7 +84,7 @@ export const ROOT: DirNode = dir('top', {
     heading(`# ${j.role} · ${j.org}`),
     L(dim(j.period)),
     ...(j.detail ? [L(accent(j.detail))] : []),
-    blank,
+    ...(j.bullets.length ? [blank] : []),
     ...j.bullets.map((b) => bullet(...rich(b))),
   ])]))),
   projects: dir('projects', Object.fromEntries(PROJECTS.map((p) => [p.slug, projectDir(p)]))),
