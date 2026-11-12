@@ -5,7 +5,8 @@
 // the energy monitor's display and the light board's six phototransistors,
 // the 16 bit LFSR from Flappy Universe with its actual taps, a UART frame
 // spelling two initials, a maze being searched the way the PhotonTracker
-// searches one, SLOTLY refusing an overlapping booking, Spottern's pipeline.
+// searches one, SLOTLY refusing an overlapping booking, Spottern's pipeline
+// run once round the outline of a cloud.
 // Nothing is a stock icon. It is all drawn here, in code, with the Pen.
 //
 // One wire on each plate is the signal's route across that floor. It enters
@@ -13,7 +14,7 @@
 // it up, so the six routes join into one path from a pin on a chip to the sky.
 
 import { lfsrStep, LFSR_TAPS } from './lfsr'
-import { fan, meander, Pen, route, type Pt } from './pen'
+import { fan, meander, Pen, route, sweep, type Pt } from './pen'
 
 // how far apart the floors are stacked
 export const GAP = 7.5
@@ -47,7 +48,10 @@ const V2: Pt = [-4.4, 3.0]
 const V3: Pt = [4.4, 3.0]
 const V4: Pt = [-4.4, -3.4]
 const V5: Pt = [4.4, 3.0]
-const V6: Pt = [3.4, -4.0]
+// The last one is the way out to the sky. It is level with V5 because it is
+// the corner of the cloud the top floor is drawn round, and the signal comes
+// in along that cloud's base.
+const V6: Pt = [2.5, 3.0]
 
 const INK = 'rgba(3, 14, 16, 0.92)'
 const COPPER = '#dcae5a'
@@ -769,77 +773,97 @@ function software(pen: Pen, pal: Palette, path: Pt[]) {
 
 // --- L5 · cloud ----------------------------------------------------------------
 
-const CLOUD_PATH: Pt[] = [V5, [-4.4, 3.0], [-4.4, 0.6], [3.4, 0.6], V6]
+// The cloud the motto ends on, as a route. The numbers are the ones in
+// CloudMark's path, "M17.5 18.5H8.5a5.5 5.5 0 1 1 5.28-7h3.72a3.5 3.5 0 1 1
+// 0 7Z": a base nine long, a lobe of radius 5.5 over its left end and one of
+// 3.5 over its right, and a step between the two, level with the top of the
+// smaller. It starts on the corner where the base meets the small lobe, runs
+// along the base and once round, and ends on the corner it started from.
+// `s` is how many plate units one unit of the icon is worth.
+function cloudMark([x, y]: Pt, s: number) {
+  const R = 5.5 * s
+  const r = 3.5 * s
+  const big: Pt = [x - 9 * s, y - R]
+  const small: Pt = [x, y - r]
+  // the big lobe stops where it meets the step, 1.5 above its own centre
+  const stop = Math.PI * 2 - Math.asin(1.5 / 5.5)
+  const outline: Pt[] = [[x, y], ...sweep(big, R, Math.PI / 2, stop), ...sweep(small, r, -Math.PI / 2, Math.PI / 2)]
+  return { big, R, small, r, outline }
+}
+
+// On this floor that cloud is the route. The signal comes in along the ground
+// from the bucket, goes once round the outline through every stage of the
+// fraud pipeline, and leaves from the corner it set out from.
+const MARK = cloudMark(V6, 0.5)
+const CLOUD_PATH: Pt[] = [V5, ...MARK.outline]
 
 function cloud(pen: Pen, pal: Palette, path: Pt[]) {
   const { line, soft, faint, hue, wire } = pal
-
-  // a cloud, in one stroke: the same mark the motto ends on
-  const puff = (cx: number, cy: number, s: number, color: string, w: number) => {
-    pen.line(
-      Array.from({ length: 49 }, (_, i): Pt => {
-        const a = (i / 48) * Math.PI * 2
-        const bump = 1 + 0.16 * Math.sin(a * 5 + 0.6) + 0.1 * Math.sin(a * 3)
-        return [cx + Math.cos(a) * s * 1.7 * bump, cy + Math.sin(a) * s * (a > Math.PI ? 0.7 : 0.34) * bump]
-      }),
-      color, w,
-    )
+  const { big, R, small, r } = MARK
+  const glass = 'rgba(6, 18, 36, 0.8)'
+  // a point on one of the two lobes, by its angle: 0 is its right, 90 its foot
+  const on = ([cx, cy]: Pt, radius: number, deg: number): Pt => {
+    const a = (deg * Math.PI) / 180
+    return [cx + Math.cos(a) * radius, cy + Math.sin(a) * radius]
   }
-  puff(-3.2, -4.3, 0.62, faint, 0.03)
-  puff(0.5, -4.55, 0.44, faint, 0.026)
 
-  // the streaming pipeline, small and steady in the background
-  pen.text('SENTIMENT PULSE  ·  STREAMING', -5.2, -2.3, { size: 0.14, color: soft, track: 0.05 })
-  const stream = ['KINESIS', 'LAMBDA', 'COMPREHEND', 'DYNAMODB', 'REACT']
-  stream.forEach((name, i) => {
-    const x = -4.5 + i * 1.72
-    if (i) pen.wire([[x - 1.72 + 0.7, -1.66], [x - 0.7, -1.66]], wire, 0.035)
-    if (i) arrow(pen, [x - 0.68, -1.66], [1, 0], wire, 0.12)
-    pen.box(x, -1.66, 1.36, 0.5, { fill: 'rgba(6, 18, 36, 0.8)', stroke: soft, lw: 0.025, r: 0.25 })
-    pen.text(name, x, -1.6, { size: 0.125, color: line, align: 'center', track: 0.03 })
-  })
+  // other clouds, further off: the same mark, small and faint
+  pen.line(cloudMark([-3.5, -3.75], 0.11).outline, faint, 0.03, { closed: true })
+  pen.line(cloudMark([2.2, -3.2], 0.14).outline, faint, 0.03, { closed: true })
+  pen.line(cloudMark([4.75, -1.75], 0.08).outline, faint, 0.026, { closed: true })
+
+  // Inside the big one, the rest of what runs in it.
 
   // infrastructure as code: a network drawn as the boxes Terraform describes
-  pen.rect(-5.2, -4.0, 3.0, 1.2, { stroke: soft, lw: 0.025, r: 0.1, dash: [0.1, 0.08] })
-  pen.text('VPC', -5.06, -3.72, { size: 0.125, color: soft, track: 0.05 })
-  for (const [name, x] of [['EC2', -4.4], ['RDS', -3.0]] as [string, number][]) {
-    pen.box(x, -3.3, 1.0, 0.56, { fill: 'rgba(6, 18, 36, 0.8)', stroke: line, lw: 0.028, r: 0.08 })
-    pen.text(name, x, -3.23, { size: 0.15, color: line, align: 'center', track: 0.04 })
+  pen.rect(-3.5, -1.6, 3.0, 1.2, { stroke: soft, lw: 0.025, r: 0.1, dash: [0.1, 0.08] })
+  pen.text('VPC', -3.36, -1.32, { size: 0.125, color: soft, track: 0.05 })
+  for (const [name, x] of [['EC2', -2.7], ['RDS', -1.3]] as [string, number][]) {
+    pen.box(x, -0.9, 1.0, 0.56, { fill: glass, stroke: line, lw: 0.028, r: 0.08 })
+    pen.text(name, x, -0.83, { size: 0.15, color: line, align: 'center', track: 0.04 })
   }
-  pen.wire([[-3.9, -3.3], [-3.5, -3.3]], wire, 0.035)
-  pen.text('TERRAFORM  ·  validate ✓', -5.2, -2.6, { size: 0.125, color: hue, track: 0.03 })
+  pen.wire([[-2.2, -0.9], [-1.8, -0.9]], wire, 0.035)
+  pen.text('TERRAFORM  ·  validate ✓', -3.5, -0.2, { size: 0.125, color: hue, track: 0.03 })
+
+  // the streaming pipeline, small and steady across the middle
+  pen.text('SENTIMENT PULSE  ·  STREAMING', -3.65, 0.36, { size: 0.14, color: soft, track: 0.05 })
+  const stream = ['KINESIS', 'LAMBDA', 'COMPREHEND', 'DYNAMODB', 'REACT']
+  stream.forEach((name, i) => {
+    const x = -3.1 + i * 1.42
+    if (i) pen.wire([[x - 0.85, 0.8], [x - 0.57, 0.8]], wire, 0.035)
+    if (i) arrow(pen, [x - 0.55, 0.8], [1, 0], wire, 0.1)
+    pen.box(x, 0.8, 1.1, 0.42, { fill: glass, stroke: soft, lw: 0.025, r: 0.21 })
+    pen.text(name, x, 0.85, { size: 0.125, color: line, align: 'center', track: 0.03 })
+  })
 
   // a lakehouse: tables in layers, raw at the bottom, governed at the top
   for (let i = 0; i < 3; i++) {
-    const y = -3.02 - i * 0.34
-    pen.poly([[-1.5, y], [-0.5, y - 0.26], [0.5, y], [-0.5, y + 0.26]], { fill: 'rgba(6, 18, 36, 0.86)', stroke: i === 2 ? hue : soft, lw: 0.028 })
+    const y = 2.3 - i * 0.3
+    pen.poly([[-2.75, y], [-1.9, y - 0.22], [-1.05, y], [-1.9, y + 0.22]], { fill: 'rgba(6, 18, 36, 0.86)', stroke: i === 2 ? hue : soft, lw: 0.028 })
   }
-  pen.text('DATABRICKS', 0.72, -3.52, { size: 0.15, color: line, track: 0.04 })
-  pen.text('UNITY CATALOG', 0.72, -3.24, { size: 0.125, color: soft, track: 0.04 })
+  pen.text('DATABRICKS', -0.85, 1.84, { size: 0.15, color: line, track: 0.04 })
+  pen.text('UNITY CATALOG', -0.85, 2.12, { size: 0.125, color: soft, track: 0.04 })
 
-  // the fraud pipeline: this is the route the signal takes across the floor
+  // The fraud pipeline is the outline itself: this is the route the signal
+  // takes across the floor, and each stage sits on the line where it happens.
   pen.wire(path, pal.metal, 0.07, { main: true })
-  const node = (x: number, y: number, name: string, sub: string) => {
-    pen.box(x, y, 1.64, 0.84, { fill: 'rgba(6, 18, 36, 0.9)', stroke: line, lw: 0.032, r: 0.12, cover: true })
-    pen.text(name, x, y - 0.03, { size: 0.17, color: line, align: 'center', track: 0.04 })
-    pen.text(sub, x, y + 0.24, { size: 0.115, color: soft, align: 'center', track: 0.02 })
+  const node = ([x, y]: Pt, name: string) => {
+    pen.box(x, y, 1.5, 0.56, { fill: 'rgba(6, 18, 36, 0.9)', stroke: line, lw: 0.032, r: 0.12, cover: true })
+    pen.text(name, x, y + 0.065, { size: 0.17, color: line, align: 'center', track: 0.04 })
   }
-  node(2.2, 3.0, 'LAMBDA', 'ingest')
-  node(0.0, 3.0, 'TEXTRACT', 'read the PDF')
-  node(-2.2, 3.0, 'BEDROCK', 'one call, whole statement')
-  node(-2.2, 0.6, 'DYNAMODB', 'every verdict')
-  node(0.0, 0.6, 'SNS', 'alert')
-  for (const x of [3.28, 1.1, -1.1, -3.3]) arrow(pen, [x - 0.14, 3.0], [-1, 0], pal.metal, 0.15)
-  for (const x of [-3.3, -1.1, 1.1]) arrow(pen, [x + 0.14, 0.6], [1, 0], pal.metal, 0.15)
-  pen.text('SPOTTERN  ·  A STATEMENT IN, A VERDICT OUT', -5.2, 1.72, { size: 0.14, color: soft, track: 0.05 })
+  node([big[0] + 2.25, V6[1]], 'LAMBDA') // half way along the base
+  node(on(big, R, 140), 'TEXTRACT')
+  node(on(big, R, 270), 'BEDROCK') // the top of the cloud
+  node([small[0] - 0.93, small[1] - r], 'DYNAMODB') // on the step
+  node(on(small, r, 0), 'SNS')
+  pen.text('SPOTTERN  ·  A STATEMENT IN, A VERDICT OUT', big[0], 3.66, { size: 0.14, color: soft, track: 0.05 })
   // the bucket the statement lands in, where this floor begins
   pen.box(V5[0], V5[1], 1.1, 0.84, { fill: 'rgba(6, 18, 36, 0.9)', stroke: line, lw: 0.032, r: 0.12, cover: true })
   pen.text('S3', V5[0], V5[1] + 0.07, { size: 0.19, color: line, align: 'center', track: 0.04 })
 
-  // and the way out
+  // and the way out: the corner the outline closes on
   port(pen, pal, V6, '', -1)
   for (let i = 0; i < 3; i++) pen.line([[V6[0] - 0.16, V6[1] - 0.62 - i * 0.2], [V6[0], V6[1] - 0.78 - i * 0.2], [V6[0] + 0.16, V6[1] - 0.62 - i * 0.2]], pal.metal, 0.03)
-  pen.text('200 OK', V6[0] + 0.62, V6[1] + 0.05, { size: 0.15, color: hue, track: 0.05 })
+  pen.text('200 OK', V6[0] + 0.36, V6[1] - 0.72, { size: 0.15, color: hue, track: 0.05 })
   frame(pen, pal, 5, 'Cloud', 'SERVERLESS  ·  DEFINED AS CODE')
 }
 

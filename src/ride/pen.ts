@@ -104,24 +104,28 @@ export class Pen {
     if (o.quiet) return
 
     const f = this.f
-    let total = 0
-    for (let i = 1; i < pts.length; i++) total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
+    // how far along the wire each of its corners is
+    const at = [0]
+    for (let i = 1; i < pts.length; i++) at.push(at[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]))
+    const total = at[at.length - 1]
     if (total < 1e-6) return
     // the golden ratio's fractional part: consecutive wires land far apart
     const phase = ((++this.wires * 0.6180339887) % 1) * 255
     const step = o.main ? 0.045 : 0.11
     f.lineWidth = Math.max(w * 2.6, 0.17)
 
-    let done = 0
-    for (let i = 1; i < pts.length; i++) {
+    // Painted from the far end back to the start. Where a route comes round
+    // to meet itself, as the cloud's does, the first pass is then the one on
+    // top: the wire lights when the signal first reaches it, not on its return.
+    for (let i = pts.length - 1; i >= 1; i--) {
       const [x0, y0] = pts[i - 1]
       const [x1, y1] = pts[i]
-      const len = Math.hypot(x1 - x0, y1 - y0)
+      const len = at[i] - at[i - 1]
       const n = Math.max(1, Math.ceil(len / step))
-      for (let k = 0; k < n; k++) {
+      for (let k = n - 1; k >= 0; k--) {
         const u0 = k / n
         const u1 = (k + 1) / n
-        const s = done + len * (u0 + u1) * 0.5
+        const s = at[i - 1] + len * (u0 + u1) * 0.5
         const r = Math.round(Math.min(1, s / FLOW_REACH) * 255)
         // 0 in blue means "not the main wire", so the main wire counts from 1
         const b = o.main ? Math.round(1 + (s / total) * 254) : 0
@@ -131,7 +135,6 @@ export class Pen {
         f.lineTo(x0 + (x1 - x0) * u1, y0 + (y1 - y0) * u1)
         f.stroke()
       }
-      done += len
     }
   }
 
@@ -297,6 +300,17 @@ export function meander(x0: number, x1: number, y: number, turns: number, h: num
   }
   pts.push([x1, y])
   return pts
+}
+
+// Part of a circle, for a route that has to curve. Angles are the canvas's:
+// 0 points along +x and they grow clockwise as drawn. The points are close
+// enough together that the corners between them cannot be seen.
+export function sweep([cx, cy]: Pt, r: number, from: number, to: number): Pt[] {
+  const n = Math.max(2, Math.ceil((Math.abs(to - from) * r) / 0.12))
+  return Array.from({ length: n + 1 }, (_, i): Pt => {
+    const a = from + ((to - from) * i) / n
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]
+  })
 }
 
 // The length of a polyline and the point a given distance along it.
