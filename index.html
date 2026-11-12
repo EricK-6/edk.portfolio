@@ -27,12 +27,12 @@
       property="og:description"
       content="Computer Systems Engineering student at the University of Auckland. AI, robotics, and cloud computing."
     />
-    <meta property="og:image" content="https://erickk.cloud/og-image.jpg?v=8" />
+    <meta property="og:image" content="https://erickk.cloud/og-image.jpg?v=12" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://erickk.cloud/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://erickk.cloud/og-image.jpg?v=8" />
+    <meta name="twitter:image" content="https://erickk.cloud/og-image.jpg?v=12" />
 
     <!-- Structured data for search engines -->
     <script type="application/ld+json">
@@ -56,11 +56,22 @@
       }
     </script>
 
+    <!-- The home page opens on a dark stage (the ride). The stylesheet blocks
+         first paint but the script that draws the stage does not, so without
+         this the first frame of the home page would be the paper colour and
+         the second would be the dark: a white flash. Ride.tsx takes the class
+         off again once the stage is on screen. Every other page opens on
+         paper and is left alone. -->
+    <script>
+      if (!location.hash || location.hash === '#top' || location.hash === '#/') document.documentElement.classList.add('boot-dark')
+    </script>
+    <style>html.boot-dark body { background-color: #020a09 !important; }</style>
+
     <!-- Fonts are self-hosted (Fontsource, imported in src/main.tsx) so the
          page needs no third-party origins and first paint isn't blocked on
          a remote stylesheet. -->
-    <script type="module" crossorigin src="./assets/index-BoJM2zAu.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BidHcrpw.css">
+    <script type="module" crossorigin src="./assets/index-DtglxNg2.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-2JQ65SNU.css">
   </head>
   <!-- the page colour up front, so the first paint before the stylesheet
        arrives is the paper rather than a white flash -->
