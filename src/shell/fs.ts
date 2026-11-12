@@ -8,7 +8,8 @@
 // file months out of date.
 
 import {
-  CERTS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS,
+  BENCH, CERTS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS, STACK,
+  floorCode, projectsOn, rolesOn,
   type Project,
 } from '../content'
 import { accent, bullet, dim, L, rich, strong, type Line } from './lines'
@@ -58,7 +59,7 @@ function projectDir(p: Project): DirNode {
   for (const l of p.links) children[/demo/i.test(l.label) ? 'demo' : 'repo'] = { type: 'link', href: l.href }
   const report = p.documents?.find((d) => d.href)
   if (report?.href) children.report = { type: 'link', href: report.href }
-  if (EXECUTABLE.has(p.slug)) children[p.slug] = { type: 'exec', slug: p.slug }
+  if (EXECUTABLE.has(p.slug) || BENCH.includes(p.slug)) children[p.slug] = { type: 'exec', slug: p.slug }
   return dir(p.slug, children)
 }
 
@@ -67,8 +68,20 @@ export const ROOT: DirNode = dir('top', {
     heading(`# ${PROFILE.fullName}`),
     L('This is the site, as a filesystem. Every section is a directory; `cd` into one and it takes you there.'),
     blank,
-    L(dim('start with  ls, cat about/bio.md, help')),
+    L(dim('start with  ls, stack, cat about/bio.md, help')),
   ]),
+  // the six floors the home page rides up through, bottom to top
+  stack: dir('top', Object.fromEntries(STACK.map((f) => [`${floorCode(f.level)}-${f.id}.md`, file(() => [
+    heading(`# ${floorCode(f.level)} · ${f.name}`),
+    L(f.title),
+    L(dim(f.body)),
+    blank,
+    L(dim('tools  '), f.tools.join(', ')),
+    L(dim('built  '), projectsOn(f.level).map((p) => p.title).join(', ')),
+    ...(rolesOn(f.level).length ? [L(dim('roles  '), rolesOn(f.level).map((j) => `${j.role} at ${j.org}`).join(', '))] : []),
+    blank,
+    L(dim('ride there: '), `floor ${f.level}`),
+  ])]))),
   about: dir('about', {
     'bio.md': file(() => [
       heading(`# ${PROFILE.fullName}`),
@@ -88,6 +101,14 @@ export const ROOT: DirNode = dir('top', {
     ...j.bullets.map((b) => bullet(...rich(b))),
   ])]))),
   projects: dir('projects', Object.fromEntries(PROJECTS.map((p) => [p.slug, projectDir(p)]))),
+  bench: dir('bench', {
+    'README.md': file(() => [
+      heading('# The bench'),
+      L('Four ideas out of the projects, rebuilt small enough to run in the page.'),
+      blank,
+      ...BENCH.map((slug) => L(dim('run  '), `./${slug}`)),
+    ]),
+  }),
   skills: dir('skills', Object.fromEntries(SKILL_GROUPS.map((g) => [`${g.id}.txt`, file(() => [
     heading(`# ${g.label} (${g.items.length})`),
     L(g.items.join(', ')),
@@ -159,6 +180,8 @@ export const pathLabel = (segs: string[]) => (segs.length ? `~/${segs.join('/')}
 // Names people reach for that are not what the directory is called.
 const ALIASES: Record<string, string[]> = {
   home: [], top: [], root: [], '~': [],
+  floors: ['stack'], ride: ['stack'], tower: ['stack'],
+  labs: ['bench'], lab: ['bench'], playground: ['bench'],
   work: ['experience'], jobs: ['experience'], job: ['experience'],
   credentials: ['certifications'], certs: ['certifications'], cert: ['certifications'],
   awards: ['projects'], project: ['projects'],

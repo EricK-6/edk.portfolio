@@ -119,6 +119,10 @@ export interface Project {
   letterbox?: string
   shelf: Shelf
   discipline?: Discipline
+  // the floors of the stack it was built on (see STACK below), the one it
+  // mostly lives on first: 0 silicon, 1 logic, 2 firmware, 3 robotics,
+  // 4 software, 5 cloud
+  floors: number[]
   // still being built: no media, no highlights, and it says so rather than
   // showing an empty well and a card that turns over onto nothing
   ongoing?: boolean
@@ -137,6 +141,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Winnie the Bot',
     slug: 'winnie-the-bot',
+    floors: [2, 3],
     blurb: 'AI interactive robot · dual ATmega328P · 3rd place ECSE',
     tag: '3rd Place · ECSE Design Competition 2025',
     year: '2025',
@@ -189,6 +194,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Spottern!',
     slug: 'spottern',
+    floors: [5, 4],
     blurb: 'Statement-level fraud detection on AWS · top 8 AWS×BNZ hackathon',
     tag: 'Top 8 Finalist · AWS×BNZ AI Hackathon 2026',
     year: '2026',
@@ -259,6 +265,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'SLOTLY',
     slug: 'slotly',
+    floors: [4, 5],
     shelf: 'self',
     discipline: 'backend',
     blurb: 'Lab equipment booking API · Postgres refuses double bookings',
@@ -316,6 +323,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Sentiment PULSE',
     slug: 'sentiment-pulse',
+    floors: [5, 4],
     shelf: 'self',
     discipline: 'fullstack',
     blurb: 'Serverless NLP pipeline on AWS + live React dashboard',
@@ -375,6 +383,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'KEB Web Design',
     slug: 'keb-web-design',
+    floors: [4],
     shelf: 'self',
     discipline: 'frontend',
     blurb: "KEB's first ever club website · React 19 + Vite",
@@ -424,6 +433,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Smart Energy Monitor',
     slug: 'smart-energy-monitor',
+    floors: [0, 2],
     shelf: 'uni',
     discipline: 'hardware',
     blurb: 'Dual-channel ATmega328P firmware · 2-layer Altium PCB · ±5% FS',
@@ -451,6 +461,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Flappy Universe',
     slug: 'flappy-universe',
+    floors: [1],
     shelf: 'uni',
     discipline: 'firmware',
     blurb: 'VHDL game on a DE0-CV FPGA · custom VGA sync · LFSR pipe gaps',
@@ -474,6 +485,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'RoastWorks Analytics',
     slug: 'roastworks-analytics',
+    floors: [4],
     shelf: 'uni',
     discipline: 'software',
     blurb: 'PyQt6 + pandas desktop app · 3 forecasting models',
@@ -495,6 +507,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'MealHub',
     slug: 'mealhub',
+    floors: [4],
     shelf: 'uni',
     discipline: 'software',
     blurb: 'Android meal planner · Java + Firebase',
@@ -516,6 +529,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'Eyed JetBot',
     slug: 'embedded-vision-jetbot',
+    floors: [3],
     blurb: 'Traffic sign robot · SVM + OpenCV on a Raspberry Pi 5',
     icon: 'bot',
     tag: 'Python · Team Project',
@@ -539,6 +553,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'BFS PhotonTracker',
     slug: 'autonomous-pathfinding-bot',
+    floors: [0, 2, 3],
     blurb: 'Line following robot · 60 Hz light board + BFS on a PSoC 5',
     icon: 'car',
     tag: 'Embedded C · Team Project',
@@ -587,7 +602,18 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 // instead of one two-line entry sitting above two one-line entries.
 export const EXPERIENCE = [
   {
+    id: 'web3',
+    role: 'Technical Executive',
+    org: 'WEB3UOA',
+    detail: 'Technical Executive in Events Team',
+    period: 'Nov 2026 - Present',
+    image: './web3.jpg',
+    // No details yet, so the entry is not expandable.
+    bullets: [] as string[],
+  },
+  {
     id: 'mercury',
+    floor: 5,
     role: 'Data Platform Intern',
     org: 'Mercury NZ',
     detail: 'Data & Analytics Enablement Team',
@@ -599,17 +625,8 @@ export const EXPERIENCE = [
     ],
   },
   {
-    id: 'web3',
-    role: 'Technical Executive',
-    org: 'WEB3UOA',
-    detail: 'Technical Executive in Events Team',
-    period: 'Nov 2026 - Present',
-    image: './web3.jpg',
-    // No details yet, so the entry is not expandable.
-    bullets: [] as string[],
-  },
-  {
     id: 'cares',
+    floor: 3,
     role: 'Research Assistant Trainee',
     org: 'University of Auckland',
     detail: 'CARES (Centre for Automation and Robotic Engineering Science)',
@@ -622,6 +639,7 @@ export const EXPERIENCE = [
   },
   {
     id: 'cilab',
+    floor: 3,
     role: 'Robotics Instructor',
     org: 'Creative Imaginary Lab (ciLab)',
     period: 'Apr 2026 - Nov 2026',
@@ -633,7 +651,7 @@ export const EXPERIENCE = [
   },
   {
     id: 'keb',
-    role: 'Academic Team Executive',
+    role: 'Academic Executive',
     org: 'Korean Engineering Body (KEB)',
     detail: 'Founding Member',
     period: 'Jul 2024 - Oct 2026',
@@ -655,6 +673,98 @@ export const EXPERIENCE = [
     ],
   },
 ]
+
+// --- the stack ---------------------------------------------------------------
+
+// The six floors between a circuit board and the cloud, bottom to top. This
+// is the motto ("From silicon to serverless") spelled out: the home page rides
+// one signal up through them, the Projects page filters by them, and the
+// terminal lists them with `stack`.
+//
+// A floor says what kind of engineering happens there, in the same plain voice
+// as the rest of the page. What was built on it is never typed here: it is
+// read off each project's `floors` and each role's `floor`, so a new project
+// lands on the right floor everywhere by itself.
+export interface Floor {
+  level: number
+  id: string
+  name: string
+  // the statement, set large beside the floor as the signal crosses it
+  title: string
+  body: string
+  tools: string[]
+}
+
+export const STACK: Floor[] = [
+  {
+    level: 0,
+    id: 'silicon',
+    name: 'Silicon',
+    title: 'Boards and analog front ends.',
+    body: 'Signal conditioning, sensor boards and two-layer PCBs: simulated in LTSpice, laid out in Altium, then built and measured against a spec.',
+    tools: ['Altium Designer', 'LTSpice', 'Proteus'],
+  },
+  {
+    level: 1,
+    id: 'logic',
+    name: 'Logic',
+    title: 'A game written in gates.',
+    body: 'VHDL on an FPGA: a custom VGA sync generator, PLL clock division, and a hardware LFSR that decides where the next pipe goes.',
+    tools: ['VHDL', 'DE0-CV FPGA', 'Intel Quartus Prime', 'ModelSim'],
+  },
+  {
+    level: 2,
+    id: 'firmware',
+    name: 'Firmware',
+    title: 'Bare-metal C, no OS underneath.',
+    body: 'Embedded C on ATmega328P and PSoC 5: ADC sampling, servo and motor control and UART, all running at once with nothing underneath to lean on.',
+    tools: ['Embedded C', 'ATmega328P', 'PSoC', 'Atmel AVR'],
+  },
+  {
+    level: 3,
+    id: 'robotics',
+    name: 'Robotics',
+    title: 'Machines that sense, plan and move.',
+    body: 'A traffic sign classifier steering a robot in real time, BFS path planning through a projected maze, and LiDAR navigation on a TurtleBot2 in ROS.',
+    tools: ['ROS', 'OpenCV', 'scikit-learn', 'Embedded Linux'],
+  },
+  {
+    level: 4,
+    id: 'software',
+    name: 'Software',
+    title: 'Software people actually use.',
+    body: 'Android, desktop and web apps, and a booking API where the database itself makes a double booking impossible.',
+    tools: ['Java', 'Python', 'TypeScript', 'React.js', 'PostgreSQL'],
+  },
+  {
+    level: 5,
+    id: 'cloud',
+    name: 'Cloud',
+    title: 'Serverless, and defined as code.',
+    body: 'Event-driven pipelines on AWS with Lambda, Bedrock and Kinesis, infrastructure in Terraform and SAM, and a data platform internship on Databricks.',
+    tools: ['AWS', 'Terraform', 'Databricks', 'Docker'],
+  },
+]
+
+// What was built on a floor: the projects that mostly live there first, then
+// the ones that only pass through it, newest first within each.
+export function projectsOn(level: number): Project[] {
+  const on = PROJECTS.filter((p) => p.floors.includes(level))
+  const rank = (p: Project) => (p.floors[0] === level ? 0 : 1)
+  return on.sort((a, b) => rank(a) - rank(b) || byRecent(a, b))
+}
+
+export const rolesOn = (level: number) => EXPERIENCE.filter((j) => j.floor === level)
+
+// "L2", the way a floor is written everywhere it is named
+export const floorCode = (level: number) => `L${level}`
+
+// --- the bench ---------------------------------------------------------------
+
+// The projects whose central idea runs as an experiment on the Projects page
+// (see components/Bench.tsx). Each experiment's anchor is `bench-<slug>`, which
+// is how a project's card, the terminal's `./slotly` and the router all find it.
+export const BENCH = ['slotly', 'flappy-universe', 'autonomous-pathfinding-bot', 'smart-energy-monitor']
 
 // --- skills ------------------------------------------------------------------
 

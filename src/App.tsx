@@ -1,10 +1,12 @@
 import { Fragment, type ComponentType } from 'react'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
+import Ride from './components/Ride'
 import About from './components/About'
 import Projects from './components/Projects'
 import Experience from './components/Experience'
 import Skills from './components/Skills'
+import Bench from './components/Bench'
+import Drums from './components/Drums'
 import Education from './components/Education'
 import Certifications from './components/Certifications'
 import Volunteering from './components/Volunteering'
@@ -21,10 +23,12 @@ import { usePage } from './router'
 // for which holds what). The URL hash is a section's anchor, so '#skills'
 // opens the Projects & Skills page and scrolls to Skills.
 const SECTIONS: Record<SectionId, ComponentType> = {
-  home: Hero,
+  home: Ride,
   about: About,
   experience: Experience,
+  offclock: Drums,
   projects: Projects,
+  bench: Bench,
   skills: Skills,
   education: Education,
   certifications: Certifications,

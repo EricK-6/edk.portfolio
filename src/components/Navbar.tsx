@@ -53,9 +53,12 @@ export default function Navbar({ page }: { page: Page }) {
       // photograph started underneath it instead of behind it. Nothing below
       // needs the space back — the intro is a full viewport tall and every
       // other section clears it with `scroll-padding-top`.
-      className={`screen-only fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${
+      // `site-header`, `is-lit` and the `nav-*` hooks below are for the home
+      // page's ride: while the stage behind the bar is dark, index.css turns
+      // the bar's ink light through them (see html[data-sky]).
+      className={`site-header screen-only fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${
         lit
-          ? 'border-grey-200 bg-page/80 backdrop-blur-xl'
+          ? 'is-lit border-grey-200 bg-page/80 backdrop-blur-xl'
           : 'border-transparent bg-transparent'
       }`}
     >
@@ -70,7 +73,7 @@ export default function Navbar({ page }: { page: Page }) {
       <nav className="relative mx-auto grid h-16 w-full max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-6 px-6 sm:px-8">
         <a
           href={hrefFor('home')}
-          className="tap-44 col-start-1 justify-self-start font-display text-lg font-semibold tracking-tight text-grey-900"
+          className="nav-ink tap-44 col-start-1 justify-self-start font-display text-lg font-semibold tracking-tight text-grey-900"
         >
           {PROFILE.name}<span className="text-accent">.</span>
         </a>
@@ -84,14 +87,14 @@ export default function Navbar({ page }: { page: Page }) {
             data-terminal-toggle
             aria-label="Toggle terminal"
             title="Terminal"
-            className="tap-44 hidden h-9 w-9 items-center justify-center rounded-lg border border-grey-200 bg-white/70 text-grey-600 transition hover:border-grey-300 hover:text-grey-900 sm:inline-flex"
+            className="nav-btn tap-44 hidden h-9 w-9 items-center justify-center rounded-lg border border-grey-200 bg-white/70 text-grey-600 transition hover:border-grey-300 hover:text-grey-900 sm:inline-flex"
           >
             <TerminalIcon />
           </button>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
             aria-label="Open command menu"
-            className="tap-44 hidden h-9 items-center gap-2 rounded-lg border border-grey-200 bg-white/70 px-2.5 text-xs text-grey-600 transition hover:border-grey-300 hover:text-grey-900 sm:inline-flex"
+            className="nav-btn tap-44 hidden h-9 items-center gap-2 rounded-lg border border-grey-200 bg-white/70 px-2.5 text-xs text-grey-600 transition hover:border-grey-300 hover:text-grey-900 sm:inline-flex"
           >
             <SearchIcon />
             <span className="font-mono">{isMac ? '⌘' : 'Ctrl'} K</span>
@@ -100,7 +103,7 @@ export default function Navbar({ page }: { page: Page }) {
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
-            className="tap-44 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-200 bg-white/70 text-grey-700 transition hover:border-grey-300 xl:hidden"
+            className="nav-btn tap-44 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-grey-200 bg-white/70 text-grey-700 transition hover:border-grey-300 xl:hidden"
           >
             <MenuIcon open={open} />
           </button>
@@ -108,16 +111,29 @@ export default function Navbar({ page }: { page: Page }) {
       </nav>
 
       {open && (
-        <div className="border-t border-grey-200 bg-page/95 backdrop-blur-xl xl:hidden">
+        <div className="nav-panel border-t border-grey-200 bg-page/95 backdrop-blur-xl xl:hidden">
           <ul className="mx-auto flex w-full max-w-6xl flex-col gap-0.5 px-6 py-3 sm:px-8">
+            <li>
+              <a
+                href="#motto"
+                onClick={() => setOpen(false)}
+                data-track="nav-home"
+                aria-current={page.id === 'home' ? 'page' : undefined}
+                className={`nav-row flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-grey-100 ${
+                  page.id === 'home' ? 'text-accent-deep' : 'nav-dim text-grey-700'
+                }`}
+              >
+                Home
+              </a>
+            </li>
             {NAV_PAGES.map((p) => (
               <li key={p.id}>
                 <a
                   href={pageHref(p)}
                   onClick={() => setOpen(false)}
                   aria-current={page.id === p.id ? 'page' : undefined}
-                  className={`flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-grey-100 ${
-                    page.id === p.id ? 'text-accent-deep' : 'text-grey-700'
+                  className={`nav-row flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-grey-100 ${
+                    page.id === p.id ? 'text-accent-deep' : 'nav-dim text-grey-700'
                   }`}
                 >
                   {p.label}
@@ -129,7 +145,7 @@ export default function Navbar({ page }: { page: Page }) {
             <li>
               <button
                 onClick={() => { setOpen(false); window.dispatchEvent(new CustomEvent('open-terminal')) }}
-                className="flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-grey-700 transition hover:bg-grey-100"
+                className="nav-row nav-dim flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-grey-700 transition hover:bg-grey-100"
               >
                 {/* the mark after the label, so "Terminal" starts on the same
                     edge as the section links above it */}
@@ -142,7 +158,7 @@ export default function Navbar({ page }: { page: Page }) {
                 menu carries it. It is the highest-intent click on the site;
                 it does not get to be the one thing a phone cannot reach. */}
             <li className="mt-2 flex items-center gap-2 border-t border-grey-200 px-3 pt-3">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-grey-500">
+              <span className="nav-dim font-mono text-[10px] uppercase tracking-[0.18em] text-grey-500">
                 Résumé
               </span>
               {RESUMES.map((r) => (
@@ -194,8 +210,8 @@ function ResumeMenu() {
         aria-haspopup="true"
         className={`tap-44 inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition ${
           open
-            ? 'border-accent/40 bg-accent/10 text-accent-deep'
-            : 'border-grey-200 bg-white/70 text-grey-700 hover:border-grey-300 hover:text-grey-900'
+            ? 'nav-open border-accent/40 bg-accent/10 text-accent-deep'
+            : 'nav-btn border-grey-200 bg-white/70 text-grey-700 hover:border-grey-300 hover:text-grey-900'
         }`}
       >
         Résumé
@@ -204,7 +220,8 @@ function ResumeMenu() {
 
       {open && (
         <div
-          className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-xl border border-grey-200 bg-white p-1 shadow-lg shadow-black/5"
+          // `pop`: dark while the stage behind is (see index.css)
+          className="pop absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-xl border border-grey-200 bg-white p-1 shadow-lg shadow-black/5"
           role="menu"
         >
           {RESUMES.map(({ id, label: kind, href }) => (
@@ -277,6 +294,27 @@ function ChevronIcon({ open }: { open: boolean }) {
 function ContentsIndex({ active }: { active: string }) {
   return (
     <ul className="col-start-2 hidden items-baseline gap-5 xl:flex">
+      {/* Home, which lands where the ride ends: on the motto, with the page
+          proper just below. The name in the corner is the way to the very
+          top, the board. It sits in the index rather than with the controls
+          on the right, so the index is still one group centred on the page. */}
+      <li>
+        <a href="#motto" data-track="nav-home" aria-current={active === 'home' ? 'page' : undefined} className="group relative flex items-baseline py-1">
+          <span
+            className={`text-[13px] transition-colors ${
+              active === 'home' ? 'nav-ink font-medium text-grey-900' : 'nav-dim text-grey-600 group-hover:text-grey-900'
+            }`}
+          >
+            Home
+          </span>
+          <span
+            aria-hidden="true"
+            className={`absolute -bottom-0.5 left-0 h-px bg-accent transition-all duration-300 ease-out ${
+              active === 'home' ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-40'
+            }`}
+          />
+        </a>
+      </li>
       {NAV_PAGES.map((p) => {
         const on = active === p.id
         return (
@@ -288,7 +326,7 @@ function ContentsIndex({ active }: { active: string }) {
             >
               <span
                 className={`text-[13px] transition-colors ${
-                  on ? 'font-medium text-grey-900' : 'text-grey-600 group-hover:text-grey-900'
+                  on ? 'nav-ink font-medium text-grey-900' : 'nav-dim text-grey-600 group-hover:text-grey-900'
                 }`}
               >
                 {p.label}

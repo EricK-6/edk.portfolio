@@ -30,4 +30,10 @@ export default defineConfig({
   define: {
     __LAST_UPDATED__: JSON.stringify(lastUpdated),
   },
+  build: {
+    // The ride's scene is three.js in a chunk of its own, loaded after first
+    // paint and only on the home page. It is meant to be that size, so the
+    // warning about it is raised to just above it rather than left to nag.
+    chunkSizeWarningLimit: 650,
+  },
 })

@@ -15,9 +15,9 @@ import { dim, L, type Line, type Seg } from '../shell/lines'
 // output is clickable.
 
 const BOOT_LINES = [
-  '[ 0.000000 ] erickk.cloud bootloader v2.0',
+  '[ 0.000000 ] erickk.cloud bootloader v3.0',
   '[ 0.000412 ] cpu: Computer Systems Engineering @ UoA',
-  '[ 0.001033 ] mem: portfolio modules ................. ok',
+  '[ 0.001033 ] mem: six floors, silicon to serverless .. ok',
   '[ 0.002566 ] net: erickk.cloud ....................... up',
   '[ 0.003733 ] starting shell ...................... ok',
 ].map((s) => L(s))
@@ -131,6 +131,13 @@ export default function TerminalDock() {
     close: () => setOpen(false),
     history,
     goTo: (anchor) => goTo(anchor),
+    // The ride listens for this (see Ride.tsx). It only exists on the home
+    // page, so go there first and give it a moment to mount.
+    rideTo: (level) => {
+      const home = !window.location.hash || window.location.hash === '#top'
+      if (!home) goTo('home')
+      later(() => window.dispatchEvent(new CustomEvent('ride-floor', { detail: level })), home ? 0 : 450)
+    },
     openProject: (slug, what) => window.dispatchEvent(new CustomEvent('project-request', { detail: { slug, what } })),
     openUrl: (href) => {
       if (href.startsWith('mailto:')) window.location.href = href
@@ -241,7 +248,7 @@ export default function TerminalDock() {
           open ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
-        <div className="relative h-full rounded-t-xl border border-b-0 border-grey-300 bg-grey-100 shadow-2xl">
+        <div className="pop relative h-full rounded-t-xl border border-b-0 border-grey-300 bg-grey-100 shadow-2xl">
           <div ref={panelRef} className="flex h-full flex-col">
             {/* title bar */}
             <div className="flex items-center gap-2 rounded-t-xl border-b border-grey-300 bg-grey-200/60 px-4 py-3">

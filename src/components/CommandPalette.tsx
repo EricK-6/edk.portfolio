@@ -113,13 +113,16 @@ export default function CommandPalette() {
   }, [open])
 
   const commands = [
+    { id: 'stack', label: 'Ride the stack', hint: 'Silicon to serverless', keywords: 'stack floors ride home top silicon serverless board lift', icon: <HashIcon />, run: () => go('home') },
     { id: 'about', label: 'About', hint: 'Profile', keywords: 'about profile bio me', icon: <HashIcon />, run: () => go('about') },
     { id: 'experience', label: 'Experience', hint: 'Where I’ve worked', keywords: 'experience work jobs roles', icon: <HashIcon />, run: () => go('experience') },
     { id: 'projects', label: 'Projects', hint: 'Things I’ve built', keywords: 'projects work portfolio builds', icon: <HashIcon />, run: () => go('projects') },
+    { id: 'bench', label: 'The bench', hint: 'Run the ideas', keywords: 'bench labs experiments run demo simulation maze lfsr scope booking', icon: <HashIcon />, run: () => go('bench') },
     { id: 'skills', label: 'Skills', hint: 'What I work with', keywords: 'skills tech stack tools', icon: <HashIcon />, run: () => go('skills') },
     { id: 'certifications', label: 'Certifications', hint: 'What I’m certified in', keywords: 'certifications credentials awards aws credly', icon: <HashIcon />, run: () => go('certifications') },
     { id: 'education', label: 'Education', hint: 'Where I’ve studied', keywords: 'education university degree uoa', icon: <HashIcon />, run: () => go('education') },
     { id: 'volunteering', label: 'Volunteering', hint: 'Events I’ve helped run', keywords: 'volunteering leadership activities clubs competitions events', icon: <HashIcon />, run: () => go('volunteering') },
+    { id: 'offclock', label: 'Drum machine', hint: 'Off the clock', keywords: 'drums beat music off the clock sequencer kit play', icon: <HashIcon />, run: () => go('offclock') },
     { id: 'terminal', label: 'Open terminal', hint: isMac ? '⌘ `' : 'Ctrl `', keywords: 'terminal shell cli console command', icon: <TerminalIcon />, run: () => { close(); window.dispatchEvent(new CustomEvent('open-terminal')) } },
     { id: 'contact', label: 'Contact', hint: 'Let’s talk', keywords: 'contact email message reach', icon: <HashIcon />, run: () => go('contact') },
     { id: 'cv-swe', label: 'Download CV : Software', hint: 'PDF', keywords: 'cv resume pdf download software swe engineering', icon: <DownloadIcon />, run: () => downloadCV(RESUMES[0].href) },
@@ -166,7 +169,7 @@ export default function CommandPalette() {
       <div
         ref={panelRef}
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-xl"
+        className="pop relative w-full max-w-xl overflow-hidden rounded-2xl border border-grey-300 bg-grey-100 shadow-xl"
       >
         <div className="flex items-center gap-3 border-b border-grey-200 px-4">
           <SearchIcon />

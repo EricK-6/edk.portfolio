@@ -4,8 +4,8 @@
 // holds the section.
 
 export type SectionId =
-  | 'home' | 'about' | 'experience'
-  | 'projects' | 'skills'
+  | 'home' | 'about' | 'experience' | 'offclock'
+  | 'projects' | 'bench' | 'skills'
   | 'education' | 'certifications' | 'volunteering'
   | 'contact'
 
@@ -19,15 +19,16 @@ export interface Page {
 }
 
 export const PAGES: readonly Page[] = [
-  { id: 'home', label: 'Home', sections: ['home', 'about', 'experience'] },
-  { id: 'work', label: 'Projects', sections: ['projects', 'skills'] },
+  { id: 'home', label: 'Home', sections: ['home', 'about', 'experience', 'offclock'] },
+  { id: 'work', label: 'Projects', sections: ['projects', 'bench', 'skills'] },
   { id: 'background', label: 'Background', sections: ['education', 'certifications', 'volunteering'] },
   { id: 'contact', label: 'Contact', sections: ['contact'] },
 ]
 
 
-// The pages listed in the nav. Home is left out: the name in the corner is
-// the way back to it.
+// The pages listed in the nav. Home is not in this list: the navbar adds its
+// own entry for it, which lands where the ride ends, and the name in the
+// corner goes to the very top.
 export const NAV_PAGES = PAGES.filter((p) => p.id !== 'home')
 
 // The intro's anchor. 'home' is the id the rest of the app uses for it; 'top'
