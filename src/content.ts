@@ -894,7 +894,7 @@ export const CLUBS = [
     period: 'Oct 2026 - Present',
     image: './web3.jpg',
     bullets: [
-      'Planning and delivering **technical workshops**, industry and social events for a community of **150+ members**.',
+      'Planning and delivering **technical workshops**, industry and social events for a community of **500+ members**.',
       'Building **industry connections** and collaborating within the events team to grow engagement in Web3.',
     ],
   },
