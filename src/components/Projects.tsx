@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
 import { emphasise } from './emphasise'
-import { BENCH, byRecent, floorCode, PROJECTS, STACK, type BuildLogEntry, type Project, type ProjectDocument, type ProjectLink } from '../content'
+import { BENCH, byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectDocument, type ProjectLink } from '../content'
 
 // The three columns the university shelf is read in. The degree covers all
 // three, and which is which is the one thing six cards in a row cannot say.
@@ -25,12 +25,10 @@ const KINDS = [
 function Columns({
   columns,
   items,
-  floor,
   equal = false,
 }: {
   columns: readonly { id: string; label: string }[]
   items: Project[]
-  floor: number | null
   equal?: boolean
 }) {
   return (
@@ -50,7 +48,7 @@ function Columns({
             </div>
             <div className={`flex flex-1 flex-col gap-5 ${equal ? '' : '[&>article]:flex-1'}`}>
               {group.map((p) => (
-                <ProjectCard key={p.title} project={p} equal={equal} dim={offFloor(p, floor)} />
+                <ProjectCard key={p.title} project={p} equal={equal} />
               ))}
             </div>
           </div>
@@ -71,28 +69,6 @@ function SubLabel({ children, count, className = '' }: { children: ReactNode; co
         {String(count).padStart(2, '0')}
       </span>
     </div>
-  )
-}
-
-// A project steps back when a floor is chosen and it was not built there.
-const offFloor = (p: Project, floor: number | null) => floor !== null && !p.floors.includes(floor)
-
-// The six floors as a small tower, the ones a project was built on lit and
-// the one it mostly lives on brightest: range at a glance, without a word.
-// The same six floors the home page rides up through.
-function FloorTower({ floors }: { floors: number[] }) {
-  const names = [...floors].sort((a, b) => a - b).map((f) => `${floorCode(f)} ${STACK[f].name}`).join(', ')
-  return (
-    <span role="img" aria-label={`Built on ${names}`} title={names} className="inline-flex flex-none flex-col-reverse gap-[2px] pt-0.5">
-      {STACK.map((f) => (
-        <span
-          key={f.id}
-          className={`block h-[5px] w-3.5 rounded-[1.5px] ${
-            floors[0] === f.level ? 'bg-accent' : floors.includes(f.level) ? 'bg-accent/40' : 'bg-grey-200'
-          }`}
-        />
-      ))}
-    </span>
   )
 }
 
@@ -130,11 +106,6 @@ export default function Projects() {
   const self = PROJECTS.filter((p) => p.shelf === 'self').sort(byRecent)
   const uni = PROJECTS.filter((p) => p.shelf === 'uni').sort(byRecent)
   const logs = PROJECTS.filter((p) => p.log).length
-  // The floor of the stack being looked at, if any. Choosing one never moves
-  // or removes a card: the others dim where they stand, so the page holds
-  // still and the shape of the whole section stays readable.
-  const [floor, setFloor] = useState<number | null>(null)
-
   return (
     <Section
       id="projects"
@@ -156,36 +127,23 @@ export default function Projects() {
       }
       wide
     >
-      <div className="mb-10" role="group" aria-label="Show the projects built on one floor of the stack">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-grey-400">Floor</span>
-          <FloorChip on={floor === null} onClick={() => setFloor(null)} track="floor-all">All</FloorChip>
-          {STACK.map((f) => (
-            <FloorChip key={f.id} on={floor === f.level} onClick={() => setFloor(floor === f.level ? null : f.level)} track={`floor-${f.id}`}>
-              <span className={floor === f.level ? '' : 'text-grey-400'}>{floorCode(f.level)}</span>
-              {f.name}
-            </FloorChip>
-          ))}
-        </div>
-      </div>
-
       <SubLabel count={awarded.length}>Awarded in competition</SubLabel>
       <div className="mt-6 space-y-8 sm:space-y-12">
         {awarded.map((p, i) => (
-          <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} dim={offFloor(p, floor)} />
+          <FeatureRow key={p.title} project={p} reverse={i % 2 === 1} />
         ))}
       </div>
 
       {/* Half-width, so these two sit between the awarded rows and the degree
           work: nobody set them, which is the whole reason they are here. */}
       <SubLabel count={self.length} className="mt-14">Self-initiated</SubLabel>
-      <Columns columns={KINDS} items={self} floor={floor} />
+      <Columns columns={KINDS} items={self} />
 
       {/* One column a discipline, so the degree's range reads at a glance
           rather than as six cards in a row. The labels are lighter than the
           shelf's own, because they sit under it. */}
       <SubLabel count={uni.length} className="mt-14">Engineered at university</SubLabel>
-      <Columns columns={DISCIPLINES} items={uni} floor={floor} equal />
+      <Columns columns={DISCIPLINES} items={uni} equal />
 
       {/* A postscript, centred, the way a letter ends: the one line about this
           site, where the work ends. It used to sit in the footer where nobody
@@ -221,24 +179,6 @@ export default function Projects() {
         .
       </p>
     </Section>
-  )
-}
-
-function FloorChip({ on, onClick, track, children }: { on: boolean; onClick: () => void; track: string; children: ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      data-track={track}
-      className={`tap-44 inline-flex h-8 items-center gap-1.5 rounded-full border px-3 font-mono text-[11px] uppercase tracking-[0.1em] transition ${
-        on
-          ? 'border-accent/40 bg-accent/10 text-accent-deep'
-          : 'border-grey-200 bg-white text-grey-600 hover:border-grey-300 hover:text-grey-900'
-      }`}
-    >
-      {children}
-    </button>
   )
 }
 
@@ -361,7 +301,7 @@ function useProjectRequests(slug: string, setLog: (v: boolean) => void, setDetai
 
 // An awarded project, full width: the clip on one side and the case for it on
 // the other. The two alternate sides so the pair does not read as one block.
-function FeatureRow({ project, reverse, dim = false }: { project: Project; reverse: boolean; dim?: boolean }) {
+function FeatureRow({ project, reverse }: { project: Project; reverse: boolean }) {
   const { title, tag, period, role, awardedBy, hostedBy, org, highlights, tech, links, documents, log } = project
   const [logOpen, setLogOpen] = useState(false)
   useProjectRequests(project.slug, setLogOpen)
@@ -376,7 +316,7 @@ function FeatureRow({ project, reverse, dim = false }: { project: Project; rever
     // case for it share a top edge and a bottom edge.
     // the id is the project's anchor: erickk.cloud/#spottern (and /spottern,
     // via 404.html) lands here
-    <article id={project.slug} className={`grid gap-6 transition-opacity duration-300 md:grid-cols-[1.05fr_1fr] md:gap-10 ${dim ? 'opacity-30' : ''}`}>
+    <article id={project.slug} className="grid gap-6 md:grid-cols-[1.05fr_1fr] md:gap-10">
       {/* items-center: a clip that keeps its own shape sits level with the
           middle of the text beside it. One that fills the row is already the
           full height, so centring costs it nothing. */}
@@ -391,7 +331,6 @@ function FeatureRow({ project, reverse, dim = false }: { project: Project; rever
               {tag}
             </div>
           )}
-          <FloorTower floors={project.floors} />
         </div>
         <h4 className="mt-2 text-xl font-semibold tracking-tight text-grey-900 sm:text-2xl">{title}</h4>
         <div className="mt-1 text-sm text-grey-500">{period}</div>
@@ -458,7 +397,7 @@ function FeatureRow({ project, reverse, dim = false }: { project: Project; rever
 // `equal` pins the height, so the degree shelf's six cards are one size
 // whatever they hold: the front already stretches (flex-1) and the footer sits
 // on the bottom edge, so a card with less to say just has more air in it.
-function ProjectCard({ project, equal = false, dim = false }: { project: Project; equal?: boolean; dim?: boolean }) {
+function ProjectCard({ project, equal = false }: { project: Project; equal?: boolean }) {
   const { title, tag, role, highlights, tech, icon, links, documents, log } = project
   const [open, setOpen] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
@@ -490,7 +429,7 @@ function ProjectCard({ project, equal = false, dim = false }: { project: Project
   }, [open])
 
   return (
-    <article id={project.slug} className={`card relative flex flex-col overflow-hidden !p-0 transition-opacity duration-300 ${equal ? 'h-[27rem]' : 'h-full'} ${dim ? 'opacity-30' : ''}`}>
+    <article id={project.slug} className={`card relative flex flex-col overflow-hidden !p-0 ${equal ? 'h-[27rem]' : 'h-full'}`}>
       {/* the part that turns over */}
       <div className="relative flex flex-1 flex-col">
         <div
@@ -523,7 +462,6 @@ function ProjectCard({ project, equal = false, dim = false }: { project: Project
                 </h4>
                 <div className="mt-0.5 text-xs text-grey-500">{tag}</div>
               </div>
-              <FloorTower floors={project.floors} />
             </div>
             {role && <div className="mt-2 text-sm text-grey-700">{role}</div>}
 

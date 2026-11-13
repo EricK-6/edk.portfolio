@@ -20,7 +20,7 @@ export interface Page {
 
 export const PAGES: readonly Page[] = [
   { id: 'home', label: 'Home', sections: ['home', 'about', 'experience', 'offclock'] },
-  { id: 'work', label: 'Projects', sections: ['projects', 'bench', 'skills'] },
+  { id: 'work', label: 'Projects', sections: ['projects', 'skills', 'bench'] },
   { id: 'background', label: 'Background', sections: ['education', 'certifications', 'volunteering'] },
   { id: 'contact', label: 'Contact', sections: ['contact'] },
 ]

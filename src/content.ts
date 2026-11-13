@@ -602,19 +602,9 @@ export const byRecent = (a: Project, b: Project) => recency(b) - recency(a)
 // instead of one two-line entry sitting above two one-line entries.
 export const EXPERIENCE = [
   {
-    id: 'web3',
-    role: 'Technical Executive',
-    org: 'WEB3UOA',
-    detail: 'Technical Executive in Events Team',
-    period: 'Nov 2026 - Present',
-    image: './web3.jpg',
-    // No details yet, so the entry is not expandable.
-    bullets: [] as string[],
-  },
-  {
     id: 'mercury',
     floor: 5,
-    role: 'Data Platform Intern',
+    role: 'Data Platform Engineer Intern',
     org: 'Mercury NZ',
     detail: 'Data & Analytics Enablement Team',
     period: 'Nov 2026 - Present',
@@ -650,18 +640,6 @@ export const EXPERIENCE = [
     ],
   },
   {
-    id: 'keb',
-    role: 'Academic Executive',
-    org: 'Korean Engineering Body (KEB)',
-    detail: 'Founding Member',
-    period: 'Jul 2024 - Oct 2026',
-    image: './KEB.webp',
-    bullets: [
-      'Co-founded an engineering community of **170+ members**; contributed to a **17-member executive team**.',
-      'Delivered **tutorial sessions** for junior engineering students and supported academic event planning.',
-    ],
-  },
-  {
     id: 'twelve',
     role: 'Front of House',
     org: 'Twelve Restaurant',
@@ -678,8 +656,7 @@ export const EXPERIENCE = [
 
 // The six floors between a circuit board and the cloud, bottom to top. This
 // is the motto ("From silicon to serverless") spelled out: the home page rides
-// one signal up through them, the Projects page filters by them, and the
-// terminal lists them with `stack`.
+// one signal up through them, and the terminal lists them with `stack`.
 //
 // A floor says what kind of engineering happens there, in the same plain voice
 // as the rest of the page. What was built on it is never typed here: it is
@@ -900,6 +877,44 @@ export type Cert = (typeof CERTS)[number]
 
 // --- volunteering ------------------------------------------------------------
 
+// The two student clubs, newest first. They sat in Experience until WEB3UOA
+// joined KEB there; an executive seat on a club is given time, not a job, so
+// both now open the Volunteering section, above the competitions.
+//
+// `mark` is the club's name as the sand wordmark over them spells it. The two
+// share "EB", which is the whole trick: KEB becomes WEB3 by turning one letter
+// to sand and pouring it back as two (see components/SandMark.tsx).
+export const CLUBS = [
+  {
+    id: 'web3',
+    mark: 'WEB3',
+    role: 'Technical Executive',
+    org: 'WEB3UOA',
+    detail: 'Technical Executive in Events Team',
+    period: 'Oct 2026 - Present',
+    image: './web3.jpg',
+    bullets: [
+      'Planning and delivering **technical workshops**, industry and social events for a community of **150+ members**.',
+      'Building **industry connections** and collaborating within the events team to grow engagement in Web3.',
+    ],
+  },
+  {
+    id: 'keb',
+    mark: 'KEB',
+    role: 'Academic Executive',
+    org: 'Korean Engineering Body (KEB)',
+    detail: 'Founding Member',
+    period: 'Jul 2024 - Oct 2026',
+    image: './KEB.webp',
+    bullets: [
+      'Co-founded an engineering community of **170+ members**; contributed to a **17-member executive team**.',
+      'Delivered **tutorial sessions** for junior engineering students and supported academic event planning.',
+    ],
+  },
+]
+
+// The competitions, oldest first (the section turns them round).
+//
 // One line a role. These were two CV bullets each, which is right on a PDF
 // and wrong in a timeline step: every extra line stretches the step. The CV is one
 // click away in the navbar for anyone who wants the full pair.
@@ -970,6 +985,6 @@ export const HIGHLIGHTS = [
   '3rd place · ECSE Design Competition 2025',
   `${CERTS.length} cloud certifications · ${issuers.slice(0, -1).join(', ')}${issuers.length > 1 ? ' and ' : ''}${issuers.at(-1)}`,
   `${PROJECTS.length} projects across cloud and robotics`,
-  'Data Platform Intern @ Mercury NZ',
+  'Data Platform Engineer Intern @ Mercury NZ',
   'Research Assistant Trainee @ UoA',
 ]

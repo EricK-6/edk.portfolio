@@ -8,7 +8,7 @@
 // file months out of date.
 
 import {
-  BENCH, CERTS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS, STACK,
+  BENCH, CERTS, CLUBS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS, STACK,
   floorCode, projectsOn, rolesOn,
   type Project,
 } from '../content'
@@ -136,11 +136,21 @@ export const ROOT: DirNode = dir('top', {
       L(dim('Diligence Awards  '), SCHOOL.diligence.map((d) => `${d.syllabus} ${d.subject}`).join(', ')),
     ]),
   }),
-  volunteering: dir('volunteering', Object.fromEntries(ROLES.map((r) => [`${r.id}.md`, file(() => [
-    heading(`# ${r.title}${r.detail ? ` (${r.detail})` : ''}`),
-    L(dim(`${r.org} · ${r.period}`)),
-    L(r.description),
-  ])]))),
+  // the clubs first, as on the page, then the competitions
+  volunteering: dir('volunteering', {
+    ...Object.fromEntries(CLUBS.map((c) => [`${c.id}.md`, file(() => [
+      heading(`# ${c.role} · ${c.org}`),
+      L(dim(c.period)),
+      L(accent(c.detail)),
+      blank,
+      ...c.bullets.map((b) => bullet(...rich(b))),
+    ])])),
+    ...Object.fromEntries(ROLES.map((r) => [`${r.id}.md`, file(() => [
+      heading(`# ${r.title}${r.detail ? ` (${r.detail})` : ''}`),
+      L(dim(`${r.org} · ${r.period}`)),
+      L(r.description),
+    ])])),
+  }),
   contact: dir('contact', {
     email: { type: 'link', href: `mailto:${PROFILE.email}`, label: PROFILE.email },
     github: { type: 'link', href: PROFILE.github.url, label: `github.com/${PROFILE.github.handle}` },
