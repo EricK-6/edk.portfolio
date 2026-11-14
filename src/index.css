@@ -206,8 +206,7 @@
 
   /* The affordance a card gets only when it really is a target. */
   a.card,
-  button.card,
-  .card-link {
+  button.card {
     @apply hover:border-grey-300 hover:shadow-[0_8px_28px_-12px_rgb(28_25_23/0.16)];
   }
 
