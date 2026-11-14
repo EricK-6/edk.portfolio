@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BENCH, PROFILE, PROJECTS } from './content'
+import { PROFILE, PROJECTS } from './content'
 import { pageOfAnchor, type Page, type PageId } from './sitemap'
 
 // The site is four pages, each a scrolling document of its own sections.
@@ -34,10 +34,8 @@ export function goTo(id: string) {
 
 // A project's slug is an anchor inside Projects, so the terminal can deep-link
 // to one.
-// So is each experiment on the bench (`bench-slotly`).
 const EXTRA: Record<string, PageId> = Object.fromEntries([
   ...PROJECTS.map((p) => [p.slug, 'work' as PageId]),
-  ...BENCH.map((slug) => [`bench-${slug}`, 'work' as PageId]),
   // where the home page's ride ends
   ['motto', 'home' as PageId],
 ])

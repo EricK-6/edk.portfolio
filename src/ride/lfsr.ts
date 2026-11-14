@@ -4,7 +4,7 @@
 // non-zero states before it repeats.
 //
 // It lives in its own file because two things clock it: the logic floor of
-// the ride draws a real state of it, and the bench runs it.
+// the ride draws a real state of it.
 export const LFSR_TAPS = [16, 15, 13, 4]
 
 export function lfsrStep(state: number) {

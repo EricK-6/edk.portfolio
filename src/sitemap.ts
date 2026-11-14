@@ -5,7 +5,7 @@
 
 export type SectionId =
   | 'home' | 'about' | 'experience' | 'offclock'
-  | 'projects' | 'bench' | 'skills'
+  | 'projects' | 'skills'
   | 'education' | 'certifications' | 'volunteering'
   | 'contact'
 
@@ -20,7 +20,7 @@ export interface Page {
 
 export const PAGES: readonly Page[] = [
   { id: 'home', label: 'Home', sections: ['home', 'about', 'experience', 'offclock'] },
-  { id: 'work', label: 'Projects', sections: ['projects', 'skills', 'bench'] },
+  { id: 'work', label: 'Projects', sections: ['projects', 'skills'] },
   { id: 'background', label: 'Background', sections: ['education', 'certifications', 'volunteering'] },
   { id: 'contact', label: 'Contact', sections: ['contact'] },
 ]

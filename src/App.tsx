@@ -5,7 +5,6 @@ import About from './components/About'
 import Projects from './components/Projects'
 import Experience from './components/Experience'
 import Skills from './components/Skills'
-import Bench from './components/Bench'
 import Drums from './components/Drums'
 import Education from './components/Education'
 import Certifications from './components/Certifications'
@@ -28,7 +27,6 @@ const SECTIONS: Record<SectionId, ComponentType> = {
   experience: Experience,
   offclock: Drums,
   projects: Projects,
-  bench: Bench,
   skills: Skills,
   education: Education,
   certifications: Certifications,

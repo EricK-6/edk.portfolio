@@ -8,7 +8,7 @@
 // file months out of date.
 
 import {
-  BENCH, CERTS, CLUBS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS, STACK,
+  CERTS, CLUBS, DEGREE, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESUMES, ROLES, SCHOOL, SKILL_GROUPS, STACK,
   floorCode, projectsOn, rolesOn,
   type Project,
 } from '../content'
@@ -59,7 +59,7 @@ function projectDir(p: Project): DirNode {
   for (const l of p.links) children[/demo/i.test(l.label) ? 'demo' : 'repo'] = { type: 'link', href: l.href }
   const report = p.documents?.find((d) => d.href)
   if (report?.href) children.report = { type: 'link', href: report.href }
-  if (EXECUTABLE.has(p.slug) || BENCH.includes(p.slug)) children[p.slug] = { type: 'exec', slug: p.slug }
+  if (EXECUTABLE.has(p.slug)) children[p.slug] = { type: 'exec', slug: p.slug }
   return dir(p.slug, children)
 }
 
@@ -101,14 +101,6 @@ export const ROOT: DirNode = dir('top', {
     ...j.bullets.map((b) => bullet(...rich(b))),
   ])]))),
   projects: dir('projects', Object.fromEntries(PROJECTS.map((p) => [p.slug, projectDir(p)]))),
-  bench: dir('bench', {
-    'README.md': file(() => [
-      heading('# The bench'),
-      L('Four ideas out of the projects, rebuilt small enough to run in the page.'),
-      blank,
-      ...BENCH.map((slug) => L(dim('run  '), `./${slug}`)),
-    ]),
-  }),
   skills: dir('skills', Object.fromEntries(SKILL_GROUPS.map((g) => [`${g.id}.txt`, file(() => [
     heading(`# ${g.label} (${g.items.length})`),
     L(g.items.join(', ')),
@@ -191,7 +183,6 @@ export const pathLabel = (segs: string[]) => (segs.length ? `~/${segs.join('/')}
 const ALIASES: Record<string, string[]> = {
   home: [], top: [], root: [], '~': [],
   floors: ['stack'], ride: ['stack'], tower: ['stack'],
-  labs: ['bench'], lab: ['bench'], playground: ['bench'],
   work: ['experience'], jobs: ['experience'], job: ['experience'],
   credentials: ['certifications'], certs: ['certifications'], cert: ['certifications'],
   awards: ['projects'], project: ['projects'],

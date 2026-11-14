@@ -3,7 +3,7 @@
 // (`ls -l`, `grep aws`, `git log`, `fortune | kiwisay`); nothing here is
 // clickable and nothing guesses what you meant.
 
-import { BENCH, CERTS, PROFILE, PROJECTS, RESUMES, SKILL_GROUPS, STACK, floorCode, projectsOn } from '../content'
+import { CERTS, PROFILE, PROJECTS, RESUMES, SKILL_GROUPS, STACK, floorCode, projectsOn } from '../content'
 import { allFiles, EXECUTABLE, findDir, findProject, getNode, pathLabel, resolve, ROOT, type DirNode, type Node } from './fs'
 import { accent, cmd, dim, L, plain, strong, t, type Line, type Seg } from './lines'
 import { runPulse, runSpottern } from './replays'
@@ -368,20 +368,11 @@ const COMMANDS: Command[] = [
       if (!p) {
         out.push(
           L(dim('replays here:  '), ...[...EXECUTABLE].flatMap((s, i) => [...(i ? [dim(' · ')] : []), cmd(`./${s}`)])),
-          L(dim('on the bench:  '), ...BENCH.flatMap((s, i) => [...(i ? [dim(' · ')] : []), cmd(`./${s}`)])),
         )
         return
       }
       if (p.slug === 'spottern') { runSpottern(ctx.print, ctx.later); return }
       if (p.slug === 'sentiment-pulse') { runPulse(ctx.print, ctx.later); return }
-      // its idea runs on the page rather than in here: go and stand in front of it
-      if (BENCH.includes(p.slug)) {
-        out.push(L(dim('→ '), p.title, dim(': on the bench, ready to run')))
-        ctx.setCwd(['bench'])
-        ctx.goTo(`bench-${p.slug}`)
-        if (ctx.small) ctx.later(ctx.close, 450)
-        return
-      }
       out.push(L(`${p.title} is ${p.video ? 'hardware or a game you have to see, not run' : 'not runnable from here'}. `, cmd(`open ${p.slug}`), dim(p.video ? ' shows the clip' : ' shows it')))
     },
   },
@@ -559,14 +550,14 @@ export function candidates(input: string, cwd: string[]): string[] {
   const words = input.split(/\s+/)
   const last = words.at(-1) ?? ''
   const startsWith = (list: string[]) => [...new Set(list)].filter((c) => c.toLowerCase().startsWith(last.toLowerCase()) && c !== last).sort()
-  if (words.length === 1) return startsWith([...COMMAND_NAMES, ...[...EXECUTABLE, ...BENCH].map((s) => `./${s}`)])
+  if (words.length === 1) return startsWith([...COMMAND_NAMES, ...[...EXECUTABLE].map((s) => `./${s}`)])
   const c = words[0].toLowerCase()
   const sections = Object.keys(ROOT.children).filter((n) => ROOT.children[n].type === 'dir')
   if (c === 'cd' || c === 'tree') return startsWith([...pathCandidates(cwd, last, 'dir'), ...sections, ...PROJECTS.map((p) => p.slug)])
   if (c === 'ls') return startsWith([...pathCandidates(cwd, last), ...sections])
   if (c === 'cat' || c === 'grep' && words.length > 2) return startsWith([...pathCandidates(cwd, last), ...PROJECTS.map((p) => p.slug)])
   if (c === 'open') return startsWith([...PROJECTS.map((p) => p.slug), ...sections, 'cv', 'github', 'linkedin', 'email', ...pathCandidates(cwd, last)])
-  if (c === 'run') return startsWith([...EXECUTABLE, ...BENCH])
+  if (c === 'run') return startsWith([...EXECUTABLE])
   if (c === 'floor') return startsWith(STACK.map((f) => f.id))
   if (c === 'cv' || c === 'resume') return startsWith(RESUMES.map((r) => r.id))
   if (c === 'help' || c === 'man') return startsWith(COMMANDS.map((x) => x.name))

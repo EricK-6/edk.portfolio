@@ -736,13 +736,6 @@ export const rolesOn = (level: number) => EXPERIENCE.filter((j) => j.floor === l
 // "L2", the way a floor is written everywhere it is named
 export const floorCode = (level: number) => `L${level}`
 
-// --- the bench ---------------------------------------------------------------
-
-// The projects whose central idea runs as an experiment on the Projects page
-// (see components/Bench.tsx). Each experiment's anchor is `bench-<slug>`, which
-// is how a project's card, the terminal's `./slotly` and the router all find it.
-export const BENCH = ['slotly', 'flappy-universe', 'autonomous-pathfinding-bot', 'smart-energy-monitor']
-
 // --- skills ------------------------------------------------------------------
 
 // Four groups, read straight off the two CVs' skills rows.

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import Section from './Section'
 import { useOnScreen } from '../useOnScreen'
 import { emphasise } from './emphasise'
-import { BENCH, byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectDocument, type ProjectLink } from '../content'
+import { byRecent, PROJECTS, type BuildLogEntry, type Project, type ProjectDocument, type ProjectLink } from '../content'
 
 // The three columns the university shelf is read in. The degree covers all
 // three, and which is which is the one thing six cards in a row cannot say.
@@ -583,17 +583,6 @@ function ProjectLinks({ slug, links, documents, log, onOpenLog, stacked = false,
           </a>
         )
       })}
-      {/* its idea runs further down the page: say so wherever its links are */}
-      {(log || Boolean(links?.length)) && BENCH.includes(slug) && (
-        <a
-          href={`#bench-${slug}`}
-          data-track={`bench-from-${slug}`}
-          className="tap-44 inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/[0.06] px-3 py-1.5 text-sm font-medium text-accent-deep transition hover:border-accent/60"
-        >
-          <svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15a1 1 0 0 0 1.5.86l13-7.5a1 1 0 0 0 0-1.72l-13-7.5A1 1 0 0 0 6 4.5Z" /></svg>
-          Run it
-        </a>
-      )}
       {documents?.map((d) =>
         d.images ? (
           <button key={d.label} type="button" onClick={() => setViewing(d)} data-track={`doc-${slug}`} className={docClass}>
